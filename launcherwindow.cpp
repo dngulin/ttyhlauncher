@@ -8,8 +8,13 @@
 #include "feedbackdialog.h"
 #include "aboutdialog.h"
 
+#include "settings.h"
+
+#include <QCloseEvent>
+#include <QMessageBox>
 #include <QTimer>
 #include <QDesktopServices>
+#include <QDesktopWidget>
 
 LauncherWindow::LauncherWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -29,8 +34,6 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     // News Menu connections
     connect(ui->ttyhNews, SIGNAL(changed()), SLOT(loadTtyh()));
     connect(ui->officialNews, SIGNAL(changed()), SLOT(loadOfficial()));
-    ui->ttyhNews->setChecked(true); // FIXME: need to restore news state from settings
-    loadPage(QUrl("http://ttyh.ru"));
 
     // Options Menu connections
     connect(ui->runSettings, SIGNAL(triggered()), SLOT(showSettingsDialog()));
@@ -43,6 +46,57 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     // Help Menu connections
     connect(ui->bugReport, SIGNAL(triggered()), SLOT(showFeedBackDialog()));
     connect(ui->aboutLauncher, SIGNAL(triggered()), SLOT(showAboutDialog()));
+
+    // Connect to settings
+    Settings* settings = Settings::instance();
+
+    // Setup login field
+    ui->nickEdit->setText(settings->loadLogin());
+    // Save login when changed
+    connect(ui->nickEdit, SIGNAL(textChanged(QString)), settings, SLOT(saveLogin(QString)));
+
+    // Setup password field
+    ui->savePassword->setChecked(settings->loadPassStore());
+    if (ui->savePassword->isChecked())
+        ui->passEdit->setText(settings->loadPassword());
+    // Password are saved on login or exit if savePassword is checked
+    connect(ui->savePassword, SIGNAL(clicked(bool)), settings, SLOT(savePassStore(bool)));
+
+    // Setup client combobox
+    ui->clientCombo->addItems(settings->getClientsNames());
+    ui->clientCombo->setCurrentIndex(settings->loadActiveClientId());
+    connect(ui->clientCombo, SIGNAL(activated(int)), settings, SLOT(saveActiveClientId(int)));
+
+    // Setup news set
+    ui->ttyhNews->setChecked(true);
+    emit ui->ttyhNews->changed();
+
+    // Setup window parameters
+    QRect geometry = settings->loadWindowGeometry();
+    // Centering window, if loaded default values
+    if (geometry.x() < 0)
+        this->move(QApplication::desktop()->screen()->rect().center() - this->rect().center());
+    else
+        this->setGeometry(geometry);
+
+    // Restore maximized state
+    if (settings->loadMaximizedState()) this->showMaximized();
+
+}
+
+void LauncherWindow::closeEvent (QCloseEvent* event) { storeParameters(); }
+
+// Run this method on close window and run game
+void LauncherWindow::storeParameters() {
+    Settings* settings = Settings::instance();
+    settings->saveWindowGeometry(this->geometry());
+    settings->saveMaximizedState(this->isMaximized());
+
+    if (ui->savePassword->isChecked())
+        settings->savePassword(ui->passEdit->text());
+    // Security issue
+    else
+        settings->savePassword("");
 }
 
 // Show dialog slots

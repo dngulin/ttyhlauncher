@@ -15,6 +15,8 @@ class LauncherWindow : public QMainWindow
 public:
     explicit LauncherWindow(QWidget *parent = 0);
     ~LauncherWindow();
+    void closeEvent (QCloseEvent* event);
+
 
 private slots:
     void loadPageTimeout();
@@ -37,6 +39,7 @@ private:
     QActionGroup *newsGroup;
 
     void loadPage(const QUrl& url);
+    void storeParameters();
 };
 
 #endif // LAUNCHERWINDOW_H
