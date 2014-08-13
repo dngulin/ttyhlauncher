@@ -100,12 +100,41 @@ void LauncherWindow::storeParameters() {
 }
 
 // Show dialog slots
-void LauncherWindow::showSettingsDialog() { SettingsDialog* d = new SettingsDialog(this); d->show(); }
-void LauncherWindow::showChangePasswordDialog() { PasswordDialog* d = new PasswordDialog(this); d->show(); }
-void LauncherWindow::showSkinLoadDialog() { SkinUploadDialog* d = new SkinUploadDialog(this); d->show(); }
-void LauncherWindow::showUpdateManagerDialog() { UpdateDialog* d = new UpdateDialog(this); d->show(); }
-void LauncherWindow::showFeedBackDialog() { FeedbackDialog* d = new FeedbackDialog(this); d->show(); }
-void LauncherWindow::showAboutDialog() { AboutDialog* d = new AboutDialog(this); d->show(); }
+void LauncherWindow::showSettingsDialog() {
+    SettingsDialog* d = new SettingsDialog(this);
+    d->exec();
+
+    Settings* settings = Settings::instance();
+    ui->clientCombo->setCurrentIndex(settings->loadActiveClientId());
+}
+
+void LauncherWindow::showChangePasswordDialog() {
+    PasswordDialog* d = new PasswordDialog(this);
+    d->exec();
+}
+
+void LauncherWindow::showSkinLoadDialog() {
+    SkinUploadDialog* d = new SkinUploadDialog(this);
+    d->exec();
+}
+
+void LauncherWindow::showUpdateManagerDialog() {
+    UpdateDialog* d = new UpdateDialog(this);
+    d->exec();
+
+    Settings* settings = Settings::instance();
+    ui->clientCombo->setCurrentIndex(settings->loadActiveClientId());
+}
+
+void LauncherWindow::showFeedBackDialog() {
+    FeedbackDialog* d = new FeedbackDialog(this);
+    d->exec();
+}
+
+void LauncherWindow::showAboutDialog() {
+    AboutDialog* d = new AboutDialog(this);
+    d->exec();
+}
 
 // Load webpage slots
 void LauncherWindow::loadTtyh() {loadPage(QUrl("http://ttyh.ru"));}

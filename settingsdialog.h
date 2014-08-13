@@ -17,6 +17,10 @@ public:
 
 private:
     Ui::SettingsDialog *ui;
+
+private slots:
+    void saveSettings();
+    void loadSettings();
 };
 
 #endif // SETTINGSDIALOG_H

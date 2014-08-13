@@ -65,7 +65,7 @@
          <bool>false</bool>
         </property>
         <property name="text">
-         <string>Требуется обновление</string>
+         <string/>
         </property>
         <property name="readOnly">
          <bool>true</bool>

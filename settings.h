@@ -31,12 +31,9 @@ public:
 
     // Mainwindow login form
     QString loadLogin();
-
     bool loadPassStore();
-
     QString loadPassword();
     void savePassword(QString password);
-
     int loadActiveClientId();
 
     // News
@@ -46,8 +43,23 @@ public:
     // Window parameters
     QRect loadWindowGeometry();
     void saveWindowGeometry(QRect geom);
-
     bool loadMaximizedState();
+
+    // Client settings
+    QString loadClientVersion();
+    void saveClientVersion(QString strid);
+
+    bool loadClientJavaState();
+    void saveClientJavaState(bool state);
+
+    QString loadClientJava();
+    void saveClientJava(QString java);
+
+    bool loadClientJavaArgsState();
+    void saveClientJavaArgsState(bool state);
+
+    QString loadClientJavaArgs();
+    void saveClientJavaArgs(QString args);
 
 public slots:
     void saveActiveClientId(int id);

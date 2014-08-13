@@ -66,3 +66,54 @@ void Settings::saveWindowGeometry(QRect geom) { settings->setValue("launcher/win
 
 bool Settings::loadMaximizedState() {return settings->value("launcher/window_maximized", false).toBool();}
 void Settings::saveMaximizedState(bool state) { settings->setValue("launcher/window_maximized", state); }
+
+// Client settings
+QString Settings::loadClientVersion() {
+    int cid = loadActiveClientId();
+    return settings->value("client-" + getClientStrId(cid) + "/version", "latest").toString();
+}
+
+void Settings::saveClientVersion(QString strid) {
+    int cid = loadActiveClientId();
+    settings->setValue("client-" + getClientStrId(cid) + "/version", strid);
+}
+
+bool Settings::loadClientJavaState() {
+    int cid = loadActiveClientId();
+    return settings->value("client-" + getClientStrId(cid) + "/custom_java", false).toBool();
+}
+
+void Settings::saveClientJavaState(bool state) {
+    int cid = loadActiveClientId();
+    settings->setValue("client-" + getClientStrId(cid) + "/custom_java", state);
+}
+
+QString Settings::loadClientJava() {
+    int cid = loadActiveClientId();
+    return settings->value("client-" + getClientStrId(cid) + "/java", "").toString();
+}
+
+void Settings::saveClientJava(QString java) {
+    int cid = loadActiveClientId();
+    settings->setValue("client-" + getClientStrId(cid) + "/java", java);
+}
+
+bool Settings::loadClientJavaArgsState() {
+    int cid = loadActiveClientId();
+    return settings->value("client-" + getClientStrId(cid) + "/add_args", false).toBool();
+}
+
+void Settings::saveClientJavaArgsState(bool state) {
+    int cid = loadActiveClientId();
+    settings->setValue("client-" + getClientStrId(cid) + "/add_args", state);
+}
+
+QString Settings::loadClientJavaArgs() {
+    int cid = loadActiveClientId();
+    return settings->value("client-" + getClientStrId(cid) + "/args", "").toString();
+}
+
+void Settings::saveClientJavaArgs(QString args) {
+    int cid = loadActiveClientId();
+    settings->setValue("client-" + getClientStrId(cid) + "/args", args);
+}
