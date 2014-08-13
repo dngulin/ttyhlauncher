@@ -21,6 +21,7 @@ private:
 private slots:
     void saveSettings();
     void loadSettings();
+    void openFileDialog();
 };
 
 #endif // SETTINGSDIALOG_H

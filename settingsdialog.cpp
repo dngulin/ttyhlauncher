@@ -3,6 +3,8 @@
 
 #include "settings.h"
 
+#include <QFileDialog>
+
 SettingsDialog::SettingsDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SettingsDialog)
@@ -17,6 +19,9 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     connect(ui->clientCombo, SIGNAL(activated(int)), settings, SLOT(saveActiveClientId(int)));
     connect(ui->clientCombo, SIGNAL(activated(int)), this, SLOT(loadSettings()));
     emit ui->clientCombo->activated(ui->clientCombo->currentIndex());
+
+    connect(ui->javapathButton, SIGNAL(clicked()), this, SLOT(openFileDialog()));
+
     connect(ui->saveButton, SIGNAL(clicked()), this, SLOT(saveSettings()));
 
 }
@@ -62,6 +67,11 @@ void SettingsDialog::loadSettings() {
     ui->javapathEdit->setText(settings->loadClientJava());
     ui->argsBox->setChecked(settings->loadClientJavaArgsState());
     ui->argsEdit->setText(settings->loadClientJavaArgs());
+}
+
+void SettingsDialog::openFileDialog() {
+    QString javapath = QFileDialog::getOpenFileName(this, "Выберите исполняемый файл java", "", "");
+    ui->javapathEdit->setText(javapath);
 }
 
 SettingsDialog::~SettingsDialog()
