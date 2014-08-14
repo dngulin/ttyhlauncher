@@ -15,6 +15,11 @@
 #include <QTimer>
 #include <QDesktopServices>
 #include <QDesktopWidget>
+#include <QByteArray>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QDebug>
+#include <QJsonObject>
 
 LauncherWindow::LauncherWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -81,6 +86,8 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
 
     // Restore maximized state
     if (settings->loadMaximizedState()) this->showMaximized();
+
+    connect(ui->playButton, SIGNAL(clicked()), this, SLOT(startGame()));
 
 }
 
@@ -161,6 +168,48 @@ void LauncherWindow::loadPage(const QUrl& url) {
 // Slots used by LoadPage method
 void LauncherWindow::loadPageTimeout() {ui->webView->load(QUrl("qrc:/resources/error.html"));}
 void LauncherWindow::pageLoaded(bool loaded) {if (!loaded) ui->webView->load(QUrl("qrc:/resources/error.html"));}
+
+void LauncherWindow::startGame() {
+
+    ui->playButton->setEnabled(false);
+
+   QString loginURL ="http://master.ttyh.ru/index.php?act=login";
+
+   QNetworkAccessManager* manager = new QNetworkAccessManager(this);
+
+   // Make login JSON request, see: http://wiki.vg/Authentication
+   QJsonDocument data;
+   QJsonObject login, agent;
+   QNetworkRequest request;
+
+   agent["name"] = "Minecraft";
+   agent["version"] = 1;
+
+   login["agent"] = agent;
+   login["username"] = ui->nickEdit->text();
+   login["password"] = ui->passEdit->text();
+   login["clientToken"] = "tok-tok-en";
+
+   data.setObject(login);
+
+   QByteArray postdata;
+   postdata.append(data.toJson());
+
+   request.setUrl(loginURL);
+   request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+   request.setHeader(QNetworkRequest::ContentLengthHeader, postdata.size());
+
+   QNetworkReply *reply = manager->post(request, postdata);
+   QEventLoop loop;
+   connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+   // FIXME: no error handler
+   loop.exec();
+
+   qDebug() << "Req: " << postdata;
+   qDebug() << "Reply: " << reply->readAll();
+
+   ui->playButton->setEnabled(true);
+}
 
 LauncherWindow::~LauncherWindow()
 {

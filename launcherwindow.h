@@ -33,6 +33,8 @@ private slots:
     void showFeedBackDialog();
     void showAboutDialog();
 
+    void startGame();
+
 
 private:
     Ui::LauncherWindow *ui;
