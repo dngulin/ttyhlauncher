@@ -177,7 +177,7 @@ void LauncherWindow::startGame() {
 
    QNetworkAccessManager* manager = new QNetworkAccessManager(this);
 
-   // Make login JSON request, see: http://wiki.vg/Authentication
+   // Make JSON login request, see: http://wiki.vg/Authentication
    QJsonDocument data;
    QJsonObject login, agent;
    QNetworkRequest request;
@@ -202,11 +202,52 @@ void LauncherWindow::startGame() {
    QNetworkReply *reply = manager->post(request, postdata);
    QEventLoop loop;
    connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
-   // FIXME: no error handler
    loop.exec();
 
-   qDebug() << "Req: " << postdata;
-   qDebug() << "Reply: " << reply->readAll();
+   // Check for connection error
+   if (reply->error() == QNetworkReply::NoError) {
+
+       QByteArray rawResponce = reply->readAll();
+       qDebug() << rawResponce;
+       QJsonParseError* error;
+       QJsonDocument json = QJsonDocument::fromJson(rawResponce, error);
+
+       // Check for incorrect JSON
+       if (error->error == QJsonParseError::NoError) {
+
+           QJsonObject responce = json.object();
+
+           // Check for error in server answer
+           if (responce["error"].toString() != "") {
+               // Error in answer handler
+               QString cause = responce["cause"].toString();
+               if (cause != "") cause = "\n\n Причина: " + cause;
+               QMessageBox::critical(this, "У нас проблема :(",
+                                     responce["errorMessage"].toString()
+                                     + cause);
+           } else {
+               // Correct login
+               QMessageBox::information(this, "Responce", "aid = " + responce["accessToken"].toString() +
+                       "\n" + "cid = " + responce["clientToken"].toString());
+           }
+
+       } else {
+           // JSON parse error
+           QMessageBox::critical(this, "У нас проблема :(",
+                                 "Упс... Сервер овтетил ерунду...\n\n" +
+                                 error->errorString() +
+                                 " в позиции " + QString::number(error->offset));
+       }
+
+
+   } else {
+       // Connection error
+       QMessageBox::critical(this, "У нас проблема :(",
+                             "Упс... Вот ведь незадача...\n\n" +
+                             reply->errorString());
+   }
+
+
 
    ui->playButton->setEnabled(true);
 }
