@@ -17,6 +17,9 @@ public:
 
 private:
     Ui::PasswordDialog *ui;
+
+private slots:
+    void changePassword();
 };
 
 #endif // PASSWORDDIALOG_H

@@ -8,7 +8,19 @@ class Settings : public QObject
 {
     Q_OBJECT
 public:
-    static Settings *instance();
+    static Settings* instance();
+
+    static const QString authUrl;
+    static const QString changePasswrdUrl;
+    static const QString skinUploadUrl;
+    static const QString feedbackUrl;
+
+    static const QString getVersionsUrl;
+    static const QString getFilelistUrl;
+    static const QString updateUrl;
+
+    static const QString launcherVerion;
+
 
 private:
     static Settings* myInstance;

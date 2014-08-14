@@ -4,6 +4,29 @@
 
 #include "settings.h"
 
+/*
+ * Versions feature plan:
+ *     - 0.1 -- implemented settings;
+ *     - 0.2 -- implemented interaction with master-server;
+ *     - 0.3 -- implemented interaction with update-server;
+ *     - 0.4 -- implemented game launch;
+ *     - 0.5 -- implemented logger, some bugfixes, code cleanups;
+ *     - 0.6 -- ????
+ *     - 1.0 -- PROFIT^WRELEASE!
+*/
+const QString Settings::launcherVerion = "0.1";
+
+// Master-server links
+const QString Settings::authUrl          = "http://master.ttyh.ru/index.php?act=login";
+const QString Settings::changePasswrdUrl = "http://master.ttyh.ru/index.php?act=chpass";
+const QString Settings::skinUploadUrl    = "http://master.ttyh.ru/index.php?act=setskin";
+const QString Settings::feedbackUrl      = "http://master.ttyh.ru/index.php?act=feedback";
+
+// Update server links
+const QString Settings::getVersionsUrl   = "http://update.ttyh.ru/index.php?act=versions"; // + &client=<client_id>
+const QString Settings::getFilelistUrl   = "http://update.ttyh.ru/index.php?act=filelist"; // + &client=<client_id>&version=<version_id>
+const QString Settings::updateUrl        = "http://update.ttyh.ru/data/"; // + <client_id>/<version_id>/<file_name>
+
 Settings* Settings::myInstance = 0;
 Settings* Settings::instance() {
     if (myInstance == 0) myInstance = new Settings();

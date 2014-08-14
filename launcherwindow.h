@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QActionGroup>
+#include "settings.h"
 
 namespace Ui {
 class LauncherWindow;
