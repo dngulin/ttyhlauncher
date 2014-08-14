@@ -209,11 +209,11 @@ void LauncherWindow::startGame() {
 
        QByteArray rawResponce = reply->readAll();
        qDebug() << rawResponce;
-       QJsonParseError* error;
-       QJsonDocument json = QJsonDocument::fromJson(rawResponce, error);
+       QJsonParseError error;
+       QJsonDocument json = QJsonDocument::fromJson(rawResponce, &error);
 
        // Check for incorrect JSON
-       if (error->error == QJsonParseError::NoError) {
+       if (error.error == QJsonParseError::NoError) {
 
            QJsonObject responce = json.object();
 
@@ -235,8 +235,8 @@ void LauncherWindow::startGame() {
            // JSON parse error
            QMessageBox::critical(this, "У нас проблема :(",
                                  "Упс... Сервер овтетил ерунду...\n\n" +
-                                 error->errorString() +
-                                 " в позиции " + QString::number(error->offset));
+                                 error.errorString() +
+                                 " в позиции " + QString::number(error.offset));
        }
 
 
