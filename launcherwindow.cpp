@@ -242,9 +242,15 @@ void LauncherWindow::startGame() {
 
    } else {
        // Connection error
-       QMessageBox::critical(this, "У нас проблема :(",
-                             "Упс... Вот ведь незадача...\n\n" +
-                             reply->errorString());
+       if (reply->error() == QNetworkReply::AuthenticationRequiredError) {
+           QMessageBox::critical(this, "У нас проблема :(",
+                                 "Ошибка авторизации.\nНеправильный логин или пароль.");
+       } else {
+           QMessageBox::critical(this, "У нас проблема :(",
+                                 "Упс... Вот ведь незадача...\n\n" +
+                                 reply->errorString());
+       }
+
    }
 
 
