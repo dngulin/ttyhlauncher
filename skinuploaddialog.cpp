@@ -60,8 +60,6 @@ void SkinUploadDialog::uploadSkin() {
 
     data.setObject(login);
 
-    qDebug() << data.toJson();
-
     QByteArray postdata;
     postdata.append(data.toJson());
 
@@ -112,7 +110,6 @@ void SkinUploadDialog::uploadSkin() {
     }
 
    delete manager;
-   delete reply;
 
     ui->sendButton->setEnabled(true);
 }

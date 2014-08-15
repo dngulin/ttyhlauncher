@@ -17,6 +17,9 @@ public:
 
 private:
     Ui::FeedbackDialog *ui;
+
+private slots:
+    void sendFeedback();
 };
 
 #endif // FEEDBACKDIALOG_H

@@ -53,7 +53,11 @@
       <widget class="QLineEdit" name="nickEdit"/>
      </item>
      <item row="1" column="1" colspan="2">
-      <widget class="QLineEdit" name="passEdit"/>
+      <widget class="QLineEdit" name="passEdit">
+       <property name="echoMode">
+        <enum>QLineEdit::Password</enum>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -67,7 +71,7 @@
    <item>
     <widget class="QPlainTextEdit" name="descEdit">
      <property name="plainText">
-      <string>Дайте краткое описание проблемы.</string>
+      <string>Краткое описание проблемы.</string>
      </property>
     </widget>
    </item>

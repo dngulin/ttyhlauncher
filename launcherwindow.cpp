@@ -251,7 +251,6 @@ void LauncherWindow::startGame() {
     }
 
     delete manager;
-    delete reply;
 
     ui->playButton->setEnabled(true);
 }
