@@ -17,6 +17,10 @@ public:
 
 private:
     Ui::SkinUploadDialog *ui;
+
+private slots:
+    void uploadSkin();
+    void openFileDialog();
 };
 
 #endif // SKINUPLOADDIALOG_H
