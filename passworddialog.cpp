@@ -93,5 +93,8 @@ void PasswordDialog::changePassword() {
 
     }
 
+    delete manager;
+    delete reply;
+
     ui->sendButton->setEnabled(true);
 }

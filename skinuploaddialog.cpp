@@ -93,7 +93,7 @@ void SkinUploadDialog::uploadSkin() {
 
             } else {
                 // Correct request
-                ui->messageLabel->setText("Скин успешно изменён!");
+                ui->messageLabel->setText("Поздравляем! Скин успешно изменён!");
             }
 
         } else {
@@ -110,6 +110,9 @@ void SkinUploadDialog::uploadSkin() {
         }
 
     }
+
+   delete manager;
+   delete reply;
 
     ui->sendButton->setEnabled(true);
 }
