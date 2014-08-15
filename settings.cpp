@@ -35,6 +35,8 @@ Settings* Settings::instance() {
 
 Settings::Settings() : QObject()
 {
+    dataPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+
     QString setPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
     settings = new QSettings(setPath + "/ttyhlauncher/config.ini", QSettings::IniFormat);
 
@@ -139,4 +141,9 @@ QString Settings::loadClientJavaArgs() {
 void Settings::saveClientJavaArgs(QString args) {
     int cid = loadActiveClientId();
     settings->setValue("client-" + getClientStrId(cid) + "/args", args);
+}
+
+QFile* Settings::getClientDir() {
+    QFile* file = new QFile(dataPath + "/ttyh_" + getClientStrId(loadActiveClientId()));
+    return file;
 }

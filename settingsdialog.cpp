@@ -4,6 +4,9 @@
 #include "settings.h"
 
 #include <QFileDialog>
+#include <QDesktopServices>
+#include <QFile>
+#include <QMessageBox>
 
 SettingsDialog::SettingsDialog(QWidget *parent) :
     QDialog(parent),
@@ -21,8 +24,8 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     emit ui->clientCombo->activated(ui->clientCombo->currentIndex());
 
     connect(ui->javapathButton, SIGNAL(clicked()), this, SLOT(openFileDialog()));
-
     connect(ui->saveButton, SIGNAL(clicked()), this, SLOT(saveSettings()));
+    connect(ui->opendirButton, SIGNAL(clicked()), this, SLOT(openClientDirectory()));
 
 }
 
@@ -72,6 +75,19 @@ void SettingsDialog::loadSettings() {
 void SettingsDialog::openFileDialog() {
     QString javapath = QFileDialog::getOpenFileName(this, "Выберите исполняемый файл java", "", "");
     ui->javapathEdit->setText(javapath);
+}
+
+void SettingsDialog::openClientDirectory() {
+
+    Settings* settings = Settings::instance();
+    QFile* clientDir = settings->getClientDir();
+    if (clientDir->exists()) {
+        QUrl clientDirUrl = QUrl(clientDir->fileName());
+        QDesktopServices::openUrl(clientDirUrl);
+    } else {
+        QMessageBox::critical(this, "У нас проблема :(", "Директория ещё не существует.\n"
+                              + clientDir->fileName());
+    }
 }
 
 SettingsDialog::~SettingsDialog()

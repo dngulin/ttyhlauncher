@@ -22,6 +22,7 @@ private slots:
     void saveSettings();
     void loadSettings();
     void openFileDialog();
+    void openClientDirectory();
 };
 
 #endif // SETTINGSDIALOG_H

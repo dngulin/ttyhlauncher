@@ -30,8 +30,10 @@ private:
     QSettings* settings;
 
     QStringList* clientStrIDs;
-    QStringList* clientNames;
+    QStringList* clientNames;    
     void appendClient(QString strid, QString name);
+
+    QString dataPath;
 
 public:
     // Clients
@@ -40,6 +42,8 @@ public:
     int strIDtoID(QString strid);
     QString getClientStrId(int id);
     QString getClientName(int id);
+
+    QFile* getClientDir();
 
     // Mainwindow login form
     QString loadLogin();
