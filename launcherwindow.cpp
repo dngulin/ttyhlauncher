@@ -20,6 +20,7 @@
 #include <QNetworkReply>
 #include <QDebug>
 #include <QJsonObject>
+#include <QUuid>
 
 LauncherWindow::LauncherWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -110,6 +111,7 @@ void LauncherWindow::storeParameters() {
 void LauncherWindow::showSettingsDialog() {
     SettingsDialog* d = new SettingsDialog(this);
     d->exec();
+    delete d;
 
     Settings* settings = Settings::instance();
     ui->clientCombo->setCurrentIndex(settings->loadActiveClientId());
@@ -118,16 +120,19 @@ void LauncherWindow::showSettingsDialog() {
 void LauncherWindow::showChangePasswordDialog() {
     PasswordDialog* d = new PasswordDialog(this);
     d->exec();
+    delete d;
 }
 
 void LauncherWindow::showSkinLoadDialog() {
     SkinUploadDialog* d = new SkinUploadDialog(this);
     d->exec();
+    delete d;
 }
 
 void LauncherWindow::showUpdateManagerDialog() {
     UpdateDialog* d = new UpdateDialog(this);
     d->exec();
+    delete d;
 
     Settings* settings = Settings::instance();
     ui->clientCombo->setCurrentIndex(settings->loadActiveClientId());
@@ -136,11 +141,13 @@ void LauncherWindow::showUpdateManagerDialog() {
 void LauncherWindow::showFeedBackDialog() {
     FeedbackDialog* d = new FeedbackDialog(this);
     d->exec();
+    delete d;
 }
 
 void LauncherWindow::showAboutDialog() {
     AboutDialog* d = new AboutDialog(this);
     d->exec();
+    delete d;
 }
 
 // Load webpage slots
@@ -186,12 +193,14 @@ void LauncherWindow::startGame() {
     login["agent"] = agent;
     login["username"] = ui->nickEdit->text();
     login["password"] = ui->passEdit->text();
-    login["clientToken"] = "tok-tok-en"; // FIXME: use QUUID
+    login["clientToken"] = QString(QUuid::createUuid().toByteArray());
 
     data.setObject(login);
 
     QByteArray postdata;
     postdata.append(data.toJson());
+
+    qDebug() << data.toJson();
 
     request.setUrl(Settings::authUrl);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
