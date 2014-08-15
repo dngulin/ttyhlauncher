@@ -107,6 +107,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>passEdit</tabstop>
+  <tabstop>pathEdit</tabstop>
+  <tabstop>browseButton</tabstop>
+  <tabstop>sendButton</tabstop>
+  <tabstop>nickEdit</tabstop>
+ </tabstops>
  <resources>
   <include location="resources.qrc"/>
  </resources>

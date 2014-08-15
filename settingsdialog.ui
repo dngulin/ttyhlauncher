@@ -180,6 +180,18 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>clientCombo</tabstop>
+  <tabstop>versionCombo</tabstop>
+  <tabstop>stateEdit</tabstop>
+  <tabstop>javapathBox</tabstop>
+  <tabstop>javapathEdit</tabstop>
+  <tabstop>javapathButton</tabstop>
+  <tabstop>argsBox</tabstop>
+  <tabstop>argsEdit</tabstop>
+  <tabstop>opendirButton</tabstop>
+  <tabstop>saveButton</tabstop>
+ </tabstops>
  <resources>
   <include location="resources.qrc"/>
  </resources>

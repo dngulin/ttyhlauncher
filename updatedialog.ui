@@ -80,6 +80,11 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>clientCombo</tabstop>
+  <tabstop>log</tabstop>
+  <tabstop>updateButton</tabstop>
+ </tabstops>
  <resources>
   <include location="resources.qrc"/>
  </resources>

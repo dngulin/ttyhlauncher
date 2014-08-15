@@ -87,13 +87,11 @@ https://github.com/figec/ttyhlauncher</string>
     </layout>
    </item>
   </layout>
-  <zorder>logo</zorder>
-  <zorder>okButton</zorder>
-  <zorder>info</zorder>
-  <zorder>lhspc</zorder>
-  <zorder>rhspc</zorder>
-  <zorder>lhspc</zorder>
  </widget>
+ <tabstops>
+  <tabstop>okButton</tabstop>
+  <tabstop>info</tabstop>
+ </tabstops>
  <resources>
   <include location="resources.qrc"/>
  </resources>

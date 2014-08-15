@@ -293,6 +293,14 @@
    <header>QtWebKitWidgets/QWebView</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>nickEdit</tabstop>
+  <tabstop>passEdit</tabstop>
+  <tabstop>clientCombo</tabstop>
+  <tabstop>savePassword</tabstop>
+  <tabstop>playButton</tabstop>
+  <tabstop>webView</tabstop>
+ </tabstops>
  <resources>
   <include location="resources.qrc"/>
  </resources>
