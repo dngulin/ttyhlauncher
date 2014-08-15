@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>336</width>
-    <height>213</height>
+    <height>185</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,11 +39,7 @@
         <bool>true</bool>
        </property>
        <property name="plainText">
-        <string>ttyhlauncher &lt;version&gt;
-
-Это ПО с открытым исходным кодом, распространяемое под лицензией GNU General Public License, версия 3.
-
-https://github.com/figec/ttyhlauncher</string>
+        <string/>
        </property>
       </widget>
      </item>
