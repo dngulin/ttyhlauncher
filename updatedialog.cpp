@@ -36,6 +36,7 @@ void UpdateDialog::clientChanged(){
     ui->updateButton->setEnabled(false);
     ui->clientCombo->setEnabled(false);
     ui->log->clear();
+    ui->progressBar->setValue(0);
 
     Settings* settings = Settings::instance();
     QString clientStrId = settings->getClientStrId(settings->loadActiveClientId());
@@ -261,7 +262,7 @@ bool UpdateDialog::checkMods() {
 }
 
 void UpdateDialog::checksResult(bool allGood){
-    ui->log->appendPlainText("\n5. Результат:");
+    ui->log->appendPlainText("\n5. Результат проверки:");
     if (allGood) {
         if (downloadSize > 0) {
             ui->log->appendPlainText("Требуется обновление, для выполнения нажмите кнопку \"Обновить\".");
@@ -270,7 +271,7 @@ void UpdateDialog::checksResult(bool allGood){
                                      + " МиБ.");
             ui->updateButton->setEnabled(true);
         } else {
-            ui->log->appendPlainText("Обновление не требуется!");
+            ui->log->appendPlainText("Всё просто замечательно! Обновление не требуется!");
         }
     } else {
         ui->log->appendPlainText("Во время проверки клиента возникли проблемы. Обновление невозможно :(");
@@ -400,10 +401,8 @@ void UpdateDialog::doUpdate() {
 
 void UpdateDialog::progress(qint64 bytesReceived, qint64 bytesTotal)  {
     // FIXME: Need to rewrite this method!
-    if (bytesReceived == bytesTotal) {
-        downloadedSize += bytesReceived;
-    }
-    ui->progressBar->setValue( ((float)downloadedSize / downloadSize) * 100);
+    float value = (float)downloadedSize / downloadSize * 100;
+    ui->progressBar->setValue( value + ((float)bytesReceived / downloadSize * 100));
 }
 
 void UpdateDialog::downloadFinished()  {
@@ -419,6 +418,8 @@ void UpdateDialog::downloadFinished()  {
             ui->log->appendPlainText("Не удалось сохранить файл. " + file->errorString());
         } else {
             file->write(downloadReply->readAll());
+            downloadedSize += file->size();
+            ui->progressBar->setValue( ((float)downloadedSize / downloadSize) * 100);
         }
         file->close();
         delete file;
