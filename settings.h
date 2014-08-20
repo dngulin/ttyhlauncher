@@ -43,7 +43,7 @@ public:
     QString getClientStrId(int id);
     QString getClientName(int id);
 
-    QFile* getClientDir();
+    QString getClientDir();
 
     // Mainwindow login form
     QString loadLogin();
@@ -76,6 +76,11 @@ public:
 
     QString loadClientJavaArgs();
     void saveClientJavaArgs(QString args);
+
+    QString makeMinecraftUuid();
+
+    QString getPlatform();
+    QString getArch();
 
 public slots:
     void saveActiveClientId(int id);

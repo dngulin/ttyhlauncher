@@ -20,7 +20,6 @@
 #include <QNetworkReply>
 #include <QDebug>
 #include <QJsonObject>
-#include <QUuid>
 
 LauncherWindow::LauncherWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -193,14 +192,12 @@ void LauncherWindow::startGame() {
     login["agent"] = agent;
     login["username"] = ui->nickEdit->text();
     login["password"] = ui->passEdit->text();
-    login["clientToken"] = QString(QUuid::createUuid().toByteArray());
+    login["clientToken"] = Settings::instance()->makeMinecraftUuid();
 
     data.setObject(login);
 
     QByteArray postdata;
     postdata.append(data.toJson());
-
-    qDebug() << data.toJson();
 
     request.setUrl(Settings::authUrl);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");

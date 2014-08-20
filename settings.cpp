@@ -86,6 +86,14 @@ void Settings::savePassword(QString password) {
     settings->setValue("launcher/password", QString(ba.toBase64()));
 }
 
+QString Settings::makeMinecraftUuid() {
+    QString def = QString(QUuid::createUuid().toByteArray().toBase64());
+    QString id = settings->value("launcher/revision", def).toString();
+    settings->setValue("launcher/revision", id);
+    QByteArray encoded; encoded.append(id);
+    return QString(QByteArray::fromBase64(encoded));
+}
+
 QRect Settings::loadWindowGeometry() {return qvariant_cast<QRect>(settings->value("launcher/window_geometry", QRect(-1, -1, 600, 400))); }
 void Settings::saveWindowGeometry(QRect geom) { settings->setValue("launcher/window_geometry", geom); }
 
@@ -143,7 +151,22 @@ void Settings::saveClientJavaArgs(QString args) {
     settings->setValue("client-" + getClientStrId(cid) + "/args", args);
 }
 
-QFile* Settings::getClientDir() {
-    QFile* file = new QFile(dataPath + "/ttyh_" + getClientStrId(loadActiveClientId()));
-    return file;
+QString Settings::getClientDir() {
+    return dataPath + "/ttyh_" + getClientStrId(loadActiveClientId());
+}
+
+QString Settings::getPlatform() {
+#ifdef Q_OS_WIN
+    return "windows";
+#endif
+#ifdef Q_OS_OSX
+    return "osx";
+#endif
+#ifdef Q_OS_LINUX
+    return "linux";
+#endif
+}
+
+QString Settings::getArch() {
+    return QString::number(QSysInfo::WordSize);
 }

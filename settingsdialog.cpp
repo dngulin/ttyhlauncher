@@ -30,17 +30,10 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     connect(ui->clientCombo, SIGNAL(activated(int)), this, SLOT(loadVersionList()));
     emit ui->clientCombo->activated(ui->clientCombo->currentIndex());
 
-    connect(ui->versionCombo, SIGNAL(activated(int)), this, SLOT(saveSelectedVersion(int)));
-
     connect(ui->javapathButton, SIGNAL(clicked()), this, SLOT(openFileDialog()));
     connect(ui->saveButton, SIGNAL(clicked()), this, SLOT(saveSettings()));
     connect(ui->opendirButton, SIGNAL(clicked()), this, SLOT(openClientDirectory()));
 
-}
-
-void SettingsDialog::saveSelectedVersion(int id) {
-    QString strid = ui->versionCombo->itemData(id).toString();
-    Settings::instance()->saveClientVersion(strid);
 }
 
 void SettingsDialog::loadVersionList() {
@@ -119,6 +112,10 @@ void SettingsDialog::makeLocalVersionList(QString reason) {
 void SettingsDialog::saveSettings() {
     Settings* settings = Settings::instance();
 
+    int id = ui->versionCombo->currentIndex();
+    QString strid = ui->versionCombo->itemData(id).toString();
+    settings->saveClientVersion(strid);
+
     settings->saveClientJavaState(ui->javapathBox->isChecked());
     settings->saveClientJava(ui->javapathEdit->text());
     settings->saveClientJavaArgsState(ui->argsBox->isChecked());
@@ -143,7 +140,7 @@ void SettingsDialog::openFileDialog() {
 void SettingsDialog::openClientDirectory() {
 
     Settings* settings = Settings::instance();
-    QFile* clientDir = settings->getClientDir();
+    QFile* clientDir = new QFile(settings->getClientDir());
     if (clientDir->exists()) {
         QUrl clientDirUrl = QUrl(clientDir->fileName());
         QDesktopServices::openUrl(clientDirUrl);
@@ -151,6 +148,7 @@ void SettingsDialog::openClientDirectory() {
         QMessageBox::critical(this, "У нас проблема :(", "Директория ещё не существует.\n"
                               + clientDir->fileName());
     }
+    delete clientDir;
 }
 
 SettingsDialog::~SettingsDialog()

@@ -30,7 +30,6 @@ private slots:
     void openClientDirectory();
     void loadVersionList();
     void makeVersionList(QNetworkReply* reply);
-    void saveSelectedVersion(int id);
 };
 
 #endif // SETTINGSDIALOG_H
