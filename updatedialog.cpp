@@ -159,14 +159,14 @@ bool UpdateDialog::checkLibs() {
                 if (rule["action"].toString() == "allow") {
                     if (rule["os"].toObject().isEmpty()) {
                         allow = true;
-                    } else if (rule["os"].toObject()["name"].toString() == settings->getPlatform()) {
+                    } else if (rule["os"].toObject()["name"].toString() == settings->getOsName()) {
                         allow = true;
                     }
                 }
 
                 // Make exclusions from allow-list
                 if (rule["action"].toString() == "disallow") {
-                    if (rule["os"].toObject()["name"].toString() == settings->getPlatform()) {
+                    if (rule["os"].toObject()["name"].toString() == settings->getOsName()) {
                         allow = false;
                     }
                 }
@@ -175,8 +175,8 @@ bool UpdateDialog::checkLibs() {
         if (!allow) continue; // Go to next lib entry, if this are disallowed
 
         // Check for natives entry: <package>/<name>-<version>-<native_string>
-        QString nativesSuffix = library["natives"].toObject()[settings->getPlatform()].toString();
-        nativesSuffix.replace("${arch}", settings->getArch());
+        QString nativesSuffix = library["natives"].toObject()[settings->getOsName()].toString();
+        nativesSuffix.replace("${arch}", settings->getWordSize());
         if (!nativesSuffix.isEmpty()) {
             fileSuffix += "-" + nativesSuffix + ".jar";
         } else {

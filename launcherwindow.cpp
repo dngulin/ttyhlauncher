@@ -28,6 +28,9 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     // Setup form from ui-file
     ui->setupUi(this);
 
+    // Setup settings
+    settings = Settings::instance();
+
     // Make news menuitems like radiobuttons (it's impossible from qt-designer)
     QActionGroup *newsGroup = new QActionGroup(this);
     newsGroup->addAction(ui->ttyhNews);
@@ -51,9 +54,6 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     // Help Menu connections
     connect(ui->bugReport, SIGNAL(triggered()), SLOT(showFeedBackDialog()));
     connect(ui->aboutLauncher, SIGNAL(triggered()), SLOT(showAboutDialog()));
-
-    // Connect to settings
-    Settings* settings = Settings::instance();
 
     // Setup login field
     ui->nickEdit->setText(settings->loadLogin());
@@ -95,7 +95,6 @@ void LauncherWindow::closeEvent (QCloseEvent* event) { storeParameters(); }
 
 // Run this method on close window and run game
 void LauncherWindow::storeParameters() {
-    Settings* settings = Settings::instance();
     settings->saveWindowGeometry(this->geometry());
     settings->saveMaximizedState(this->isMaximized());
 
@@ -112,7 +111,6 @@ void LauncherWindow::showSettingsDialog() {
     d->exec();
     delete d;
 
-    Settings* settings = Settings::instance();
     ui->clientCombo->setCurrentIndex(settings->loadActiveClientId());
 }
 
@@ -133,7 +131,6 @@ void LauncherWindow::showUpdateManagerDialog() {
     d->exec();
     delete d;
 
-    Settings* settings = Settings::instance();
     ui->clientCombo->setCurrentIndex(settings->loadActiveClientId());
 }
 
@@ -183,16 +180,21 @@ void LauncherWindow::startGame() {
 
     // Make JSON login request, see: http://wiki.vg/Authentication
     QJsonDocument data;
-    QJsonObject login, agent;
+    QJsonObject login, agent, platform;
     QNetworkRequest request;
 
     agent["name"] = "Minecraft";
     agent["version"] = 1;
 
+    platform["os"] = settings->getOsName();
+    platform["version"] = settings->getOsVersion();
+    platform["word"] = settings->getWordSize();
+
     login["agent"] = agent;
+    login["platform"] = platform;
     login["username"] = ui->nickEdit->text();
     login["password"] = ui->passEdit->text();
-    login["clientToken"] = Settings::instance()->makeMinecraftUuid();
+    login["clientToken"] = settings->makeMinecraftUuid();
 
     data.setObject(login);
 

@@ -1,6 +1,7 @@
 #include <QtCore>
 #include <QObject>
 #include <QStandardPaths>
+#include <QSysInfo>
 
 #include "settings.h"
 
@@ -155,7 +156,7 @@ QString Settings::getClientDir() {
     return dataPath + "/ttyh_" + getClientStrId(loadActiveClientId());
 }
 
-QString Settings::getPlatform() {
+QString Settings::getOsName() {
 #ifdef Q_OS_WIN
     return "windows";
 #endif
@@ -167,6 +168,50 @@ QString Settings::getPlatform() {
 #endif
 }
 
-QString Settings::getArch() {
+QString Settings::getOsVersion() {
+#ifdef Q_OS_WIN
+    switch (QSysInfo::WindowsVersion) {
+        case QSysInfo::WV_95:           return "95, OMFG!";
+        case QSysInfo::WV_98:           return "98";
+        case QSysInfo::WV_Me:           return "Me";
+        case QSysInfo::WV_NT:           return "NT";
+        case QSysInfo::WV_2000:         return "2000";
+        case QSysInfo::WV_XP:           return "XP";
+        case QSysInfo::WV_2003:         return "2003";
+        case QSysInfo::WV_VISTA:        return "Vista";
+        case QSysInfo::WV_WINDOWS7:     return "7";
+        case QSysInfo::WV_WINDOWS8:     return "8";
+        case QSysInfo::WV_WINDOWS8_1:   return "8.1";
+        default:                        return "unknown";
+    }
+#endif
+
+#ifdef Q_OS_OSX
+    switch (QSysInfo::MacVersion) {
+        case QSysInfo::MV_10_6:     return "10.6";
+        case QSysInfo::MV_10_7:     return "10.7";
+        case QSysInfo::MV_10_8:while(str.endsWith( '\n' )) str.chop(1);     return "10.8";
+        case QSysInfo::MV_10_9:     return "10.9";
+        default:                    return "unknown";
+    }
+#endif
+
+#ifdef Q_OS_LINUX
+    QProcess* lsbRelease = new QProcess(this);
+    lsbRelease->start("lsb_release", QStringList() << "-d");
+
+    if (!lsbRelease->waitForStarted())  return "NO_LSB_DISTRO";
+    if (!lsbRelease->waitForFinished()) return "ERROR";
+
+    // Get value from output: "Description:\t<value>\n"
+    QString releaseInfo = lsbRelease->readLine().split('\t').last();
+    releaseInfo = releaseInfo.split('\n').first();
+
+    delete lsbRelease;
+    return releaseInfo;
+#endif
+}
+
+QString Settings::getWordSize() {
     return QString::number(QSysInfo::WordSize);
 }

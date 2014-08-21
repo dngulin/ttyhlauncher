@@ -79,8 +79,9 @@ public:
 
     QString makeMinecraftUuid();
 
-    QString getPlatform();
-    QString getArch();
+    QString getOsName();
+    QString getOsVersion();
+    QString getWordSize();
 
 public slots:
     void saveActiveClientId(int id);

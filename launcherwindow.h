@@ -40,6 +40,7 @@ private slots:
 private:
     Ui::LauncherWindow *ui;
     QActionGroup *newsGroup;
+    Settings* settings;
 
     void loadPage(const QUrl& url);
     void storeParameters();
