@@ -76,7 +76,7 @@ void UpdateDialog::clientChanged(){
 
 bool UpdateDialog::checkVersionFiles() {
     ui->log->appendPlainText("\n1. Проверка состояния базовых файлов...");
-    QString filePrefix = settings->getClientDir() + "/versions";
+    QString filePrefix = settings->getVersionsDir();
 
     // Mke filename and URL prefixes
     QString version = settings->loadClientVersion();
@@ -106,7 +106,7 @@ bool UpdateDialog::checkVersionFiles() {
 bool UpdateDialog::checkLibs() {
     ui->log->appendPlainText("\n2. Проверка состояния библиотек...");
 
-    QString filePrefix = settings->getClientDir() + "/versions";
+    QString filePrefix = settings->getVersionsDir();
 
     // Mke filename and URL prefixes
     QString version = settings->loadClientVersion();
@@ -129,7 +129,7 @@ bool UpdateDialog::checkLibs() {
         return false;
     }
 
-    filePrefix = settings->getBaseDir() + "/libraries";
+    filePrefix = settings->getLibsDir();
     QJsonArray libraries = json.object()["libraries"].toArray();
     QJsonObject library;
     for (QJsonArray::iterator libit = libraries.begin(), end = libraries.end(); libit != end; ++libit) {
@@ -205,7 +205,7 @@ bool UpdateDialog::checkAssets() {
         ui->log->appendPlainText("В конфигурационном файле отсутсвует информация о ресурсах :(");
     }
 
-    QString filePrefix = settings->getBaseDir() + "/assets";
+    QString filePrefix = settings->getAssetsDir();
     QFile* indexFile = new QFile(filePrefix + "/indexes/" + assets + ".json");
     if (!indexFile->exists()) {
         if (!downloadNow(QUrl("https://s3.amazonaws.com/Minecraft.Download/indexes/" + assets + ".json"), indexFile->fileName())) return false;

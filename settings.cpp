@@ -152,14 +152,32 @@ void Settings::saveClientJavaArgs(QString args) {
     settings->setValue("client-" + getClientStrId(cid) + "/args", args);
 }
 
-QString Settings::getClientDir() {
-    return dataPath + "/client_" + getClientStrId(loadActiveClientId());
-}
-
+// Directories
 QString Settings::getBaseDir() {
     return dataPath;
 }
 
+QString Settings::getClientDir() {
+    return dataPath + "/client_" + getClientStrId(loadActiveClientId());
+}
+
+QString Settings::getAssetsDir() {
+    return dataPath + "/assets";
+}
+
+QString Settings::getLibsDir() {
+    return dataPath + "/libraries";
+}
+
+QString Settings::getVersionsDir() {
+    return getClientDir() + "/versions";
+}
+
+QString Settings::getNativesDir() {
+    return getClientDir() + "/natives";
+}
+
+// Platform information
 QString Settings::getOsName() {
 #ifdef Q_OS_WIN
     return "windows";

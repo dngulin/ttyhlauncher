@@ -43,8 +43,12 @@ public:
     QString getClientStrId(int id);
     QString getClientName(int id);
 
-    QString getClientDir();
     QString getBaseDir();
+    QString getClientDir();
+    QString getAssetsDir();
+    QString getLibsDir();
+    QString getVersionsDir();
+    QString getNativesDir();
 
     // Mainwindow login form
     QString loadLogin();
