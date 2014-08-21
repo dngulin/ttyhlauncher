@@ -129,7 +129,7 @@ bool UpdateDialog::checkLibs() {
         return false;
     }
 
-    filePrefix = settings->getClientDir() + "/libraries";
+    filePrefix = settings->getBaseDir() + "/libraries";
     QJsonArray libraries = json.object()["libraries"].toArray();
     QJsonObject library;
     for (QJsonArray::iterator libit = libraries.begin(), end = libraries.end(); libit != end; ++libit) {
@@ -205,7 +205,7 @@ bool UpdateDialog::checkAssets() {
         ui->log->appendPlainText("В конфигурационном файле отсутсвует информация о ресурсах :(");
     }
 
-    QString filePrefix = settings->getClientDir() + "/assets";
+    QString filePrefix = settings->getBaseDir() + "/assets";
     QFile* indexFile = new QFile(filePrefix + "/indexes/" + assets + ".json");
     if (!indexFile->exists()) {
         if (!downloadNow(QUrl("https://s3.amazonaws.com/Minecraft.Download/indexes/" + assets + ".json"), indexFile->fileName())) return false;

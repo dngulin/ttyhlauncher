@@ -176,89 +176,97 @@ void LauncherWindow::startGame() {
 
     ui->playButton->setEnabled(false);
 
-    QNetworkAccessManager* manager = new QNetworkAccessManager(this);
+    if (!ui->playOffline->isChecked()) {
+        QNetworkAccessManager* manager = new QNetworkAccessManager(this);
 
-    // Make JSON login request, see: http://wiki.vg/Authentication
-    QJsonDocument data;
-    QJsonObject login, agent, platform;
-    QNetworkRequest request;
+        // Make JSON login request, see: http://wiki.vg/Authentication
+        QJsonDocument data;
+        QJsonObject login, agent, platform;
+        QNetworkRequest request;
 
-    agent["name"] = "Minecraft";
-    agent["version"] = 1;
+        agent["name"] = "Minecraft";
+        agent["version"] = 1;
 
-    platform["os"] = settings->getOsName();
-    platform["version"] = settings->getOsVersion();
-    platform["word"] = settings->getWordSize();
+        platform["os"] = settings->getOsName();
+        platform["version"] = settings->getOsVersion();
+        platform["word"] = settings->getWordSize();
 
-    login["agent"] = agent;
-    login["platform"] = platform;
-    login["username"] = ui->nickEdit->text();
-    login["password"] = ui->passEdit->text();
-    login["clientToken"] = settings->makeMinecraftUuid();
+        login["agent"] = agent;
+        login["platform"] = platform;
+        login["username"] = ui->nickEdit->text();
+        login["password"] = ui->passEdit->text();
+        login["clientToken"] = settings->makeMinecraftUuid();
 
-    data.setObject(login);
+        data.setObject(login);
 
-    QByteArray postdata;
-    postdata.append(data.toJson());
+        QByteArray postdata;
+        postdata.append(data.toJson());
 
-    request.setUrl(Settings::authUrl);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-    request.setHeader(QNetworkRequest::ContentLengthHeader, postdata.size());
+        request.setUrl(Settings::authUrl);
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+        request.setHeader(QNetworkRequest::ContentLengthHeader, postdata.size());
 
-    QNetworkReply *reply = manager->post(request, postdata);
-    QEventLoop loop;
-    connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
-    loop.exec();
+        QNetworkReply *reply = manager->post(request, postdata);
+        QEventLoop loop;
+        connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+        loop.exec();
 
-    // Check for connection error
-    if (reply->error() == QNetworkReply::NoError) {
+        // Check for connection error
+        if (reply->error() == QNetworkReply::NoError) {
 
-        QByteArray rawResponce = reply->readAll();
-        QJsonParseError error;
-        QJsonDocument json = QJsonDocument::fromJson(rawResponce, &error);
+            QByteArray rawResponce = reply->readAll();
+            QJsonParseError error;
+            QJsonDocument json = QJsonDocument::fromJson(rawResponce, &error);
 
-        // Check for incorrect JSON
-        if (error.error == QJsonParseError::NoError) {
+            // Check for incorrect JSON
+            if (error.error == QJsonParseError::NoError) {
 
-            QJsonObject responce = json.object();
+                QJsonObject responce = json.object();
 
-            // Check for error in server answer
-            if (responce["error"].toString() != "") {
-                // Error in answer handler
-                QString cause = responce["cause"].toString();
-                if (cause != "") cause = "\n\n Причина: " + cause;
-                QMessageBox::critical(this, "У нас проблема :(",
-                                      responce["errorMessage"].toString()
-                        + cause);
+                // Check for error in server answer
+                if (responce["error"].toString() != "") {
+                    // Error in answer handler
+                    QString cause = responce["cause"].toString();
+                    if (cause != "") cause = "\n\n Причина: " + cause;
+                    QMessageBox::critical(this, "У нас проблема :(",
+                                          responce["errorMessage"].toString()
+                            + cause);
+                } else {
+                    // Correct login
+
+                    QString uuid = responce["clientToken"].toString();
+                    QString acessToken = responce["accessToken"].toString();
+
+                    // Run game in online-mode
+                }
+
             } else {
-                // Correct login
-                QMessageBox::information(this, "Responce", "aid = " + responce["accessToken"].toString() +
-                        "\n" + "cid = " + responce["clientToken"].toString());
+                // JSON parse error
+                QMessageBox::critical(this, "У нас проблема :(",
+                                      "Упс... Сервер овтетил ерунду...\n\n" +
+                                      error.errorString() +
+                                      " в позиции " + QString::number(error.offset));
             }
 
+
         } else {
-            // JSON parse error
-            QMessageBox::critical(this, "У нас проблема :(",
-                                  "Упс... Сервер овтетил ерунду...\n\n" +
-                                  error.errorString() +
-                                  " в позиции " + QString::number(error.offset));
+            // Connection error
+            if (reply->error() == QNetworkReply::AuthenticationRequiredError) {
+                QMessageBox::critical(this, "У нас проблема!",
+                                      "Ошибка авторизации.\nНеправильный логин или пароль\n\t...или они оба неправильные :(");
+            } else {
+                QMessageBox::critical(this, "У нас проблема :(",
+                                      "Упс... Вот ведь незадача...\n\n" +
+                                      reply->errorString());
+            }
+
         }
 
+        delete manager;
 
     } else {
-        // Connection error
-        if (reply->error() == QNetworkReply::AuthenticationRequiredError) {
-            QMessageBox::critical(this, "У нас проблема!",
-                                  "Ошибка авторизации.\nНеправильный логин или пароль\n\t...или они оба неправильные :(");
-        } else {
-            QMessageBox::critical(this, "У нас проблема :(",
-                                  "Упс... Вот ведь незадача...\n\n" +
-                                  reply->errorString());
-        }
-
+        // Run game in offline mode
     }
-
-    delete manager;
 
     ui->playButton->setEnabled(true);
 }

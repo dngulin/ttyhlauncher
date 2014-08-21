@@ -153,7 +153,11 @@ void Settings::saveClientJavaArgs(QString args) {
 }
 
 QString Settings::getClientDir() {
-    return dataPath + "/ttyh_" + getClientStrId(loadActiveClientId());
+    return dataPath + "/client_" + getClientStrId(loadActiveClientId());
+}
+
+QString Settings::getBaseDir() {
+    return dataPath;
 }
 
 QString Settings::getOsName() {

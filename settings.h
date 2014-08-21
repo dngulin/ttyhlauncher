@@ -44,6 +44,7 @@ public:
     QString getClientName(int id);
 
     QString getClientDir();
+    QString getBaseDir();
 
     // Mainwindow login form
     QString loadLogin();
