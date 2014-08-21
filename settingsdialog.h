@@ -5,6 +5,8 @@
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
 
+#include "settings.h"
+
 namespace Ui {
 class SettingsDialog;
 }
@@ -20,6 +22,7 @@ public:
 private:
     Ui::SettingsDialog *ui;
     QNetworkAccessManager* nam;
+    Settings* settings;
     void makeLocalVersionList(QString reason);
 
 

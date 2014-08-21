@@ -393,7 +393,7 @@ void UpdateDialog::doUpdate() {
     downloadedSize = 0;
 
     downloadReply = downloadNam->get(QNetworkRequest(downloadUrls.first()));
-    ui->log->appendPlainText("Загрузка файла " + downloadNames.first() + "...");
+    ui->log->appendPlainText("Загрузка файла " + downloadNames.first().split('/').last() + "...");
 
     connect(downloadReply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(progress(qint64,qint64)));
     connect(downloadReply, SIGNAL(finished()), this, SLOT(downloadFinished()));
@@ -444,7 +444,7 @@ void UpdateDialog::downloadFinished()  {
         disconnect(downloadReply, SIGNAL(finished()), this, SLOT(downloadFinished()));
 
         downloadReply = downloadNam->get(QNetworkRequest(downloadUrls.first()));
-        ui->log->appendPlainText("Загрузка файла " + downloadNames.first() + "...");
+        ui->log->appendPlainText("Загрузка файла " + downloadNames.first().split('/').last() + "...");
 
         connect(downloadReply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(progress(qint64,qint64)));
         connect(downloadReply, SIGNAL(finished()), this, SLOT(downloadFinished()));

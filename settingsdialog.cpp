@@ -1,8 +1,6 @@
 #include "settingsdialog.h"
 #include "ui_settingsdialog.h"
 
-#include "settings.h"
-
 #include <QFileDialog>
 #include <QDesktopServices>
 #include <QFile>
@@ -17,8 +15,8 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui(new Ui::SettingsDialog)
 {
     ui->setupUi(this);
+    settings = Settings::instance();
 
-    Settings* settings = Settings::instance();
     nam = new QNetworkAccessManager(this);
     connect(nam, SIGNAL(finished(QNetworkReply*)), this, SLOT(makeVersionList(QNetworkReply*)));
 
@@ -81,7 +79,7 @@ void SettingsDialog::makeVersionList(QNetworkReply* reply) {
                 }
 
                 if (ui->versionCombo->count() > 1) {
-                    QString strVerId = Settings::instance()->loadClientVersion();
+                    QString strVerId = settings->loadClientVersion();
                     for (int i = 0; i <= ui->versionCombo->count(); i++) {
                         if (ui->versionCombo->itemData(i).toString() == strVerId) {
                             ui->versionCombo->setCurrentIndex(i);
@@ -107,10 +105,22 @@ void SettingsDialog::makeVersionList(QNetworkReply* reply) {
 
 void SettingsDialog::makeLocalVersionList(QString reason) {
     ui->stateEdit->setText(reason);
+
+    QString prefix = settings->getClientDir() + "/versions";
+    QDir verdir = QDir(prefix);
+    QStringList subdirs = verdir.entryList();
+    for (QStringList::iterator nameit = subdirs.begin(), end = subdirs.end(); nameit != end; ++nameit) {
+        QString ver = (*nameit);
+        QFile* file = new QFile(prefix + "/" + ver + "/" + ver + ".json");
+        if (file->exists()) {
+            ui->versionCombo->addItem(ver, ver);
+        }
+        delete file;
+    }
+    ui->versionCombo->setEnabled(true);
 }
 
 void SettingsDialog::saveSettings() {
-    Settings* settings = Settings::instance();
 
     int id = ui->versionCombo->currentIndex();
     QString strid = ui->versionCombo->itemData(id).toString();
@@ -123,7 +133,6 @@ void SettingsDialog::saveSettings() {
 }
 
 void SettingsDialog::loadSettings() {
-    Settings* settings = Settings::instance();
 
     // Setup settings
     ui->javapathBox->setChecked(settings->loadClientJavaState());
@@ -139,7 +148,6 @@ void SettingsDialog::openFileDialog() {
 
 void SettingsDialog::openClientDirectory() {
 
-    Settings* settings = Settings::instance();
     QFile* clientDir = new QFile(settings->getClientDir());
     if (clientDir->exists()) {
         QUrl clientDirUrl = QUrl(clientDir->fileName());

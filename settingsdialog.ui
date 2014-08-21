@@ -61,9 +61,6 @@
       </item>
       <item row="2" column="1">
        <widget class="QLineEdit" name="stateEdit">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
         <property name="text">
          <string/>
         </property>
