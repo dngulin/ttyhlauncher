@@ -190,7 +190,7 @@ QString Settings::getOsVersion() {
     switch (QSysInfo::MacVersion) {
         case QSysInfo::MV_10_6:     return "10.6";
         case QSysInfo::MV_10_7:     return "10.7";
-        case QSysInfo::MV_10_8:while(str.endsWith( '\n' )) str.chop(1);     return "10.8";
+        case QSysInfo::MV_10_8:     return "10.8";
         case QSysInfo::MV_10_9:     return "10.9";
         default:                    return "unknown";
     }
