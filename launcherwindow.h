@@ -34,7 +34,7 @@ private slots:
     void showFeedBackDialog();
     void showAboutDialog();
 
-    void startGame();
+    void playButtonClicked();
 
 
 private:
@@ -44,6 +44,8 @@ private:
 
     void loadPage(const QUrl& url);
     void storeParameters();
+
+    void runGame(QString uuid, QString acessToken, QString gameVersion);
 };
 
 #endif // LAUNCHERWINDOW_H
