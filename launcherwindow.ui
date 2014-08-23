@@ -71,23 +71,10 @@
          </spacer>
         </item>
         <item>
-         <layout class="QGridLayout" name="formLayout" columnminimumwidth="0,200">
+         <layout class="QGridLayout" name="formLayout">
           <property name="verticalSpacing">
            <number>4</number>
           </property>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="passEdit">
-            <property name="echoMode">
-             <enum>QLineEdit::Password</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="nickEdit"/>
-          </item>
-          <item row="2" column="1">
-           <widget class="QComboBox" name="clientCombo"/>
-          </item>
           <item row="2" column="0">
            <widget class="QLabel" name="clienttypeLabel">
             <property name="text">
@@ -95,10 +82,10 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="passLabel">
-            <property name="text">
-             <string>Пароль</string>
+          <item row="1" column="1" colspan="2">
+           <widget class="QLineEdit" name="passEdit">
+            <property name="echoMode">
+             <enum>QLineEdit::Password</enum>
             </property>
            </widget>
           </item>
@@ -109,14 +96,17 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QCheckBox" name="savePassword">
+          <item row="1" column="0">
+           <widget class="QLabel" name="passLabel">
             <property name="text">
-             <string>Запомнить пароль</string>
+             <string>Пароль</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
+          <item row="2" column="1" colspan="2">
+           <widget class="QComboBox" name="clientCombo"/>
+          </item>
+          <item row="3" column="2">
            <layout class="QHBoxLayout" name="playbuttonLayout">
             <item>
              <spacer name="btnSpc">
@@ -139,6 +129,16 @@
              </widget>
             </item>
            </layout>
+          </item>
+          <item row="3" column="0" colspan="2">
+           <widget class="QCheckBox" name="savePassword">
+            <property name="text">
+             <string>Запомнить пароль</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" colspan="2">
+           <widget class="QLineEdit" name="nickEdit"/>
           </item>
          </layout>
         </item>
@@ -297,7 +297,6 @@
   <tabstop>nickEdit</tabstop>
   <tabstop>passEdit</tabstop>
   <tabstop>clientCombo</tabstop>
-  <tabstop>savePassword</tabstop>
   <tabstop>playButton</tabstop>
   <tabstop>webView</tabstop>
  </tabstops>
