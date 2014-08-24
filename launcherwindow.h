@@ -46,6 +46,9 @@ private:
     void storeParameters();
 
     void runGame(QString uuid, QString acessToken, QString gameVersion);
+
+    void unzipAllFiles(QString zipFilePath, QString extractionPath);
+    void recursiveDelete(QString filePath);
 };
 
 #endif // LAUNCHERWINDOW_H

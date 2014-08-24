@@ -142,7 +142,7 @@ bool UpdateDialog::checkLibs() {
         fileSuffix.replace('.', '/');                        // package format
         fileSuffix += "/" + entry.at(1)                      // + name
                     + "/" + entry.at(2)                      // + version
-                    + "/" + entry.at(1) + "-" + entry.at(2); // + name-verion
+                    + "/" + entry.at(1) + "-" + entry.at(2); // + name-version
 
         // Check rules for disallow rules
         QJsonArray rules = library["rules"].toArray();

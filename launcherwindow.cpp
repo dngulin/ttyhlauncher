@@ -20,6 +20,12 @@
 #include <QNetworkReply>
 #include <QDebug>
 #include <QJsonObject>
+#include <QFileInfo>
+
+#include <quazip/quazip.h>
+#include <quazip/quazipfile.h>
+#include <quazip/zip.h>
+#include <quazip/ioapi.h>
 
 LauncherWindow::LauncherWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -287,7 +293,7 @@ void LauncherWindow::playButtonClicked() {
             } else {
                 // JSON parse error
                 QMessageBox::critical(this, "У нас проблема :(",
-                                      "Упс... Сервер овтетил ерунду...\n\n" +
+                                      "Упс... При попытке логина сервер овтетил ерунду...\n\n" +
                                       error.errorString() +
                                       " в позиции " + QString::number(error.offset));
             }
@@ -378,20 +384,10 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
 
     // Prepare library path
     libpath = settings->getNativesDir();
+    recursiveDelete(libpath);
+
     QDir libsDir = QDir(libpath);
-
-    if (libsDir.exists()) {
-
-        QStringList lstFiles = libsDir.entryList(QDir::Files);
-        // Wow, foreach in C++! It's surprise for me!
-        foreach (QString entry, lstFiles) {
-            QString entryAbsPath = libsDir.absolutePath() + "/" + entry;
-            QFile::remove(entryAbsPath);
-        }
-
-    } else {
-        libsDir.mkpath(libpath);
-    }
+    libsDir.mkpath(libpath);
 
     if (!libsDir.exists()) {
         QMessageBox::critical(this, "У нас проблема :(",
@@ -400,7 +396,7 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
     }
 
     // Setup classpath and extract natives!
-    QFile* versionFile = new QFile(settings->getVersionsDir() + "/" + gameVersion + "/" + gameVersion + ".jar");
+    QFile* versionFile = new QFile(settings->getVersionsDir() + "/" + gameVersion + "/" + gameVersion + ".json");
 
     if (versionFile->open(QIODevice::ReadOnly)) {
 
@@ -408,6 +404,88 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
         QJsonDocument versionJson = QJsonDocument::fromJson(versionFile->readAll(), &error);
 
         if (error.error == QJsonParseError::NoError) {
+
+            QJsonArray libraries = versionJson.object()["libraries"].toArray();
+            for (QJsonArray::iterator libit = libraries.begin(), end = libraries.end(); libit != end; ++libit) {
+
+                QJsonObject library = (*libit).toObject();
+
+                QStringList entry = library["name"].toString().split(':');
+
+                // <package>:<name>:<version> to <package>/<name>/<version>/<name>-<version> and chahge <backage> format from a.b.c to a/b/c
+                QString libSuffix = entry.at(0);                  // package
+                libSuffix.replace('.', '/');                      // package format
+                libSuffix += "/" + entry.at(1)                    // + name
+                        + "/" + entry.at(2)                       // + version
+                        + "/" + entry.at(1) + "-" + entry.at(2);  // + name-version
+
+                if (library["natives"].isNull()) {
+                    libSuffix += ".jar:";
+                    classpath += settings->getLibsDir() + "/" + libSuffix;
+
+                } else {
+                    if (!library["natives"].toObject()[settings->getOsName()].isNull()) {
+                        libSuffix += "-natives-" + settings->getOsName() + ".jar";
+                        unzipAllFiles(settings->getLibsDir() + "/" + libSuffix,
+                                      settings->getNativesDir());
+                    }
+                }
+
+
+            }
+
+            // Add game jar to classpath
+            classpath += settings->getVersionsDir() + "/" + gameVersion + "/" + gameVersion + ".jar";
+
+            // Setup mainClass
+            if (versionJson.object()["mainClass"].isNull()) {
+                QMessageBox::critical(this, "У нас проблема :(",
+                                      "Вот беда. В конфигурационном файле не указан mainClass.");
+                return;
+            } else {
+                mainClass = versionJson.object()["mainClass"].toString();
+            }
+
+            // Read assets index
+            QString assetsIndex;
+            if (versionJson.object()["assets"].isNull()) {
+                QMessageBox::critical(this, "У нас проблема !!!",
+                                      "Аааа! В конфигурационном файле не указаны ассеты!");
+                return;
+            } else {
+                assetsIndex = versionJson.object()["assets"].toString();
+            }
+
+
+            // Setup aruments
+            if (versionJson.object()["minecraftArguments"].isNull()) {
+                QMessageBox::critical(this, "У нас проблема :(",
+                                      "В конфигурационном файле не указаны аргументы запуска.");
+                return;
+            } else {
+                minecraftArguments = versionJson.object()["minecraftArguments"].toString();
+            }
+            // QString uuid, QString acessToken, QString gameVersion
+            minecraftArguments.replace("${auth_player_name}",  settings->loadLogin());
+            minecraftArguments.replace("${version_name}",      gameVersion);
+            minecraftArguments.replace("${game_directory}",    settings->getClientDir());
+            minecraftArguments.replace("${assets_root}",       settings->getAssetsDir());
+            minecraftArguments.replace("${assets_index_name}", assetsIndex);
+            minecraftArguments.replace("${auth_uuid}",         uuid);
+            minecraftArguments.replace("${auth_access_token}", acessToken);
+
+            // What it means?
+            minecraftArguments.replace("${user_properties}",   "{}");
+            //minecraftArguments.replace("${user_type}",         "${user_type}";
+
+            // RUN-RUN-RUN!
+            QStringList args;
+            args << "-Djava.library.path=" + libpath
+                 << "-cp" << classpath
+                 << mainClass
+                 << minecraftArguments.split(" ");
+
+            QProcess::execute(java, args);
 
         } else {
             QMessageBox::critical(this, "У нас проблема :(",
@@ -426,6 +504,58 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
     }
 
     delete versionFile;
+
+}
+
+void LauncherWindow::recursiveDelete(QString filePath) {
+    QFileInfo fileInfo = QFileInfo(filePath);
+
+    if (fileInfo.isDir()) {
+        QStringList lstFiles = QDir(filePath).entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
+        if (!lstFiles.isEmpty()) {
+            foreach (QString entry, lstFiles)
+                recursiveDelete(filePath + "/" + entry);
+        }
+        QDir(filePath).rmdir(fileInfo.absoluteFilePath());
+
+    } else if (fileInfo.exists()) {
+        QFile::remove(filePath);
+    }
+}
+
+void LauncherWindow::unzipAllFiles(QString zipFilePath, QString extractionPath) {
+
+    // Open ZIP
+    QuaZip zip(zipFilePath);
+    if (zip.open(QuaZip::mdUnzip)) {
+
+        QuaZipFile zipFile(&zip);
+
+        for (bool f=zip.goToFirstFile(); f; f=zip.goToNextFile()) {
+            zipFile.open(QIODevice::ReadOnly);
+
+            QFile* realFile = new QFile(extractionPath + "/" + zip.getCurrentFileName());
+
+            QFileInfo rfInfo = QFileInfo(*realFile);
+
+            QDir rfDir = rfInfo.absoluteDir();
+            rfDir.mkpath(rfDir.absolutePath());
+
+            if (!rfInfo.isDir()) {
+                if (realFile->open(QIODevice::WriteOnly)) {
+                    realFile->write(zipFile.readAll());
+                    realFile->close();
+                } else {
+                    // FIXME
+                    qDebug() << realFile->errorString();
+                }
+            }
+
+            delete realFile;
+            zipFile.close();
+        }
+        zip.close();
+    }
 
 }
 
