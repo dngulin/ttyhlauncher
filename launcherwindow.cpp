@@ -611,7 +611,14 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
                         logger->append("Client", minecraft->readAll());
                     }
                 }
+
                 logger->append(this->objectName(), "Game process finished!\n");
+                if (minecraft->exitCode() != 0) {
+                    QMessageBox::critical(this, "Ну вот!",
+                                          "Кажется игра некорректно завершилась, посмотрите лог-файл.\n");
+                    logger->append(this->objectName(), "Error: not null exit code: "
+                                   + QString::number(minecraft->exitCode()) + "\n");
+                }
                 this->close();
 
             }
