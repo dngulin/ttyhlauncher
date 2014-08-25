@@ -476,7 +476,7 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
 
             // What it means?
             minecraftArguments.replace("${user_properties}",   "{}");
-            //minecraftArguments.replace("${user_type}",         "${user_type}";
+            //minecraftArguments.replace("${user_type}",       "${user_type}";
 
             // RUN-RUN-RUN!
             QStringList args;
@@ -485,7 +485,67 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
                  << mainClass
                  << minecraftArguments.split(" ");
 
-            QProcess::execute(java, args);
+            QProcess* minecraft = new QProcess(this);
+            minecraft->setProcessChannelMode(QProcess::MergedChannels);
+            minecraft->start(java, args);
+
+            if (!minecraft->waitForStarted()) {
+                switch(minecraft->error()) {
+                case QProcess::FailedToStart:
+                    QMessageBox::critical(this, "Проблема!",
+                                          "Смерть на взлёте! Игра не запускается!\n"
+                                          + minecraft->errorString());
+                    break;
+
+                case QProcess::Crashed:
+                    QMessageBox::critical(this, "Проблема!",
+                                          "Игра упала и не подымается :(\n"
+                                          + minecraft->errorString());
+                    break;
+
+                case QProcess::Timedout:
+                    QMessageBox::critical(this, "Проблема!",
+                                          "Что-то долго игра не может запуститься...\n"
+                                          + minecraft->errorString());
+                    break;
+
+                case QProcess::WriteError:
+                    QMessageBox::critical(this, "Проблема!",
+                                          "Игра не может писать :(\n"
+                                          + minecraft->errorString());
+                    break;
+
+                case QProcess::ReadError:
+                    QMessageBox::critical(this, "Проблема!",
+                                          "Игра не может читать :(!\n"
+                                          + minecraft->errorString());
+                    break;
+
+                case QProcess::UnknownError:
+                default:
+                    QMessageBox::critical(this, "Проблема!",
+                                          "Произошло что-то странное и игра не запустилась!\n"
+                                          + minecraft->errorString());
+
+                    break;
+                }
+
+            } else {
+
+                while (minecraft->state() == QProcess::Running) {
+                    if (minecraft->waitForReadyRead()) {
+                        qDebug() << minecraft->readAll();
+                    }
+                }
+
+                QMessageBox::information(this, "Игра окончена!",
+                                         "Игра окончена!\n" +
+                                         QString::number(minecraft->exitCode()));
+
+            }
+
+            delete minecraft;
+
 
         } else {
             QMessageBox::critical(this, "У нас проблема :(",
