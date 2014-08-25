@@ -3,6 +3,8 @@
 
 #include <QDialog>
 
+#include "logger.h"
+
 namespace Ui {
 class FeedbackDialog;
 }
@@ -17,6 +19,7 @@ public:
 
 private:
     Ui::FeedbackDialog *ui;
+    Logger* logger;
 
 private slots:
     void sendFeedback();

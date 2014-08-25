@@ -17,20 +17,26 @@ FeedbackDialog::FeedbackDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    logger = Logger::logger();
+
     Settings* settings = Settings::instance();
     ui->nickEdit->setText(settings->loadLogin());
 
     connect(ui->sendButton, SIGNAL(clicked()), this, SLOT(sendFeedback()));
+    logger->append("FeedBackDialog", "Feedback dialog dialog opened\n");
 }
 
 FeedbackDialog::~FeedbackDialog()
 {
+    logger->append("FeedBackDialog", "Feedback dialog dialog closed\n");
     delete ui;
 }
 
 void FeedbackDialog::sendFeedback() {
 
     ui->sendButton->setEnabled(false);
+    logger->append("FeedBackDialog", "Sending feedback, description:\n");
+    logger->append("FeedBackDialog", ui->descEdit->toPlainText() + "\n");
 
     QNetworkAccessManager* manager = new QNetworkAccessManager(this);
 
@@ -74,23 +80,30 @@ void FeedbackDialog::sendFeedback() {
             if (responce["error"].toString() != "") {
                 // Error in answer handler
                 ui->messageLabel->setText("Ошибка: " + responce["error"].toString());
+                logger->append("FeedBackDialog", "Error:"
+                                         + responce["error"].toString() + "\n");
 
             } else {
                 // Correct request
+                logger->append("FeedBackDialog", "OK\n");
                 ui->messageLabel->setText("Сообщение об ошибке доставлено!");
             }
 
         } else {
             // JSON parse error
             ui->messageLabel->setText("Ошибка: сервер ответил ерунду...");
+            logger->append("FeedBackDialog", "JSON parse error!\n");
+
         }
 
     } else {
         // Connection error
         if (reply->error() == QNetworkReply::AuthenticationRequiredError) {
             ui->messageLabel->setText("Ошибка: неправильный логин или пароль!");
+            logger->append("FeedBackDialog", "Error: bad login\n");
         } else {
             ui->messageLabel->setText("Ошибка: " + reply->errorString());
+            logger->append("FeedBackDialog", "Error: " + reply->errorString() + "\n");
         }
 
     }

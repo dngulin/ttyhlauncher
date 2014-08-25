@@ -2,6 +2,7 @@
 #include "ui_updatedialog.h"
 
 #include "settings.h"
+#include "logger.h"
 
 #include <QNetworkReply>
 
@@ -10,6 +11,7 @@ UpdateDialog::UpdateDialog(QWidget *parent) :
     ui(new Ui::UpdateDialog)
 {
     ui->setupUi(this);
+    Logger::logger()->append("UpdateDialog", "Update dialog opened\n");
 
     downloadSize = 0;
     assets = "";
@@ -26,6 +28,12 @@ UpdateDialog::UpdateDialog(QWidget *parent) :
     emit ui->clientCombo->activated(ui->clientCombo->currentIndex());
 
     connect(ui->updateButton, SIGNAL(clicked()), this, SLOT(doUpdate()));
+
+}
+
+void UpdateDialog::append(QString text) {
+    ui->log->appendPlainText(text);
+    Logger::logger()->append("UpdateDialog", text + "\n");
 }
 
 void UpdateDialog::clientChanged(){
@@ -40,7 +48,7 @@ void UpdateDialog::clientChanged(){
 
     Settings* settings = Settings::instance();
     QString clientStrId = settings->getClientStrId(settings->loadActiveClientId());
-    ui->log->appendPlainText("Проверка наличия обновлений для клиента \""
+    append("Проверка наличия обновлений для клиента \""
                              + clientStrId + "\", версия \""
                              + settings->loadClientVersion() + "\"");
 
@@ -66,7 +74,7 @@ void UpdateDialog::clientChanged(){
         ui->clientCombo->setEnabled(true);
 
     } else {
-        ui->log->appendPlainText("Не удалось связаться с сервером обновлений!");
+        append("Не удалось связаться с сервером обновлений!");
         ui->clientCombo->setEnabled(true);
         ui->updateButton->setEnabled(true);
     }
@@ -75,7 +83,8 @@ void UpdateDialog::clientChanged(){
 }
 
 bool UpdateDialog::checkVersionFiles() {
-    ui->log->appendPlainText("\n1. Проверка состояния базовых файлов...");
+    append("");
+    append("1. Проверка состояния базовых файлов...");
     QString filePrefix = settings->getVersionsDir();
 
     // Mke filename and URL prefixes
@@ -104,7 +113,8 @@ bool UpdateDialog::checkVersionFiles() {
 }
 
 bool UpdateDialog::checkLibs() {
-    ui->log->appendPlainText("\n2. Проверка состояния библиотек...");
+    append("");
+    append("2. Проверка состояния библиотек...");
 
     QString filePrefix = settings->getVersionsDir();
 
@@ -115,7 +125,7 @@ bool UpdateDialog::checkLibs() {
 
     QFile* cfgFile = new QFile(filePrefix + ".json");
     if (!cfgFile->open(QIODevice::ReadOnly)) {
-        ui->log->appendPlainText("Не удалось открыть конфигурационный файл :(");
+        append("Не удалось открыть конфигурационный файл :(");
         return false;
     }
 
@@ -125,7 +135,7 @@ bool UpdateDialog::checkLibs() {
     delete cfgFile;
 
     if (!error.error == QJsonParseError::NoError) {
-        ui->log->appendPlainText("Ошибка разбора конфигурационного файла :(");
+        append("Ошибка разбора конфигурационного файла :(");
         return false;
     }
 
@@ -198,11 +208,12 @@ bool UpdateDialog::checkLibs() {
 }
 
 bool UpdateDialog::checkAssets() {
-    ui->log->appendPlainText("\n3. Проверка состояния игровых ресурсов...");
+    append("");
+    append("3. Проверка состояния игровых ресурсов...");
 
     // assets are defined on check-libs stage
     if (assets.isEmpty()) {
-        ui->log->appendPlainText("В конфигурационном файле отсутсвует информация о ресурсах :(");
+        append("В конфигурационном файле отсутсвует информация о ресурсах :(");
     }
 
     QString filePrefix = settings->getAssetsDir();
@@ -212,7 +223,7 @@ bool UpdateDialog::checkAssets() {
     }
 
     if (!indexFile->open(QIODevice::ReadOnly)) {
-        ui->log->appendPlainText("Не удалось открыть индексный файл :(");
+        append("Не удалось открыть индексный файл :(");
         return false;
     }
 
@@ -222,7 +233,7 @@ bool UpdateDialog::checkAssets() {
     delete indexFile;
 
     if (!error.error == QJsonParseError::NoError) {
-        ui->log->appendPlainText("Ошибка разбора индексного файла :(");
+        append("Ошибка разбора индексного файла :(");
         return false;
     }
 
@@ -252,29 +263,32 @@ bool UpdateDialog::checkAssets() {
 }
 
 bool UpdateDialog::checkMods() {
-    ui->log->appendPlainText("\n4. Проверка состояния модификаций...");
+    append("");
+    append("4. Проверка состояния модификаций...");
 
     // $ echo we need own update-server | iconv -f koi-7
-    ui->log->appendPlainText("\n * ВЕ НЕЕД ОВН УПДАТЕ-СЕРЖЕР *");
+    append("");
+    append(" * ВЕ НЕЕД ОВН УПДАТЕ-СЕРЖЕР *");
 
     ui->progressBar->setValue(100);
     return true;
 }
 
 void UpdateDialog::checksResult(bool allGood){
-    ui->log->appendPlainText("\n5. Результат проверки:");
+    append("");
+    append("5. Результат проверки:");
     if (allGood) {
         if (downloadSize > 0) {
-            ui->log->appendPlainText("Требуется обновление, для выполнения нажмите кнопку \"Обновить\".");
-            ui->log->appendPlainText("Необходимо загрузить "
+            append("Требуется обновление, для выполнения нажмите кнопку \"Обновить\".");
+            append("Необходимо загрузить "
                                      + QString::number((float)downloadSize / (1024 * 1024), 'f', 2).replace('.', ',')
                                      + " МиБ.");
             ui->updateButton->setEnabled(true);
         } else {
-            ui->log->appendPlainText("Всё просто замечательно! Обновление не требуется!");
+            append("Всё просто замечательно! Обновление не требуется!");
         }
     } else {
-        ui->log->appendPlainText("Во время проверки клиента возникли проблемы. Обновление невозможно :(");
+        append("Во время проверки клиента возникли проблемы. Обновление невозможно :(");
     }
 }
 
@@ -291,7 +305,7 @@ bool UpdateDialog::isLatestVersionKnown(QNetworkReply* reply) {
             // Check for error in server answer
             if (responce["error"].toString() != "") {
                 // Error in answer handler
-                ui->log->appendPlainText(responce["error"].toString());
+                append(responce["error"].toString());
                 return false;
 
             } else {
@@ -304,7 +318,7 @@ bool UpdateDialog::isLatestVersionKnown(QNetworkReply* reply) {
 
         } else {
             // JSON parse error
-            ui->log->appendPlainText("Ошибка бмена данными с сервером обновления. "
+            append("Ошибка бмена данными с сервером обновления. "
                                      + error.errorString() + " в позиции "
                                      + QString::number(error.offset) + ".");
             return false;
@@ -312,7 +326,7 @@ bool UpdateDialog::isLatestVersionKnown(QNetworkReply* reply) {
 
     } else {
         // Connection error
-        ui->log->appendPlainText("Ошибка подключения к серверу обновления. "
+        append("Ошибка подключения к серверу обновления. "
                                  + reply->errorString());
         return false;
     }
@@ -320,7 +334,7 @@ bool UpdateDialog::isLatestVersionKnown(QNetworkReply* reply) {
 
 bool UpdateDialog::downloadNow(QUrl url, QString fileName) {
 
-    ui->log->appendPlainText("Загрузка файла " + fileName.split("/").last() + "...");
+    append("Загрузка файла " + fileName.split("/").last() + "...");
 
     QNetworkAccessManager* manager = new QNetworkAccessManager(this);
     QNetworkRequest request;
@@ -335,7 +349,7 @@ bool UpdateDialog::downloadNow(QUrl url, QString fileName) {
     if (reply->error() == QNetworkReply::NoError) {
         answer = reply->readAll();
     } else {
-        ui->log->appendPlainText("Не удалось загрузить файл: " + url.toString() + ".");
+        append("Не удалось загрузить файл: " + url.toString() + ".");
         return false;
     }
     delete manager;
@@ -346,7 +360,7 @@ bool UpdateDialog::downloadNow(QUrl url, QString fileName) {
 
     if (!file->open(QIODevice::WriteOnly)) {
         delete file;
-        ui->log->appendPlainText("Не удалось сохранить файл: " + fileName + ".");
+        append("Не удалось сохранить файл: " + fileName + ".");
         return false;
     }
 
@@ -360,7 +374,7 @@ bool UpdateDialog::downloadNow(QUrl url, QString fileName) {
 
 void UpdateDialog::addTarget(QUrl url, QString fileName) {
 
-    ui->log->appendPlainText("Файл " + fileName.split("/").last() + " добавлен в очередь загрузки.");
+    append("Файл " + fileName.split("/").last() + " добавлен в очередь загрузки.");
     downloadUrls.append(url);
     downloadNames.append(fileName);
 
@@ -378,7 +392,7 @@ void UpdateDialog::addTarget(QUrl url, QString fileName) {
 
 void UpdateDialog::addAssetTarget(QUrl url, QString fileName, QString resName, int size) {
 
-    ui->log->appendPlainText("Ресурс " + resName + " добавлен в очередь загрузки.");
+    append("Ресурс " + resName + " добавлен в очередь загрузки.");
 
     downloadUrls.append(url);
     downloadNames.append(fileName);
@@ -386,7 +400,7 @@ void UpdateDialog::addAssetTarget(QUrl url, QString fileName, QString resName, i
 }
 
 void UpdateDialog::doUpdate() {
-    ui->log->appendPlainText("\nОбновление клиента...");
+    append("\nОбновление клиента...");
     ui->progressBar->setValue(0);
     ui->updateButton->setEnabled(false);
     ui->clientCombo->setEnabled(false);
@@ -394,7 +408,7 @@ void UpdateDialog::doUpdate() {
     downloadedSize = 0;
 
     downloadReply = downloadNam->get(QNetworkRequest(downloadUrls.first()));
-    ui->log->appendPlainText("Загрузка файла " + downloadNames.first().split('/').last() + "...");
+    append("Загрузка файла " + downloadNames.first().split('/').last() + "...");
 
     connect(downloadReply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(progress(qint64,qint64)));
     connect(downloadReply, SIGNAL(finished()), this, SLOT(downloadFinished()));
@@ -416,7 +430,7 @@ void UpdateDialog::downloadFinished()  {
         fdir.mkpath(fdir.absolutePath());
 
         if (!file->open(QIODevice::WriteOnly)) {
-            ui->log->appendPlainText("Не удалось сохранить файл. " + file->errorString());
+            append("Не удалось сохранить файл. " + file->errorString());
         } else {
             file->write(downloadReply->readAll());
             downloadedSize += file->size();
@@ -426,7 +440,7 @@ void UpdateDialog::downloadFinished()  {
         delete file;
 
     } else {
-        ui->log->appendPlainText("Загрузка не удалась. " + downloadReply->errorString());
+        append("Загрузка не удалась. " + downloadReply->errorString());
     }
 
     downloadNames.removeFirst();
@@ -436,7 +450,7 @@ void UpdateDialog::downloadFinished()  {
         disconnect(downloadReply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(progress(qint64,qint64)));
         disconnect(downloadReply, SIGNAL(finished()), this, SLOT(downloadFinished()));
 
-        ui->log->appendPlainText("Удалось загрузить "
+        append("Удалось загрузить "
                                  + QString::number(ui->progressBar->value())
                                  + "% необходимых данных.");
         ui->clientCombo->setEnabled(true);
@@ -446,7 +460,7 @@ void UpdateDialog::downloadFinished()  {
         disconnect(downloadReply, SIGNAL(finished()), this, SLOT(downloadFinished()));
 
         downloadReply = downloadNam->get(QNetworkRequest(downloadUrls.first()));
-        ui->log->appendPlainText("Загрузка файла " + downloadNames.first().split('/').last() + "...");
+        append("Загрузка файла " + downloadNames.first().split('/').last() + "...");
 
         connect(downloadReply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(progress(qint64,qint64)));
         connect(downloadReply, SIGNAL(finished()), this, SLOT(downloadFinished()));
@@ -455,5 +469,6 @@ void UpdateDialog::downloadFinished()  {
 
 UpdateDialog::~UpdateDialog()
 {
+    Logger::logger()->append("UpdateDialog", "Update dialog closed\n");
     delete ui;
 }

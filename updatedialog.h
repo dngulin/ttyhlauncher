@@ -46,6 +46,8 @@ private:
     void addTarget(QUrl url, QString fileName);
     void addAssetTarget(QUrl url, QString fileName, QString resName, int size);
 
+    void append(QString text);
+
 private slots:
     void clientChanged();
     void doUpdate();
