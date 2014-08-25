@@ -532,15 +532,13 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
 
             } else {
 
+                this->hide();
                 while (minecraft->state() == QProcess::Running) {
                     if (minecraft->waitForReadyRead()) {
                         qDebug() << minecraft->readAll();
                     }
                 }
-
-                QMessageBox::information(this, "Игра окончена!",
-                                         "Игра окончена!\n" +
-                                         QString::number(minecraft->exitCode()));
+                this->close();
 
             }
 
