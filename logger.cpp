@@ -14,18 +14,29 @@ Logger* Logger::logger() {
 Logger::Logger(QObject *parent) :
     QObject(parent)
 {
-    logFile = new QFile(Settings::instance()->getBaseDir() + "/launcher.log");
+    // Rotate logs
+    int rotations = 3;
 
+    // remove latest index
+    QFile::remove(Settings::instance()->getBaseDir() + "/launcher." + QString::number(rotations - 1) + ".log");
+
+    // rotate logs
+    for (int i = rotations - 2; i >=0; i--) {
+        QFile::rename(Settings::instance()->getBaseDir()+ "/launcher." + QString::number(i) + ".log",
+                      Settings::instance()->getBaseDir()+ "/launcher." + QString::number(i + 1) + ".log");
+    }
+
+    logFile = new QFile(Settings::instance()->getBaseDir() + "/launcher.0.log");
     if (!logFile->open(QIODevice::Append | QIODevice::Text)) qCritical() << "Can't setup logger!";
 
-    append("logger", QDate::currentDate().toString("dd.MM.yy")
+    append("Logger", QDate::currentDate().toString("dd.MM.yy")
            + " ttyhlauncher-" + Settings::instance()->launcherVerion + " started.\n");
 
 }
 
 void Logger::append(QString sender, QString text)
 {
-    QString prefix = "(" + QTime::currentTime().toString("hh:mm") + ") " + sender + " >> ";
+    QString prefix = "(" + QTime::currentTime().toString("hh:mm:ss") + ") " + sender + " >> ";
 
     QTextStream(stdout) << prefix << text;
     QTextStream textout(logFile);
