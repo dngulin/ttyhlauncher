@@ -39,7 +39,7 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     logger = Logger::logger();
 
     // Make news menuitems like radiobuttons (it's impossible from qt-designer)
-    QActionGroup *newsGroup = new QActionGroup(this);
+    newsGroup = new QActionGroup(this);
     newsGroup->addAction(ui->ttyhNews);
     newsGroup->addAction(ui->officialNews);
 
