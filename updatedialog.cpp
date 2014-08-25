@@ -389,6 +389,7 @@ void UpdateDialog::doUpdate() {
     ui->log->appendPlainText("\nОбновление клиента...");
     ui->progressBar->setValue(0);
     ui->updateButton->setEnabled(false);
+    ui->clientCombo->setEnabled(false);
 
     downloadedSize = 0;
 
@@ -438,6 +439,7 @@ void UpdateDialog::downloadFinished()  {
         ui->log->appendPlainText("Удалось загрузить "
                                  + QString::number(ui->progressBar->value())
                                  + "% необходимых данных.");
+        ui->clientCombo->setEnabled(true);
     } else {
 
         disconnect(downloadReply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(progress(qint64,qint64)));
