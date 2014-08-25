@@ -3,6 +3,8 @@
 
 #include <QDialog>
 
+#include "logger.h"
+
 namespace Ui {
 class PasswordDialog;
 }
@@ -17,6 +19,8 @@ public:
 
 private:
     Ui::PasswordDialog *ui;
+
+    Logger* logger;
 
 private slots:
     void changePassword();

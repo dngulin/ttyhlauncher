@@ -36,7 +36,7 @@ void FeedbackDialog::sendFeedback() {
 
     ui->sendButton->setEnabled(false);
     logger->append("FeedBackDialog", "Sending feedback, description:\n");
-    logger->append("FeedBackDialog", ui->descEdit->toPlainText() + "\n");
+    logger->append("FeedBackDialog", "\"" + ui->descEdit->toPlainText() + "\"\n");
 
     QNetworkAccessManager* manager = new QNetworkAccessManager(this);
 
@@ -67,6 +67,8 @@ void FeedbackDialog::sendFeedback() {
     // Check for connection error
     if (reply->error() == QNetworkReply::NoError) {
 
+        logger->append("FeedBackDialog", "OK\n");
+
         QByteArray rawResponce = reply->readAll();
         QJsonParseError error;
         QJsonDocument json = QJsonDocument::fromJson(rawResponce, &error);
@@ -85,8 +87,8 @@ void FeedbackDialog::sendFeedback() {
 
             } else {
                 // Correct request
-                logger->append("FeedBackDialog", "OK\n");
                 ui->messageLabel->setText("Сообщение об ошибке доставлено!");
+                logger->append("FeedBackDialog", "Feedback sended\n");
             }
 
         } else {

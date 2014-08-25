@@ -15,7 +15,11 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui(new Ui::SettingsDialog)
 {
     ui->setupUi(this);
+
     settings = Settings::instance();
+    logger = Logger::logger();
+
+    logger->append("SettingsDialog", "Settings dialog opened\n");
 
     nam = new QNetworkAccessManager(this);
     connect(nam, SIGNAL(finished(QNetworkReply*)), this, SLOT(makeVersionList(QNetworkReply*)));
@@ -31,11 +35,18 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     connect(ui->javapathButton, SIGNAL(clicked()), this, SLOT(openFileDialog()));
     connect(ui->saveButton, SIGNAL(clicked()), this, SLOT(saveSettings()));
     connect(ui->opendirButton, SIGNAL(clicked()), this, SLOT(openClientDirectory()));
-
 }
+
+SettingsDialog::~SettingsDialog()
+{
+    logger->append("SettingsDialog", "Settings dialog closed\n");
+    delete ui;
+}
+
 
 void SettingsDialog::loadVersionList() {
     ui->stateEdit->setText("Составляется список версий...");
+    logger->append("SettingsDialog", "Making version list...\n");
 
     ui->versionCombo->setEnabled(false);
     ui->versionCombo->clear();
@@ -44,13 +55,16 @@ void SettingsDialog::loadVersionList() {
     QNetworkRequest request;
     // FIXME: in release url depended at activeClient value
     request.setUrl(QUrl("https://s3.amazonaws.com/Minecraft.Download/versions/versions.json"));
+    logger->append("SettingsDialog", "Making version list request...\n");
     nam->get(request);
+
 }
 
 void SettingsDialog::makeVersionList(QNetworkReply* reply) {
 
     // Check for connection error
     if (reply->error() == QNetworkReply::NoError) {
+        logger->append("SettingsDialog", "OK\n");
 
         QByteArray rawResponce = reply->readAll();
         QJsonParseError error;
@@ -65,10 +79,13 @@ void SettingsDialog::makeVersionList(QNetworkReply* reply) {
             if (responce["error"].toString() != "") {
                 // Error in answer handler
                 ui->stateEdit->setText("Ошибка! " + responce["errorMessage"].toString());
+                logger->append("SettingsDialog", "Error: "
+                               + responce["errorMessage"].toString() + "\n");
 
             } else {
                 // Correct login
                 ui->stateEdit->setText("Список версий с сервера обновлений");
+                logger->append("SettingsDialog", "List downloaded\n");
 
                 QJsonArray versions = responce["versions"].toArray();
                 QJsonObject version;
@@ -92,18 +109,21 @@ void SettingsDialog::makeVersionList(QNetworkReply* reply) {
 
         } else {
             // JSON parse error
+            logger->append("SettingsDialog", "JSON parse error!\n");
             makeLocalVersionList("Локальные версии (ошибка обмена с севрером)");
         }
 
 
     } else {
         // Connection error
+        logger->append("SettingsDialog", "Connection error!\n");
         makeLocalVersionList("Локальные версии (сервер недоступен)");
     }
 
 }
 
 void SettingsDialog::makeLocalVersionList(QString reason) {
+    logger->append("SettingsDialog", "Making local version list...\n");
     ui->stateEdit->setText(reason);
 
     QString prefix = settings->getClientDir() + "/versions";
@@ -130,6 +150,8 @@ void SettingsDialog::saveSettings() {
     settings->saveClientJava(ui->javapathEdit->text());
     settings->saveClientJavaArgsState(ui->argsBox->isChecked());
     settings->saveClientJavaArgs(ui->argsEdit->text());
+
+    logger->append("SettingsDialog", "Settings saved\n");
 }
 
 void SettingsDialog::loadSettings() {
@@ -155,11 +177,7 @@ void SettingsDialog::openClientDirectory() {
     } else {
         QMessageBox::critical(this, "У нас проблема :(", "Директория ещё не существует.\n"
                               + clientDir->fileName());
+        logger->append("SettingsDialog", "Error: can't open client directory (not exists)\n");
     }
     delete clientDir;
-}
-
-SettingsDialog::~SettingsDialog()
-{
-    delete ui;
 }

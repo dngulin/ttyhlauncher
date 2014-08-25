@@ -94,9 +94,14 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
 
     connect(ui->playButton, SIGNAL(clicked()), this, SLOT(playButtonClicked()));
 
+    logger->append(this->objectName(), "Launcher window opened\n");
+
 }
 
-void LauncherWindow::closeEvent (QCloseEvent* event) { storeParameters(); }
+void LauncherWindow::closeEvent (QCloseEvent* event) {
+    logger->append(this->objectName(), "Launcher window closed\n");
+    storeParameters();
+}
 
 // Run this method on close window and run game
 void LauncherWindow::storeParameters() {
@@ -184,6 +189,8 @@ void LauncherWindow::pageLoaded(bool loaded) {if (!loaded) ui->webView->load(QUr
 void LauncherWindow::playButtonClicked() {
 
     logger->append(this->objectName(), "Try to start game...\n");
+    logger->append(this->objectName(), "Client id: "
+                   + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
 
     ui->playButton->setEnabled(false);
 
@@ -614,12 +621,14 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
 
                 logger->append(this->objectName(), "Game process finished!\n");
                 if (minecraft->exitCode() != 0) {
+                    this->show();
                     QMessageBox::critical(this, "Ну вот!",
                                           "Кажется игра некорректно завершилась, посмотрите лог-файл.\n");
                     logger->append(this->objectName(), "Error: not null exit code: "
                                    + QString::number(minecraft->exitCode()) + "\n");
+                } else {
+                    this->close();
                 }
-                this->close();
 
             }
 

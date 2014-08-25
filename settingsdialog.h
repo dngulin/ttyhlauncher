@@ -6,6 +6,7 @@
 #include <QNetworkAccessManager>
 
 #include "settings.h"
+#include "logger.h"
 
 namespace Ui {
 class SettingsDialog;
@@ -22,7 +23,10 @@ public:
 private:
     Ui::SettingsDialog *ui;
     QNetworkAccessManager* nam;
+
     Settings* settings;
+    Logger* logger;
+
     void makeLocalVersionList(QString reason);
 
 
