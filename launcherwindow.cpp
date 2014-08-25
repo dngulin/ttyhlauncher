@@ -24,8 +24,6 @@
 
 #include <quazip/quazip.h>
 #include <quazip/quazipfile.h>
-#include <quazip/zip.h>
-#include <quazip/ioapi.h>
 
 LauncherWindow::LauncherWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -506,35 +504,51 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
             } else {
                 minecraftArguments = versionJson.object()["minecraftArguments"].toString();
             }
-            // QString uuid, QString acessToken, QString gameVersion
-            minecraftArguments.replace("${auth_player_name}",  settings->loadLogin());
-            minecraftArguments.replace("${version_name}",      gameVersion);
-            minecraftArguments.replace("${game_directory}",    settings->getClientDir());
-            minecraftArguments.replace("${assets_root}",       settings->getAssetsDir());
-            minecraftArguments.replace("${assets_index_name}", assetsIndex);
-            minecraftArguments.replace("${auth_uuid}",         uuid);
-            minecraftArguments.replace("${auth_access_token}", acessToken);
 
-            // What it means?
-            minecraftArguments.replace("${user_properties}",   "{}");
-            //minecraftArguments.replace("${user_type}",       "${user_type}";
+            // Crazy way, but this must work
+            QStringList mcArgList;
+            foreach (QString mcArg, minecraftArguments.split(" ")) {
+                mcArg.replace("${auth_player_name}",  settings->loadLogin());
+                mcArg.replace("${version_name}",      gameVersion);
+                mcArg.replace("${game_directory}",    settings->getClientDir());
+                mcArg.replace("${assets_root}",       settings->getAssetsDir());
+                mcArg.replace("${assets_index_name}", assetsIndex);
+                mcArg.replace("${auth_uuid}",         uuid);
+                mcArg.replace("${auth_access_token}", acessToken);
+
+                // What it means?
+                mcArg.replace("${user_properties}",   "{}");
+                //mcArg.replace("${user_type}",       "${user_type}";
+
+                mcArgList << mcArg;
+            }
+
+
 
             // RUN-RUN-RUN!
             logger->append(this->objectName(), "Making run string...\n");
-            QStringList args;
-            args << "-Djava.library.path=" + libpath
+            QStringList argList;
+
+            // Setup user args
+            QStringList userArgList;
+            if (settings->loadClientJavaArgsState()) {
+                userArgList = settings->loadClientJavaArgs().split(" ");
+            }
+            if (!userArgList.isEmpty()) argList << userArgList;
+
+            argList << "-Djava.library.path=" + libpath
                  << "-cp" << classpath
                  << mainClass
-                 << minecraftArguments.split(" ");
+                 << mcArgList;
 
             QString stringargs;
-            foreach (QString arg, args) stringargs += arg + " ";
+            foreach (QString arg, argList) stringargs += arg + " ";
             logger->append(this->objectName(), "Run string: " + java + " " + stringargs + "\n");
 
             logger->append(this->objectName(), "Try to launch game...\n");
             QProcess* minecraft = new QProcess(this);
             minecraft->setProcessChannelMode(QProcess::MergedChannels);
-            minecraft->start(java, args);
+            minecraft->start(java, argList);
 
             if (!minecraft->waitForStarted()) {
                 switch(minecraft->error()) {
