@@ -3,7 +3,9 @@
 
 #include <QMainWindow>
 #include <QActionGroup>
+
 #include "settings.h"
+#include "logger.h"
 
 namespace Ui {
 class LauncherWindow;
@@ -40,7 +42,9 @@ private slots:
 private:
     Ui::LauncherWindow *ui;
     QActionGroup *newsGroup;
+
     Settings* settings;
+    Logger* logger;
 
     void loadPage(const QUrl& url);
     void storeParameters();
