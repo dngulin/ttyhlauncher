@@ -152,6 +152,13 @@ void SettingsDialog::saveSettings() {
     settings->saveClientJavaArgs(ui->argsEdit->text());
 
     logger->append("SettingsDialog", "Settings saved\n");
+    logger->append("SettingsDialog", "\tClient: " + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
+    logger->append("SettingsDialog", "\tVersion: " + settings->loadClientVersion() + "\n");
+    logger->append("SettingsDialog", "\tUseClientJava: " + QString(ui->javapathBox->isChecked() ? "true" : "false") + "\n");
+    logger->append("SettingsDialog", "\tClientJava: " + ui->javapathEdit->text() + "\n");
+    logger->append("SettingsDialog", "\tUseClientArgs: " + QString(ui->argsBox->isChecked() ? "true" : "false") + "\n");
+    logger->append("SettingsDialog", "\tClientArgs: " + ui->argsEdit->text() + "\n");
+
 }
 
 void SettingsDialog::loadSettings() {
@@ -161,6 +168,14 @@ void SettingsDialog::loadSettings() {
     ui->javapathEdit->setText(settings->loadClientJava());
     ui->argsBox->setChecked(settings->loadClientJavaArgsState());
     ui->argsEdit->setText(settings->loadClientJavaArgs());
+
+    logger->append("SettingsDialog", "Settings loaded\n");
+    logger->append("SettingsDialog", "\tClient: " + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
+    logger->append("SettingsDialog", "\tVersion: " + settings->loadClientVersion() + "\n");
+    logger->append("SettingsDialog", "\tUseClientJava: " + QString(ui->javapathBox->isChecked() ? "true" : "false") + "\n");
+    logger->append("SettingsDialog", "\tClientJava: " + ui->javapathEdit->text() + "\n");
+    logger->append("SettingsDialog", "\tUseClientArgs: " + QString(ui->argsBox->isChecked() ? "true" : "false") + "\n");
+    logger->append("SettingsDialog", "\tClientArgs: " + ui->argsEdit->text() + "\n");
 }
 
 void SettingsDialog::openFileDialog() {
