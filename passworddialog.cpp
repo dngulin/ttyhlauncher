@@ -2,6 +2,7 @@
 #include "ui_passworddialog.h"
 
 #include "settings.h"
+#include "util.h"
 #include "reply.h"
 
 #include <QJsonDocument>
@@ -39,8 +40,6 @@ void PasswordDialog::changePassword() {
 
     ui->sendButton->setEnabled(false);
 
-    QNetworkAccessManager* manager = new QNetworkAccessManager(this);
-
     // Make JSON login request
     QJsonObject payload;
     payload["username"] = ui->nickEdit->text();
@@ -69,7 +68,7 @@ void PasswordDialog::changePassword() {
 
             // Check for error in server answer
             if (!responce["error"].isNull()) {
-                // Error in answer handler
+
                 ui->messageLabel->setText("Ошибка: " + responce["error"].toString());
                 logger->append("PasswordDialog", "Error: "  + responce["error"].toString() + "\n");
 
