@@ -96,17 +96,6 @@ void SettingsDialog::makeVersionList(QNetworkReply* reply) {
 
                 // Make additional local version list
                 appendVersionList("Список версий с сервера обновлений");
-
-                if (ui->versionCombo->count() > 1) {
-                    QString strVerId = settings->loadClientVersion();
-                    for (int i = 0; i <= ui->versionCombo->count(); i++) {
-                        if (ui->versionCombo->itemData(i).toString() == strVerId) {
-                            ui->versionCombo->setCurrentIndex(i);
-                            break;
-                        }
-                    }
-                    ui->versionCombo->setEnabled(true);
-                }
             }
 
         } else {
@@ -141,6 +130,9 @@ void SettingsDialog::appendVersionList(QString reason) {
         }
         delete file;
     }
+
+    int id = ui->versionCombo->findData(settings->loadClientVersion());
+    if (id != -1) ui->versionCombo->setCurrentIndex(id);
     ui->versionCombo->setEnabled(true);
 }
 

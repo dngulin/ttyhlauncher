@@ -392,9 +392,8 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
     }
 
     // Setup classpath and extract natives!
-    logger->append(this->objectName(), "Reading version file...\n");
-
     QFile* versionFile = new QFile(settings->getVersionsDir() + "/" + gameVersion + "/" + gameVersion + ".json");
+    logger->append(this->objectName(), "Reading version file: " + versionFile->fileName() + "\n");
 
     if (!versionFile->open(QIODevice::ReadOnly)) {
 
