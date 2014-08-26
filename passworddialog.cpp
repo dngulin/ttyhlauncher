@@ -2,9 +2,8 @@
 #include "ui_passworddialog.h"
 
 #include "settings.h"
+#include "reply.h"
 
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
 #include <QJsonDocument>
 
 PasswordDialog::PasswordDialog(QWidget *parent) :
@@ -43,36 +42,25 @@ void PasswordDialog::changePassword() {
     QNetworkAccessManager* manager = new QNetworkAccessManager(this);
 
     // Make JSON login request
-    QJsonDocument data;
-    QJsonObject login;
-    QNetworkRequest request;
+    QJsonObject payload;
+    payload["username"] = ui->nickEdit->text();
+    payload["password"] = ui->passEdit->text();
+    payload["newpassword"] = ui->newpassEdit->text();
 
-    login["username"] = ui->nickEdit->text();
-    login["password"] = ui->passEdit->text();
-    login["newpassword"] = ui->newpassEdit->text();
+    QJsonDocument jsonRequest(payload);
 
-    data.setObject(login);
+    logger->append("PasswordDialog", "Making request...\n");
+    Reply serverReply = Util::makePost(Settings::changePasswrdUrl, jsonRequest.toJson());
 
-    QByteArray postdata;
-    postdata.append(data.toJson());
+    if (!serverReply.isOK()) {
 
-    request.setUrl(Settings::changePasswrdUrl);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-    request.setHeader(QNetworkRequest::ContentLengthHeader, postdata.size());
+        ui->messageLabel->setText("Ошибка: " + serverReply.getErrorString());
+        logger->append("PasswordDialog", "Error: " + serverReply.getErrorString() + "\n");
 
-    logger->append("PasswordDialog", "Making network request...\n");
-    QNetworkReply *reply = manager->post(request, postdata);
-    QEventLoop loop;
-    connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
-    loop.exec();
+    } else {
 
-    // Check for connection error
-    if (reply->error() == QNetworkReply::NoError) {
-        logger->append("PasswordDialog", "OK\n");
-
-        QByteArray rawResponce = reply->readAll();
         QJsonParseError error;
-        QJsonDocument json = QJsonDocument::fromJson(rawResponce, &error);
+        QJsonDocument json = QJsonDocument::fromJson(serverReply.reply(), &error);
 
         // Check for incorrect JSON
         if (error.error == QJsonParseError::NoError) {
@@ -80,11 +68,10 @@ void PasswordDialog::changePassword() {
             QJsonObject responce = json.object();
 
             // Check for error in server answer
-            if (responce["error"].toString() != "") {
+            if (!responce["error"].isNull()) {
                 // Error in answer handler
                 ui->messageLabel->setText("Ошибка: " + responce["error"].toString());
-                logger->append("PasswordDialog", "Error: "
-                               + responce["error"].toString() + "\n");
+                logger->append("PasswordDialog", "Error: "  + responce["error"].toString() + "\n");
 
             } else {
                 // Correct request
@@ -97,20 +84,7 @@ void PasswordDialog::changePassword() {
             ui->messageLabel->setText("Ошибка: сервер ответил ерунду...");
             logger->append("PasswordDialog", "JSON parsing error\n");
         }
-
-    } else {
-        // Connection error
-        if (reply->error() == QNetworkReply::AuthenticationRequiredError) {
-            ui->messageLabel->setText("Ошибка: неправильный логин или пароль!");
-            logger->append("PasswordDialog", "Error: bad login\n");
-        } else {
-            ui->messageLabel->setText("Ошибка: " + reply->errorString());
-            logger->append("PasswordDialog", "Error: " + reply->errorString() + "\n");
-        }
-
     }
-
-    delete manager;
 
     ui->sendButton->setEnabled(true);
 }

@@ -588,12 +588,12 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
                                           + minecraft->errorString());
                     logger->append(this->objectName(), "Error: "
                                    + minecraft->errorString() + "\n");
-
                     break;
                 }
 
             } else { // Game successful started
 
+                logger->append(this->objectName(), "Main window hidden\n");
                 this->hide();
                 while (minecraft->state() == QProcess::Running) {
                     if (minecraft->waitForReadyRead()) {
@@ -606,7 +606,8 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
 
                     this->show();
                     QMessageBox::critical(this, "Ну вот!",  "Кажется игра некорректно завершилась, посмотрите лог-файл.\n");
-                    logger->append(this->objectName(), "Error: not null exit code: " + QString::number(minecraft->exitCode()) + "\n");
+                    logger->append(this->objectName(), "Error: not null game exit code: " + QString::number(minecraft->exitCode()) + "\n");
+                    logger->append(this->objectName(), "Main window showed\n");
 
                 } else {
 
