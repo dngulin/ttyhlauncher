@@ -3,10 +3,10 @@
 
 #include <QtCore>
 
-class ServerReply
+class Reply
 {
 public:
-    ServerReply(bool state, QString errStr, QByteArray data);
+    Reply(bool state, QString errStr, QByteArray data);
 
     bool isOK();
     QString getErrorString();

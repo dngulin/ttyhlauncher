@@ -10,6 +10,8 @@
 #include <QFileDialog>
 
 #include "settings.h"
+#include "reply.h"
+#include "util.h"
 
 FeedbackDialog::FeedbackDialog(QWidget *parent) :
     QDialog(parent),
@@ -38,8 +40,6 @@ void FeedbackDialog::sendFeedback() {
     logger->append("FeedBackDialog", "Sending feedback, description:\n");
     logger->append("FeedBackDialog", "\"" + ui->descEdit->toPlainText() + "\"\n");
 
-    QNetworkAccessManager* manager = new QNetworkAccessManager(this);
-
     // Make JSON login request
     QJsonDocument data;
     QJsonObject login;
@@ -52,24 +52,18 @@ void FeedbackDialog::sendFeedback() {
 
     data.setObject(login);
 
-    QByteArray postdata;
-    postdata.append(data.toJson());
+    Reply serverReply = Util::makePost(Settings::feedbackUrl, data.toJson());
 
-    request.setUrl(Settings::feedbackUrl);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-    request.setHeader(QNetworkRequest::ContentLengthHeader, postdata.size());
+    if (!serverReply.isOK()) {
 
-    QNetworkReply *reply = manager->post(request, postdata);
-    QEventLoop loop;
-    connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
-    loop.exec();
+        ui->messageLabel->setText("Ошибка: " + serverReply.getErrorString());
+        logger->append("FeedBackDialog", "Error: " + serverReply.getErrorString() + "\n");
 
-    // Check for connection error
-    if (reply->error() == QNetworkReply::NoError) {
+    } else {
 
         logger->append("FeedBackDialog", "OK\n");
 
-        QByteArray rawResponce = reply->readAll();
+        QByteArray rawResponce = serverReply.reply();
         QJsonParseError error;
         QJsonDocument json = QJsonDocument::fromJson(rawResponce, &error);
 
@@ -79,7 +73,7 @@ void FeedbackDialog::sendFeedback() {
             QJsonObject responce = json.object();
 
             // Check for error in server answer
-            if (responce["error"].toString() != "") {
+            if (!responce["error"].isNull()) {
                 // Error in answer handler
                 ui->messageLabel->setText("Ошибка: " + responce["error"].toString());
                 logger->append("FeedBackDialog", "Error:"
@@ -97,20 +91,7 @@ void FeedbackDialog::sendFeedback() {
             logger->append("FeedBackDialog", "JSON parse error!\n");
 
         }
-
-    } else {
-        // Connection error
-        if (reply->error() == QNetworkReply::AuthenticationRequiredError) {
-            ui->messageLabel->setText("Ошибка: неправильный логин или пароль!");
-            logger->append("FeedBackDialog", "Error: bad login\n");
-        } else {
-            ui->messageLabel->setText("Ошибка: " + reply->errorString());
-            logger->append("FeedBackDialog", "Error: " + reply->errorString() + "\n");
-        }
-
     }
-
-    delete manager;
 
     ui->sendButton->setEnabled(true);
 }

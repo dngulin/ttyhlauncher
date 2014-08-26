@@ -2,12 +2,12 @@
 #define UTIL_H
 
 #include <QtCore>
-#include "serverreply.h"
+#include "reply.h"
 
 namespace Util {
 
-ServerReply makeGet(QString url);
-ServerReply makePost(QString url, QByteArray postData);
+Reply makeGet(QString url);
+Reply makePost(QString url, QByteArray postData);
 
 void removeAll(QString filePath);
 

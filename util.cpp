@@ -7,7 +7,7 @@
 #include <quazip/quazip.h>
 #include <quazip/quazipfile.h>
 
-ServerReply Util::makeGet(QString url) {
+Reply Util::makeGet(QString url) {
 
     Logger::logger()->append("Util", "Make GET: " + url + "\n");
 
@@ -38,11 +38,11 @@ ServerReply Util::makeGet(QString url) {
     }
 
     delete manager;
-    return ServerReply(success, errStr, data);
+    return Reply(success, errStr, data);
 }
 
 
-ServerReply Util::makePost(QString url, QByteArray postData) {
+Reply Util::makePost(QString url, QByteArray postData) {
 
     Logger::logger()->append("Util", "Make POST: " + url + "\n");
 
@@ -77,7 +77,7 @@ ServerReply Util::makePost(QString url, QByteArray postData) {
     }
 
     delete manager;
-    return ServerReply(success, errStr, data);
+    return Reply(success, errStr, data);
 }
 
 
