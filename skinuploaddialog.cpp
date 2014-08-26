@@ -17,6 +17,9 @@ SkinUploadDialog::SkinUploadDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    logger = Logger::logger();
+    logger->append("SkinUploadDialog", "Skin upload dialog opened\n");
+
     Settings* settings = Settings::instance();
     ui->nickEdit->setText(settings->loadLogin());
 
@@ -26,19 +29,24 @@ SkinUploadDialog::SkinUploadDialog(QWidget *parent) :
 
 SkinUploadDialog::~SkinUploadDialog()
 {
+    logger->append("SkinUploadDialog", "Skin upload dialog closed\n");
     delete ui;
 }
 
 void SkinUploadDialog::uploadSkin() {
 
+    logger->append("SkinUploadDialog", "Try to upload skin\n");
+
     QFile* skinfile = new QFile(ui->pathEdit->text());
     if (!skinfile->exists()) {
         ui->messageLabel->setText("Ошибка: файл скина не существует :(");
+        logger->append("SkinUploadDialog", "Error: skin file not exists\n");
         return;
     }
 
     if (!skinfile->open(QIODevice::ReadOnly)) {
         ui->messageLabel->setText("Ошибка: не удалось открыть файл скина :(");
+        logger->append("SkinUploadDialog", "Error: can't open skinfile\n");
         return;
     }
 
@@ -67,6 +75,7 @@ void SkinUploadDialog::uploadSkin() {
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setHeader(QNetworkRequest::ContentLengthHeader, postdata.size());
 
+    logger->append("SkinUploadDialog", "Making request...\n");
     QNetworkReply *reply = manager->post(request, postdata);
     QEventLoop loop;
     connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
@@ -74,6 +83,7 @@ void SkinUploadDialog::uploadSkin() {
 
     // Check for connection error
     if (reply->error() == QNetworkReply::NoError) {
+        logger->append("SkinUploadDialog", "OK\n");
 
         QByteArray rawResponce = reply->readAll();
         QJsonParseError error;
@@ -85,26 +95,31 @@ void SkinUploadDialog::uploadSkin() {
             QJsonObject responce = json.object();
 
             // Check for error in server answer
-            if (responce["error"].toString() != "") {
+            if (!responce["error"].isNull()) {
                 // Error in answer handler
                 ui->messageLabel->setText("Ошибка: " + responce["error"].toString());
+                logger->append("SkinUploadDialog", "Error: " + responce["error"].toString() + "\n");
 
             } else {
                 // Correct request
                 ui->messageLabel->setText("Поздравляем! Скин успешно изменён!");
+                logger->append("SkinUploadDialog", "Skin changed!\n");
             }
 
         } else {
             // JSON parse error
             ui->messageLabel->setText("Ошибка: сервер ответил ерунду...");
+            logger->append("SkinUploadDialog", "JSON parse error\n");
         }
 
     } else {
         // Connection error
         if (reply->error() == QNetworkReply::AuthenticationRequiredError) {
             ui->messageLabel->setText("Ошибка: неправильный логин или пароль!");
+            logger->append("SkinUploadDialog", "Error: bad login\n");
         } else {
             ui->messageLabel->setText("Ошибка: " + reply->errorString());
+            logger->append("SkinUploadDialog", "Error: " + reply->errorString() + "\n");
         }
 
     }
@@ -117,5 +132,6 @@ void SkinUploadDialog::uploadSkin() {
 void SkinUploadDialog::openFileDialog() {
     QString path = QFileDialog::getOpenFileName(this, "Выберите файл скина", QDir::homePath(), "*.png");
     ui->pathEdit->setText(path);
+    logger->append("SkinUploadDialog", "Selected skin-file: " + path + "\n");
 }
 

@@ -57,7 +57,6 @@ void SettingsDialog::loadVersionList() {
     request.setUrl(QUrl("https://s3.amazonaws.com/Minecraft.Download/versions/versions.json"));
     logger->append("SettingsDialog", "Making version list request...\n");
     nam->get(request);
-
 }
 
 void SettingsDialog::makeVersionList(QNetworkReply* reply) {

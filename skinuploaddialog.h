@@ -3,6 +3,8 @@
 
 #include <QDialog>
 
+#include "logger.h"
+
 namespace Ui {
 class SkinUploadDialog;
 }
@@ -17,6 +19,8 @@ public:
 
 private:
     Ui::SkinUploadDialog *ui;
+
+    Logger* logger;
 
 private slots:
     void uploadSkin();
