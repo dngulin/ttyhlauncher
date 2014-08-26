@@ -26,7 +26,9 @@ Logger::Logger(QObject *parent) :
                       Settings::instance()->getBaseDir()+ "/launcher." + QString::number(i + 1) + ".log");
     }
 
+    QDir().mkpath(Settings::instance()->getBaseDir()); // Make dir, if not exist
     logFile = new QFile(Settings::instance()->getBaseDir() + "/launcher.0.log");
+
     if (!logFile->open(QIODevice::Append | QIODevice::Text)) qCritical() << "Can't setup logger!";
 
     append("Logger", QDate::currentDate().toString("dd.MM.yy")
