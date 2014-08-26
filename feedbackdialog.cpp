@@ -40,19 +40,16 @@ void FeedbackDialog::sendFeedback() {
     logger->append("FeedBackDialog", "Sending feedback, description:\n");
     logger->append("FeedBackDialog", "\"" + ui->descEdit->toPlainText() + "\"\n");
 
-    // Make JSON login request
-    QJsonDocument data;
-    QJsonObject login;
-    QNetworkRequest request;
+    QJsonObject payload;
+    payload["username"] = ui->nickEdit->text();
+    payload["password"] = ui->passEdit->text();
+    payload["desc"] = ui->descEdit->toPlainText();  // FIXME (unsafe, base64?)
+    payload["log"] = "diagnostic log will be here"; // FIXME
 
-    login["username"] = ui->nickEdit->text();
-    login["password"] = ui->passEdit->text();
-    login["desc"] = ui->descEdit->toPlainText();
-    login["log"] = "diagnostic log will be here"; // FIXME
+    QJsonDocument jsonRequest(payload);
 
-    data.setObject(login);
-
-    Reply serverReply = Util::makePost(Settings::feedbackUrl, data.toJson());
+    logger->append("FeedBackDialog", "Making request...\n");
+    Reply serverReply = Util::makePost(Settings::feedbackUrl, jsonRequest.toJson());
 
     if (!serverReply.isOK()) {
 
@@ -63,33 +60,29 @@ void FeedbackDialog::sendFeedback() {
 
         logger->append("FeedBackDialog", "OK\n");
 
-        QByteArray rawResponce = serverReply.reply();
         QJsonParseError error;
-        QJsonDocument json = QJsonDocument::fromJson(rawResponce, &error);
+        QJsonDocument json = QJsonDocument::fromJson(serverReply.reply(), &error);
 
-        // Check for incorrect JSON
         if (error.error == QJsonParseError::NoError) {
 
             QJsonObject responce = json.object();
 
-            // Check for error in server answer
-            if (!responce["error"].isNull()) {
-                // Error in answer handler
+            if (responce["error"].isNull()) {
+
+                ui->messageLabel->setText("Сообщение об ошибке доставлено!");
+                logger->append("FeedBackDialog", "Feedback sended\n");
+
+            } else {
+                // Error answer handler
                 ui->messageLabel->setText("Ошибка: " + responce["error"].toString());
                 logger->append("FeedBackDialog", "Error:"
                                          + responce["error"].toString() + "\n");
-
-            } else {
-                // Correct request
-                ui->messageLabel->setText("Сообщение об ошибке доставлено!");
-                logger->append("FeedBackDialog", "Feedback sended\n");
             }
 
         } else {
             // JSON parse error
             ui->messageLabel->setText("Ошибка: сервер ответил ерунду...");
             logger->append("FeedBackDialog", "JSON parse error!\n");
-
         }
     }
 

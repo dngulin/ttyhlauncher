@@ -177,7 +177,7 @@ void LauncherWindow::loadPage(const QUrl& url) {
     connect(ptimer, SIGNAL(timeout()), SLOT(loadPageTimeout()));                // Show error page on timeout
     connect(ui->webView, SIGNAL(loadFinished(bool)), SLOT(pageLoaded(bool)));   // Show error page on loading fail
     connect(ui->webView, SIGNAL(loadFinished(bool)), ptimer, SLOT(stop()));
-    ptimer->start(10000); // Timeout value
+    ptimer->start(15000); // Timeout value
 }
 
 // Slots used by LoadPage method
@@ -195,159 +195,116 @@ void LauncherWindow::playButtonClicked() {
     if (!ui->playOffline->isChecked()) {
         logger->append(this->objectName(), "Online mode is selected\n");
 
-        QNetworkAccessManager* manager = new QNetworkAccessManager(this);
-
         // Make JSON login request, see: http://wiki.vg/Authentication
-        QNetworkRequest loginRequest;
-        QJsonDocument jsonRequest;
-        QJsonObject reqtData, reqAgent, reqPlatform;
+        QJsonObject payload, agent, platform;
 
-        reqAgent["name"] = "Minecraft";
-        reqAgent["version"] = 1;
+        agent["name"] = "Minecraft";
+        agent["version"] = 1;
 
-        reqPlatform["os"] = settings->getOsName();
-        reqPlatform["version"] = settings->getOsVersion();
-        reqPlatform["word"] = settings->getWordSize();
+        platform["os"] = settings->getOsName();
+        platform["version"] = settings->getOsVersion();
+        platform["word"] = settings->getWordSize();
 
-        reqtData["agent"] = reqAgent;
-        reqtData["platform"] = reqPlatform;
-        reqtData["username"] = ui->nickEdit->text();
-        reqtData["password"] = ui->passEdit->text();
-        reqtData["clientToken"] = settings->makeMinecraftUuid();
+        payload["agent"] = agent;
+        payload["platform"] = platform;
+        payload["username"] = ui->nickEdit->text();
+        payload["password"] = ui->passEdit->text();
+        payload["clientToken"] = settings->makeMinecraftUuid();
 
-        jsonRequest.setObject(reqtData);
-
-        QByteArray postdata;
-        postdata.append(jsonRequest.toJson());
-
-        loginRequest.setUrl(Settings::authUrl);
-        loginRequest.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-        loginRequest.setHeader(QNetworkRequest::ContentLengthHeader, postdata.size());
+        QJsonDocument jsonRequest(payload);
 
         logger->append(this->objectName(), "Making login request...\n");
-        QNetworkReply *loginReply = manager->post(loginRequest, postdata);
-        QEventLoop loop;
-        connect(loginReply, SIGNAL(finished()), &loop, SLOT(quit()));
-        loop.exec();
+        Reply loginReply = Util::makePost(Settings::authUrl, jsonRequest.toJson());
 
-        // Check for connection error
-        if (loginReply->error() == QNetworkReply::NoError) {
+        if (!loginReply.isOK()) {
 
-            QByteArray rawLoginReply = loginReply->readAll();
+            QMessageBox::critical(this, "У нас проблема :(", "Упс... Вот ведь незадача...\n"
+                                  + loginReply.getErrorString());
+            logger->append(this->objectName(), "Error: " + loginReply.getErrorString() + "\n");
+
+        } else { // Successful login request
+
             QJsonParseError error;
-            QJsonDocument jsonLoginReply = QJsonDocument::fromJson(rawLoginReply, &error);
+            QJsonDocument jsonLoginReply = QJsonDocument::fromJson(loginReply.reply(), &error);
 
-            // Check for incorrect JSON
-            if (error.error == QJsonParseError::NoError) {
+            if (!(error.error == QJsonParseError::NoError)) {
 
-                QJsonObject replyData = jsonLoginReply.object();
+                QMessageBox::critical(this, "У нас проблема :(", "При попытке логина сервер овтетил ерунду...\n\n"
+                                      + error.errorString() + " в позиции " + QString::number(error.offset));
+                logger->append(this->objectName(), "JSON parse error: " + error.errorString()
+                               + " в поз. "  + QString::number(error.offset) + "\n");
 
-                // Check for error in server answer
-                if (replyData["error"].toString() != "") {
-                    // Error in answer handler
-                    QString cause = replyData["cause"].toString();
-                    if (cause != "") cause = "\n\n Причина: " + cause;
-                    QMessageBox::critical(this, "У нас проблема :(",
-                                          replyData["errorMessage"].toString()
-                                          + cause);
-                    logger->append(this->objectName(), "Error: "
-                                   + replyData["errorMessage"].toString() + "\n");
-                } else {
+            } else { // Correct login request
 
-                    // Correct login, run game in online-mode
+                QJsonObject loginReplyData = jsonLoginReply.object();
+
+                if (!loginReplyData["error"].isNull()) {
+
+                    QMessageBox::critical(this, "У нас проблема :(", loginReplyData["errorMessage"].toString());
+                    logger->append(this->objectName(), "Error: " + loginReplyData["errorMessage"].toString() + "\n");
+
+                } else { // No "error" field in responce
+
+                    // Prepare to run game in online-mode
                     logger->append(this->objectName(), "OK\n");
 
-                    QString uuid = replyData["clientToken"].toString();
-                    QString acessToken = replyData["accessToken"].toString();
+                    QString uuid = loginReplyData["clientToken"].toString();
+                    QString acessToken = loginReplyData["accessToken"].toString();
                     QString gameVersion = settings->loadClientVersion();
 
                     // Switch from "latest" to real version
                     bool run = true;
-
                     if (gameVersion == "latest") {
+
                         logger->append(this->objectName(), "Looking for 'latest' version on update server...\n");
+                        Reply versionReply = Util::makeGet("https://s3.amazonaws.com/Minecraft.Download/versions/versions.json");
 
-                        QNetworkRequest versionRequest;
-                        versionRequest.setUrl(QUrl("https://s3.amazonaws.com/Minecraft.Download/versions/versions.json"));
+                        if (!versionReply.isOK()) {
 
-                        QNetworkReply *versionReply = manager->get(versionRequest);
-                        QEventLoop loop;
-                        connect(versionReply, SIGNAL(finished()), &loop, SLOT(quit()));
-                        loop.exec();
+                            QMessageBox::critical(this, "У нас проблема :(", "Не удалось определить версию для запуска!\n"
+                                                  + versionReply.getErrorString());
+                            logger->append(this->objectName(), "Error: " + versionReply.getErrorString() + "\n");
+                            run = false;
 
-                        if (versionReply->error() == QNetworkReply::NoError) {
+                        } else { // Successful version request
 
-                            QByteArray rawVersionReply = versionReply->readAll();
                             QJsonParseError error;
-                            QJsonDocument jsonVersionReply = QJsonDocument::fromJson(rawVersionReply, &error);
+                            QJsonDocument jsonVersionReply = QJsonDocument::fromJson(versionReply.reply(), &error);
 
-                            // Check for incorrect JSON
-                            if (error.error == QJsonParseError::NoError) {
+                            if (!(error.error == QJsonParseError::NoError)) {
 
-                                QJsonObject latest = jsonVersionReply.object()["latest"].toObject();
-                                gameVersion = latest["release"].toString();
-                                logger->append(this->objectName(), "Game version is " + gameVersion + "\n");
-
-                                if (gameVersion == "") {
-                                    run = false;
-                                    logger->append(this->objectName(), "Error: emty game version\n");
-                                }
-
-
-                            } else {
-                                QMessageBox::critical(this, "У нас проблема :(",
-                                                      "Не удалось понять что же нужно запустить...\n"
+                                QMessageBox::critical(this, "У нас проблема :(", "Не удалось понять что же нужно запустить...\n"
                                                       + error.errorString() + " в поз. "  + QString::number(error.offset));
                                 logger->append(this->objectName(), "JSON parse error: " + error.errorString()
                                                + " в поз. "  + QString::number(error.offset) + "\n");
                                 run = false;
+
+                            } else { // Correct version reply
+
+                                QJsonObject latest = jsonVersionReply.object()["latest"].toObject();
+                                if (latest["release"].isNull()) {
+
+                                    run = false;
+                                    QMessageBox::critical(this, "У нас проблема :(", "Не удалось определить версию для запуска!\n");
+                                    logger->append(this->objectName(), "Error: empty game version\n");
+
+                                } else {
+
+                                    gameVersion = latest["release"].toString();
+                                    logger->append(this->objectName(), "Game version is " + gameVersion + "\n");
+
+                                }
                             }
-
-                        } else {
-                            QMessageBox::critical(this, "У нас проблема :(",
-                                                  "Не удалось определить версию для запуска!\n"
-                                                  + versionReply->errorString());
-                            logger->append(this->objectName(), "Error: " + versionReply->errorString() + "\n");
-                            run = false;
                         }
-
                     }
 
                     if (run) runGame(uuid, acessToken, gameVersion);
-
                 }
-
-            } else {
-                // JSON parse error
-                QMessageBox::critical(this, "У нас проблема :(",
-                                      "Упс... При попытке логина сервер овтетил ерунду...\n\n" +
-                                      error.errorString() +
-                                      " в позиции " + QString::number(error.offset));
-                logger->append(this->objectName(), "JSON parse error: " + error.errorString()
-                               + " в поз. "  + QString::number(error.offset) + "\n");
             }
-
-
-        } else {
-            // Connection error
-            if (loginReply->error() == QNetworkReply::AuthenticationRequiredError) {
-                QMessageBox::critical(this, "У нас проблема!",
-                                      "Ошибка авторизации.\nНеправильный логин или пароль\n\t...или они оба неправильные :(");
-                logger->append(this->objectName(), "Error: bad login\n");
-            } else {
-                QMessageBox::critical(this, "У нас проблема :(",
-                                      "Упс... Вот ведь незадача...\n\n" +
-                                      loginReply->errorString());
-                logger->append(this->objectName(), "Error: " + loginReply->errorString() + "\n");
-            }
-
         }
 
-        delete manager;
+    } else { // Offline mode
 
-    } else {
-
-        // Run game in offline mode
         logger->append(this->objectName(), "Offline mode is selected\n");
 
         QString uuid = "HARD";
@@ -439,12 +396,28 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
 
     QFile* versionFile = new QFile(settings->getVersionsDir() + "/" + gameVersion + "/" + gameVersion + ".json");
 
-    if (versionFile->open(QIODevice::ReadOnly)) {
+    if (!versionFile->open(QIODevice::ReadOnly)) {
+
+        QMessageBox::critical(this, "У нас проблема :(", "Не удалось открыть конфигурационный файл!");
+        logger->append(this->objectName(), "Error: can't open version file\n");
+        delete versionFile;
+        return;
+
+    } else { // Version file opened
 
         QJsonParseError error;
         QJsonDocument versionJson = QJsonDocument::fromJson(versionFile->readAll(), &error);
 
-        if (error.error == QJsonParseError::NoError) {
+        if (!(error.error == QJsonParseError::NoError)) {
+
+            QMessageBox::critical(this, "У нас проблема :(", "Зело непонятный конфигурационный файл...\n"
+                                  + error.errorString() + "  поз. " + QString::number(error.offset));
+            logger->append(this->objectName(), "JSON parse error: " + error.errorString() + " в поз. "
+                           + QString::number(error.offset) + "\n");
+            delete versionFile;
+            return;
+
+        } else { // Correct version file
 
             QJsonArray libraries = versionJson.object()["libraries"].toArray();
             for (QJsonArray::iterator libit = libraries.begin(), end = libraries.end(); libit != end; ++libit) {
@@ -461,14 +434,15 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
                         + "/" + entry.at(1) + "-" + entry.at(2);  // + name-version
 
                 if (library["natives"].isNull()) {
+
                     libSuffix += ".jar:";
                     classpath += settings->getLibsDir() + "/" + libSuffix;
 
                 } else {
+
                     if (!library["natives"].toObject()[settings->getOsName()].isNull()) {
                         libSuffix += "-natives-" + settings->getOsName() + ".jar";
-                        Util::unzipArchive(settings->getLibsDir() + "/" + libSuffix,
-                                      settings->getNativesDir());
+                        Util::unzipArchive(settings->getLibsDir() + "/" + libSuffix, settings->getNativesDir());
                     }
                 }
 
@@ -480,39 +454,48 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
 
             // Setup mainClass
             if (versionJson.object()["mainClass"].isNull()) {
-                QMessageBox::critical(this, "У нас проблема :(",
-                                      "Вот беда. В конфигурационном файле не указан mainClass.");
+
+                QMessageBox::critical(this, "У нас проблема :(", "Вот беда. В конфигурационном файле не указан mainClass.");
                 logger->append(this->objectName(), "Error: can't read mainClass\n");
                 return;
+
             } else {
+
                 mainClass = versionJson.object()["mainClass"].toString();
+
             }
 
             // Read assets index
             QString assetsIndex;
             if (versionJson.object()["assets"].isNull()) {
-                QMessageBox::critical(this, "У нас проблема !!!",
-                                      "Аааа! В конфигурационном файле не указаны ассеты!");
+
+                QMessageBox::critical(this, "У нас проблема !!!",  "Аааа! В конфигурационном файле не указаны ассеты!");
                 logger->append(this->objectName(), "Error: can't read assets index name\n");
                 return;
-            } else {
-                assetsIndex = versionJson.object()["assets"].toString();
-            }
 
+            } else {
+
+                assetsIndex = versionJson.object()["assets"].toString();
+
+            }
 
             // Setup aruments
             if (versionJson.object()["minecraftArguments"].isNull()) {
-                QMessageBox::critical(this, "У нас проблема :(",
-                                      "В конфигурационном файле не указаны аргументы запуска.");
+
+                QMessageBox::critical(this, "У нас проблема :(", "В конфигурационном файле не указаны аргументы запуска.");
                 logger->append(this->objectName(), "Error: can't read minecraft arguments\n");
                 return;
+
             } else {
+
                 minecraftArguments = versionJson.object()["minecraftArguments"].toString();
+
             }
 
             // Crazy way, but this must work
             QStringList mcArgList;
             foreach (QString mcArg, minecraftArguments.split(" ")) {
+
                 mcArg.replace("${auth_player_name}",  settings->loadLogin());
                 mcArg.replace("${version_name}",      gameVersion);
                 mcArg.replace("${game_directory}",    settings->getClientDir());
@@ -556,6 +539,7 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
             minecraft->start(java, argList);
 
             if (!minecraft->waitForStarted()) {
+
                 switch(minecraft->error()) {
                 case QProcess::FailedToStart:
                     QMessageBox::critical(this, "Проблема!",
@@ -608,7 +592,7 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
                     break;
                 }
 
-            } else {
+            } else { // Game successful started
 
                 this->hide();
                 while (minecraft->state() == QProcess::Running) {
@@ -619,37 +603,22 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
 
                 logger->append(this->objectName(), "Game process finished!\n");
                 if (minecraft->exitCode() != 0) {
-                    this->show();
-                    QMessageBox::critical(this, "Ну вот!",
-                                          "Кажется игра некорректно завершилась, посмотрите лог-файл.\n");
-                    logger->append(this->objectName(), "Error: not null exit code: "
-                                   + QString::number(minecraft->exitCode()) + "\n");
-                } else {
-                    this->close();
-                }
 
+                    this->show();
+                    QMessageBox::critical(this, "Ну вот!",  "Кажется игра некорректно завершилась, посмотрите лог-файл.\n");
+                    logger->append(this->objectName(), "Error: not null exit code: " + QString::number(minecraft->exitCode()) + "\n");
+
+                } else {
+
+                    this->close();
+
+                }
             }
 
             delete minecraft;
-
-
-        } else {
-            QMessageBox::critical(this, "У нас проблема :(",
-                                  "Зело непонятный конфигурационный файл...\n"
-                                  + error.errorString() + "  поз. " + QString::number(error.offset));
-            logger->append(this->objectName(), "JSON parse error: " + error.errorString()
-                           + " в поз. "  + QString::number(error.offset) + "\n");
-            delete versionFile;
-            return;
         }
 
         versionFile->close();
-    } else {
-        QMessageBox::critical(this, "У нас проблема :(",
-                              "Не удалось открыть конфигурационный файл!");
-        logger->append(this->objectName(), "Error: can't open version file\n");
-        delete versionFile;
-        return;
     }
 
     delete versionFile;
