@@ -22,7 +22,9 @@ SOURCES += main.cpp\
     feedbackdialog.cpp \
     aboutdialog.cpp \
     settings.cpp \
-    logger.cpp
+    logger.cpp \
+    serverreply.cpp \
+    util.cpp
 
 HEADERS  += launcherwindow.h \
     passworddialog.h \
@@ -32,7 +34,9 @@ HEADERS  += launcherwindow.h \
     feedbackdialog.h \
     aboutdialog.h \
     settings.h \
-    logger.h
+    logger.h \
+    util.h \
+    serverreply.h
 
 FORMS    += launcherwindow.ui \
     passworddialog.ui \

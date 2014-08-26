@@ -9,6 +9,7 @@
 #include "aboutdialog.h"
 
 #include "settings.h"
+#include "util.h"
 
 #include <QCloseEvent>
 #include <QMessageBox>
@@ -21,9 +22,6 @@
 #include <QDebug>
 #include <QJsonObject>
 #include <QFileInfo>
-
-#include <quazip/quazip.h>
-#include <quazip/quazipfile.h>
 
 LauncherWindow::LauncherWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -409,7 +407,7 @@ void LauncherWindow::playButtonClicked() {
 
 void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersion) {
 
-    logger->append(this->objectName(), "Preparing to run game...\n");
+    logger->append(this->objectName(), "Preparing game to run...\n");
 
     QString java, libpath, classpath,
             mainClass, minecraftArguments;
@@ -424,7 +422,7 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
     // Prepare library path
     logger->append(this->objectName(), "Prepare natives directory...\n");
     libpath = settings->getNativesDir();
-    recursiveDelete(libpath);
+    Util::removeAll(libpath);
 
     QDir libsDir = QDir(libpath);
     libsDir.mkpath(libpath);
@@ -469,7 +467,7 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
                 } else {
                     if (!library["natives"].toObject()[settings->getOsName()].isNull()) {
                         libSuffix += "-natives-" + settings->getOsName() + ".jar";
-                        unzipAllFiles(settings->getLibsDir() + "/" + libSuffix,
+                        Util::unzipArchive(settings->getLibsDir() + "/" + libSuffix,
                                       settings->getNativesDir());
                     }
                 }
@@ -657,60 +655,6 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
     delete versionFile;
 
 }
-
-void LauncherWindow::recursiveDelete(QString filePath) {
-    QFileInfo fileInfo = QFileInfo(filePath);
-
-    if (fileInfo.isDir()) {
-        QStringList lstFiles = QDir(filePath).entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
-        if (!lstFiles.isEmpty()) {
-            foreach (QString entry, lstFiles)
-                recursiveDelete(filePath + "/" + entry);
-        }
-        QDir(filePath).rmdir(fileInfo.absoluteFilePath());
-
-    } else if (fileInfo.exists()) {
-        QFile::remove(filePath);
-    }
-}
-
-void LauncherWindow::unzipAllFiles(QString zipFilePath, QString extractionPath) {
-
-    // Open ZIP
-    QuaZip zip(zipFilePath);
-    if (zip.open(QuaZip::mdUnzip)) {
-
-        QuaZipFile zipFile(&zip);
-
-        for (bool f=zip.goToFirstFile(); f; f=zip.goToNextFile()) {
-            zipFile.open(QIODevice::ReadOnly);
-
-            QFile* realFile = new QFile(extractionPath + "/" + zip.getCurrentFileName());
-
-            QFileInfo rfInfo = QFileInfo(*realFile);
-
-            QDir rfDir = rfInfo.absoluteDir();
-            rfDir.mkpath(rfDir.absolutePath());
-
-            if (!rfInfo.isDir()) {
-                logger->append(this->objectName(), "Unzip: " + realFile->fileName() + "\n");
-                if (realFile->open(QIODevice::WriteOnly)) {
-                    realFile->write(zipFile.readAll());
-                    realFile->close();
-                } else {
-                    logger->append(this->objectName(), "Unzip error: " + realFile->errorString() + "\n");
-                }
-            }
-
-            delete realFile;
-            zipFile.close();
-        }
-        zip.close();
-    }
-
-}
-
-
 
 LauncherWindow::~LauncherWindow()
 {
