@@ -83,16 +83,19 @@ void SettingsDialog::makeVersionList(QNetworkReply* reply) {
 
             } else {
                 // Correct login
-                ui->stateEdit->setText("Список версий с сервера обновлений");
                 logger->append("SettingsDialog", "List downloaded\n");
 
+                // Make remote version list
                 QJsonArray versions = responce["versions"].toArray();
-                QJsonObject version;
-                for (QJsonArray::iterator it = versions.begin(), end = versions.end(); it != end; ++it) {
-                    version = (*it).toObject();
+
+                foreach (QJsonValue value, versions) {
+                    QJsonObject version = value.toObject();
                     if (version["type"].toString() == "release")
                         ui->versionCombo->addItem(version["id"].toString(), version["id"].toString());
                 }
+
+                // Make additional local version list
+                appendVersionList("Список версий с сервера обновлений");
 
                 if (ui->versionCombo->count() > 1) {
                     QString strVerId = settings->loadClientVersion();
@@ -109,30 +112,32 @@ void SettingsDialog::makeVersionList(QNetworkReply* reply) {
         } else {
             // JSON parse error
             logger->append("SettingsDialog", "JSON parse error!\n");
-            makeLocalVersionList("Локальные версии (ошибка обмена с севрером)");
+            appendVersionList("Локальные версии (ошибка обмена с севрером)");
         }
 
 
     } else {
         // Connection error
         logger->append("SettingsDialog", "Connection error!\n");
-        makeLocalVersionList("Локальные версии (сервер недоступен)");
+        appendVersionList("Локальные версии (сервер недоступен)");
     }
 
 }
 
-void SettingsDialog::makeLocalVersionList(QString reason) {
-    logger->append("SettingsDialog", "Making local version list...\n");
+void SettingsDialog::appendVersionList(QString reason) {
+    logger->append("SettingsDialog", "Append local version list...\n");
     ui->stateEdit->setText(reason);
 
     QString prefix = settings->getClientDir() + "/versions";
     QDir verdir = QDir(prefix);
-    QStringList subdirs = verdir.entryList();
-    for (QStringList::iterator nameit = subdirs.begin(), end = subdirs.end(); nameit != end; ++nameit) {
-        QString ver = (*nameit);
+    QStringList subdirs = verdir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+    foreach (QString ver, subdirs) {
         QFile* file = new QFile(prefix + "/" + ver + "/" + ver + ".json");
         if (file->exists()) {
-            ui->versionCombo->addItem(ver, ver);
+            // Add to version list unique local versions
+            if (ui->versionCombo->findData(ver) == -1) {
+                ui->versionCombo->addItem(ver + " (локальная версия)", ver);
+            }
         }
         delete file;
     }

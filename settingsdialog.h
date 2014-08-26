@@ -27,7 +27,7 @@ private:
     Settings* settings;
     Logger* logger;
 
-    void makeLocalVersionList(QString reason);
+    void appendVersionList(QString reason);
 
 
 private slots:
