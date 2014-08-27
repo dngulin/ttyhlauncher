@@ -1,12 +1,13 @@
 #include "skinuploaddialog.h"
 #include "ui_skinuploaddialog.h"
 
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
+
+#include "settings.h"
+#include "util.h"
+#include "reply.h"
+
 #include <QJsonDocument>
-#include <QJsonObject>
 #include <QFile>
-#include <QIODevice>
 #include <QFileDialog>
 
 #include "settings.h"
@@ -52,51 +53,37 @@ void SkinUploadDialog::uploadSkin() {
 
     ui->sendButton->setEnabled(false);
 
-    QNetworkAccessManager* manager = new QNetworkAccessManager(this);
-
     // Make JSON login request
-    QJsonDocument data;
-    QJsonObject login;
-    QNetworkRequest request;
+    QJsonObject payload;
+    payload["username"] = ui->nickEdit->text();
+    payload["password"] = ui->passEdit->text();
 
-    login["username"] = ui->nickEdit->text();
-    login["password"] = ui->passEdit->text();
+    QByteArray skin(skinfile->readAll());
+    payload["skinData"] = QString(skin.toBase64());
 
-    QByteArray skin;
-    skin.append(skinfile->readAll());
-    login["skinData"] = QString(skin.toBase64());
-
-    data.setObject(login);
-
-    QByteArray postdata;
-    postdata.append(data.toJson());
-
-    request.setUrl(Settings::skinUploadUrl);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-    request.setHeader(QNetworkRequest::ContentLengthHeader, postdata.size());
+    QJsonDocument jsonRequest(payload);
 
     logger->append("SkinUploadDialog", "Making request...\n");
-    QNetworkReply *reply = manager->post(request, postdata);
-    QEventLoop loop;
-    connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
-    loop.exec();
+    Reply serverReply = Util::makePost(Settings::skinUploadUrl, jsonRequest.toJson());
 
-    // Check for connection error
-    if (reply->error() == QNetworkReply::NoError) {
+    if (!serverReply.isOK()) {
+
+        ui->messageLabel->setText("Ошибка: " + serverReply.getErrorString());
+        logger->append("SkinUploadDialog", "Error: " + serverReply.getErrorString() + "\n");
+
+    } else {
+
         logger->append("SkinUploadDialog", "OK\n");
-
-        QByteArray rawResponce = reply->readAll();
         QJsonParseError error;
-        QJsonDocument json = QJsonDocument::fromJson(rawResponce, &error);
+        QJsonDocument json = QJsonDocument::fromJson(serverReply.reply(), &error);
 
         // Check for incorrect JSON
         if (error.error == QJsonParseError::NoError) {
 
             QJsonObject responce = json.object();
 
-            // Check for error in server answer
             if (!responce["error"].isNull()) {
-                // Error in answer handler
+
                 ui->messageLabel->setText("Ошибка: " + responce["error"].toString());
                 logger->append("SkinUploadDialog", "Error: " + responce["error"].toString() + "\n");
 
@@ -111,20 +98,7 @@ void SkinUploadDialog::uploadSkin() {
             ui->messageLabel->setText("Ошибка: сервер ответил ерунду...");
             logger->append("SkinUploadDialog", "JSON parse error\n");
         }
-
-    } else {
-        // Connection error
-        if (reply->error() == QNetworkReply::AuthenticationRequiredError) {
-            ui->messageLabel->setText("Ошибка: неправильный логин или пароль!");
-            logger->append("SkinUploadDialog", "Error: bad login\n");
-        } else {
-            ui->messageLabel->setText("Ошибка: " + reply->errorString());
-            logger->append("SkinUploadDialog", "Error: " + reply->errorString() + "\n");
-        }
-
     }
-
-   delete manager;
 
     ui->sendButton->setEnabled(true);
 }
