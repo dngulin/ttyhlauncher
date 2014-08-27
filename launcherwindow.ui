@@ -71,7 +71,7 @@
          </spacer>
         </item>
         <item>
-         <layout class="QGridLayout" name="formLayout">
+         <layout class="QGridLayout" name="loginForm">
           <property name="verticalSpacing">
            <number>4</number>
           </property>

@@ -190,6 +190,10 @@ void LauncherWindow::playButtonClicked() {
     logger->append(this->objectName(), "Client id: "
                    + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
 
+    ui->nickEdit->setEnabled(false);
+    ui->passEdit->setEnabled(false);
+    ui->clientCombo->setEnabled(false);
+    ui->savePassword->setEnabled(false);
     ui->playButton->setEnabled(false);
 
     if (!ui->playOffline->isChecked()) {
@@ -359,6 +363,10 @@ void LauncherWindow::playButtonClicked() {
 
     }
 
+    ui->nickEdit->setEnabled(true);
+    ui->passEdit->setEnabled(true);
+    ui->clientCombo->setEnabled(true);
+    ui->savePassword->setEnabled(true);
     ui->playButton->setEnabled(true);
 }
 
