@@ -99,6 +99,7 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
 void LauncherWindow::closeEvent (QCloseEvent* event) {
     logger->append(this->objectName(), "Launcher window closed\n");
     storeParameters();
+    event->accept();
 }
 
 // Run this method on close window and run game
@@ -190,11 +191,7 @@ void LauncherWindow::playButtonClicked() {
     logger->append(this->objectName(), "Client id: "
                    + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
 
-    ui->nickEdit->setEnabled(false);
-    ui->passEdit->setEnabled(false);
-    ui->clientCombo->setEnabled(false);
-    ui->savePassword->setEnabled(false);
-    ui->playButton->setEnabled(false);
+    ui->centralWidget->setEnabled(false);
 
     if (!ui->playOffline->isChecked()) {
         logger->append(this->objectName(), "Online mode is selected\n");
@@ -363,11 +360,7 @@ void LauncherWindow::playButtonClicked() {
 
     }
 
-    ui->nickEdit->setEnabled(true);
-    ui->passEdit->setEnabled(true);
-    ui->clientCombo->setEnabled(true);
-    ui->savePassword->setEnabled(true);
-    ui->playButton->setEnabled(true);
+    ui->centralWidget->setEnabled(true);
 }
 
 void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersion) {
@@ -602,6 +595,7 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
 
                 logger->append(this->objectName(), "Main window hidden\n");
                 this->hide();
+
                 while (minecraft->state() == QProcess::Running) {
                     if (minecraft->waitForReadyRead()) {
                         logger->append("Client", minecraft->readAll());
