@@ -50,7 +50,7 @@ void SettingsDialog::loadVersionList() {
 
     ui->versionCombo->setEnabled(false);
     ui->versionCombo->clear();
-    ui->versionCombo->addItem("Последняя доступня версия", "latest");
+    ui->versionCombo->addItem("Последняя доступная версия", "latest");
 
     QNetworkRequest request;
     // FIXME: in release url depended at activeClient value
