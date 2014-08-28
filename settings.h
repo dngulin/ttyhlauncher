@@ -4,6 +4,8 @@
 #include <QtCore>
 #include <QObject>
 
+#include "logger.h"
+
 class Settings : public QObject
 {
     Q_OBJECT
@@ -15,10 +17,6 @@ public:
     static const QString skinUploadUrl;
     static const QString feedbackUrl;
 
-    static const QString getVersionsUrl;
-    static const QString getFilelistUrl;
-    static const QString updateUrl;
-
     static const QString launcherVerion;
 
 
@@ -29,20 +27,30 @@ private:
     Settings();
     QSettings* settings;
 
-    QStringList* clientStrIDs;
-    QStringList* clientNames;    
+    QStringList clientStrIDs;
+    QStringList clientNames;
     void appendClient(QString strid, QString name);
 
     QString dataPath;
+    QString updateServer;
 
 public:
+    // Update URLs
+    QString getVersionsUrl();
+    QString getVersionUrl(QString version);
+    QString getLibsUrl();
+    QString getAssetsUrl();
+
     // Clients
+    void loadClientList();
+
     QStringList getClientsNames();
     int getClientId(QString name);
     int strIDtoID(QString strid);
     QString getClientStrId(int id);
     QString getClientName(int id);
 
+    // Directories
     QString getBaseDir();
     QString getClientDir();
     QString getAssetsDir();
@@ -56,10 +64,6 @@ public:
     QString loadPassword();
     void savePassword(QString password);
     int loadActiveClientId();
-
-    // News
-    QString loadNewsSource();
-    void saveNewsSource(QString id);
 
     // Window parameters
     QRect loadWindowGeometry();

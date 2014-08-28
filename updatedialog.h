@@ -2,9 +2,10 @@
 #define UPDATEDIALOG_H
 
 #include <QDialog>
-#include <QNetworkAccessManager>
 
 #include "settings.h"
+#include "logger.h"
+#include "downloadmanager.h"
 
 namespace Ui {
 class UpdateDialog;
@@ -21,39 +22,27 @@ public:
 private:
     Ui::UpdateDialog *ui;
     Settings* settings;
+    Logger* logger;
+    DownloadManager* dm;
 
-    QString latestver;
-    QString assets;
+    bool updateState;
 
-    QNetworkAccessManager* downloadNam;
-    QNetworkReply* downloadReply;
-    QVector<QUrl> downloadUrls;
-    QVector<QString> downloadNames;
-
-    quint64 downloadSize;
-    quint64 downloadedSize;
-
-    bool isLatestVersionKnown(QNetworkReply* reply);
-
-    bool checkVersionFiles();
-    bool checkLibs();
-    bool checkAssets();
-    bool checkMods();
-    void checksResult(bool allGood);
-
-    bool downloadNow(QUrl url, QString fileName);
-
-    void addTarget(QUrl url, QString fileName);
-    void addAssetTarget(QUrl url, QString fileName, QString resName, int size);
-
-    void append(QString text);
+    bool downloadIfNotExists(QString url, QString fileName);
+    bool addToQueryIfNeed(QString url,
+                          QString fileName,
+                          QString displayName,
+                          QString checkSumm,
+                          quint64 size);
 
 private slots:
     void clientChanged();
+
+    void doCheck();
     void doUpdate();
 
-    void progress(qint64 bytesReceived, qint64 bytesTotal);
-    void downloadFinished();
+    void downloadStarted(QString displayName);
+    void error(QString errorString);
+    void downloadsFinished();
 
 };
 

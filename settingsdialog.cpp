@@ -30,7 +30,17 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     connect(ui->clientCombo, SIGNAL(activated(int)), settings, SLOT(saveActiveClientId(int)));
     connect(ui->clientCombo, SIGNAL(activated(int)), this, SLOT(loadSettings()));
     connect(ui->clientCombo, SIGNAL(activated(int)), this, SLOT(loadVersionList()));
-    emit ui->clientCombo->activated(ui->clientCombo->currentIndex());
+
+    if (ui->clientCombo->count() == 0) {
+        ui->saveButton->setEnabled(false);
+        ui->opendirButton->setEnabled(false);
+
+        logger->append("SettingsDialog", "Error: empty client list!\n");
+        ui->stateEdit->setText("Не удалось получить список клиентов");
+    } else {
+        emit ui->clientCombo->activated(ui->clientCombo->currentIndex());
+    }
+
 
     connect(ui->javapathButton, SIGNAL(clicked()), this, SLOT(openFileDialog()));
     connect(ui->saveButton, SIGNAL(clicked()), this, SLOT(saveSettings()));
@@ -54,8 +64,9 @@ void SettingsDialog::loadVersionList() {
 
     QNetworkRequest request;
     // FIXME: in release url depended at activeClient value
-    request.setUrl(QUrl("https://s3.amazonaws.com/Minecraft.Download/versions/versions.json"));
+    request.setUrl(QUrl(settings->getVersionsUrl()));
     logger->append("SettingsDialog", "Making version list request...\n");
+    logger->append("SettingsDialog", "URL: " + settings->getVersionsUrl() +"\n");
     nam->get(request);
 }
 
@@ -107,7 +118,7 @@ void SettingsDialog::makeVersionList(QNetworkReply* reply) {
 
     } else {
         // Connection error
-        logger->append("SettingsDialog", "Connection error!\n");
+        logger->append("SettingsDialog", "Error: " + reply->errorString() +"\n");
         appendVersionList("Локальные версии (сервер недоступен)");
     }
 

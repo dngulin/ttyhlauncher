@@ -73,7 +73,7 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     // Setup client combobox
     ui->clientCombo->addItems(settings->getClientsNames());
     ui->clientCombo->setCurrentIndex(settings->loadActiveClientId());
-    connect(ui->clientCombo, SIGNAL(activated(int)), settings, SLOT(saveActiveClientId(int)));
+    connect(ui->clientCombo, SIGNAL(activated(int)), settings, SLOT(saveActiveClientId(int)));        
 
     // Setup news set
     ui->ttyhNews->setChecked(true);
@@ -93,6 +93,12 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     connect(ui->playButton, SIGNAL(clicked()), this, SLOT(playButtonClicked()));
 
     logger->append(this->objectName(), "Launcher window opened\n");
+
+    if (ui->clientCombo->count() == 0) {
+        this->show(); // hack to show window before error message
+        ui->playButton->setEnabled(false);
+        QMessageBox::critical(this, "Беда-беда!",  "Не удалось получить список клиентов\nМы все умрём.\n");
+    }
 
 }
 
@@ -258,7 +264,7 @@ void LauncherWindow::playButtonClicked() {
                     if (gameVersion == "latest") {
 
                         logger->append(this->objectName(), "Looking for 'latest' version on update server...\n");
-                        Reply versionReply = Util::makeGet("https://s3.amazonaws.com/Minecraft.Download/versions/versions.json");
+                        Reply versionReply = Util::makeGet(settings->getVersionsUrl());
 
                         if (!versionReply.isOK()) {
 
@@ -435,7 +441,9 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
 
                 if (library["natives"].isNull()) {
 
-                    libSuffix += ".jar:";
+                    if (settings->getOsName() == "windows") libSuffix += ".jar;";
+                    else libSuffix += ".jar:";
+
                     classpath += settings->getLibsDir() + "/" + libSuffix;
 
                 } else {
@@ -536,6 +544,7 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
             logger->append(this->objectName(), "Try to launch game...\n");
             QProcess* minecraft = new QProcess(this);
             minecraft->setProcessChannelMode(QProcess::MergedChannels);
+            minecraft->setWorkingDirectory(settings->getClientDir());
             minecraft->start(java, argList);
 
             if (!minecraft->waitForStarted()) {

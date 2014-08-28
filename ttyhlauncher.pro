@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     settings.cpp \
     logger.cpp \
     util.cpp \
-    reply.cpp
+    reply.cpp \
+    downloadmanager.cpp
 
 HEADERS  += launcherwindow.h \
     passworddialog.h \
@@ -36,7 +37,8 @@ HEADERS  += launcherwindow.h \
     settings.h \
     logger.h \
     util.h \
-    reply.h
+    reply.h \
+    downloadmanager.h
 
 FORMS    += launcherwindow.ui \
     passworddialog.ui \

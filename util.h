@@ -8,6 +8,7 @@ namespace Util {
 
 Reply makeGet(QString url);
 Reply makePost(QString url, QByteArray postData);
+quint64 getFileSize(QString url);
 
 void removeAll(QString filePath);
 

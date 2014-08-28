@@ -2,8 +2,10 @@
 #include <QObject>
 #include <QStandardPaths>
 #include <QSysInfo>
+#include <QMessageBox>
 
 #include "settings.h"
+#include "util.h"
 
 /*
  * Versions feature plan:
@@ -23,11 +25,6 @@ const QString Settings::changePasswrdUrl = "http://master.ttyh.ru/index.php?act=
 const QString Settings::skinUploadUrl    = "http://master.ttyh.ru/index.php?act=setskin";
 const QString Settings::feedbackUrl      = "http://master.ttyh.ru/index.php?act=feedback";
 
-// Update server links
-const QString Settings::getVersionsUrl   = "http://update.ttyh.ru/index.php?act=versions"; // + &client=<client_id>
-const QString Settings::getFilelistUrl   = "http://update.ttyh.ru/index.php?act=filelist"; // + &client=<client_id>&version=<version_id>
-const QString Settings::updateUrl        = "http://update.ttyh.ru/data/"; // + <client_id>/<version_id>/<file_name>
-
 Settings* Settings::myInstance = 0;
 Settings* Settings::instance() {
     if (myInstance == 0) myInstance = new Settings();
@@ -37,30 +34,109 @@ Settings* Settings::instance() {
 Settings::Settings() : QObject()
 {
     dataPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+    updateServer = "http://betrok.net/ttyhstore";
 
     QString setPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
     settings = new QSettings(setPath + "/ttyhlauncher/config.ini", QSettings::IniFormat);
 
-    clientStrIDs = new QStringList();
-    clientNames = new QStringList();
+}
 
-    appendClient("classic", "Классический клиент");
-    appendClient("industrial", "Индустриальный клиент");
+void Settings::loadClientList() {
+
+    Logger* logger = Logger::logger();
+
+    QFile* prefixesFile = new QFile(dataPath + "/prefixes.json");
+
+    logger->append("Settings", "Loading newest clisent list...\n");
+    Reply prefixesReply = Util::makeGet(updateServer + "/prefixes.json");
+
+    if (prefixesReply.isOK()) {
+
+        logger->append("Settings", "OK. Saving local copy...\n");
+        if (prefixesFile->open(QIODevice::WriteOnly)) {
+            prefixesFile->write(prefixesReply.reply());
+            prefixesFile->close();
+
+        } else {
+            logger->append("Settings", "Error: save list: " + prefixesFile->errorString() + "\n");
+        }
+
+    } else {
+        logger->append("Settings", "Error: " + prefixesReply.getErrorString() + "\n");
+    }
+
+    if (prefixesFile->open(QIODevice::ReadOnly)) {
+
+        QJsonParseError error;
+        QJsonDocument json = QJsonDocument::fromJson(prefixesReply.reply(), &error);
+
+        if (error.error == QJsonParseError::NoError) {
+
+            logger->append("Settings", "Loading local client list...\n");
+
+            QJsonObject clients = json.object()["prefixes"].toObject();
+            foreach (QString key, clients.keys()) {
+                QJsonObject client = clients[key].toObject();
+                if (client["type"] == "public") {
+                    appendClient(key, client["about"].toString());
+                    logger->append("Settings", "Add client: " + key + "\n");
+                }
+            }
+
+        } else {
+            logger->append("Settings", "JSON parse error!\n");
+        }
+
+        prefixesFile->close();
+
+    } else {
+        logger->append("Settings", "Error: open list: " + prefixesFile->errorString() + "\n");
+    }
+
+    delete prefixesFile;
+
 }
 
 void Settings::appendClient(QString strid, QString name) {
-    clientStrIDs->append(strid);
-    clientNames->append(name);
+    clientStrIDs.append(strid);
+    clientNames.append(name);
 }
 
-QStringList Settings::getClientsNames() { return *clientNames; }
-int Settings::getClientId(QString name) { return clientNames->indexOf(name); }
-int Settings::strIDtoID(QString strid) { return clientStrIDs->indexOf(strid); }
-QString Settings::getClientName(int id) { return clientNames->at(id); }
-QString Settings::getClientStrId(int id) { return clientStrIDs->at(id); }
+QString Settings::getVersionsUrl() {
+    QString client = getClientStrId(loadActiveClientId());
+    return updateServer + "/" + client + "/versions/versions.json";
+}
+
+QString Settings::getVersionUrl(QString version) {
+    QString client = getClientStrId(loadActiveClientId());
+    return updateServer + "/" + client + "/" + version + "/";
+}
+
+QString Settings::getLibsUrl() {
+    return updateServer + "/libraries/";
+}
+
+QString Settings::getAssetsUrl() {
+    return updateServer + "/assets/";
+}
+
+QStringList Settings::getClientsNames() { return clientNames; }
+int Settings::getClientId(QString name) { return clientNames.indexOf(name); }
+int Settings::strIDtoID(QString strid) { return clientStrIDs.indexOf(strid); }
+
+QString Settings::getClientName(int id) {
+    if (id < 0) return "Unknown client";
+    if (clientNames.size() <= id) return "Unknown client";
+    return clientNames.at(id);
+}
+QString Settings::getClientStrId(int id) {
+    if (id < 0) return "unknown";
+    if (clientStrIDs.size() <= id) return "unknown";
+    return clientStrIDs.at(id);
+}
 
 int Settings::loadActiveClientId() {
-    QString strid = settings->value("launcher/client", clientStrIDs->at(0)).toString();
+    QString strid = settings->value("launcher/client", "default").toString();
     return strIDtoID(strid);
 }
 

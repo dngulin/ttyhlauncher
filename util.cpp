@@ -7,6 +7,20 @@
 #include <quazip/quazip.h>
 #include <quazip/quazipfile.h>
 
+quint64 Util::getFileSize(QString url) {
+    QNetworkAccessManager* manager = new QNetworkAccessManager();
+    QNetworkRequest request;
+    request.setUrl(QUrl(url));
+
+    QNetworkReply *reply = manager->head(request);
+    QEventLoop loop;
+    QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+    loop.exec();
+
+    return reply->header(QNetworkRequest::ContentLengthHeader).toULongLong();
+}
+
+
 Reply Util::makeGet(QString url) {
 
     Logger::logger()->append("Util", "Make GET: " + url + "\n");
