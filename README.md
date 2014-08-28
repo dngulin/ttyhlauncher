@@ -7,5 +7,4 @@ We are against the use of the launcher for illegal purposes, it is written just 
 ## Dependecies
 
 1. Qt (5.3 minimum)
-
 2. QuaZip (tested with 0.7)
