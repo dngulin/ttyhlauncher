@@ -166,6 +166,8 @@ void SettingsDialog::saveSettings() {
     logger->append("SettingsDialog", "\tUseClientArgs: " + QString(ui->argsBox->isChecked() ? "true" : "false") + "\n");
     logger->append("SettingsDialog", "\tClientArgs: " + ui->argsEdit->text() + "\n");
 
+    this->close();
+
 }
 
 void SettingsDialog::loadSettings() {
