@@ -441,6 +441,12 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
 
                 if (library["natives"].isNull()) {
 
+                    if (!QFile::exists(settings->getLibsDir() + "/" + libSuffix + ".jar")) {
+                        QMessageBox::critical(this, "У нас проблема :(",
+                                              "Отсутсвуют необходимые игровые файлы!\nВыполните обновление.");
+                        return;
+                    }
+
                     if (settings->getOsName() == "windows") libSuffix += ".jar;";
                     else libSuffix += ".jar:";
 
@@ -459,6 +465,12 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
 
             // Add game jar to classpath
             classpath += settings->getVersionsDir() + "/" + gameVersion + "/" + gameVersion + ".jar";
+
+            if (!QFile::exists(settings->getVersionsDir() + "/" + gameVersion + "/" + gameVersion + ".jar")) {
+                QMessageBox::critical(this, "У нас проблема :(",
+                                      "Отсутсвуют необходимые игровые файлы!\nВыполните обновление.");
+                return;
+            }
 
             // Setup mainClass
             if (versionJson.object()["mainClass"].isNull()) {
