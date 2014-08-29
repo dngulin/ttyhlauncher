@@ -311,8 +311,72 @@ void UpdateDialog::doCheck() {
         if (addToQueryIfNeed(url, fileName, displayName, checkSumm, size)) needUpdate = true;
     }
 
-    // Check modifications
+    // Check custom files
+    if (versionJson.object()["customFiles"].toBool()) {
 
+        ui->log->appendPlainText("\n # Проверка дополнительных модификаций:");
+        logger->append("UpdateDialog", "Checking ustom files\n");
+
+        // Download files index
+        if (!downloadIfNotExists(versionUrlPrefix + "files.json",
+                                 versionFilePrefix + "files.json")) {
+            return;
+        }
+
+        // Open custom files index
+        QJsonDocument filesJson;
+
+        QFile* filesIndexfile = new QFile(versionFilePrefix + "files.json");
+        if (!filesIndexfile->open(QIODevice::ReadOnly)) {
+
+            ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось открыть files.json");
+            logger->append("UpdateDialog", "Error: can't open files.json\n");
+            return;
+
+        } else {
+
+            QJsonParseError error;
+            filesJson = QJsonDocument::fromJson(filesIndexfile->readAll(), &error);
+
+            if (error.error != QJsonParseError::NoError) {
+
+                ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось разобрать files.json");
+                logger->append("UpdateDialog", "Error: can't parse files.json\n");
+                return;
+
+            }
+            filesIndexfile->close();
+        }
+        delete filesIndexfile;
+
+        // FIXME: need to apply delete rules here!
+
+        // Make mutable list
+        QStringList mutableList;
+        foreach (QJsonValue value, filesJson.object()["mutable"].toArray()) {
+            mutableList.append(value.toString());
+        }
+
+        QString filesFilePrefix = settings->getClientDir() + "/";
+        QString filesUrlPrefix = settings->getVersionUrl(clientVersion) + "files/";
+
+        foreach (QString key, filesJson.object()["objects"].toObject().keys()) {
+
+            QJsonObject customFile
+                    = filesJson.object()["objects"].toObject()[key].toObject();
+
+            // Check each asset file
+            checkSumm = customFile["hash"].toString();
+            size = customFile["size"].toInt();
+            url = filesUrlPrefix + key;
+            fileName = filesFilePrefix + key;
+            displayName = "файл " + key;
+
+            if (mutableList.contains(key)) checkSumm = "mutable"; // Download only if not exists
+
+            if (addToQueryIfNeed(url, fileName, displayName, checkSumm, size)) needUpdate = true;
+        }
+    }
 
     if (needUpdate) {
 
@@ -410,7 +474,9 @@ bool UpdateDialog::addToQueryIfNeed(QString url, QString fileName, QString displ
         ui->log->appendPlainText(" >> Необходимо загрузить " + displayName + " ("
                                  + QString::number((float(size) / 1024 / 1024), 'f', 2) + " МиБ)" );
         return true;
-    } else  {
+
+    } else if (checkSumm != "mutable") {
+
         QString fileHash;
         QFile* file = new QFile(fileName);
         if (!file->open(QIODevice::ReadOnly)) {
