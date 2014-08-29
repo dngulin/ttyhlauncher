@@ -43,8 +43,63 @@ void FeedbackDialog::sendFeedback() {
     QJsonObject payload;
     payload["username"] = ui->nickEdit->text();
     payload["password"] = ui->passEdit->text();
-    payload["desc"] = ui->descEdit->toPlainText();  // FIXME (unsafe, base64?)
-    payload["log"] = "diagnostic log will be here"; // FIXME
+
+    // Users input and logs trnslated to Base64
+
+    QByteArray desc; desc.append(ui->descEdit->toPlainText());
+    payload["desc"] = QString(desc.toBase64());
+
+    logger->append("FeedBackDialog", "Prepare diagnostic log...\n");
+    Settings* settings = Settings::instance();
+
+    QByteArray log;
+    log.append("## ============================= ##\n");
+    log.append("    TTYHLAUNCHER DIAGNOSTIC LOG\n");
+    log.append("## ============================= ##\n");
+    log.append("\n");
+
+    log.append(settings->getOsName() + ", ");
+    log.append(settings->getOsVersion() + ", ");
+    log.append("arch: " + settings->getWordSize() + ".\n");
+    log.append("\n");
+
+    log.append("## ============================= ##\n");
+    log.append("             JAVA INFO\n");
+    log.append("## ============================= ##\n");
+    log.append("\n");
+
+    log.append(Util::getCommandOutput("java", QStringList() << "-version"));
+    log.append("\n");
+
+    // Show custom java -version if exists
+    int activeClientId = settings->loadActiveClientId();
+    QStringList clientList = settings->getClientsNames();
+    foreach (QString client, clientList) {
+        settings->saveActiveClientId(clientList.indexOf(client));
+
+        if (settings->loadClientJavaState()) {
+            log.append(" >> Client \"" + settings->getClientStrId(clientList.indexOf(client)) + "\" has custom java:\n");
+            log.append(Util::getCommandOutput(settings->loadClientJava(), QStringList() << "-version"));
+            log.append("\n");
+        }
+
+    }
+    settings->saveActiveClientId(activeClientId);
+
+    // Show logs
+    log.append("## ============================= ##\n");
+    log.append("             LOGS INFO\n");
+    log.append("## ============================= ##\n");
+    log.append("\n");
+
+    QString logsPrefix = settings->getBaseDir() + "/";
+    for (int i = 0; i < 3; i++) {
+        log.append(" >> Log file \"launcher." + QString::number(i) + ".log\":\n");
+        log.append(Util::getFileContetnts(logsPrefix + "launcher." + QString::number(i) + ".log"));
+        log.append("\n");
+    }
+
+    payload["log"] = QString(log.toBase64());
 
     QJsonDocument jsonRequest(payload);
 

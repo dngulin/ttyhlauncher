@@ -10,6 +10,9 @@ Reply makeGet(QString url);
 Reply makePost(QString url, QByteArray postData);
 quint64 getFileSize(QString url);
 
+QString getCommandOutput(QString command, QStringList args);
+QString getFileContetnts(QString path);
+
 void removeAll(QString filePath);
 
 void unzipArchive(QString zipFilePath, QString extractionPath);

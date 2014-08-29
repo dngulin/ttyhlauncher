@@ -154,3 +154,47 @@ void Util::unzipArchive(QString zipFilePath, QString extractionPath) {
     }
 
 }
+
+
+QString Util::getCommandOutput(QString command, QStringList args) {
+
+    Logger* logger = Logger::logger();
+
+    QString toRun, result;
+
+    toRun += command;
+    foreach (QString arg, args) toRun += " " + arg;
+
+    logger->append("Util", "Running: " + toRun + "\n");
+    result = "Output of \"" + toRun + "\":\n";
+
+    QProcess* process = new QProcess(0);
+    process->setProcessChannelMode(QProcess::MergedChannels);
+    process->start(command, args);
+
+    if (!process->waitForStarted()) result += "FAILED_TO_START\n";
+    logger->append("Util", "Process started\n");
+
+    process->waitForFinished();
+    logger->append("Util", "Process terminated!\n");
+
+    result += process->readAll();
+
+    delete process;
+    return result;
+}
+
+
+QString Util::getFileContetnts(QString path) {
+    QString result;
+    QFile* file = new QFile(path);
+    if (file->open(QIODevice::ReadOnly)) {
+        result = file->readAll();
+        file->close();
+    } else {
+        result = "CANT_OPEN_FILE";
+    }
+
+    delete file;
+    return result;
+}
