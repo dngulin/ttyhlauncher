@@ -1,10 +1,16 @@
-# ttyhlauncher
+### About
 
-Open source implementation of the old ttyh.ru launcher under the GNU GPL version 3.
+**ttyhlauncher** is the open source implementation of the old ttyh.ru minecraft launcher under the GNU GPL version 3.
 
 We are against the use of the launcher for illegal purposes, it is written just for fun. If you like minecraft, buy the game and support the developer.
 
-## Dependecies
 
-1. Qt (5.3 minimum)
-2. QuaZip (tested with 0.7)
+### Update server
+
+This minecraft launcher is designed for using custom update server, called "ttyhstore", see [github repo](https://github.com/betrok/ttyhstore) for details.
+
+### Dependecies
+
+1. Qt-5.3.1 (core, gui, widgets, webkitwidgets)
+2. libquazip
+
