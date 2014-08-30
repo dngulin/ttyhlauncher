@@ -28,13 +28,17 @@ UpdateDialog::UpdateDialog(QWidget *parent) :
     connect(ui->clientCombo, SIGNAL(activated(int)), settings, SLOT(saveActiveClientId(int)));
     connect(ui->clientCombo, SIGNAL(activated(int)), this, SLOT(clientChanged()));
 
+    state = canCheck;
+    ui->updateButton->setText("Проверить");
+    connect(ui->updateButton, SIGNAL(clicked()), this, SLOT(doCheck()));
+
+
     if (ui->clientCombo->count() == 0) {
         ui->updateButton->setEnabled(false);
         logger->append("UpdateDialog", "Error: empty client list!\n");
         ui->log->setPlainText("Ошибка! Не удалось получить список клиентов!");
     } else {
         // Auto switch to "check state"
-        updateState = true;
         emit ui->clientCombo->activated(ui->clientCombo->currentIndex());
     }
 
@@ -46,19 +50,35 @@ void UpdateDialog::clientChanged() {
     logger->append("UpdateDialog", "Selected client: " + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
     ui->log->setPlainText("Для проверки наличия обновлений выберите нужный клиет и нажмите кнопку \"Проверить\"");
 
-    if (updateState) {
+    switch (state) {
 
+    case canUpdate:
         dm->reset();
-
         removeList.clear();
         ui->progressBar->setValue(0);
 
-        updateState = false;
         disconnect(ui->updateButton, SIGNAL(clicked()), this, SLOT(doUpdate()));
 
         ui->updateButton->setText("Проверить");
-        ui->updateButton->setEnabled(true);
         connect(ui->updateButton, SIGNAL(clicked()), this, SLOT(doCheck()));
+        state = canCheck;
+
+    case canClose:
+        dm->reset();
+        removeList.clear();
+        ui->progressBar->setValue(0);
+
+        disconnect(ui->updateButton, SIGNAL(clicked()), this, SLOT(close()));
+
+        ui->updateButton->setText("Проверить");
+        connect(ui->updateButton, SIGNAL(clicked()), this, SLOT(doCheck()));
+        state = canCheck;
+
+    default:
+    case canCheck:
+        dm->reset();
+        removeList.clear();
+        ui->progressBar->setValue(0);
     }
 
 }
@@ -395,8 +415,11 @@ void UpdateDialog::doCheck() {
                     logger->append("UpdateDialog", "Marked to delete: " + installedEntry + "\n");
                 }
             }
-
         }
+
+
+        ui->log->appendPlainText("Проверка файлов модификаций...");
+        logger->append("UpdateDialog", "Checing needed custom files...\n");
 
         // Make mutable list
         QStringList mutableList;
@@ -427,11 +450,10 @@ void UpdateDialog::doCheck() {
 
     if (needUpdate) {
 
-        updateState = true;
         disconnect(ui->updateButton, SIGNAL(clicked()), this, SLOT(doCheck()));
-
         ui->updateButton->setText("Обновить");
         connect(ui->updateButton, SIGNAL(clicked()), this, SLOT(doUpdate()));
+        state = canUpdate;
 
         ui->log->appendPlainText("\nТребуется обновление!");
 
@@ -454,6 +476,12 @@ void UpdateDialog::doCheck() {
     } else {
         ui->log->appendPlainText("\nОбновление не требуется!");
         logger->append("UpdateDialog", "Check result: no need updates\n");
+
+        disconnect(ui->updateButton, SIGNAL(clicked()), this, SLOT(doCheck()));
+        ui->updateButton->setText("Закрыть");
+        connect(ui->updateButton, SIGNAL(clicked()), this, SLOT(close()));
+        state = canClose;
+
     }
 
     ui->clientCombo->setEnabled(true);
@@ -505,10 +533,17 @@ void UpdateDialog::error(QString errorString) {
 }
 
 void UpdateDialog::updateFinished() {
-    ui->clientCombo->setEnabled(true);
 
     ui->log->appendPlainText("\nОбновление выполнено!");
     logger->append("UpdateDialog", "Update completed\n");
+
+    disconnect(ui->updateButton, SIGNAL(clicked()), this, SLOT(doUpdate()));
+    ui->updateButton->setText("Закрыть");
+    connect(ui->updateButton, SIGNAL(clicked()), this, SLOT(close()));
+    state = canUpdate;
+
+    ui->clientCombo->setEnabled(true);
+    ui->updateButton->setEnabled(true);
 }
 
 bool UpdateDialog::downloadIfNotExists(QString url, QString fileName) {

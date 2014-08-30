@@ -28,14 +28,16 @@ private:
     QString clientVersion;
     QStringList removeList;
 
-    bool updateState;
-
     bool downloadIfNotExists(QString url, QString fileName);
     bool addToQueryIfNeed(QString url,
                           QString fileName,
                           QString displayName,
                           QString checkSumm,
                           quint64 size);
+
+    enum UpdaterState {canCheck, canUpdate, canClose};
+    UpdaterState state;
+
 
 private slots:
     void clientChanged();
