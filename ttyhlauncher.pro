@@ -50,3 +50,7 @@ FORMS    += launcherwindow.ui \
 
 RESOURCES += \
     resources.qrc
+
+RC_ICONS = resources/favicon.ico
+
+ICON = resources/favicon.icns
