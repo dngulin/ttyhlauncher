@@ -20,10 +20,10 @@
 const QString Settings::launcherVerion = "0.5";
 
 // Master-server links
-const QString Settings::authUrl          = "http://master.ttyh.ru/index.php?act=login";
-const QString Settings::changePasswrdUrl = "http://master.ttyh.ru/index.php?act=chpass";
-const QString Settings::skinUploadUrl    = "http://master.ttyh.ru/index.php?act=setskin";
-const QString Settings::feedbackUrl      = "http://master.ttyh.ru/index.php?act=feedback";
+const QString Settings::authUrl          = "https://master.ttyh.ru/index.php?act=login";
+const QString Settings::changePasswrdUrl = "https://master.ttyh.ru/index.php?act=chpass";
+const QString Settings::skinUploadUrl    = "https://master.ttyh.ru/index.php?act=setskin";
+const QString Settings::feedbackUrl      = "https://master.ttyh.ru/index.php?act=feedback";
 
 Settings* Settings::myInstance = 0;
 Settings* Settings::instance() {
