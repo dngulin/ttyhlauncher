@@ -17,7 +17,7 @@ UpdateDialog::UpdateDialog(QWidget *parent) :
     connect(dm, SIGNAL(progressChanged(int)), ui->progressBar, SLOT(setValue(int)));
     connect(dm, SIGNAL(beginDownloadFile(QString)), this, SLOT(downloadStarted(QString)));
     connect(dm, SIGNAL(error(QString)), this, SLOT(error(QString)));
-    connect(dm, SIGNAL(finished()), this, SLOT(downloadsFinished()));
+    connect(dm, SIGNAL(finished()), this, SLOT(updateFinished()));
 
     settings = Settings::instance();
     logger = Logger::logger();
@@ -49,7 +49,10 @@ void UpdateDialog::clientChanged() {
     if (updateState) {
 
         dm->reset();
+
+        removeList.clear();
         ui->progressBar->setValue(0);
+
         updateState = false;
         disconnect(ui->updateButton, SIGNAL(clicked()), this, SLOT(doUpdate()));
 
@@ -72,7 +75,7 @@ void UpdateDialog::doCheck() {
     // Setup begin checking data
 
     bool needUpdate = false;
-    QString clientVersion = settings->loadClientVersion();
+    clientVersion = settings->loadClientVersion();
     QString versionsDir = settings->getVersionsDir();
 
     // Check for latest version
@@ -324,10 +327,10 @@ void UpdateDialog::doCheck() {
         }
 
         // Open custom files index
-        QJsonDocument filesJson;
+        QJsonDocument currentCustomsJson, previousCustomsJson;
 
-        QFile* filesIndexfile = new QFile(versionFilePrefix + "files.json");
-        if (!filesIndexfile->open(QIODevice::ReadOnly)) {
+        QFile* currentCustomsFile = new QFile(versionFilePrefix + "files.json");
+        if (!currentCustomsFile->open(QIODevice::ReadOnly)) {
 
             ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось открыть files.json");
             logger->append("UpdateDialog", "Error: can't open files.json\n");
@@ -336,7 +339,7 @@ void UpdateDialog::doCheck() {
         } else {
 
             QJsonParseError error;
-            filesJson = QJsonDocument::fromJson(filesIndexfile->readAll(), &error);
+            currentCustomsJson = QJsonDocument::fromJson(currentCustomsFile->readAll(), &error);
 
             if (error.error != QJsonParseError::NoError) {
 
@@ -345,25 +348,69 @@ void UpdateDialog::doCheck() {
                 return;
 
             }
-            filesIndexfile->close();
+            currentCustomsFile->close();
         }
-        delete filesIndexfile;
+        delete currentCustomsFile;
 
-        // FIXME: need to apply delete rules here!
+        // Make deletion list
+        if (QFile::exists(settings->getClientDir() + "/installed_files.json")) {
+
+            ui->log->appendPlainText("Построение списка устаревших файлов...");
+            logger->append("UpdateDialog", "Makeing deletion list...\n");
+
+            QFile* previousCustomsFile = new QFile(settings->getClientDir() + "/installed_files.json");
+            if (!previousCustomsFile->open(QIODevice::ReadOnly)) {
+
+                ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось открыть installed_files.json");
+                logger->append("UpdateDialog", "Error: can't open installed_files.json\n");
+                return;
+
+            } else {
+
+                QJsonParseError error;
+                previousCustomsJson = QJsonDocument::fromJson(previousCustomsFile->readAll(), &error);
+
+                if (error.error != QJsonParseError::NoError) {
+
+                    ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось разобрать installed_files.json");
+                    logger->append("UpdateDialog", "Error: can't parse installed_files.json\n");
+                    return;
+
+                }
+                previousCustomsFile->close();
+            }
+            delete previousCustomsFile;
+
+            QStringList currentFileList = currentCustomsJson.object()["objects"].toObject().keys();
+            QStringList previousFileList = previousCustomsJson.object()["objects"].toObject().keys();
+
+            // Add file to deletion list if exist in previous installation and not exists in current
+            foreach (QString installedEntry, previousFileList) {
+                if (currentFileList.indexOf(installedEntry) == -1) {
+
+                    removeList.append(installedEntry);
+                    needUpdate = true;
+
+                    ui->log->appendPlainText(" >> Необходимо удалить: " + installedEntry);
+                    logger->append("UpdateDialog", "Marked to delete: " + installedEntry + "\n");
+                }
+            }
+
+        }
 
         // Make mutable list
         QStringList mutableList;
-        foreach (QJsonValue value, filesJson.object()["mutable"].toArray()) {
+        foreach (QJsonValue value, currentCustomsJson.object()["mutable"].toArray()) {
             mutableList.append(value.toString());
         }
 
         QString filesFilePrefix = settings->getClientDir() + "/";
         QString filesUrlPrefix = settings->getVersionUrl(clientVersion) + "files/";
 
-        foreach (QString key, filesJson.object()["objects"].toObject().keys()) {
+        foreach (QString key, currentCustomsJson.object()["objects"].toObject().keys()) {
 
             QJsonObject customFile
-                    = filesJson.object()["objects"].toObject()[key].toObject();
+                    = currentCustomsJson.object()["objects"].toObject()[key].toObject();
 
             // Check each asset file
             checkSumm = customFile["hash"].toString();
@@ -386,12 +433,23 @@ void UpdateDialog::doCheck() {
         ui->updateButton->setText("Обновить");
         connect(ui->updateButton, SIGNAL(clicked()), this, SLOT(doUpdate()));
 
-        ui->log->appendPlainText("\nТребуется обновление! Необходимо загрузить "
-                                 + QString::number((float(dm->getDownloadsSize()) / 1024 / 1024), 'f', 2)
-                                 + " МиБ");
-        logger->append("UpdateDialog", "Check result: need to download "
-                       + QString::number((float(dm->getDownloadsSize()) / 1024 / 1024), 'f', 2)
-                       + " MiB\n");
+        ui->log->appendPlainText("\nТребуется обновление!");
+
+        if (!removeList.isEmpty()) {
+
+            ui->log->appendPlainText("Необходимо удалить: " + removeList.join(", "));
+            logger->append("UpdateDialog", "Check result: remove list: " + removeList.join(", ") + "\n");
+        }
+
+        if (dm->getDownloadsSize() != 0) {
+
+            ui->log->appendPlainText("Необходимо загрузить "
+                                     + QString::number((float(dm->getDownloadsSize()) / 1024 / 1024), 'f', 2)
+                                     + " МиБ");
+            logger->append("UpdateDialog", "Check result: need to download "
+                           + QString::number((float(dm->getDownloadsSize()) / 1024 / 1024), 'f', 2)
+                           + " MiB\n");
+        }
 
     } else {
         ui->log->appendPlainText("\nОбновление не требуется!");
@@ -406,9 +464,36 @@ void UpdateDialog::doUpdate() {
     ui->clientCombo->setEnabled(false);
     ui->updateButton->setEnabled(false);
 
-    ui->log->appendPlainText("\n\n # Обновление клиента:");
-    logger->append("UpdateDialog", "Updates started...\n");
-    dm->startDownloads();
+    if (!removeList.isEmpty()) {
+
+        ui->log->appendPlainText("\n # Удаление устаревших модификаций:");
+        logger->append("UpdateDialog", "Removing files...\n");
+
+        foreach (QString entry, removeList) {
+            ui->log->appendPlainText("Удаление: " + entry);
+            logger->append("UpdateDialog", "Remove " + entry +"\n");
+
+            QFile::remove(settings->getClientDir() + "/" + entry);
+            ui->progressBar->setValue(int((float(removeList.indexOf(entry) + 1) / removeList.size()) * 100));
+        }
+
+    }
+
+    // Replace custom files index
+    QFile::remove(settings->getClientDir() + "/installed_files.json");
+    QFile::copy(settings->getVersionsDir() + "/" + clientVersion + "/files.json",
+                settings->getClientDir() + "/installed_files.json");
+
+    if (dm->getDownloadsSize() != 0) {
+
+        ui->log->appendPlainText("\n # Загрузка обновлений:");
+        logger->append("UpdateDialog", "Downloads started...\n");
+        dm->startDownloads();
+
+    } else {
+        updateFinished();
+    }
+
 }
 
 void UpdateDialog::downloadStarted(QString displayName) {
@@ -416,16 +501,14 @@ void UpdateDialog::downloadStarted(QString displayName) {
 }
 
 void UpdateDialog::error(QString errorString) {
-    ui->log->appendPlainText(" [!] Ошибка при загрузке: " + errorString);
+    ui->log->appendPlainText(" [!] Ошибка: " + errorString);
 }
 
-void UpdateDialog::downloadsFinished() {
+void UpdateDialog::updateFinished() {
     ui->clientCombo->setEnabled(true);
 
-    ui->log->appendPlainText("\nОбновление выполнено! Удалось загрузить "
-                             + QString::number(ui->progressBar->value()) + "% данных.");
-    logger->append("UpdateDialog", "Update finished with "
-                   + QString::number(ui->progressBar->value()) + "% sucess.");
+    ui->log->appendPlainText("\nОбновление выполнено!");
+    logger->append("UpdateDialog", "Update completed\n");
 }
 
 bool UpdateDialog::downloadIfNotExists(QString url, QString fileName) {

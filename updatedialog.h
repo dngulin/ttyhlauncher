@@ -25,6 +25,9 @@ private:
     Logger* logger;
     DownloadManager* dm;
 
+    QString clientVersion;
+    QStringList removeList;
+
     bool updateState;
 
     bool downloadIfNotExists(QString url, QString fileName);
@@ -42,7 +45,7 @@ private slots:
 
     void downloadStarted(QString displayName);
     void error(QString errorString);
-    void downloadsFinished();
+    void updateFinished();
 
 };
 
