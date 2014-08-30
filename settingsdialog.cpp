@@ -196,7 +196,7 @@ void SettingsDialog::openClientDirectory() {
 
     QFile* clientDir = new QFile(settings->getClientDir());
     if (clientDir->exists()) {
-        QUrl clientDirUrl = QUrl(clientDir->fileName());
+        QUrl clientDirUrl = QUrl::fromLocalFile(clientDir->fileName());
         QDesktopServices::openUrl(clientDirUrl);
     } else {
         QMessageBox::critical(this, "У нас проблема :(", "Директория ещё не существует.\n"
