@@ -163,7 +163,7 @@ QString Util::getCommandOutput(QString command, QStringList args) {
     QString toRun, result;
 
     toRun += command;
-    foreach (QString arg, args) toRun += " " + arg;
+    toRun += " " + args.join(" ");
 
     logger->append("Util", "Running: " + toRun + "\n");
     result = "Output of \"" + toRun + "\":\n";
