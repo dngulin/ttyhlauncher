@@ -1,7 +1,6 @@
 #ifndef DOWNLOADMANAGER_H
 #define DOWNLOADMANAGER_H
 
-#include <QObject>
 #include <QtCore>
 #include <QtNetwork>
 

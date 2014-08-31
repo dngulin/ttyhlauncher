@@ -3,12 +3,7 @@
 
 #include <QFileDialog>
 #include <QDesktopServices>
-#include <QFile>
 #include <QMessageBox>
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QNetworkRequest>
-#include <QJsonDocument>
 
 SettingsDialog::SettingsDialog(QWidget *parent) :
     QDialog(parent),

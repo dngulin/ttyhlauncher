@@ -1,8 +1,7 @@
 #include <QtCore>
-#include <QObject>
 #include <QStandardPaths>
 #include <QSysInfo>
-#include <QMessageBox>
+
 
 #include "settings.h"
 #include "util.h"

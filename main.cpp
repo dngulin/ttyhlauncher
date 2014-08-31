@@ -6,7 +6,6 @@
 #include <QApplication>
 #include <QSplashScreen>
 #include <QBitmap>
-#include <QtCore>
 
 int main(int argc, char *argv[])
 {

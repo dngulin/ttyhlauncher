@@ -11,7 +11,6 @@
 #include "settings.h"
 #include "util.h"
 
-#include <QtCore>
 #include <QtGui>
 #include <QDesktopWidget>
 #include <QMessageBox>

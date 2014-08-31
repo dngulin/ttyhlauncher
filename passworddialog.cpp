@@ -5,8 +5,6 @@
 #include "util.h"
 #include "reply.h"
 
-#include <QJsonDocument>
-
 PasswordDialog::PasswordDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::PasswordDialog)

@@ -1,8 +1,5 @@
 #include "downloadmanager.h"
 
-#include <QtCore>
-#include <QtNetwork>
-
 DownloadManager::DownloadManager(QObject *parent) :
     QObject(parent)
 {

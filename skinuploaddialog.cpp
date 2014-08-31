@@ -1,16 +1,11 @@
 #include "skinuploaddialog.h"
 #include "ui_skinuploaddialog.h"
 
-
 #include "settings.h"
 #include "util.h"
 #include "reply.h"
 
-#include <QJsonDocument>
-#include <QFile>
 #include <QFileDialog>
-
-#include "settings.h"
 
 SkinUploadDialog::SkinUploadDialog(QWidget *parent) :
     QDialog(parent),

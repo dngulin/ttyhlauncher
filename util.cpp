@@ -1,7 +1,6 @@
 #include "util.h"
 #include "logger.h"
 
-#include <QtCore>
 #include <QtNetwork>
 
 #include <quazip/quazip.h>

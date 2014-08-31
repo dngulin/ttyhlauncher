@@ -2,7 +2,6 @@
 #define SETTINGS_H
 
 #include <QtCore>
-#include <QObject>
 
 #include "logger.h"
 

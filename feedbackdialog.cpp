@@ -1,14 +1,6 @@
 #include "feedbackdialog.h"
 #include "ui_feedbackdialog.h"
 
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QFile>
-#include <QIODevice>
-#include <QFileDialog>
-
 #include "settings.h"
 #include "reply.h"
 #include "util.h"

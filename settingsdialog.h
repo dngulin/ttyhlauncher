@@ -2,8 +2,7 @@
 #define SETTINGSDIALOG_H
 
 #include <QDialog>
-#include <QNetworkReply>
-#include <QNetworkAccessManager>
+#include <QtNetwork>
 
 #include "settings.h"
 #include "logger.h"
