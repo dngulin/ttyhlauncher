@@ -11,17 +11,10 @@
 #include "settings.h"
 #include "util.h"
 
-#include <QCloseEvent>
-#include <QMessageBox>
-#include <QTimer>
-#include <QDesktopServices>
+#include <QtCore>
+#include <QtGui>
 #include <QDesktopWidget>
-#include <QByteArray>
-#include <QNetworkRequest>
-#include <QNetworkReply>
-#include <QDebug>
-#include <QJsonObject>
-#include <QFileInfo>
+#include <QMessageBox>
 
 LauncherWindow::LauncherWindow(QWidget *parent) :
     QMainWindow(parent),
