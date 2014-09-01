@@ -208,7 +208,7 @@ void LauncherWindow::playButtonClicked() {
         payload["platform"] = platform;
         payload["username"] = ui->nickEdit->text();
         payload["password"] = ui->passEdit->text();
-        payload["clientToken"] = settings->makeMinecraftUuid().remove('{').remove('}');
+        payload["ticket"] = settings->makeMinecraftUuid().remove('{').remove('}');
 
         QJsonDocument jsonRequest(payload);
 
