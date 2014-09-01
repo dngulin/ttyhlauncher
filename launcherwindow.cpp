@@ -515,10 +515,8 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
                 mcArg.replace("${assets_index_name}", assetsIndex);
                 mcArg.replace("${auth_uuid}",         uuid);
                 mcArg.replace("${auth_access_token}", acessToken);
-
-                // What it means?
                 mcArg.replace("${user_properties}",   "{}");
-                //mcArg.replace("${user_type}",       "${user_type}";
+                mcArg.replace("${user_type}",       "mojang");
 
                 mcArgList << mcArg;
             }
