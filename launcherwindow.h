@@ -19,6 +19,7 @@ public:
     explicit LauncherWindow(QWidget *parent = 0);
     ~LauncherWindow();
     void closeEvent (QCloseEvent* event);
+    void keyPressEvent(QKeyEvent* pe);
 
 
 private slots:

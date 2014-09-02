@@ -100,6 +100,12 @@ void LauncherWindow::closeEvent (QCloseEvent* event) {
     event->accept();
 }
 
+void LauncherWindow::keyPressEvent(QKeyEvent* pe) {
+ if(pe->key() == Qt::Key_Return) playButtonClicked();
+ pe->accept();
+}
+
+
 // Run this method on close window and run game
 void LauncherWindow::storeParameters() {
     settings->saveWindowGeometry(this->geometry());
