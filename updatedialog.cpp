@@ -238,11 +238,12 @@ void UpdateDialog::doCheck() {
         QJsonArray rules = library["rules"].toArray();
         bool allowLib = true;
         if (!rules.isEmpty()) {
+
+            // Disallow libray if not in allow list
+            allowLib = false;
+
             foreach (QJsonValue ruleValue, rules) {
                 QJsonObject rule = ruleValue.toObject();
-
-                // Disallow libray if not in allow list
-                allowLib = false;
 
                 // Process allow variants (all or specified)
                 if (rule["action"].toString() == "allow") {
@@ -262,7 +263,10 @@ void UpdateDialog::doCheck() {
             }
         }
         // Go to next lib entry, if this are disallowed
-        if (!allowLib) continue;
+        if (!allowLib) {
+            logger->append("UpdateDialog", "Skipping lib: " + libSuffix + ".jar\n");
+            continue;
+        }
 
         // Check for natives entry: <package>/<name>-<version>-<native_string>
         QString nativesSuffix = library["natives"].toObject()[settings->getOsName()].toString();

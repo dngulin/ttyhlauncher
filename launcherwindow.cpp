@@ -65,7 +65,7 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     // Setup client combobox
     ui->clientCombo->addItems(settings->getClientsNames());
     ui->clientCombo->setCurrentIndex(settings->loadActiveClientId());
-    connect(ui->clientCombo, SIGNAL(activated(int)), settings, SLOT(saveActiveClientId(int)));        
+    connect(ui->clientCombo, SIGNAL(activated(int)), settings, SLOT(saveActiveClientId(int)));
 
     // Setup news set
     ui->ttyhNews->setChecked(true);
@@ -101,8 +101,8 @@ void LauncherWindow::closeEvent (QCloseEvent* event) {
 }
 
 void LauncherWindow::keyPressEvent(QKeyEvent* pe) {
- if(pe->key() == Qt::Key_Return) playButtonClicked();
- pe->accept();
+    if(pe->key() == Qt::Key_Return) playButtonClicked();
+    pe->accept();
 }
 
 
@@ -402,7 +402,7 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
 
     if (!versionFile->open(QIODevice::ReadOnly)) {
 
-        QMessageBox::critical(this, "У нас проблема :(", "Не удалось открыть конфигурационный файл!");
+        QMessageBox::information(this, "Обновление!", "Необходимо обновить клиент!");
         logger->append(this->objectName(), "Error: can't open version file\n");
         delete versionFile;
         return;
@@ -424,9 +424,9 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
         } else { // Correct version file
 
             QJsonArray libraries = versionJson.object()["libraries"].toArray();
-            for (QJsonArray::iterator libit = libraries.begin(), end = libraries.end(); libit != end; ++libit) {
+            foreach (QJsonValue libValue, libraries) {
 
-                QJsonObject library = (*libit).toObject();
+                QJsonObject library = libValue.toObject();
 
                 QStringList entry = library["name"].toString().split(':');
 
@@ -437,11 +437,46 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
                         + "/" + entry.at(2)                       // + version
                         + "/" + entry.at(1) + "-" + entry.at(2);  // + name-version
 
+                // Check for allow-disallow rules
+                QJsonArray rules = library["rules"].toArray();
+                bool allowLib = true;
+                if (!rules.isEmpty()) {
+
+                    // Disallow libray if not in allow list
+                    allowLib = false;
+
+                    foreach (QJsonValue ruleValue, rules) {
+                        QJsonObject rule = ruleValue.toObject();
+
+                        // Process allow variants (all or specified)
+                        if (rule["action"].toString() == "allow") {
+                            if (rule["os"].toObject().isEmpty()) {
+                                allowLib = true;
+                            } else if (rule["os"].toObject()["name"].toString() == settings->getOsName()) {
+                                allowLib = true;
+                            }
+                        }
+
+                        // Make exclusions from allow-list
+                        if (rule["action"].toString() == "disallow") {
+                            if (rule["os"].toObject()["name"].toString() == settings->getOsName()) {
+                                allowLib = false;
+                            }
+                        }
+                    }
+                }
+
+                if (!allowLib) {
+                    logger->append(this->objectName(), "Skipping lib: " + libSuffix + ".jar\n");
+                    continue;
+                }
+
                 if (library["natives"].isNull()) {
 
                     if (!QFile::exists(settings->getLibsDir() + "/" + libSuffix + ".jar")) {
                         QMessageBox::critical(this, "У нас проблема :(",
                                               "Отсутсвуют необходимые игровые файлы!\nВыполните обновление.");
+                        logger->append(this->objectName(), "Error: lib not found: " + libSuffix + ".jar\n");
                         return;
                     }
 
@@ -541,9 +576,9 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
             if (!userArgList.isEmpty()) argList << userArgList;
 
             argList << "-Djava.library.path=" + libpath
-                 << "-cp" << classpath
-                 << mainClass
-                 << mcArgList;
+                    << "-cp" << classpath
+                    << mainClass
+                    << mcArgList;
 
             QString stringargs;
             foreach (QString arg, argList) stringargs += arg + " ";
