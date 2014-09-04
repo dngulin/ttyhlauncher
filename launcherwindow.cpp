@@ -475,7 +475,8 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
 
                     if (!QFile::exists(settings->getLibsDir() + "/" + libSuffix + ".jar")) {
                         QMessageBox::critical(this, "У нас проблема :(",
-                                              "Отсутсвуют необходимые игровые файлы!\nВыполните обновление.");
+                                              "Отсутсвуют необходимые игровые файлы!\n"
+                                              + libSuffix + ".jar" + "\nВыполните обновление.");
                         logger->append(this->objectName(), "Error: lib not found: " + libSuffix + ".jar\n");
                         return;
                     }
