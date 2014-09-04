@@ -32,7 +32,7 @@ Logger::Logger(QObject *parent) :
     if (!logFile->open(QIODevice::Append | QIODevice::Text)) qCritical() << "Can't setup logger!";
 
     append("Logger", QDate::currentDate().toString("dd.MM.yy")
-           + " ttyhlauncher-" + Settings::instance()->launcherVerion + " started.\n");
+           + " ttyhlauncher-" + Settings::instance()->launcherVersion + " started.\n");
 
 }
 

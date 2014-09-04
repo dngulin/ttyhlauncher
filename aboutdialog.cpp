@@ -10,7 +10,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->info->setPlainText("ttyhlauncher " + Settings::launcherVerion + "\n\n" +
+    ui->info->setPlainText("ttyhlauncher " + Settings::launcherVersion + "\n\n" +
                            "Это ПО с открытым исходным кодом, распространяемое под лицензией " +
                            "GNU General Public License, версия 3.\n\n" +
                            "https://github.com/figec/ttyhlauncher");

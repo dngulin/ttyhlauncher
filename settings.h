@@ -16,7 +16,7 @@ public:
     static const QString skinUploadUrl;
     static const QString feedbackUrl;
 
-    static const QString launcherVerion;
+    static const QString launcherVersion;
 
 
 private:
