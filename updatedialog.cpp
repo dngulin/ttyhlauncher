@@ -32,7 +32,6 @@ UpdateDialog::UpdateDialog(QWidget *parent) :
     ui->updateButton->setText("Проверить");
     connect(ui->updateButton, SIGNAL(clicked()), this, SLOT(doCheck()));
 
-
     if (ui->clientCombo->count() == 0) {
         ui->updateButton->setEnabled(false);
         logger->append("UpdateDialog", "Error: empty client list!\n");
@@ -285,6 +284,7 @@ void UpdateDialog::doCheck() {
         size = libsJson.object()["objects"].toObject()[libSuffix].toObject()["size"].toInt();
 
         if (addToQueryIfNeed(url, fileName, displayName, checkSumm, size)) needUpdate = true;
+        QApplication::processEvents(); // Update text in log
     }
 
     // Check assets
@@ -336,6 +336,7 @@ void UpdateDialog::doCheck() {
         displayName = "ресурс " + key;
 
         if (addToQueryIfNeed(url, fileName, displayName, checkSumm, size)) needUpdate = true;
+        QApplication::processEvents(); // Update text in log
     }
 
     // Check custom files
@@ -449,6 +450,7 @@ void UpdateDialog::doCheck() {
             if (mutableList.contains(key)) checkSumm = "mutable"; // Download only if not exists
 
             if (addToQueryIfNeed(url, fileName, displayName, checkSumm, size)) needUpdate = true;
+            QApplication::processEvents(); // Update text in log
         }
     }
 
