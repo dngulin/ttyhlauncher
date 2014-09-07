@@ -116,7 +116,11 @@ void UpdateDialog::doCheck() {
                 if (latest["release"].isNull()) {
                     ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось определить оследнюю версию клиента");
                     logger->append("UpdateDialog", "Error: empty latest client version\n");
+
+                    ui->clientCombo->setEnabled(true);
+                    ui->updateButton->setEnabled(true);
                     return;
+
                 } else {
                     clientVersion = latest["release"].toString();
                 }
@@ -124,12 +128,18 @@ void UpdateDialog::doCheck() {
             } else {
                 ui->log->appendPlainText("Проверка остановлена. Ошибка разбора JSON!");
                 logger->append("UpdateDialog", "Error: can't parse JSON\n");
+
+                ui->clientCombo->setEnabled(true);
+                ui->updateButton->setEnabled(true);
                 return;
             }
 
         } else {
             ui->log->appendPlainText("Проверка остановлена. Ошибка: " + versionReply.getErrorString());
             logger->append("UpdateDialog", "Error: " + versionReply.getErrorString() + "\n");
+
+            ui->clientCombo->setEnabled(true);
+            ui->updateButton->setEnabled(true);
             return;
         }
 
@@ -142,13 +152,19 @@ void UpdateDialog::doCheck() {
     QString versionFilePrefix = versionsDir + "/" + clientVersion + "/";
     QString versionUrlPrefix = settings->getVersionUrl(clientVersion);
 
-    if (!downloadIfNotExists(versionUrlPrefix + clientVersion +".json",
+    if (!downloadNow(versionUrlPrefix + clientVersion +".json",
                              versionFilePrefix + clientVersion +".json")) {
+
+        ui->clientCombo->setEnabled(true);
+        ui->updateButton->setEnabled(true);
         return;
     }
 
-    if (!downloadIfNotExists(versionUrlPrefix + "libs.json",
+    if (!downloadNow(versionUrlPrefix + "libs.json",
                              versionFilePrefix + "libs.json")) {
+
+        ui->clientCombo->setEnabled(true);
+        ui->updateButton->setEnabled(true);
         return;
     }
 
@@ -160,6 +176,9 @@ void UpdateDialog::doCheck() {
 
         ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось открыть " + clientVersion +".json");
         logger->append("UpdateDialog", "Error: can't open " + clientVersion +".json\n");
+
+        ui->clientCombo->setEnabled(true);
+        ui->updateButton->setEnabled(true);
         return;
 
     } else {
@@ -171,6 +190,9 @@ void UpdateDialog::doCheck() {
 
             ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось разобрать" + clientVersion +".json");
             logger->append("UpdateDialog", "Error: can't parse " + clientVersion +".json\n");
+
+            ui->clientCombo->setEnabled(true);
+            ui->updateButton->setEnabled(true);
             return;
 
         }
@@ -183,6 +205,9 @@ void UpdateDialog::doCheck() {
 
         ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось открыть libs.json");
         logger->append("UpdateDialog", "Error: can't open libs.json\n");
+
+        ui->clientCombo->setEnabled(true);
+        ui->updateButton->setEnabled(true);
         return;
 
     } else {
@@ -194,6 +219,9 @@ void UpdateDialog::doCheck() {
 
             ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось разобрать libs.json");
             logger->append("UpdateDialog", "Error: can't parse libs.json\n");
+
+            ui->clientCombo->setEnabled(true);
+            ui->updateButton->setEnabled(true);
             return;
 
         }
@@ -296,8 +324,12 @@ void UpdateDialog::doCheck() {
     QString assetsFilePrefix = settings->getAssetsDir() + "/objects/";
     QString assetsUrlPrefix = settings->getAssetsUrl() + "objects/";
 
-    if (!downloadIfNotExists(settings->getAssetsUrl() + "indexes/" + assetsVersion + ".json",
+    if (!downloadNow(settings->getAssetsUrl() + "indexes/" + assetsVersion + ".json",
                              settings->getAssetsDir() + "/indexes/" + assetsVersion + ".json")) {
+
+        dm->reset();
+        ui->clientCombo->setEnabled(true);
+        ui->updateButton->setEnabled(true);
         return;
     }
 
@@ -317,6 +349,10 @@ void UpdateDialog::doCheck() {
 
             ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось разобрать " + assetsVersion +".json");
             logger->append("UpdateDialog", "Error: can't parse assets index " + assetsVersion +".json\n");
+
+            dm->reset();
+            ui->clientCombo->setEnabled(true);
+            ui->updateButton->setEnabled(true);
             return;
 
         }
@@ -346,8 +382,12 @@ void UpdateDialog::doCheck() {
         logger->append("UpdateDialog", "Checking ustom files\n");
 
         // Download files index
-        if (!downloadIfNotExists(versionUrlPrefix + "files.json",
+        if (!downloadNow(versionUrlPrefix + "files.json",
                                  versionFilePrefix + "files.json")) {
+
+            dm->reset();
+            ui->clientCombo->setEnabled(true);
+            ui->updateButton->setEnabled(true);
             return;
         }
 
@@ -359,6 +399,10 @@ void UpdateDialog::doCheck() {
 
             ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось открыть files.json");
             logger->append("UpdateDialog", "Error: can't open files.json\n");
+
+            dm->reset();
+            ui->clientCombo->setEnabled(true);
+            ui->updateButton->setEnabled(true);
             return;
 
         } else {
@@ -370,6 +414,10 @@ void UpdateDialog::doCheck() {
 
                 ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось разобрать files.json");
                 logger->append("UpdateDialog", "Error: can't parse files.json\n");
+
+                dm->reset();
+                ui->clientCombo->setEnabled(true);
+                ui->updateButton->setEnabled(true);
                 return;
 
             }
@@ -388,6 +436,10 @@ void UpdateDialog::doCheck() {
 
                 ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось открыть installed_files.json");
                 logger->append("UpdateDialog", "Error: can't open installed_files.json\n");
+
+                dm->reset();
+                ui->clientCombo->setEnabled(true);
+                ui->updateButton->setEnabled(true);
                 return;
 
             } else {
@@ -399,6 +451,10 @@ void UpdateDialog::doCheck() {
 
                     ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось разобрать installed_files.json");
                     logger->append("UpdateDialog", "Error: can't parse installed_files.json\n");
+
+                    dm->reset();
+                    ui->clientCombo->setEnabled(true);
+                    ui->updateButton->setEnabled(true);
                     return;
 
                 }
@@ -552,34 +608,32 @@ void UpdateDialog::updateFinished() {
     ui->updateButton->setEnabled(true);
 }
 
-bool UpdateDialog::downloadIfNotExists(QString url, QString fileName) {
+bool UpdateDialog::downloadNow(QString url, QString fileName) {
 
-    if (!QFile::exists(fileName)) {
-        ui->log->appendPlainText("Загрузка: " + fileName.split("/").last());
-        logger->append("UpdateDialog", "Downloading "  + fileName.split("/").last() + "\n");
+    ui->log->appendPlainText("Загрузка: " + fileName.split("/").last());
+    logger->append("UpdateDialog", "Downloading "  + fileName.split("/").last() + "\n");
 
-        Reply reply = Util::makeGet(url);
-        if (!reply.isOK()) {
-            ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось загрузить файл");
-            logger->append("UpdateDialog", "Error: " + reply.getErrorString() + "\n");
-            return false;
+    Reply reply = Util::makeGet(url);
+    if (!reply.isOK()) {
+        ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось загрузить файл");
+        logger->append("UpdateDialog", "Error: " + reply.getErrorString() + "\n");
+        return false;
+    } else {
+        QFile* file = new QFile(fileName);
+
+        QDir fdir = QFileInfo(fileName).absoluteDir();
+        fdir.mkpath(fdir.absolutePath());
+
+        if (file->open(QIODevice::WriteOnly)) {
+            file->write(reply.reply());
+            file->close();
+            delete file;
+            return true;
         } else {
-            QFile* file = new QFile(fileName);
-
-            QDir fdir = QFileInfo(fileName).absoluteDir();
-            fdir.mkpath(fdir.absolutePath());
-
-            if (file->open(QIODevice::WriteOnly)) {
-                file->write(reply.reply());
-                file->close();
-                delete file;
-                return true;
-            } else {
-                ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось сохранить файл");
-                logger->append("UpdateDialog", "Error: can't save file\n");
-                delete file;
-                return false;
-            }
+            ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось сохранить файл");
+            logger->append("UpdateDialog", "Error: can't save file\n");
+            delete file;
+            return false;
         }
     }
 

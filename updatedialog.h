@@ -28,7 +28,7 @@ private:
     QString clientVersion;
     QStringList removeList;
 
-    bool downloadIfNotExists(QString url, QString fileName);
+    bool downloadNow(QString url, QString fileName);
     bool addToQueryIfNeed(QString url,
                           QString fileName,
                           QString displayName,
