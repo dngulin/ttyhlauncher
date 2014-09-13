@@ -61,6 +61,7 @@ public:
     QString getLibsDir();
     QString getVersionsDir();
     QString getNativesDir();
+    QString getConfigDir();
 
     // Mainwindow login form
     QString loadLogin();

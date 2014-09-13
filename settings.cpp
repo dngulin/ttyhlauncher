@@ -281,6 +281,10 @@ QString Settings::getNativesDir() {
     return getClientDir() + "/natives";
 }
 
+QString Settings::getConfigDir() {
+    return configPath;
+}
+
 // Platform information
 QString Settings::getOsName() {
 #ifdef Q_OS_WIN
