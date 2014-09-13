@@ -13,8 +13,8 @@ quint64 getFileSize(QString url);
 QString getCommandOutput(QString command, QStringList args);
 QString getFileContetnts(QString path);
 
+bool downloadFile(QString url, QString fileName);
 void removeAll(QString filePath);
-
 void unzipArchive(QString zipFilePath, QString extractionPath);
 
 }

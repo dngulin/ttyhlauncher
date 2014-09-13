@@ -197,3 +197,29 @@ QString Util::getFileContetnts(QString path) {
     delete file;
     return result;
 }
+
+
+bool Util::downloadFile(QString url, QString fileName) {
+
+    Reply reply = makeGet(url);
+    if (!reply.isOK()) {
+        return false;
+    } else {
+        QFile* file = new QFile(fileName);
+
+        QDir fdir = QFileInfo(fileName).absoluteDir();
+        fdir.mkpath(fdir.absolutePath());
+
+        if (file->open(QIODevice::WriteOnly)) {
+            file->write(reply.reply());
+            file->close();
+            delete file;
+            return true;
+        } else {
+            delete file;
+            return false;
+        }
+    }
+
+    return true;
+}

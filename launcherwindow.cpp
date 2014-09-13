@@ -304,6 +304,21 @@ void LauncherWindow::playButtonClicked() {
                         }
                     }
 
+                    // update json indexes before run (version, libs, [files])
+                    logger->append(this->objectName(), "Updating game indexes..." + gameVersion + "\n");
+
+                    QString currentVersionDir = settings->getVersionsDir() + "/" + gameVersion + "/" + gameVersion + "/" ;
+
+                    Util::downloadFile(settings->getVersionUrl(gameVersion) + gameVersion + ".json", currentVersionDir + gameVersion + ".json");
+                    Util::downloadFile(settings->getVersionUrl(gameVersion) + "libs.json", currentVersionDir + "libs.json");
+
+                    QByteArray jsonData;
+                    jsonData.append(Util::getFileContetnts(currentVersionDir + gameVersion + ".json"));
+                    QJsonObject versionIndex = QJsonDocument::fromJson(jsonData).object();
+                    if (versionIndex["customFiles"].toBool()) {
+                        Util::downloadFile(settings->getVersionUrl(gameVersion) + "files.json", currentVersionDir + "files.json");
+                    }
+
                     if (run) runGame(uuid, acessToken, gameVersion);
                 }
             }
@@ -593,8 +608,11 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
             logger->append(this->objectName(), "Try to launch game...\n");
             QProcess* minecraft = new QProcess(this);
             minecraft->setProcessChannelMode(QProcess::MergedChannels);
+
+            // Set working directory
             QDir(settings->getClientPrefix(gameVersion)).mkpath(settings->getClientPrefix(gameVersion));
             minecraft->setWorkingDirectory(settings->getClientPrefix(gameVersion));
+
             minecraft->start(java, argList);
 
             if (!minecraft->waitForStarted()) {
