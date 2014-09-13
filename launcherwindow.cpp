@@ -593,6 +593,7 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
             logger->append(this->objectName(), "Try to launch game...\n");
             QProcess* minecraft = new QProcess(this);
             minecraft->setProcessChannelMode(QProcess::MergedChannels);
+            QDir(settings->getClientPrefix(gameVersion)).mkpath(settings->getClientPrefix(gameVersion));
             minecraft->setWorkingDirectory(settings->getClientPrefix(gameVersion));
             minecraft->start(java, argList);
 
