@@ -31,6 +31,7 @@ private:
     void appendClient(QString strid, QString name);
 
     QString dataPath;
+    QString configPath;
     QString updateServer;
 
 public:

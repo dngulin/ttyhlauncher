@@ -32,11 +32,12 @@ Settings* Settings::instance() {
 
 Settings::Settings() : QObject()
 {
-    dataPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
     updateServer = "http://betrok.net/ttyhstore";
 
-    QString setPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
-    settings = new QSettings(setPath + "/ttyhlauncher/config.ini", QSettings::IniFormat);
+    dataPath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/ttyh_minecraft";
+    configPath = QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + "/ttyhlauncher";
+
+    settings = new QSettings(configPath + "/config.ini", QSettings::IniFormat);
 
 }
 
