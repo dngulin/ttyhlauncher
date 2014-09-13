@@ -307,7 +307,7 @@ void LauncherWindow::playButtonClicked() {
                     // update json indexes before run (version, libs, [files])
                     logger->append(this->objectName(), "Updating game indexes..." + gameVersion + "\n");
 
-                    QString currentVersionDir = settings->getVersionsDir() + "/" + gameVersion + "/" + gameVersion + "/" ;
+                    QString currentVersionDir = settings->getVersionsDir() + "/" + gameVersion + "/" ;
 
                     Util::downloadFile(settings->getVersionUrl(gameVersion) + gameVersion + ".json", currentVersionDir + gameVersion + ".json");
                     Util::downloadFile(settings->getVersionUrl(gameVersion) + "libs.json", currentVersionDir + "libs.json");
