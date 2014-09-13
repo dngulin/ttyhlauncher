@@ -44,6 +44,9 @@ public:
     // Clients
     void loadClientList();
 
+    // Keystore
+    void loadCustomKeystore();
+
     QStringList getClientsNames();
     int getClientId(QString name);
     int strIDtoID(QString strid);

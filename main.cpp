@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
     splash->show();
 
     Settings::instance()->loadClientList();
+    Settings::instance()->loadCustomKeystore();
 
     splash->close();
     delete splash;

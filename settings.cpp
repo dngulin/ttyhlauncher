@@ -38,7 +38,6 @@ Settings::Settings() : QObject()
     configPath = QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + "/ttyhlauncher";
 
     settings = new QSettings(configPath + "/config.ini", QSettings::IniFormat);
-
 }
 
 void Settings::loadClientList() {
@@ -47,7 +46,7 @@ void Settings::loadClientList() {
 
     QFile* prefixesFile = new QFile(dataPath + "/prefixes.json");
 
-    logger->append("Settings", "Loading newest clisent list...\n");
+    logger->append("Settings", "Updating local clisent list...\n");
     Reply prefixesReply = Util::makeGet(updateServer + "/prefixes.json");
 
     if (prefixesReply.isOK()) {
@@ -95,6 +94,31 @@ void Settings::loadClientList() {
 
     delete prefixesFile;
 
+}
+
+void Settings::loadCustomKeystore() {
+    Logger* logger = Logger::logger();
+    QFile* keystoreFile = new QFile(configPath + "/keystore.ks");
+
+    logger->append("Settings", "Updating local java keystore...\n");
+    Reply keystoreReply = Util::makeGet(updateServer + "/store.ks");
+
+    if (keystoreReply.isOK()) {
+
+        logger->append("Settings", "OK. Saving local copy...\n");
+        if (prefixesFile->open(QIODevice::WriteOnly)) {
+            prefixesFile->write(keystoreReply.reply());
+            prefixesFile->close();
+
+        } else {
+            logger->append("Settings", "Error: save keystore: " + prefixesFile->errorString() + "\n");
+        }
+
+    } else {
+        logger->append("Settings", "Error: " + keystoreReply.getErrorString() + "\n");
+    }
+
+    delete keystoreFile;
 }
 
 void Settings::appendClient(QString strid, QString name) {
