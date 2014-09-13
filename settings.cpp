@@ -106,12 +106,12 @@ void Settings::loadCustomKeystore() {
     if (keystoreReply.isOK()) {
 
         logger->append("Settings", "OK. Saving local copy...\n");
-        if (prefixesFile->open(QIODevice::WriteOnly)) {
-            prefixesFile->write(keystoreReply.reply());
-            prefixesFile->close();
+        if (keystoreFile->open(QIODevice::WriteOnly)) {
+            keystoreFile->write(keystoreReply.reply());
+            keystoreFile->close();
 
         } else {
-            logger->append("Settings", "Error: save keystore: " + prefixesFile->errorString() + "\n");
+            logger->append("Settings", "Error: save keystore: " + keystoreFile->errorString() + "\n");
         }
 
     } else {
