@@ -426,12 +426,12 @@ void UpdateDialog::doCheck() {
         delete currentCustomsFile;
 
         // Make deletion list
-        if (QFile::exists(settings->getClientDir() + "/installed_files.json")) {
+        if (QFile::exists(settings->getClientPrefix(clientVersion) + "/installed_files.json")) {
 
             ui->log->appendPlainText("Построение списка устаревших файлов...");
             logger->append("UpdateDialog", "Makeing deletion list...\n");
 
-            QFile* previousCustomsFile = new QFile(settings->getClientDir() + "/installed_files.json");
+            QFile* previousCustomsFile = new QFile(settings->getClientPrefix(clientVersion) + "/installed_files.json");
             if (!previousCustomsFile->open(QIODevice::ReadOnly)) {
 
                 ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось открыть installed_files.json");
@@ -488,7 +488,7 @@ void UpdateDialog::doCheck() {
             mutableList.append(value.toString());
         }
 
-        QString filesFilePrefix = settings->getClientDir() + "/";
+        QString filesFilePrefix = settings->getClientPrefix(clientVersion) + "/";
         QString filesUrlPrefix = settings->getVersionUrl(clientVersion) + "files/";
 
         foreach (QString key, currentCustomsJson.object()["objects"].toObject().keys()) {
@@ -563,16 +563,16 @@ void UpdateDialog::doUpdate() {
             ui->log->appendPlainText("Удаление: " + entry);
             logger->append("UpdateDialog", "Remove " + entry +"\n");
 
-            QFile::remove(settings->getClientDir() + "/" + entry);
+            QFile::remove(settings->getClientPrefix(clientVersion) + "/" + entry);
             ui->progressBar->setValue(int((float(removeList.indexOf(entry) + 1) / removeList.size()) * 100));
         }
 
     }
 
     // Replace custom files index
-    QFile::remove(settings->getClientDir() + "/installed_files.json");
+    QFile::remove(settings->getClientPrefix(clientVersion) + "/installed_files.json");
     QFile::copy(settings->getVersionsDir() + "/" + clientVersion + "/files.json",
-                settings->getClientDir() + "/installed_files.json");
+                settings->getClientPrefix(clientVersion) + "/installed_files.json");
 
     if (dm->getDownloadsSize() != 0) {
 

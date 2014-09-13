@@ -236,6 +236,10 @@ QString Settings::getClientDir() {
     return dataPath + "/client_" + getClientStrId(loadActiveClientId());
 }
 
+QString Settings::getClientPrefix(QString version) {
+    return getClientDir() + "/prefixes/" + version;
+}
+
 QString Settings::getAssetsDir() {
     return dataPath + "/assets";
 }

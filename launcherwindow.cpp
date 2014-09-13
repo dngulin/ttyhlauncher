@@ -553,7 +553,7 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
 
                 mcArg.replace("${auth_player_name}",  settings->loadLogin());
                 mcArg.replace("${version_name}",      gameVersion);
-                mcArg.replace("${game_directory}",    settings->getClientDir());
+                mcArg.replace("${game_directory}",    settings->getClientPrefix(gameVersion));
                 mcArg.replace("${assets_root}",       settings->getAssetsDir());
                 mcArg.replace("${assets_index_name}", assetsIndex);
                 mcArg.replace("${auth_uuid}",         uuid);
@@ -589,7 +589,7 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
             logger->append(this->objectName(), "Try to launch game...\n");
             QProcess* minecraft = new QProcess(this);
             minecraft->setProcessChannelMode(QProcess::MergedChannels);
-            minecraft->setWorkingDirectory(settings->getClientDir());
+            minecraft->setWorkingDirectory(settings->getClientPrefix(gameVersion));
             minecraft->start(java, argList);
 
             if (!minecraft->waitForStarted()) {

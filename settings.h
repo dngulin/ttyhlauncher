@@ -52,6 +52,7 @@ public:
     // Directories
     QString getBaseDir();
     QString getClientDir();
+    QString getClientPrefix(QString version);
     QString getAssetsDir();
     QString getLibsDir();
     QString getVersionsDir();
