@@ -55,6 +55,8 @@ private:
 
     void unzipAllFiles(QString zipFilePath, QString extractionPath);
     void recursiveDelete(QString filePath);
+
+    void showUpdateDialog(const QString message);
 };
 
 #endif // LAUNCHERWINDOW_H

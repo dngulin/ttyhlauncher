@@ -140,11 +140,7 @@ void LauncherWindow::showSkinLoadDialog() {
 }
 
 void LauncherWindow::showUpdateManagerDialog() {
-    UpdateDialog* d = new UpdateDialog(this);
-    d->exec();
-    delete d;
-
-    ui->clientCombo->setCurrentIndex(settings->loadActiveClientId());
+    showUpdateDialog("Для проверки наличия обновлений выберите нужный клиет и нажмите кнопку \"Проверить\"");
 }
 
 void LauncherWindow::showFeedBackDialog() {
@@ -157,6 +153,15 @@ void LauncherWindow::showAboutDialog() {
     AboutDialog* d = new AboutDialog(this);
     d->exec();
     delete d;
+}
+
+void LauncherWindow::showUpdateDialog(QString message) {
+
+    UpdateDialog* d = new UpdateDialog(message, this);
+    d->exec();
+    delete d;
+
+    ui->clientCombo->setCurrentIndex(settings->loadActiveClientId());
 }
 
 // Load webpage slots
@@ -376,9 +381,9 @@ void LauncherWindow::playButtonClicked() {
             }
 
             if (gameVersion == "latest") {
-                QMessageBox::critical(this, "У нас проблема :(",
-                                      "Похоже, что не установлено\nни одной версии игры.\n\tЭто печально!");
                 logger->append(this->objectName(), "Error: no local versions\n");
+                showUpdateDialog(QString("Похоже, что не установлено ни одной версии клиента. Выполните обновление.\n")
+                                 + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
                 run = false;
             }
         }
@@ -414,7 +419,7 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
 
     if (!libsDir.exists()) {
         QMessageBox::critical(this, "У нас проблема :(",
-                              "Не удалось подготовить LIBRARY_PATH. Sorry!");
+                              "Не удалось подготовить LIBRARY_PATH. Извините :(");
         logger->append(this->objectName(), "Error: can't create natives directory!\n");
         return;
     }
@@ -426,7 +431,8 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
     if (!versionFile->open(QIODevice::ReadOnly)) {
 
         logger->append(this->objectName(), "Error: can't open version file\n");
-        QMessageBox::information(this, "Обновление!", "Необходимо обновить клиент!");
+        showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
+                         + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
         delete versionFile;
         return;
     }
@@ -451,8 +457,9 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
 
     if (!libIndexFile->open(QIODevice::ReadOnly)) {
 
-        logger->append(this->objectName(), "Error: can't open index file\n");
-        QMessageBox::information(this, "Обновление!", "Необходимо обновить клиент!");
+        logger->append(this->objectName(), "Error: can't open lib index file\n");
+        showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
+                         + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
         delete libIndexFile;
         return;
     }
@@ -522,7 +529,8 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
 
             if (!isValidGameFile(settings->getLibsDir() + "/" + libSuffix + ".jar", libIndex[libSuffix + ".jar"].toObject()["hash"].toString())) {
 
-                QMessageBox::information(this, "Требуется обновление", "Необходимо выполнить обновление игры.");
+                showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
+                                 + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
                 return;
             }
 
@@ -536,7 +544,8 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
             libSuffix += "-natives-" + settings->getOsName() + ".jar";
             if (!isValidGameFile(settings->getLibsDir() + "/" + libSuffix, libIndex[libSuffix].toObject()["hash"].toString())) {
 
-                QMessageBox::information(this, "Требуется обновление", "Необходимо выполнить обновление игры.");
+                showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
+                                 + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
                 return;
             }
             Util::unzipArchive(settings->getLibsDir() + "/" + libSuffix, settings->getNativesDir());
@@ -550,7 +559,8 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
 
     QString jarHash = versionIndex["jarHash"].toString();
     if (!isValidGameFile(settings->getVersionsDir() + "/" + gameVersion + "/" + gameVersion + ".jar", jarHash)) {
-        QMessageBox::information(this, "Требуется обновление", "Необходимо выполнить обновление игры.");
+        showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
+                         + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
         return;
     }
 
@@ -563,7 +573,8 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
         if (!customFilesIndexFile->open(QIODevice::ReadOnly)) {
 
             logger->append(this->objectName(), "Error: can't open index file\n");
-            QMessageBox::information(this, "Обновление!", "Необходимо обновить клиент!");
+            showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
+                             + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
             delete customFilesIndexFile;
             return;
         }
@@ -600,7 +611,8 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
             }
 
             if (!isValidGameFile(filesPrefix + "/" + file, hash)) {
-                QMessageBox::information(this, "Требуется обновление", "Необходимо выполнить обновление игры.");
+                showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
+                                 + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
                 return;
             }
         }
@@ -638,7 +650,8 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
         if (!assetIndexFile->open(QIODevice::ReadOnly)) {
 
             logger->append(this->objectName(), "Error: can't open index file\n");
-            QMessageBox::information(this, "Обновление!", "Необходимо обновить клиент!");
+            showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
+                             + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
             delete assetIndexFile;
             return;
         }
@@ -663,7 +676,8 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
             QString assetSuffix = hash.mid(0, 2);
 
             if (!isValidGameFile(assetsPrefix + assetSuffix + "/" + hash, hash)) {
-                QMessageBox::information(this, "Требуется обновление", "Необходимо выполнить обновление игры.");
+                showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
+                                 + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
                 return;
             }
         }
