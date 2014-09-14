@@ -541,7 +541,15 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
 
         } else {
 
-            libSuffix += "-natives-" + settings->getOsName() + ".jar";
+            QString nativesSuffix = library["natives"].toObject()[settings->getOsName()].toString();
+            nativesSuffix.replace("${arch}", settings->getWordSize());
+
+            if (!nativesSuffix.isEmpty()) {
+                libSuffix += "-" + nativesSuffix + ".jar";
+            } else {
+                libSuffix += ".jar";
+            }
+
             if (!isValidGameFile(settings->getLibsDir() + "/" + libSuffix, libIndex[libSuffix].toObject()["hash"].toString())) {
 
                 showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
