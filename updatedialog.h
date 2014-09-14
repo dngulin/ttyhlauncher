@@ -16,7 +16,7 @@ class UpdateDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit UpdateDialog(QWidget *parent = 0);
+    explicit UpdateDialog(QString displayMessage, QWidget *parent = 0);
     ~UpdateDialog();
 
 private:

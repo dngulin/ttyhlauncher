@@ -7,7 +7,7 @@
 #include "logger.h"
 #include "util.h"
 
-UpdateDialog::UpdateDialog(QWidget *parent) :
+UpdateDialog::UpdateDialog(QString displayMessage, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::UpdateDialog)
 {
@@ -29,6 +29,7 @@ UpdateDialog::UpdateDialog(QWidget *parent) :
     connect(ui->clientCombo, SIGNAL(activated(int)), this, SLOT(clientChanged()));
 
     state = canCheck;
+    ui->log->setPlainText(displayMessage);
     ui->updateButton->setText("Проверить");
     connect(ui->updateButton, SIGNAL(clicked()), this, SLOT(doCheck()));
 
@@ -36,12 +37,7 @@ UpdateDialog::UpdateDialog(QWidget *parent) :
         ui->updateButton->setEnabled(false);
         logger->append("UpdateDialog", "Error: empty client list!\n");
         ui->log->setPlainText("Ошибка! Не удалось получить список клиентов!");
-    } else {
-        // Auto switch to "check state"
-        emit ui->clientCombo->activated(ui->clientCombo->currentIndex());
     }
-
-
 }
 
 void UpdateDialog::clientChanged() {
