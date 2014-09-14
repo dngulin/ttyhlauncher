@@ -319,6 +319,13 @@ void LauncherWindow::playButtonClicked() {
                         Util::downloadFile(settings->getVersionUrl(gameVersion) + "files.json", currentVersionDir + "files.json");
                     }
 
+                    if (!versionIndex["assets"].isNull()) {
+                        QString assets = versionIndex["assets"].toString();
+                        Util::downloadFile(settings->getAssetsUrl() + "indexes/" + assets + ".json",
+                                           settings->getAssetsDir() + "/indexes/" + assets + ".json");
+                    }
+
+
                     if (run) runGame(uuid, acessToken, gameVersion);
                 }
             }
@@ -412,300 +419,439 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
         return;
     }
 
-    // Setup classpath and extract natives!
+    // Open version index file
     QFile* versionFile = new QFile(settings->getVersionsDir() + "/" + gameVersion + "/" + gameVersion + ".json");
     logger->append(this->objectName(), "Reading version file: " + versionFile->fileName() + "\n");
 
     if (!versionFile->open(QIODevice::ReadOnly)) {
 
-        QMessageBox::information(this, "Обновление!", "Необходимо обновить клиент!");
         logger->append(this->objectName(), "Error: can't open version file\n");
+        QMessageBox::information(this, "Обновление!", "Необходимо обновить клиент!");
         delete versionFile;
         return;
+    }
 
-    } else { // Version file opened
+    QJsonParseError error;
+    QJsonObject versionIndex = QJsonDocument::fromJson(versionFile->readAll(), &error).object();
+    versionFile->close();
+    delete versionFile;
 
-        QJsonParseError error;
-        QJsonDocument versionJson = QJsonDocument::fromJson(versionFile->readAll(), &error);
+    if (!(error.error == QJsonParseError::NoError)) {
+
+        QMessageBox::critical(this, "У нас проблема :(", "Не удалось разобрать индекс версии...\n"
+                              + error.errorString() + "  поз. " + QString::number(error.offset));
+        logger->append(this->objectName(), "JSON parse error: " + error.errorString() + " в поз. "
+                       + QString::number(error.offset) + "\n");
+        return;
+    }
+
+    // Open libs index file
+    QFile* libIndexFile = new QFile(settings->getVersionsDir() + "/" + gameVersion + "/" + "libs.json");
+    logger->append(this->objectName(), "Reading index file: " + libIndexFile->fileName() + "\n");
+
+    if (!libIndexFile->open(QIODevice::ReadOnly)) {
+
+        logger->append(this->objectName(), "Error: can't open index file\n");
+        QMessageBox::information(this, "Обновление!", "Необходимо обновить клиент!");
+        delete libIndexFile;
+        return;
+    }
+
+    QJsonObject libIndex = QJsonDocument::fromJson(libIndexFile->readAll(), &error).object()["objects"].toObject();
+    libIndexFile->close();
+    delete libIndexFile;
+
+    if (!(error.error == QJsonParseError::NoError)) {
+
+        QMessageBox::critical(this, "У нас проблема :(", "Не удалось разобрать индекс библиотек...\n"
+                              + error.errorString() + "  поз. " + QString::number(error.offset));
+        logger->append(this->objectName(), "JSON parse error: " + error.errorString() + " в поз. "
+                       + QString::number(error.offset) + "\n");
+        return;
+    }
+
+    QJsonArray libraries = versionIndex["libraries"].toArray();
+    foreach (QJsonValue libValue, libraries) {
+
+        QJsonObject library = libValue.toObject();
+
+        QStringList entry = library["name"].toString().split(':');
+
+        // <package>:<name>:<version> to <package>/<name>/<version>/<name>-<version> and chahge <backage> format from a.b.c to a/b/c
+        QString libSuffix = entry.at(0);                  // package
+        libSuffix.replace('.', '/');                      // package format
+        libSuffix += "/" + entry.at(1)                    // + name
+                + "/" + entry.at(2)                       // + version
+                + "/" + entry.at(1) + "-" + entry.at(2);  // + name-version
+
+        // Check for allow-disallow rules
+        QJsonArray rules = library["rules"].toArray();
+        bool allowLib = true;
+        if (!rules.isEmpty()) {
+
+            // Disallow libray if not in allow list
+            allowLib = false;
+
+            foreach (QJsonValue ruleValue, rules) {
+                QJsonObject rule = ruleValue.toObject();
+
+                // Process allow variants (all or specified)
+                if (rule["action"].toString() == "allow") {
+                    if (rule["os"].toObject().isEmpty()) {
+                        allowLib = true;
+                    } else if (rule["os"].toObject()["name"].toString() == settings->getOsName()) {
+                        allowLib = true;
+                    }
+                }
+
+                // Make exclusions from allow-list
+                if (rule["action"].toString() == "disallow") {
+                    if (rule["os"].toObject()["name"].toString() == settings->getOsName()) {
+                        allowLib = false;
+                    }
+                }
+            }
+        }
+
+        if (!allowLib) {
+            logger->append(this->objectName(), "Skipping lib: " + libSuffix + ".jar\n");
+            continue;
+        }
+
+        if (library["natives"].isNull()) {
+
+            if (!isValidGameFile(settings->getLibsDir() + "/" + libSuffix + ".jar", libIndex[libSuffix + ".jar"].toObject()["hash"].toString())) {
+
+                QMessageBox::information(this, "Требуется обновление", "Необходимо выполнить обновление игры.");
+                return;
+            }
+
+            if (settings->getOsName() == "windows") libSuffix += ".jar;";
+            else libSuffix += ".jar:";
+
+            classpath += settings->getLibsDir() + "/" + libSuffix;
+
+        } else {
+
+            libSuffix += "-natives-" + settings->getOsName() + ".jar";
+            if (!isValidGameFile(settings->getLibsDir() + "/" + libSuffix, libIndex[libSuffix].toObject()["hash"].toString())) {
+
+                QMessageBox::information(this, "Требуется обновление", "Необходимо выполнить обновление игры.");
+                return;
+            }
+            Util::unzipArchive(settings->getLibsDir() + "/" + libSuffix, settings->getNativesDir());
+        }
+
+
+    }
+
+    // Add game jar to classpath
+    classpath += settings->getVersionsDir() + "/" + gameVersion + "/" + gameVersion + ".jar";
+
+    QString jarHash = versionIndex["jarHash"].toString();
+    if (!isValidGameFile(settings->getVersionsDir() + "/" + gameVersion + "/" + gameVersion + ".jar", jarHash)) {
+        QMessageBox::information(this, "Требуется обновление", "Необходимо выполнить обновление игры.");
+        return;
+    }
+
+    // Open custom files index
+    if (versionIndex["customFiles"].toBool()) {
+
+        QFile* customFilesIndexFile = new QFile(settings->getVersionsDir() + "/" + gameVersion + "/" + "files.json");
+        logger->append(this->objectName(), "Reading index file: " + customFilesIndexFile->fileName() + "\n");
+
+        if (!customFilesIndexFile->open(QIODevice::ReadOnly)) {
+
+            logger->append(this->objectName(), "Error: can't open index file\n");
+            QMessageBox::information(this, "Обновление!", "Необходимо обновить клиент!");
+            delete customFilesIndexFile;
+            return;
+        }
+
+        QJsonObject customFilesObject = QJsonDocument::fromJson(customFilesIndexFile->readAll(), &error).object();
+        customFilesIndexFile->close();
+        delete customFilesIndexFile;
 
         if (!(error.error == QJsonParseError::NoError)) {
 
-            QMessageBox::critical(this, "У нас проблема :(", "Зело непонятный конфигурационный файл...\n"
+            QMessageBox::critical(this, "У нас проблема :(", "Не удалось разобрать индекс модификаций...\n"
                                   + error.errorString() + "  поз. " + QString::number(error.offset));
             logger->append(this->objectName(), "JSON parse error: " + error.errorString() + " в поз. "
                            + QString::number(error.offset) + "\n");
-            delete versionFile;
             return;
-
-        } else { // Correct version file
-
-            QJsonArray libraries = versionJson.object()["libraries"].toArray();
-            foreach (QJsonValue libValue, libraries) {
-
-                QJsonObject library = libValue.toObject();
-
-                QStringList entry = library["name"].toString().split(':');
-
-                // <package>:<name>:<version> to <package>/<name>/<version>/<name>-<version> and chahge <backage> format from a.b.c to a/b/c
-                QString libSuffix = entry.at(0);                  // package
-                libSuffix.replace('.', '/');                      // package format
-                libSuffix += "/" + entry.at(1)                    // + name
-                        + "/" + entry.at(2)                       // + version
-                        + "/" + entry.at(1) + "-" + entry.at(2);  // + name-version
-
-                // Check for allow-disallow rules
-                QJsonArray rules = library["rules"].toArray();
-                bool allowLib = true;
-                if (!rules.isEmpty()) {
-
-                    // Disallow libray if not in allow list
-                    allowLib = false;
-
-                    foreach (QJsonValue ruleValue, rules) {
-                        QJsonObject rule = ruleValue.toObject();
-
-                        // Process allow variants (all or specified)
-                        if (rule["action"].toString() == "allow") {
-                            if (rule["os"].toObject().isEmpty()) {
-                                allowLib = true;
-                            } else if (rule["os"].toObject()["name"].toString() == settings->getOsName()) {
-                                allowLib = true;
-                            }
-                        }
-
-                        // Make exclusions from allow-list
-                        if (rule["action"].toString() == "disallow") {
-                            if (rule["os"].toObject()["name"].toString() == settings->getOsName()) {
-                                allowLib = false;
-                            }
-                        }
-                    }
-                }
-
-                if (!allowLib) {
-                    logger->append(this->objectName(), "Skipping lib: " + libSuffix + ".jar\n");
-                    continue;
-                }
-
-                if (library["natives"].isNull()) {
-
-                    if (!QFile::exists(settings->getLibsDir() + "/" + libSuffix + ".jar")) {
-                        QMessageBox::critical(this, "У нас проблема :(",
-                                              "Отсутсвуют необходимые игровые файлы!\n"
-                                              + libSuffix + ".jar" + "\nВыполните обновление.");
-                        logger->append(this->objectName(), "Error: lib not found: " + libSuffix + ".jar\n");
-                        return;
-                    }
-
-                    if (settings->getOsName() == "windows") libSuffix += ".jar;";
-                    else libSuffix += ".jar:";
-
-                    classpath += settings->getLibsDir() + "/" + libSuffix;
-
-                } else {
-
-                    if (!library["natives"].toObject()[settings->getOsName()].isNull()) {
-                        libSuffix += "-natives-" + settings->getOsName() + ".jar";
-                        Util::unzipArchive(settings->getLibsDir() + "/" + libSuffix, settings->getNativesDir());
-                    }
-                }
-
-
-            }
-
-            // Add game jar to classpath
-            classpath += settings->getVersionsDir() + "/" + gameVersion + "/" + gameVersion + ".jar";
-
-            if (!QFile::exists(settings->getVersionsDir() + "/" + gameVersion + "/" + gameVersion + ".jar")) {
-                QMessageBox::critical(this, "У нас проблема :(",
-                                      "Отсутсвуют необходимые игровые файлы!\nВыполните обновление.");
-                return;
-            }
-
-            // Setup mainClass
-            if (versionJson.object()["mainClass"].isNull()) {
-
-                QMessageBox::critical(this, "У нас проблема :(", "Вот беда. В конфигурационном файле не указан mainClass.");
-                logger->append(this->objectName(), "Error: can't read mainClass\n");
-                return;
-
-            } else {
-
-                mainClass = versionJson.object()["mainClass"].toString();
-
-            }
-
-            // Read assets index
-            QString assetsIndex;
-            if (versionJson.object()["assets"].isNull()) {
-
-                QMessageBox::critical(this, "У нас проблема !!!",  "Аааа! В конфигурационном файле не указаны ассеты!");
-                logger->append(this->objectName(), "Error: can't read assets index name\n");
-                return;
-
-            } else {
-
-                assetsIndex = versionJson.object()["assets"].toString();
-
-            }
-
-            // Setup aruments
-            if (versionJson.object()["minecraftArguments"].isNull()) {
-
-                QMessageBox::critical(this, "У нас проблема :(", "В конфигурационном файле не указаны аргументы запуска.");
-                logger->append(this->objectName(), "Error: can't read minecraft arguments\n");
-                return;
-
-            } else {
-
-                minecraftArguments = versionJson.object()["minecraftArguments"].toString();
-
-            }
-
-            // Crazy way, but this must work
-            QStringList mcArgList;
-            foreach (QString mcArg, minecraftArguments.split(" ")) {
-
-                mcArg.replace("${auth_player_name}",  settings->loadLogin());
-                mcArg.replace("${version_name}",      gameVersion);
-                mcArg.replace("${game_directory}",    settings->getClientPrefix(gameVersion));
-                mcArg.replace("${assets_root}",       settings->getAssetsDir());
-                mcArg.replace("${assets_index_name}", assetsIndex);
-                mcArg.replace("${auth_uuid}",         uuid);
-                mcArg.replace("${auth_access_token}", acessToken);
-                mcArg.replace("${user_properties}",   "{}");
-                mcArg.replace("${user_type}",       "mojang");
-
-                mcArgList << mcArg;
-            }
-
-
-
-            // RUN-RUN-RUN!
-            logger->append(this->objectName(), "Making run string...\n");
-            QStringList argList;
-
-            // Workaround for Oracle Java + StartSSL
-            argList << "-Djavax.net.ssl.trustStore=" + settings->getConfigDir() + "/keystore.ks"
-                    << "-Djavax.net.ssl.trustStorePassword=123456";
-
-            // Setup user args
-            QStringList userArgList;
-            if (settings->loadClientJavaArgsState()) {
-                userArgList = settings->loadClientJavaArgs().split(" ");
-            }
-            if (!userArgList.isEmpty()) argList << userArgList;
-
-            argList << "-Djava.library.path=" + libpath
-                    << "-cp" << classpath
-                    << mainClass
-                    << mcArgList;
-
-            QString stringargs;
-            foreach (QString arg, argList) stringargs += arg + " ";
-            logger->append(this->objectName(), "Run string: " + java + " " + stringargs + "\n");
-
-            logger->append(this->objectName(), "Try to launch game...\n");
-            QProcess* minecraft = new QProcess(this);
-            minecraft->setProcessChannelMode(QProcess::MergedChannels);
-
-            // Set working directory
-            QDir(settings->getClientPrefix(gameVersion)).mkpath(settings->getClientPrefix(gameVersion));
-            minecraft->setWorkingDirectory(settings->getClientPrefix(gameVersion));
-
-            minecraft->start(java, argList);
-
-            if (!minecraft->waitForStarted()) {
-
-                switch(minecraft->error()) {
-                case QProcess::FailedToStart:
-                    QMessageBox::critical(this, "Проблема!",
-                                          "Смерть на взлёте! Игра не запускается!\n"
-                                          + minecraft->errorString());
-                    logger->append(this->objectName(), "Error: failed to start: "
-                                   + minecraft->errorString() + "\n");
-                    break;
-
-                case QProcess::Crashed:
-                    QMessageBox::critical(this, "Проблема!",
-                                          "Игра упала и не подымается :(\n"
-                                          + minecraft->errorString());
-                    logger->append(this->objectName(), "Error: crashed: "
-                                   + minecraft->errorString() + "\n");
-                    break;
-
-                case QProcess::Timedout:
-                    QMessageBox::critical(this, "Проблема!",
-                                          "Что-то долго игра не может запуститься...\n"
-                                          + minecraft->errorString());
-                    logger->append(this->objectName(), "Error: timeout: "
-                                   + minecraft->errorString() + "\n");
-                    break;
-
-                case QProcess::WriteError:
-                    QMessageBox::critical(this, "Проблема!",
-                                          "Игра не может писать :(\n"
-                                          + minecraft->errorString());
-                    logger->append(this->objectName(), "Error: write error: "
-                                   + minecraft->errorString() + "\n");
-                    break;
-
-                case QProcess::ReadError:
-                    QMessageBox::critical(this, "Проблема!",
-                                          "Игра не может читать :(!\n"
-                                          + minecraft->errorString());
-                    logger->append(this->objectName(), "Error: read error: "
-                                   + minecraft->errorString() + "\n");
-                    break;
-
-                case QProcess::UnknownError:
-                default:
-                    QMessageBox::critical(this, "Проблема!",
-                                          "Произошло что-то странное и игра не запустилась!\n"
-                                          + minecraft->errorString());
-                    logger->append(this->objectName(), "Error: "
-                                   + minecraft->errorString() + "\n");
-                    break;
-                }
-
-            } else { // Game successful started
-
-                logger->append(this->objectName(), "Main window hidden\n");
-                this->hide();
-
-                while (minecraft->state() == QProcess::Running) {
-                    if (minecraft->waitForReadyRead()) {
-                        logger->append("Client", minecraft->readAll());
-                    }
-                }
-
-                logger->append(this->objectName(), "Game process finished!\n");
-                if (minecraft->exitCode() != 0) {
-
-                    this->show();
-                    QMessageBox::critical(this, "Ну вот!",  "Кажется игра некорректно завершилась, посмотрите лог-файл.\n");
-                    logger->append(this->objectName(), "Error: not null game exit code: " + QString::number(minecraft->exitCode()) + "\n");
-                    logger->append(this->objectName(), "Main window showed\n");
-
-                } else {
-
-                    this->close();
-
-                }
-            }
-
-            delete minecraft;
         }
 
-        versionFile->close();
+        QStringList mutableFileList;
+        QJsonArray mutableFileIndex = customFilesObject["mutable"].toArray();
+        foreach (QJsonValue entry, mutableFileIndex) {
+            mutableFileList.append(entry.toString());
+        }
+
+        QJsonObject regularFileIndex = customFilesObject["objects"].toObject();
+        QString filesPrefix = settings->getClientPrefix(gameVersion);
+
+        foreach (QString file, regularFileIndex.keys()) {
+
+            QString hash;
+            if (mutableFileList.indexOf(file) == -1) {
+                hash = regularFileIndex[file].toObject()["hash"].toString();
+            } else {
+                hash = "mutable";
+            }
+
+            if (!isValidGameFile(filesPrefix + "/" + file, hash)) {
+                QMessageBox::information(this, "Требуется обновление", "Необходимо выполнить обновление игры.");
+                return;
+            }
+        }
     }
 
-    delete versionFile;
+    // Setup mainClass
+    if (versionIndex["mainClass"].isNull()) {
+
+        QMessageBox::critical(this, "У нас проблема :(", "Вот беда. В конфигурационном файле не указан mainClass.");
+        logger->append(this->objectName(), "Error: can't read mainClass\n");
+        return;
+
+    } else {
+
+        mainClass = versionIndex["mainClass"].toString();
+
+    }
+
+    // Read assets index
+    QString assetsVersion;
+    if (versionIndex["assets"].isNull()) {
+
+        QMessageBox::critical(this, "У нас проблема !!!",  "Аааа! В конфигурационном файле не указаны ресурсы игры!");
+        logger->append(this->objectName(), "Error: can't read assets index name\n");
+        return;
+
+    } else {
+
+        assetsVersion = versionIndex["assets"].toString();
+
+        // Open assets index file
+        QFile* assetIndexFile = new QFile(settings->getAssetsDir() + "/indexes/" + assetsVersion + ".json");
+        logger->append(this->objectName(), "Reading index file: " + assetIndexFile->fileName() + "\n");
+
+        if (!assetIndexFile->open(QIODevice::ReadOnly)) {
+
+            logger->append(this->objectName(), "Error: can't open index file\n");
+            QMessageBox::information(this, "Обновление!", "Необходимо обновить клиент!");
+            delete assetIndexFile;
+            return;
+        }
+
+        QJsonObject assetIndex = QJsonDocument::fromJson(assetIndexFile->readAll(), &error).object()["objects"].toObject();
+        assetIndexFile->close();
+        delete assetIndexFile;
+
+        if (!(error.error == QJsonParseError::NoError)) {
+
+            QMessageBox::critical(this, "У нас проблема :(", "Не удалось разобрать индекс ресурсов...\n"
+                                  + error.errorString() + "  поз. " + QString::number(error.offset));
+            logger->append(this->objectName(), "JSON parse error: " + error.errorString() + " в поз. "
+                           + QString::number(error.offset) + "\n");
+            return;
+        }
+
+        QString assetsPrefix = settings->getAssetsDir() + "/objects/";
+        foreach (QString key, assetIndex.keys()) {
+
+            QString hash = assetIndex[key].toObject()["hash"].toString();;
+            QString assetSuffix = hash.mid(0, 2);
+
+            if (!isValidGameFile(assetsPrefix + assetSuffix + "/" + hash, hash)) {
+                QMessageBox::information(this, "Требуется обновление", "Необходимо выполнить обновление игры.");
+                return;
+            }
+        }
+    }
+
+    // Setup aruments
+    if (versionIndex["minecraftArguments"].isNull()) {
+
+        QMessageBox::critical(this, "У нас проблема :(", "В конфигурационном файле не указаны аргументы запуска.");
+        logger->append(this->objectName(), "Error: can't read minecraft arguments\n");
+        return;
+
+    } else {
+
+        minecraftArguments = versionIndex["minecraftArguments"].toString();
+    }
+
+    // Crazy way, but this must work
+    QStringList mcArgList;
+    foreach (QString mcArg, minecraftArguments.split(" ")) {
+
+        mcArg.replace("${auth_player_name}",  settings->loadLogin());
+        mcArg.replace("${version_name}",      gameVersion);
+        mcArg.replace("${game_directory}",    settings->getClientPrefix(gameVersion));
+        mcArg.replace("${assets_root}",       settings->getAssetsDir());
+        mcArg.replace("${assets_index_name}", assetsVersion);
+        mcArg.replace("${auth_uuid}",         uuid);
+        mcArg.replace("${auth_access_token}", acessToken);
+        mcArg.replace("${user_properties}",   "{}");
+        mcArg.replace("${user_type}",       "mojang");
+
+        mcArgList << mcArg;
+    }
+
+    // RUN-RUN-RUN!
+    logger->append(this->objectName(), "Making run string...\n");
+    QStringList argList;
+
+    // Workaround for Oracle Java + StartSSL
+    argList << "-Djavax.net.ssl.trustStore=" + settings->getConfigDir() + "/keystore.ks"
+            << "-Djavax.net.ssl.trustStorePassword=123456";
+
+    // Setup user args
+    QStringList userArgList;
+    if (settings->loadClientJavaArgsState()) {
+        userArgList = settings->loadClientJavaArgs().split(" ");
+    }
+    if (!userArgList.isEmpty()) argList << userArgList;
+
+    argList << "-Djava.library.path=" + libpath
+            << "-cp" << classpath
+            << mainClass
+            << mcArgList;
+
+    QString stringargs = argList.join(' ');
+    logger->append(this->objectName(), "Run string: " + java + " " + stringargs + "\n");
+
+    logger->append(this->objectName(), "Try to launch game...\n");
+    QProcess* minecraft = new QProcess(this);
+    minecraft->setProcessChannelMode(QProcess::MergedChannels);
+
+    // Set working directory
+    QDir(settings->getClientPrefix(gameVersion)).mkpath(settings->getClientPrefix(gameVersion));
+    minecraft->setWorkingDirectory(settings->getClientPrefix(gameVersion));
+
+    minecraft->start(java, argList);
+
+    if (!minecraft->waitForStarted()) {
+
+        switch(minecraft->error()) {
+        case QProcess::FailedToStart:
+            QMessageBox::critical(this, "Проблема!",
+                                  "Смерть на взлёте! Игра не запускается!\n"
+                                  + minecraft->errorString());
+            logger->append(this->objectName(), "Error: failed to start: "
+                           + minecraft->errorString() + "\n");
+            break;
+
+        case QProcess::Crashed:
+            QMessageBox::critical(this, "Проблема!",
+                                  "Игра упала и не подымается :(\n"
+                                  + minecraft->errorString());
+            logger->append(this->objectName(), "Error: crashed: "
+                           + minecraft->errorString() + "\n");
+            break;
+
+        case QProcess::Timedout:
+            QMessageBox::critical(this, "Проблема!",
+                                  "Что-то долго игра не может запуститься...\n"
+                                  + minecraft->errorString());
+            logger->append(this->objectName(), "Error: timeout: "
+                           + minecraft->errorString() + "\n");
+            break;
+
+        case QProcess::WriteError:
+            QMessageBox::critical(this, "Проблема!",
+                                  "Игра не может писать :(\n"
+                                  + minecraft->errorString());
+            logger->append(this->objectName(), "Error: write error: "
+                           + minecraft->errorString() + "\n");
+            break;
+
+        case QProcess::ReadError:
+            QMessageBox::critical(this, "Проблема!",
+                                  "Игра не может читать :(!\n"
+                                  + minecraft->errorString());
+            logger->append(this->objectName(), "Error: read error: "
+                           + minecraft->errorString() + "\n");
+            break;
+
+        case QProcess::UnknownError:
+        default:
+            QMessageBox::critical(this, "Проблема!",
+                                  "Произошло что-то странное и игра не запустилась!\n"
+                                  + minecraft->errorString());
+            logger->append(this->objectName(), "Error: "
+                           + minecraft->errorString() + "\n");
+            break;
+        }
+
+    } else { // Game successful started
+
+        logger->append(this->objectName(), "Main window hidden\n");
+        this->hide();
+
+        while (minecraft->state() == QProcess::Running) {
+            if (minecraft->waitForReadyRead()) {
+                logger->append("Client", minecraft->readAll());
+            }
+        }
+
+        logger->append(this->objectName(), "Game process finished!\n");
+        if (minecraft->exitCode() != 0) {
+
+            this->show();
+            QMessageBox::critical(this, "Ну вот!",  "Кажется игра некорректно завершилась, посмотрите лог-файл.\n");
+            logger->append(this->objectName(), "Error: not null game exit code: " + QString::number(minecraft->exitCode()) + "\n");
+            logger->append(this->objectName(), "Main window showed\n");
+
+        } else {
+
+            this->close();
+
+        }
+    }
+
+    delete minecraft;
 
 }
 
-LauncherWindow::~LauncherWindow()
-{
+bool LauncherWindow::isValidGameFile(QString fileName, QString hash) {
+
+    logger->append(this->objectName(), "Precheck: " + fileName + "\n");
+
+    if (!QFile::exists(fileName)) {
+
+        logger->append(this->objectName(), "Precheck: file not exists!\n");
+        return false;
+    }
+
+    if (hash == "mutable") return true;
+
+    QFile* file = new QFile(fileName);
+    if (!file->open(QIODevice::ReadOnly)) {
+
+        logger->append(this->objectName(), "Precheck: can't read file!\n");
+        delete file;
+        return false;
+
+    } else {
+
+        QByteArray data = file->readAll();
+        QString fileHash = QString(QCryptographicHash::hash(data, QCryptographicHash::Sha1).toHex());
+        file->close();
+        delete file;
+
+        if (fileHash != hash) {
+
+            logger->append(this->objectName(), "Precheck: bad checksumm!\n");
+            return false;
+        }
+    }
+
+    return true;
+}
+
+LauncherWindow::~LauncherWindow() {
+
     delete ui;
     delete newsGroup;
 }

@@ -50,6 +50,7 @@ private:
     void loadPage(const QUrl& url);
     void storeParameters();
 
+    bool isValidGameFile(QString fileName, QString hash);
     void runGame(QString uuid, QString acessToken, QString gameVersion);
 
     void unzipAllFiles(QString zipFilePath, QString extractionPath);
