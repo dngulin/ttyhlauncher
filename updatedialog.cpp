@@ -141,7 +141,7 @@ void UpdateDialog::doCheck() {
 
     }
 
-    // Check for version-files
+    // Check for version and data indexes
     ui->log->appendPlainText("\n # Проверка файлов игры:");
     logger->append("UpdateDialog", "Checking game files\n");
 
@@ -156,17 +156,18 @@ void UpdateDialog::doCheck() {
         return;
     }
 
-    if (!downloadNow(versionUrlPrefix + "libs.json",
-                             versionFilePrefix + "libs.json")) {
+    if (!downloadNow(versionUrlPrefix + "data.json",
+                             versionFilePrefix + "data.json")) {
 
         ui->clientCombo->setEnabled(true);
         ui->updateButton->setEnabled(true);
         return;
     }
 
-    // Reading info from JSON-files files
-    QJsonDocument versionJson, libsJson;
+    // Reading info from indexes
+    QJsonDocument versionJson, dataJson;
 
+    // Reading version index
     QFile* versionIndexfile = new QFile(versionFilePrefix + clientVersion +".json");
     if (!versionIndexfile->open(QIODevice::ReadOnly)) {
 
@@ -196,11 +197,12 @@ void UpdateDialog::doCheck() {
     }
     delete versionIndexfile;
 
-    QFile* libsIndexfile = new QFile(versionFilePrefix + "libs.json");
-    if (!libsIndexfile->open(QIODevice::ReadOnly)) {
+    // Reading data index
+    QFile* dataIndexfile = new QFile(versionFilePrefix + "data.json");
+    if (!dataIndexfile->open(QIODevice::ReadOnly)) {
 
-        ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось открыть libs.json");
-        logger->append("UpdateDialog", "Error: can't open libs.json\n");
+        ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось открыть data.json");
+        logger->append("UpdateDialog", "Error: can't open data.json\n");
 
         ui->clientCombo->setEnabled(true);
         ui->updateButton->setEnabled(true);
@@ -209,21 +211,21 @@ void UpdateDialog::doCheck() {
     } else {
 
         QJsonParseError error;
-        libsJson = QJsonDocument::fromJson(libsIndexfile->readAll(), &error);
+        dataJson = QJsonDocument::fromJson(dataIndexfile->readAll(), &error);
 
         if (error.error != QJsonParseError::NoError) {
 
-            ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось разобрать libs.json");
-            logger->append("UpdateDialog", "Error: can't parse libs.json\n");
+            ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось разобрать data.json");
+            logger->append("UpdateDialog", "Error: can't parse data.json\n");
 
             ui->clientCombo->setEnabled(true);
             ui->updateButton->setEnabled(true);
             return;
 
         }
-        libsIndexfile->close();
+        dataIndexfile->close();
     }
-    delete libsIndexfile;
+    delete dataIndexfile;
 
     // Check game files
     QString url, fileName, displayName, checkSumm;
@@ -233,8 +235,8 @@ void UpdateDialog::doCheck() {
     url = versionUrlPrefix + clientVersion + ".jar";
     fileName = versionFilePrefix + clientVersion + ".jar";
     displayName = "файл " + clientVersion + ".jar";
-    checkSumm = versionJson.object()["jarHash"].toString();
-    size = versionJson.object()["jarSize"].toInt();
+    checkSumm = dataJson.object()["main"].toObject()["hash"].toString();
+    size = dataJson.object()["main"].toObject()["size"].toInt();
 
     if (addToQueryIfNeed(url, fileName, displayName, checkSumm, size)) needUpdate = true;
 
@@ -300,12 +302,12 @@ void UpdateDialog::doCheck() {
             libSuffix += ".jar";
         }
 
-        // Check each library file
+        // Check each library file by exists and hash
         url = libUrlPrefix + libSuffix;
         fileName = libFilePrefix + libSuffix;
         displayName = "файл " + libSuffix.split('/').last();
-        checkSumm = libsJson.object()["objects"].toObject()[libSuffix].toObject()["hash"].toString();
-        size = libsJson.object()["objects"].toObject()[libSuffix].toObject()["size"].toInt();
+        checkSumm = dataJson.object()["libs"].toObject()[libSuffix].toObject()["hash"].toString();
+        size = dataJson.object()["libs"].toObject()[libSuffix].toObject()["size"].toInt();
 
         if (addToQueryIfNeed(url, fileName, displayName, checkSumm, size)) needUpdate = true;
         QApplication::processEvents(); // Update text in log
@@ -329,6 +331,7 @@ void UpdateDialog::doCheck() {
         return;
     }
 
+    // Reading assets index
     QFile* assetsIndexfile = new QFile(settings->getAssetsDir() + "/indexes/" + assetsVersion + ".json");
     if (!assetsIndexfile->open(QIODevice::ReadOnly)) {
 
@@ -356,7 +359,9 @@ void UpdateDialog::doCheck() {
     }
     delete assetsIndexfile;
 
+    // Check each asset by exists and hash
     QJsonObject assets = assetsJson.object()["objects"].toObject();
+
     foreach (QString key, assets.keys()) {
         QJsonObject asset = assets[key].toObject();
 
@@ -371,66 +376,24 @@ void UpdateDialog::doCheck() {
         QApplication::processEvents(); // Update text in log
     }
 
-    // Check custom files
-    if (versionJson.object()["customFiles"].toBool()) {
+    // Check additional files if defined
+    if (!dataJson.object()["files"].toObject()["index"].isNull()) {
 
         ui->log->appendPlainText("\n # Проверка дополнительных модификаций:");
-        logger->append("UpdateDialog", "Checking ustom files\n");
+        logger->append("UpdateDialog", "Checking custom files\n");
 
-        // Download files index
-        if (!downloadNow(versionUrlPrefix + "files.json",
-                                 versionFilePrefix + "files.json")) {
+        // Open installed files index
+        QJsonDocument installedDataJson;
 
-            dm->reset();
-            ui->clientCombo->setEnabled(true);
-            ui->updateButton->setEnabled(true);
-            return;
-        }
+        if (QFile::exists(settings->getClientPrefix(clientVersion) + "/installed_data.json")) {
 
-        // Open custom files index
-        QJsonDocument currentCustomsJson, previousCustomsJson;
-
-        QFile* currentCustomsFile = new QFile(versionFilePrefix + "files.json");
-        if (!currentCustomsFile->open(QIODevice::ReadOnly)) {
-
-            ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось открыть files.json");
-            logger->append("UpdateDialog", "Error: can't open files.json\n");
-
-            dm->reset();
-            ui->clientCombo->setEnabled(true);
-            ui->updateButton->setEnabled(true);
-            return;
-
-        } else {
-
-            QJsonParseError error;
-            currentCustomsJson = QJsonDocument::fromJson(currentCustomsFile->readAll(), &error);
-
-            if (error.error != QJsonParseError::NoError) {
-
-                ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось разобрать files.json");
-                logger->append("UpdateDialog", "Error: can't parse files.json\n");
-
-                dm->reset();
-                ui->clientCombo->setEnabled(true);
-                ui->updateButton->setEnabled(true);
-                return;
-
-            }
-            currentCustomsFile->close();
-        }
-        delete currentCustomsFile;
-
-        // Make deletion list
-        if (QFile::exists(settings->getClientPrefix(clientVersion) + "/installed_files.json")) {
-
-            ui->log->appendPlainText("Построение списка устаревших файлов...");
+            ui->log->appendPlainText("Проверка наличия устаревших файлов...");
             logger->append("UpdateDialog", "Makeing deletion list...\n");
 
-            QFile* previousCustomsFile = new QFile(settings->getClientPrefix(clientVersion) + "/installed_files.json");
-            if (!previousCustomsFile->open(QIODevice::ReadOnly)) {
+            QFile* installedDataFile = new QFile(settings->getClientPrefix(clientVersion) + "/installed_data.json");
+            if (!installedDataFile->open(QIODevice::ReadOnly)) {
 
-                ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось открыть installed_files.json");
+                ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось открыть installed_data.json");
                 logger->append("UpdateDialog", "Error: can't open installed_files.json\n");
 
                 dm->reset();
@@ -441,12 +404,12 @@ void UpdateDialog::doCheck() {
             } else {
 
                 QJsonParseError error;
-                previousCustomsJson = QJsonDocument::fromJson(previousCustomsFile->readAll(), &error);
+                installedDataJson = QJsonDocument::fromJson(installedDataFile->readAll(), &error);
 
                 if (error.error != QJsonParseError::NoError) {
 
-                    ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось разобрать installed_files.json");
-                    logger->append("UpdateDialog", "Error: can't parse installed_files.json\n");
+                    ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось разобрать installed_data.json");
+                    logger->append("UpdateDialog", "Error: can't parse installed_data.json\n");
 
                     dm->reset();
                     ui->clientCombo->setEnabled(true);
@@ -454,12 +417,13 @@ void UpdateDialog::doCheck() {
                     return;
 
                 }
-                previousCustomsFile->close();
+                installedDataFile->close();
             }
-            delete previousCustomsFile;
+            delete installedDataFile;
 
-            QStringList currentFileList = currentCustomsJson.object()["objects"].toObject().keys();
-            QStringList previousFileList = previousCustomsJson.object()["objects"].toObject().keys();
+            // Check for difference between current and previous installations
+            QStringList currentFileList = dataJson.object()["files"].toObject()["index"].toObject().keys();
+            QStringList previousFileList = installedDataJson.object()["files"].toObject()["index"].toObject().keys();
 
             // Add file to deletion list if exist in previous installation and not exists in current
             foreach (QString installedEntry, previousFileList) {
@@ -474,25 +438,25 @@ void UpdateDialog::doCheck() {
             }
         }
 
-
+        // Check custom files
         ui->log->appendPlainText("Проверка файлов модификаций...");
         logger->append("UpdateDialog", "Checing needed custom files...\n");
 
-        // Make mutable list
+        // Make mutable files list (that checks only by existion)
         QStringList mutableList;
-        foreach (QJsonValue value, currentCustomsJson.object()["mutable"].toArray()) {
+        foreach (QJsonValue value, dataJson.object()["files"].toObject()["mutables"].toArray()) {
             mutableList.append(value.toString());
         }
 
         QString filesFilePrefix = settings->getClientPrefix(clientVersion) + "/";
         QString filesUrlPrefix = settings->getVersionUrl(clientVersion) + "files/";
 
-        foreach (QString key, currentCustomsJson.object()["objects"].toObject().keys()) {
+        foreach (QString key, dataJson.object()["files"].toObject()["index"].toObject().keys()) {
 
             QJsonObject customFile
-                    = currentCustomsJson.object()["objects"].toObject()[key].toObject();
+                    = dataJson.object()["files"].toObject()["index"].toObject()[key].toObject();
 
-            // Check each asset file
+            // Check each custom file
             checkSumm = customFile["hash"].toString();
             size = customFile["size"].toInt();
             url = filesUrlPrefix + key;
@@ -539,7 +503,6 @@ void UpdateDialog::doCheck() {
         ui->updateButton->setText("Закрыть");
         connect(ui->updateButton, SIGNAL(clicked()), this, SLOT(close()));
         state = canClose;
-
     }
 
     ui->clientCombo->setEnabled(true);
@@ -566,9 +529,11 @@ void UpdateDialog::doUpdate() {
     }
 
     // Replace custom files index
-    QFile::remove(settings->getClientPrefix(clientVersion) + "/installed_files.json");
-    QFile::copy(settings->getVersionsDir() + "/" + clientVersion + "/files.json",
-                settings->getClientPrefix(clientVersion) + "/installed_files.json");
+    QFile::remove(settings->getClientPrefix(clientVersion) + "/installed_data.json");
+
+    QDir(settings->getClientPrefix(clientVersion) + "/").mkpath(settings->getClientPrefix(clientVersion) + "/");
+    QFile::copy(settings->getVersionsDir() + "/" + clientVersion + "/data.json",
+                settings->getClientPrefix(clientVersion) + "/installed_data.json");
 
     if (dm->getDownloadsSize() != 0) {
 

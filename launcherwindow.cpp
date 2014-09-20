@@ -309,27 +309,23 @@ void LauncherWindow::playButtonClicked() {
                         }
                     }
 
-                    // update json indexes before run (version, libs, [files])
+                    // update json indexes before run (version, data, assets)
                     logger->append(this->objectName(), "Updating game indexes..." + gameVersion + "\n");
 
                     QString currentVersionDir = settings->getVersionsDir() + "/" + gameVersion + "/" ;
 
                     Util::downloadFile(settings->getVersionUrl(gameVersion) + gameVersion + ".json", currentVersionDir + gameVersion + ".json");
-                    Util::downloadFile(settings->getVersionUrl(gameVersion) + "libs.json", currentVersionDir + "libs.json");
+                    Util::downloadFile(settings->getVersionUrl(gameVersion) + "data.json", currentVersionDir + "data.json");
 
                     QByteArray jsonData;
                     jsonData.append(Util::getFileContetnts(currentVersionDir + gameVersion + ".json"));
                     QJsonObject versionIndex = QJsonDocument::fromJson(jsonData).object();
-                    if (versionIndex["customFiles"].toBool()) {
-                        Util::downloadFile(settings->getVersionUrl(gameVersion) + "files.json", currentVersionDir + "files.json");
-                    }
 
                     if (!versionIndex["assets"].isNull()) {
                         QString assets = versionIndex["assets"].toString();
                         Util::downloadFile(settings->getAssetsUrl() + "indexes/" + assets + ".json",
                                            settings->getAssetsDir() + "/indexes/" + assets + ".json");
                     }
-
 
                     if (run) runGame(uuid, acessToken, gameVersion);
                 }
@@ -451,22 +447,22 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
         return;
     }
 
-    // Open libs index file
-    QFile* libIndexFile = new QFile(settings->getVersionsDir() + "/" + gameVersion + "/" + "libs.json");
-    logger->append(this->objectName(), "Reading index file: " + libIndexFile->fileName() + "\n");
+    // Open data index file
+    QFile* dataIndexFile = new QFile(settings->getVersionsDir() + "/" + gameVersion + "/" + "data.json");
+    logger->append(this->objectName(), "Reading index file: " + dataIndexFile->fileName() + "\n");
 
-    if (!libIndexFile->open(QIODevice::ReadOnly)) {
+    if (!dataIndexFile->open(QIODevice::ReadOnly)) {
 
-        logger->append(this->objectName(), "Error: can't open lib index file\n");
+        logger->append(this->objectName(), "Error: can't open data index file\n");
         showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
                          + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
-        delete libIndexFile;
+        delete dataIndexFile;
         return;
     }
 
-    QJsonObject libIndex = QJsonDocument::fromJson(libIndexFile->readAll(), &error).object()["objects"].toObject();
-    libIndexFile->close();
-    delete libIndexFile;
+    QJsonDocument dataJson = QJsonDocument::fromJson(dataIndexFile->readAll(), &error);
+    dataIndexFile->close();
+    delete dataIndexFile;
 
     if (!(error.error == QJsonParseError::NoError)) {
 
@@ -476,6 +472,9 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
                        + QString::number(error.offset) + "\n");
         return;
     }
+
+    // Libs size and hash index
+    QJsonObject libIndex = dataJson.object()["libs"].toObject();
 
     QJsonArray libraries = versionIndex["libraries"].toArray();
     foreach (QJsonValue libValue, libraries) {
@@ -565,7 +564,7 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
     // Add game jar to classpath
     classpath += settings->getVersionsDir() + "/" + gameVersion + "/" + gameVersion + ".jar";
 
-    QString jarHash = versionIndex["jarHash"].toString();
+    QString jarHash = dataJson.object()["main"].toObject()["hash"].toString();
     if (!isValidGameFile(settings->getVersionsDir() + "/" + gameVersion + "/" + gameVersion + ".jar", jarHash)) {
         showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
                          + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
@@ -573,40 +572,17 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
     }
 
     // Open custom files index
-    if (versionIndex["customFiles"].toBool()) {
+    if (!dataJson.object()["files"].toObject()["index"].isNull()) {
 
-        QFile* customFilesIndexFile = new QFile(settings->getVersionsDir() + "/" + gameVersion + "/" + "files.json");
-        logger->append(this->objectName(), "Reading index file: " + customFilesIndexFile->fileName() + "\n");
-
-        if (!customFilesIndexFile->open(QIODevice::ReadOnly)) {
-
-            logger->append(this->objectName(), "Error: can't open index file\n");
-            showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
-                             + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
-            delete customFilesIndexFile;
-            return;
-        }
-
-        QJsonObject customFilesObject = QJsonDocument::fromJson(customFilesIndexFile->readAll(), &error).object();
-        customFilesIndexFile->close();
-        delete customFilesIndexFile;
-
-        if (!(error.error == QJsonParseError::NoError)) {
-
-            QMessageBox::critical(this, "У нас проблема :(", "Не удалось разобрать индекс модификаций...\n"
-                                  + error.errorString() + "  поз. " + QString::number(error.offset));
-            logger->append(this->objectName(), "JSON parse error: " + error.errorString() + " в поз. "
-                           + QString::number(error.offset) + "\n");
-            return;
-        }
+        QJsonObject customFilesObject = dataJson.object()["files"].toObject();
 
         QStringList mutableFileList;
-        QJsonArray mutableFileIndex = customFilesObject["mutable"].toArray();
+        QJsonArray mutableFileIndex = customFilesObject["mutables"].toArray();
         foreach (QJsonValue entry, mutableFileIndex) {
             mutableFileList.append(entry.toString());
         }
 
-        QJsonObject regularFileIndex = customFilesObject["objects"].toObject();
+        QJsonObject regularFileIndex = customFilesObject["index"].toObject();
         QString filesPrefix = settings->getClientPrefix(gameVersion);
 
         foreach (QString file, regularFileIndex.keys()) {
