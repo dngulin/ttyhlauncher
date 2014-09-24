@@ -31,7 +31,6 @@ private slots:
     void loadTtyh();
 
     void showSettingsDialog();
-    void showChangePasswordDialog();
     void showSkinLoadDialog();
     void showUpdateManagerDialog();
     void showFeedBackDialog();

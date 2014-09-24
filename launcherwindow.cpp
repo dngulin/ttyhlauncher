@@ -2,7 +2,6 @@
 #include "ui_launcherwindow.h"
 
 #include "settingsdialog.h"
-#include "passworddialog.h"
 #include "skinuploaddialog.h"
 #include "updatedialog.h"
 #include "feedbackdialog.h"
@@ -42,7 +41,6 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     connect(ui->runSettings, SIGNAL(triggered()), SLOT(showSettingsDialog()));
 
     // Additional Menu connections
-    connect(ui->changePassword, SIGNAL(triggered()), SLOT(showChangePasswordDialog()));
     connect(ui->changeSkin, SIGNAL(triggered()), SLOT(showSkinLoadDialog()));
     connect(ui->updateManager, SIGNAL(triggered()), SLOT(showUpdateManagerDialog()));
 
@@ -125,12 +123,6 @@ void LauncherWindow::showSettingsDialog() {
     delete d;
 
     ui->clientCombo->setCurrentIndex(settings->loadActiveClientId());
-}
-
-void LauncherWindow::showChangePasswordDialog() {
-    PasswordDialog* d = new PasswordDialog(this);
-    d->exec();
-    delete d;
 }
 
 void LauncherWindow::showSkinLoadDialog() {

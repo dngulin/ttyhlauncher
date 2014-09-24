@@ -15,7 +15,6 @@ LIBS += -lquazip
 
 SOURCES += main.cpp\
         launcherwindow.cpp \
-    passworddialog.cpp \
     skinuploaddialog.cpp \
     settingsdialog.cpp \
     updatedialog.cpp \
@@ -28,7 +27,6 @@ SOURCES += main.cpp\
     downloadmanager.cpp
 
 HEADERS  += launcherwindow.h \
-    passworddialog.h \
     skinuploaddialog.h \
     settingsdialog.h \
     updatedialog.h \
@@ -41,7 +39,6 @@ HEADERS  += launcherwindow.h \
     downloadmanager.h
 
 FORMS    += launcherwindow.ui \
-    passworddialog.ui \
     skinuploaddialog.ui \
     settingsdialog.ui \
     updatedialog.ui \
