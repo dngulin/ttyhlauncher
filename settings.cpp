@@ -37,6 +37,10 @@ Settings::Settings() : QObject()
     dataPath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/ttyh_minecraft";
     configPath = QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + "/ttyhlauncher";
 
+    // Prepare data and config directories
+    QDir(dataPath).mkpath(dataPath);
+    QDir(configPath).mkpath(configPath);
+
     settings = new QSettings(configPath + "/config.ini", QSettings::IniFormat);
 }
 
