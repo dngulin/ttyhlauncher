@@ -13,8 +13,8 @@ TEMPLATE = app
 
 LIBS += -lquazip
 
-SOURCES += main.cpp\
-        launcherwindow.cpp \
+SOURCES += main.cpp \
+    launcherwindow.cpp \
     skinuploaddialog.cpp \
     settingsdialog.cpp \
     updatedialog.cpp \
@@ -26,7 +26,7 @@ SOURCES += main.cpp\
     reply.cpp \
     downloadmanager.cpp
 
-HEADERS  += launcherwindow.h \
+HEADERS += launcherwindow.h \
     skinuploaddialog.h \
     settingsdialog.h \
     updatedialog.h \
@@ -38,7 +38,7 @@ HEADERS  += launcherwindow.h \
     reply.h \
     downloadmanager.h
 
-FORMS    += launcherwindow.ui \
+FORMS += launcherwindow.ui \
     skinuploaddialog.ui \
     settingsdialog.ui \
     updatedialog.ui \
@@ -53,17 +53,17 @@ RC_ICONS = resources/favicon.ico
 ICON = resources/favicon.icns
 
 unix {
-	target.path =  $$PREFIX/bin
-	INSTALLS    += target
-	
-	OBJECTS_DIR = .obj
-	MOC_DIR     = .moc
-	UI_DIR      = .ui
-	
-	desktopfile.files = resources/unix/ttyhlauncher.desktop
-	desktopicon.files = resources/unix/ttyhlauncher.svg
-	desktopfile.path  = $$PREFIX/share/applications
-	desktopicon.path  = $$PREFIX/share/icons/hicolor/scalable/apps
-	
-	CONFIG(unix_desktop): INSTALLS += desktopfile desktopicon
+    target.path = $$PREFIX/bin
+    INSTALLS    += target
+
+    OBJECTS_DIR = .obj
+    MOC_DIR     = .moc
+    UI_DIR      = .ui
+
+    desktopfile.files = resources/unix/ttyhlauncher.desktop
+    desktopicon.files = resources/unix/ttyhlauncher.svg
+    desktopfile.path  = $$PREFIX/share/applications
+    desktopicon.path  = $$PREFIX/share/icons/hicolor/scalable/apps
+
+    CONFIG(unix_desktop): INSTALLS += desktopfile desktopicon
 }
