@@ -58,6 +58,7 @@ unix {
 	
 	OBJECTS_DIR = .obj
 	MOC_DIR     = .moc
+	UI_DIR      = .ui
 	
 	desktopfile.files = resources/unix/ttyhlauncher.desktop
 	desktopicon.files = resources/unix/ttyhlauncher.svg
