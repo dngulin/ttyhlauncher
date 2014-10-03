@@ -65,5 +65,5 @@ unix {
 	desktopfile.path  = $$PREFIX/share/applications
 	desktopicon.path  = $$PREFIX/share/icons/hicolor/scalable/apps
 	
-	INSTALLS    += desktopfile desktopicon
+	CONFIG(unix_desktop): INSTALLS += desktopfile desktopicon
 }
