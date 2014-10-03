@@ -51,3 +51,11 @@ RESOURCES += \
 RC_ICONS = resources/favicon.ico
 
 ICON = resources/favicon.icns
+
+unix {
+	target.path = $$PREFIX/bin
+	INSTALLS    = target
+	
+	OBJECTS_DIR = .obj
+	MOC_DIR     = .moc
+}
