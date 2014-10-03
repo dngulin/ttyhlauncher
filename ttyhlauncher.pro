@@ -53,9 +53,16 @@ RC_ICONS = resources/favicon.ico
 ICON = resources/favicon.icns
 
 unix {
-	target.path = $$PREFIX/bin
-	INSTALLS    = target
+	target.path =  $$PREFIX/bin
+	INSTALLS    += target
 	
 	OBJECTS_DIR = .obj
 	MOC_DIR     = .moc
+	
+	desktopfile.files = resources/unix/ttyhlauncher.desktop
+	desktopicon.files = resources/unix/ttyhlauncher.svg
+	desktopfile.path  = $$PREFIX/share/applications
+	desktopicon.path  = $$PREFIX/share/icons/hicolor/scalable/apps
+	
+	INSTALLS    += desktopfile desktopicon
 }
