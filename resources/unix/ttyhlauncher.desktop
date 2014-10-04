@@ -1,0 +1,14 @@
+ [Desktop Entry]
+Encoding=UTF-8
+Name=Ttyh! Minecraft!
+Name[ru]=Ттюх! Minecraft!
+GenericName=Ttyh Minecraft Launcher
+GenericName[ru]=Ттюх Minecraft Лаунчер
+Comment=Launch Ttyh!
+Comment[ru]=Запустить Ттюх!
+TryExec=ttyhlauncher
+Exec=ttyhlauncher %u
+Icon=ttyhlauncher
+StartupNotify=true
+Type=Application
+Categories=Game;
