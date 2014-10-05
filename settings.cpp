@@ -32,7 +32,7 @@ Settings* Settings::instance() {
 
 Settings::Settings() : QObject()
 {
-    updateServer = "http://betrok.net/ttyhstore";
+    updateServer = "http://store.ttyh.ru";
 
     dataPath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/ttyh_minecraft";
     configPath = QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + "/ttyhlauncher";
