@@ -1,4 +1,4 @@
- [Desktop Entry]
+[Desktop Entry]
 Encoding=UTF-8
 Name=Ttyh! Minecraft!
 Name[ru]=Ттюх! Minecraft!
@@ -11,4 +11,4 @@ Exec=ttyhlauncher %u
 Icon=ttyhlauncher
 StartupNotify=true
 Type=Application
-Categories=Game;
+Categories=Application;Game;ActionGame;Qt;
