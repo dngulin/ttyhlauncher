@@ -193,6 +193,7 @@ void LauncherWindow::playButtonClicked() {
                    + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
 
     ui->centralWidget->setEnabled(false);
+    ui->menuBar->setEnabled(false);
 
     if (!ui->playOffline->isChecked()) {
         logger->append(this->objectName(), "Online mode is selected\n");
@@ -381,6 +382,7 @@ void LauncherWindow::playButtonClicked() {
     }
 
     ui->centralWidget->setEnabled(true);
+    ui->menuBar->setEnabled(true);
 }
 
 void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersion) {
