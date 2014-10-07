@@ -16,7 +16,7 @@
  *     - 0.6 -- ????
  *     - 1.0 -- PROFIT^WRELEASE!
 */
-const QString Settings::launcherVersion = "0.7";
+const QString Settings::launcherVersion = "0.8";
 
 // Master-server links
 const QString Settings::authUrl          = "https://master.ttyh.ru/index.php?act=login";
