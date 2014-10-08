@@ -68,14 +68,13 @@ void Settings::loadClientList() {
         logger->append("Settings", "Error: " + prefixesReply.getErrorString() + "\n");
     }
 
+    logger->append("Settings", "Loading local client list...\n");
     if (prefixesFile->open(QIODevice::ReadOnly)) {
 
         QJsonParseError error;
-        QJsonDocument json = QJsonDocument::fromJson(prefixesReply.reply(), &error);
+        QJsonDocument json = QJsonDocument::fromJson(prefixesFile->readAll(), &error);
 
         if (error.error == QJsonParseError::NoError) {
-
-            logger->append("Settings", "Loading local client list...\n");
 
             QJsonObject clients = json.object()["prefixes"].toObject();
             foreach (QString key, clients.keys()) {
@@ -87,7 +86,7 @@ void Settings::loadClientList() {
             }
 
         } else {
-            logger->append("Settings", "JSON parse error!\n");
+            logger->append("Settings", "Error: JSON: " + error.errorString() + " at " + QString::number(error.offset) + "\n");
         }
 
         prefixesFile->close();
