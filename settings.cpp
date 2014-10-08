@@ -204,6 +204,9 @@ void Settings::saveWindowGeometry(QRect geom) { settings->setValue("launcher/win
 bool Settings::loadMaximizedState() {return settings->value("launcher/window_maximized", false).toBool();}
 void Settings::saveMaximizedState(bool state) { settings->setValue("launcher/window_maximized", state); }
 
+bool Settings::loadOfflineModeState() { return settings->value("launcher/offline_mode", false).toBool(); }
+void Settings::saveOfflineModeState(bool offlineState) { settings->setValue("launcher/offline_mode", offlineState); }
+
 // Client settings
 QString Settings::loadClientVersion() {
     int cid = loadActiveClientId();

@@ -36,6 +36,8 @@ private slots:
     void showFeedBackDialog();
     void showAboutDialog();
 
+    void ofllineModeChanged();
+
     void playButtonClicked();
 
 

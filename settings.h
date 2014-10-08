@@ -75,6 +75,10 @@ public:
     void saveWindowGeometry(QRect geom);
     bool loadMaximizedState();
 
+    // Offline mode
+    void saveOfflineModeState(bool offlineState);
+    bool loadOfflineModeState();
+
     // Client settings
     QString loadClientVersion();
     void saveClientVersion(QString strid);
@@ -91,6 +95,7 @@ public:
     QString loadClientJavaArgs();
     void saveClientJavaArgs(QString args);
 
+    // Custom
     QString makeMinecraftUuid();
 
     QString getOsName();
