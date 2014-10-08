@@ -337,8 +337,8 @@ void LauncherWindow::playButtonClicked() {
 
         logger->append(this->objectName(), "Offline mode is selected\n");
 
-        QString uuid = "HARD";
-        QString acessToken = "CORE";
+        QString uuid = QString(QUuid::createUuid().toByteArray()).remove('{').remove('}');
+        QString acessToken = QString(QUuid::createUuid().toByteArray()).remove('{').remove('}');
         QString gameVersion = settings->loadClientVersion();
 
         bool run = true;
