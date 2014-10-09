@@ -52,7 +52,7 @@ private:
     void storeParameters();
 
     bool isValidGameFile(QString fileName, QString hash);
-    void runGame(QString uuid, QString acessToken, QString gameVersion);
+    void runGame(QString uuid, QString accessToken, QString gameVersion);
 
     void unzipAllFiles(QString zipFilePath, QString extractionPath);
     void recursiveDelete(QString filePath);

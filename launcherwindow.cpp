@@ -261,7 +261,7 @@ void LauncherWindow::playButtonClicked() {
                     logger->append(this->objectName(), "OK\n");
 
                     QString uuid = loginReplyData["clientToken"].toString();
-                    QString acessToken = loginReplyData["accessToken"].toString();
+                    QString accessToken = loginReplyData["accessToken"].toString();
                     QString gameVersion = settings->loadClientVersion();
 
                     // Switch from "latest" to real version
@@ -328,7 +328,7 @@ void LauncherWindow::playButtonClicked() {
                                            settings->getAssetsDir() + "/indexes/" + assets + ".json");
                     }
 
-                    if (run) runGame(uuid, acessToken, gameVersion);
+                    if (run) runGame(uuid, accessToken, gameVersion);
                 }
             }
         }
@@ -338,7 +338,7 @@ void LauncherWindow::playButtonClicked() {
         logger->append(this->objectName(), "Offline mode is selected\n");
 
         QString uuid = QString(QUuid::createUuid().toByteArray()).remove('{').remove('}');
-        QString acessToken = QString(QUuid::createUuid().toByteArray()).remove('{').remove('}');
+        QString accessToken = QString(QUuid::createUuid().toByteArray()).remove('{').remove('}');
         QString gameVersion = settings->loadClientVersion();
 
         bool run = true;
@@ -385,7 +385,7 @@ void LauncherWindow::playButtonClicked() {
             }
         }
 
-        if (run) runGame(uuid, acessToken, gameVersion);
+        if (run) runGame(uuid, accessToken, gameVersion);
 
     }
 
@@ -393,7 +393,7 @@ void LauncherWindow::playButtonClicked() {
     ui->menuBar->setEnabled(true);
 }
 
-void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersion) {
+void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVersion) {
 
     logger->append(this->objectName(), "Preparing game to run...\n");
 
@@ -691,7 +691,7 @@ void LauncherWindow::runGame(QString uuid, QString acessToken, QString gameVersi
         mcArg.replace("${assets_root}",       settings->getAssetsDir());
         mcArg.replace("${assets_index_name}", assetsVersion);
         mcArg.replace("${auth_uuid}",         uuid);
-        mcArg.replace("${auth_access_token}", acessToken);
+        mcArg.replace("${auth_access_token}", accessToken);
         mcArg.replace("${user_properties}",   "{}");
         mcArg.replace("${user_type}",       "mojang");
 
