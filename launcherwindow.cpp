@@ -165,7 +165,7 @@ void LauncherWindow::showUpdateDialog(QString message) {
 }
 
 // Load webpage slots
-void LauncherWindow::loadTtyh() {loadPage(QUrl("http://ttyh.ru"));}
+void LauncherWindow::loadTtyh() {loadPage(QUrl("http://ttyh.ru/misc.php?page=newsfeed"));}
 void LauncherWindow::loadOfficial() {loadPage(QUrl("http://mcupdate.tumblr.com/"));}
 
 // Open external browser slot
