@@ -10,4 +10,4 @@ Exec=ttyhlauncher
 Icon=ttyhlauncher
 StartupNotify=true
 Type=Application
-Categories=Game;
+Categories=Qt;Game;AdventureGame;
