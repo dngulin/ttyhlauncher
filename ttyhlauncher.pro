@@ -67,3 +67,9 @@ unix {
 
     CONFIG(unix_desktop): INSTALLS += desktopfile desktopicon
 }
+
+macx {
+    INCLUDEPATH += /usr/local/include
+    LIBS += -L/usr/local/lib
+    QMAKE_MAC_SDK = macosx10.9
+}
