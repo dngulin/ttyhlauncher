@@ -1,0 +1,9 @@
+*.o
+*.app
+moc_*
+ui_*
+Makefile
+.qmake*
+*resources*
+ttyhlauncher.pro.user*
+*.zip

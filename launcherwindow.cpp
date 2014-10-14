@@ -705,6 +705,7 @@ void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVers
     // Workaround for Oracle Java + StartSSL
     argList << "-Djavax.net.ssl.trustStore=" + settings->getConfigDir() + "/keystore.ks"
             << "-Djavax.net.ssl.trustStorePassword=123456";
+    argList << "-Dline.separator=\r\n";
 
     // Setup user args
     QStringList userArgList;
