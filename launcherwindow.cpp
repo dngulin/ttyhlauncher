@@ -136,7 +136,7 @@ void LauncherWindow::showSkinLoadDialog() {
 }
 
 void LauncherWindow::showUpdateManagerDialog() {
-    showUpdateDialog("Для проверки наличия обновлений выберите нужный клиет и нажмите кнопку \"Проверить\"");
+    showUpdateDialog("Для проверки наличия обновлений выберите нужный клиент и нажмите кнопку \"Проверить\"");
 }
 
 void LauncherWindow::showFeedBackDialog() {
