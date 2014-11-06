@@ -46,6 +46,13 @@ void SkinUploadDialog::uploadSkin() {
         return;
     }
 
+    QImage* skinImage = new QImage(ui->pathEdit->text());
+    if(skinImage->height() != 32 || skinImage->width() != 64) {
+        ui->messageLabel->setText("Ошибка: скин имеет неверное разрешение :(");
+        logger->append("SkinUploadDialog", "Error: skin file has incorrect resolution\n");
+        return;
+    }
+
     ui->sendButton->setEnabled(false);
 
     // Make JSON login request
