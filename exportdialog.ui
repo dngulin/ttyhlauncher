@@ -43,7 +43,7 @@
      <item row="0" column="0">
       <widget class="QLabel" name="clientLabel">
        <property name="text">
-        <string>Игройовй клиент</string>
+        <string>Игровой клиент</string>
        </property>
       </widget>
      </item>
