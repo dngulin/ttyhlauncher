@@ -57,7 +57,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="mutableLabel">
      <property name="text">
       <string>Список изменяемых файлов:</string>
      </property>
@@ -68,7 +68,7 @@
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <widget class="QPlainTextEdit" name="log_2">
+     <widget class="QPlainTextEdit" name="mutableList">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -220,7 +220,7 @@ servers.dat</string>
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="fetchButton">
+      <widget class="QPushButton" name="checkoutButton">
        <property name="text">
         <string>Рассчитать контрольные суммы</string>
        </property>
