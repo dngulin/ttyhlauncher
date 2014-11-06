@@ -42,6 +42,11 @@ private slots:
 
     void switchBuilderMenuVisibility();
 
+    void showCloneDialog();
+    void showFetchDialog();
+    void showCheckoutDialog();
+    void showExportDialog();
+
 
 private:
     Ui::LauncherWindow *ui;

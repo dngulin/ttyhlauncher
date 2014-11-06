@@ -7,6 +7,11 @@
 #include "feedbackdialog.h"
 #include "aboutdialog.h"
 
+#include "clonedialog.h"
+#include "fetchdialog.h"
+#include "checkoutdialog.h"
+#include "exportdialog.h"
+
 #include "settings.h"
 #include "util.h"
 
@@ -49,10 +54,14 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     connect(ui->bugReport, SIGNAL(triggered()), SLOT(showFeedBackDialog()));
     connect(ui->aboutLauncher, SIGNAL(triggered()), SLOT(showAboutDialog()));
 
-    // Hide client builder menu and connect entryes
+    // Client builder menu visibility and connect entryes
     ui->builderMenu->menuAction()->setVisible(false);
-
     new QShortcut(QKeySequence(Qt::SHIFT + Qt::Key_B), this, SLOT(switchBuilderMenuVisibility()));
+
+    connect(ui->doClone, SIGNAL(triggered()), this, SLOT(showCloneDialog()));
+    connect(ui->doFetch, SIGNAL(triggered()), this, SLOT(showFetchDialog()));
+    connect(ui->doCheckout, SIGNAL(triggered()), this, SLOT(showCheckoutDialog()));
+    connect(ui->doExport, SIGNAL(triggered()), this, SLOT(showExportDialog()));
 
     // Setup offlineMode entry
     ui->playOffline->setChecked(settings->loadOfflineModeState());
@@ -119,6 +128,30 @@ void LauncherWindow::switchBuilderMenuVisibility() {
     } else {
         ui->builderMenu->menuAction()->setVisible(true);
     }
+}
+
+void LauncherWindow::showCloneDialog() {
+    CloneDialog* d = new CloneDialog(this);
+    d->exec();
+    delete d;
+}
+
+void LauncherWindow::showFetchDialog() {
+    FetchDialog* d = new FetchDialog(this);
+    d->exec();
+    delete d;
+}
+
+void LauncherWindow::showCheckoutDialog() {
+    CheckoutDialog* d = new CheckoutDialog(this);
+    d->exec();
+    delete d;
+}
+
+void LauncherWindow::showExportDialog() {
+    ExportDialog* d = new ExportDialog(this);
+    d->exec();
+    delete d;
 }
 
 // Run this method on close window and run game
