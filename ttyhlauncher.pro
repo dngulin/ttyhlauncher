@@ -24,7 +24,8 @@ SOURCES += main.cpp \
     logger.cpp \
     util.cpp \
     reply.cpp \
-    downloadmanager.cpp
+    downloadmanager.cpp \
+    clonedialog.cpp
 
 HEADERS += launcherwindow.h \
     skinuploaddialog.h \
@@ -36,14 +37,16 @@ HEADERS += launcherwindow.h \
     logger.h \
     util.h \
     reply.h \
-    downloadmanager.h
+    downloadmanager.h \
+    clonedialog.h
 
 FORMS += launcherwindow.ui \
     skinuploaddialog.ui \
     settingsdialog.ui \
     updatedialog.ui \
     feedbackdialog.ui \
-    aboutdialog.ui
+    aboutdialog.ui \
+    clonedialog.ui
 
 RESOURCES += \
     resources.qrc
