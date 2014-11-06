@@ -114,10 +114,10 @@ void LauncherWindow::keyPressEvent(QKeyEvent* pe) {
 }
 
 void LauncherWindow::switchBuilderMenuVisibility() {
-    if (!ui->builderMenu->menuAction()->isVisible()) {
-         ui->builderMenu->menuAction()->setVisible(true);
+    if (ui->builderMenu->menuAction()->isVisible()) {
+        ui->builderMenu->menuAction()->setVisible(false);
     } else {
-         ui->builderMenu->menuAction()->setVisible(false);
+        ui->builderMenu->menuAction()->setVisible(true);
     }
 }
 
