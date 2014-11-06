@@ -160,7 +160,7 @@
      <x>0</x>
      <y>0</y>
      <width>898</width>
-     <height>20</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="newsMenu">
@@ -191,10 +191,20 @@
     <addaction name="bugReport"/>
     <addaction name="aboutLauncher"/>
    </widget>
+   <widget class="QMenu" name="builderMenu">
+    <property name="title">
+     <string>Инструменты сборщика</string>
+    </property>
+    <addaction name="doClone"/>
+    <addaction name="doFetch"/>
+    <addaction name="doCheckout"/>
+    <addaction name="doExport"/>
+   </widget>
    <addaction name="newsMenu"/>
    <addaction name="optionsMenu"/>
    <addaction name="addMenu"/>
    <addaction name="helpMenu"/>
+   <addaction name="builderMenu"/>
   </widget>
   <action name="ttyhNews">
    <property name="checkable">
@@ -245,7 +255,7 @@
   </action>
   <action name="changePassword">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset>
      <normaloff>:/resources/password.png</normaloff>:/resources/password.png</iconset>
    </property>
    <property name="text">
@@ -287,6 +297,26 @@
    </property>
    <property name="text">
     <string>О программе</string>
+   </property>
+  </action>
+  <action name="doClone">
+   <property name="text">
+    <string>Клонирование</string>
+   </property>
+  </action>
+  <action name="doFetch">
+   <property name="text">
+    <string>Загрузка</string>
+   </property>
+  </action>
+  <action name="doCheckout">
+   <property name="text">
+    <string>Контрольные суммы</string>
+   </property>
+  </action>
+  <action name="doExport">
+   <property name="text">
+    <string>Экспорт</string>
    </property>
   </action>
  </widget>

@@ -13,6 +13,7 @@
 #include <QtGui>
 #include <QDesktopWidget>
 #include <QMessageBox>
+#include <QShortcut>
 
 LauncherWindow::LauncherWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -47,6 +48,11 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     // Help Menu connections
     connect(ui->bugReport, SIGNAL(triggered()), SLOT(showFeedBackDialog()));
     connect(ui->aboutLauncher, SIGNAL(triggered()), SLOT(showAboutDialog()));
+
+    // Hide client builder menu and connect entryes
+    ui->builderMenu->menuAction()->setVisible(false);
+
+    new QShortcut(QKeySequence(Qt::SHIFT + Qt::Key_B), this, SLOT(switchBuilderMenuVisibility()));
 
     // Setup offlineMode entry
     ui->playOffline->setChecked(settings->loadOfflineModeState());
@@ -107,6 +113,13 @@ void LauncherWindow::keyPressEvent(QKeyEvent* pe) {
     pe->accept();
 }
 
+void LauncherWindow::switchBuilderMenuVisibility() {
+    if (!ui->builderMenu->menuAction()->isVisible()) {
+         ui->builderMenu->menuAction()->setVisible(true);
+    } else {
+         ui->builderMenu->menuAction()->setVisible(false);
+    }
+}
 
 // Run this method on close window and run game
 void LauncherWindow::storeParameters() {

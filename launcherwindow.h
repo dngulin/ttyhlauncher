@@ -40,6 +40,8 @@ private slots:
 
     void playButtonClicked();
 
+    void switchBuilderMenuVisibility();
+
 
 private:
     Ui::LauncherWindow *ui;
