@@ -306,7 +306,7 @@
   </action>
   <action name="doFetch">
    <property name="text">
-    <string>Загрузка</string>
+    <string>Полная загрузка</string>
    </property>
   </action>
   <action name="doCheckout">
