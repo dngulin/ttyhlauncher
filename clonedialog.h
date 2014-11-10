@@ -2,6 +2,8 @@
 #define CLONEDIALOG_H
 
 #include <QDialog>
+#include "settings.h"
+#include "logger.h"
 
 namespace Ui {
 class CloneDialog;
@@ -17,6 +19,13 @@ public:
 
 private:
     Ui::CloneDialog *ui;
+    Settings* settings;
+    Logger* logger;
+
+    bool loadVersionList();
+
+private slots:
+    void makeClone();
 };
 
 #endif // CLONEDIALOG_H
