@@ -74,8 +74,8 @@ void CloneDialog::makeClone() {
     }
 
     // Disable inputs
-    ui->sourceCombo->setEditable(false);
-    ui->clientCombo->setEditable(false);
+    ui->sourceCombo->setEnabled(false);
+    ui->clientCombo->setEnabled(false);
     ui->versionEdit->setEnabled(false);
     ui->cloneButton->setEnabled(false);
 
@@ -91,6 +91,7 @@ void CloneDialog::makeClone() {
 
     foreach (QString ext, exts) {
         ui->log->appendPlainText("Загрузка файла " + ui->sourceCombo->currentText() + ext + "...");
+        QApplication::processEvents();
         Reply reply = Util::makeGet("http://s3.amazonaws.com/Minecraft.Download/versions/"
                                     + ui->sourceCombo->currentText() + "/"
                                     + ui->sourceCombo->currentText() + ext);
@@ -116,8 +117,8 @@ void CloneDialog::makeClone() {
     }
 
     // Enable inputs
-    ui->sourceCombo->setEditable(true);
-    ui->clientCombo->setEditable(true);
+    ui->sourceCombo->setEnabled(true);
+    ui->clientCombo->setEnabled(true);
     ui->versionEdit->setEnabled(true);
     ui->cloneButton->setEnabled(true);
 
