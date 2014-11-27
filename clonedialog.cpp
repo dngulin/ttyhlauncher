@@ -116,6 +116,49 @@ void CloneDialog::makeClone() {
         }
     }
 
+    // Edit downloaded JSON
+    ui->log->appendPlainText("Редактирование id в " + ui->versionEdit->text() + ".json");
+    logger->append("CloneDialog", "Changing id in "  + ui->versionEdit->text() + ".json\n");
+
+    QFile versionFile(path + ui->versionEdit->text() + ".json");
+    if (versionFile.exists()) {
+        if (versionFile.open(QIODevice::ReadOnly)) {
+
+            QJsonParseError error;
+            QJsonDocument versionJson = QJsonDocument::fromJson(versionFile.readAll(), &error);
+            versionFile.close();
+
+            if ( error.error == QJsonParseError::NoError ) {
+
+                QJsonObject jsonRoot = versionJson.object();
+
+                QJsonValueRef idRef = jsonRoot.find("id").value();
+                idRef = QJsonValue(ui->versionEdit->text());
+
+                if (versionFile.open(QIODevice::WriteOnly)) {
+
+                    versionJson.setObject(jsonRoot);
+                    versionFile.reset();
+                    versionFile.write(versionJson.toJson());
+
+                    versionFile.close();
+                } else {
+                    ui->log->appendPlainText("Ошибка: не удалось записать файл: " + ui->versionEdit->text() + ".json");
+                    logger->append("CloneDialog", "Error: can't write file: "  + ui->versionEdit->text() + ".json\n");
+                }
+            } else {
+                ui->log->appendPlainText("Ошибка: не удалось разобрать JSON: " + ui->versionEdit->text() + ".json");
+                logger->append("CloneDialog", "Error: can't parse JSON: "  + ui->versionEdit->text() + ".json\n");
+            }
+        } else {
+            ui->log->appendPlainText("Ошибка: не удалось открыть файл: " + ui->versionEdit->text() + ".json");
+            logger->append("CloneDialog", "Error: can't open file: "  + ui->versionEdit->text() + ".json\n");
+        }
+    } else {
+        ui->log->appendPlainText("Ошибка: файл не существует: " + ui->versionEdit->text() + ".json");
+        logger->append("CloneDialog", "Error: file not exists: "  + ui->versionEdit->text() + ".json\n");
+    }
+
     // Enable inputs
     ui->sourceCombo->setEnabled(true);
     ui->clientCombo->setEnabled(true);
