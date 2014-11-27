@@ -65,6 +65,7 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
 
     // Setup offlineMode entry
     ui->playOffline->setChecked(settings->loadOfflineModeState());
+    this->ofllineModeChanged();
     connect(ui->playOffline, SIGNAL(triggered()), SLOT(ofllineModeChanged()));
 
     // Setup login field
@@ -199,6 +200,8 @@ void LauncherWindow::showAboutDialog() {
 
 void LauncherWindow::ofllineModeChanged() {
     settings->saveOfflineModeState(ui->playOffline->isChecked());
+    settings->loadOfflineModeState() ? ui->playButton->setText("Играть (оффлайн)") :
+                                       ui->playButton->setText("Играть");
 }
 
 void LauncherWindow::showUpdateDialog(QString message) {
