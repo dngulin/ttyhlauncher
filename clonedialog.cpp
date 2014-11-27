@@ -131,9 +131,7 @@ void CloneDialog::makeClone() {
             if ( error.error == QJsonParseError::NoError ) {
 
                 QJsonObject jsonRoot = versionJson.object();
-
-                QJsonValueRef idRef = jsonRoot.find("id").value();
-                idRef = QJsonValue(ui->versionEdit->text());
+                jsonRoot["id"] = ui->versionEdit->text();
 
                 if (versionFile.open(QIODevice::WriteOnly)) {
 
