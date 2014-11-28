@@ -2,6 +2,8 @@
 #define FETCHDIALOG_H
 
 #include <QDialog>
+#include "settings.h"
+#include "logger.h"
 
 namespace Ui {
 class FetchDialog;
@@ -17,6 +19,14 @@ public:
 
 private:
     Ui::FetchDialog *ui;
+    Settings* settings;
+    Logger* logger;
+
+    void downloadFile(QString url, QString fname);
+
+private slots:
+    void makeFetch();
+    void makeVersionList();
 };
 
 #endif // FETCHDIALOG_H
