@@ -221,7 +221,7 @@ void LauncherWindow::loadOfficial() {loadPage(QUrl("http://mcupdate.tumblr.com/"
 void LauncherWindow::linkClicked(const QUrl& url) {
     logger->append(this->objectName(), "Try to open url in external browser. " + url.toString() + "\n");
     if (!QDesktopServices::openUrl(url))
-        logger->append(this->objectName(), "Filed to open system browser!");
+        logger->append(this->objectName(), "Failed to open system browser!");
 }
 
 // Load webpage method
@@ -746,7 +746,12 @@ void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVers
 
         mcArgList << mcArg;
     }
-
+    // Width & height args
+    if(settings->loadMinecraftSizeState()) {
+        QRect mcRect = settings->loadMinecraftWindowGeometry();
+        mcArgList << "--width"  << QString::number(mcRect.width());
+        mcArgList << "--height" << QString::number(mcRect.height());
+    }
     // RUN-RUN-RUN!
     logger->append(this->objectName(), "Making run string...\n");
     QStringList argList;

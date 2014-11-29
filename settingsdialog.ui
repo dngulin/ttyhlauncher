@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>463</width>
-    <height>338</height>
+    <height>410</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -81,6 +81,68 @@
       </item>
       <item row="1" column="1">
        <widget class="QComboBox" name="versionCombo"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="sizeBox">
+     <property name="title">
+      <string>Указать размер окна</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+     <layout class="QHBoxLayout" name="hzLayout">
+      <item>
+       <widget class="QLabel" name="widthLabel">
+        <property name="text">
+         <string>Ширина</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="widthSpinBox">
+        <property name="maximum">
+         <number>10000</number>
+        </property>
+        <property name="value">
+         <number>854</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Высота</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="heightSpinBox">
+        <property name="maximum">
+         <number>10000</number>
+        </property>
+        <property name="value">
+         <number>480</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="shspc">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
       </item>
      </layout>
     </widget>
