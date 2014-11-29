@@ -100,6 +100,9 @@ public:
     QString loadClientJavaArgs();
     void saveClientJavaArgs(QString args);
 
+    bool loadClientFullscreenState();
+    void saveClientFullscreenState(bool state);
+
     // Custom
     QString makeMinecraftUuid();
 

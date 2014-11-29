@@ -204,6 +204,15 @@ void Settings::saveMinecraftWindowGeometry(QRect g) {settings->setValue("minecra
 bool Settings::loadMinecraftSizeState() {return settings->value("minecraft/window_geometry_state", false).toBool(); }
 void Settings::saveMinecraftSizeState(bool s) { settings->setValue("minecraft/window_geometry_state", s); }
 
+bool Settings::loadClientFullscreenState() {
+    int c = loadActiveClientId();
+    return settings->value("client-" + getClientStrId(c) + "/fullscreen", false).toBool();
+}
+void Settings::saveClientFullscreenState(bool state) {
+    int c = loadActiveClientId();
+    settings->setValue("client-" + getClientStrId(c) + "/fullscreen", state);
+}
+
 // Launcher window geometry
 QRect Settings::loadWindowGeometry() {return qvariant_cast<QRect>(settings->value("launcher/window_geometry", QRect(-1, -1, 600, 400))); }
 void Settings::saveWindowGeometry(QRect geom) { settings->setValue("launcher/window_geometry", geom); }

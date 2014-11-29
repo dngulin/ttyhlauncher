@@ -746,11 +746,15 @@ void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVers
 
         mcArgList << mcArg;
     }
-    // Width & height args
+    // Width & height/fullscreen args
     if(settings->loadMinecraftSizeState()) {
-        QRect mcRect = settings->loadMinecraftWindowGeometry();
-        mcArgList << "--width"  << QString::number(mcRect.width());
-        mcArgList << "--height" << QString::number(mcRect.height());
+        if(settings->loadClientFullscreenState()) {
+            mcArgList << "--fullscreen";
+        } else {
+            QRect mcRect = settings->loadMinecraftWindowGeometry();
+            mcArgList << "--width"  << QString::number(mcRect.width());
+            mcArgList << "--height" << QString::number(mcRect.height());
+        }
     }
     // RUN-RUN-RUN!
     logger->append(this->objectName(), "Making run string...\n");

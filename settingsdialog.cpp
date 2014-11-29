@@ -36,10 +36,11 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
         emit ui->clientCombo->activated(ui->clientCombo->currentIndex());
     }
 
-
     connect(ui->javapathButton, SIGNAL(clicked()), this, SLOT(openFileDialog()));
     connect(ui->saveButton, SIGNAL(clicked()), this, SLOT(saveSettings()));
     connect(ui->opendirButton, SIGNAL(clicked()), this, SLOT(openClientDirectory()));
+
+    connect(ui->fullscreenCheckbox, SIGNAL(toggled(bool)), this, SLOT(toggleFullscreen(bool)));
 }
 
 SettingsDialog::~SettingsDialog()
@@ -154,6 +155,7 @@ void SettingsDialog::saveSettings() {
     settings->saveClientJavaArgs(ui->argsEdit->text());
     settings->saveMinecraftWindowGeometry(QRect(-1, -1, ui->widthSpinBox->value(), ui->heightSpinBox->value()));
     settings->saveMinecraftSizeState(ui->sizeBox->isChecked());
+    settings->saveClientFullscreenState(ui->fullscreenCheckbox->isChecked());
 
     logger->append("SettingsDialog", "Settings saved\n");
     logger->append("SettingsDialog", "\tClient: " + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
@@ -165,6 +167,7 @@ void SettingsDialog::saveSettings() {
     logger->append("SettingsDialog", "\tMinecraftGeometry: " +
                    QString::number(settings->loadMinecraftWindowGeometry().width()) + "," +
                    QString::number(settings->loadMinecraftWindowGeometry().height()) + "\n");
+    logger->append("SettingsDialog", "\tFullscreen: " + QString(settings->loadClientFullscreenState()? "true" : "false")+"\n");
     this->close();
 
 }
@@ -180,6 +183,11 @@ void SettingsDialog::loadSettings() {
     ui->heightSpinBox->setValue(settings->loadMinecraftWindowGeometry().height());
     ui->sizeBox->setChecked(settings->loadMinecraftSizeState());
 
+    bool fullscreen = settings->loadClientFullscreenState();
+    ui->fullscreenCheckbox->setChecked(fullscreen);
+    // update
+    this->toggleFullscreen(fullscreen);
+
     logger->append("SettingsDialog", "Settings loaded\n");
     logger->append("SettingsDialog", "\tClient: " + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
     logger->append("SettingsDialog", "\tVersion: " + settings->loadClientVersion() + "\n");
@@ -190,6 +198,7 @@ void SettingsDialog::loadSettings() {
     logger->append("SettingsDialog", "\tMinecraftGeometry: " +
                    QString::number(ui->widthSpinBox->value())  + "," +
                    QString::number(ui->heightSpinBox->value()) + "\n");
+    logger->append("SettingsDialog", "\tFullscreen: " + QString(ui->fullscreenCheckbox->isChecked() ? "true" : "false")+"\n");
 }
 
 void SettingsDialog::openFileDialog() {
@@ -209,4 +218,18 @@ void SettingsDialog::openClientDirectory() {
         logger->append("SettingsDialog", "Error: can't open client directory (not exists)\n");
     }
     delete clientDir;
+}
+
+void SettingsDialog::toggleFullscreen(bool b) {
+    if(b) { // disable
+        ui->widthLabel->setEnabled(false);
+        ui->heightLabel->setEnabled(false);
+        ui->widthSpinBox->setEnabled(false);
+        ui->heightSpinBox->setEnabled(false);
+    } else { // enable
+        ui->widthLabel->setEnabled(true);
+        ui->heightLabel->setEnabled(true);
+        ui->widthSpinBox->setEnabled(true);
+        ui->heightSpinBox->setEnabled(true);
+    }
 }
