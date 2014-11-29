@@ -198,8 +198,14 @@ QString Settings::makeMinecraftUuid() {
     return QString(QByteArray::fromBase64(encoded));
 }
 // Minecraft window geometry
-QRect Settings::loadMinecraftWindowGeometry() {return qvariant_cast<QRect>(settings->value("minecraft/window_geometry", QRect(-1, -1, 854, 480))); }
-void Settings::saveMinecraftWindowGeometry(QRect g) {settings->setValue("minecraft/window_geometry", g); }
+QRect Settings::loadMinecraftWindowGeometry() {
+    int c = loadActiveClientId();
+    return qvariant_cast<QRect>(settings->value("client-" + getClientStrId(c) + "/window_geometry", QRect(-1, -1, 854, 480)));
+}
+void Settings::saveMinecraftWindowGeometry(QRect g) {
+    int c = loadActiveClientId();
+    settings->setValue("client-" + getClientStrId(c) + "/window_geometry", g);
+}
 
 bool Settings::loadMinecraftSizeState() {return settings->value("minecraft/window_geometry_state", false).toBool(); }
 void Settings::saveMinecraftSizeState(bool s) { settings->setValue("minecraft/window_geometry_state", s); }
