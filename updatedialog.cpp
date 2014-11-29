@@ -43,7 +43,7 @@ UpdateDialog::UpdateDialog(QString displayMessage, QWidget *parent) :
 void UpdateDialog::clientChanged() {
 
     logger->append("UpdateDialog", "Selected client: " + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
-    ui->log->setPlainText("Для проверки наличия обновлений выберите нужный клиет и нажмите кнопку \"Проверить\"");
+    ui->log->setPlainText("Для проверки наличия обновлений выберите нужный клиент и нажмите кнопку \"Проверить\"");
 
     switch (state) {
 
@@ -110,7 +110,7 @@ void UpdateDialog::doCheck() {
                 QJsonObject latest = jsonVersionReply.object()["latest"].toObject();
 
                 if (latest["release"].isNull()) {
-                    ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось определить оследнюю версию клиента");
+                    ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось определить последнюю версию клиента");
                     logger->append("UpdateDialog", "Error: empty latest client version\n");
 
                     ui->clientCombo->setEnabled(true);
@@ -228,17 +228,17 @@ void UpdateDialog::doCheck() {
     delete dataIndexfile;
 
     // Check game files
-    QString url, fileName, displayName, checkSumm;
+    QString url, fileName, displayName, checkSum;
     quint64 size;
 
     // Check main file
     url = versionUrlPrefix + clientVersion + ".jar";
     fileName = versionFilePrefix + clientVersion + ".jar";
     displayName = "файл " + clientVersion + ".jar";
-    checkSumm = dataJson.object()["main"].toObject()["hash"].toString();
+    checkSum = dataJson.object()["main"].toObject()["hash"].toString();
     size = dataJson.object()["main"].toObject()["size"].toInt();
 
-    if (addToQueryIfNeed(url, fileName, displayName, checkSumm, size)) needUpdate = true;
+    if (addToQueryIfNeed(url, fileName, displayName, checkSum, size)) needUpdate = true;
 
     // Check libs
     ui->log->appendPlainText("\n # Проверка библиотек:");
@@ -306,10 +306,10 @@ void UpdateDialog::doCheck() {
         url = libUrlPrefix + libSuffix;
         fileName = libFilePrefix + libSuffix;
         displayName = "файл " + libSuffix.split('/').last();
-        checkSumm = dataJson.object()["libs"].toObject()[libSuffix].toObject()["hash"].toString();
+        checkSum = dataJson.object()["libs"].toObject()[libSuffix].toObject()["hash"].toString();
         size = dataJson.object()["libs"].toObject()[libSuffix].toObject()["size"].toInt();
 
-        if (addToQueryIfNeed(url, fileName, displayName, checkSumm, size)) needUpdate = true;
+        if (addToQueryIfNeed(url, fileName, displayName, checkSum, size)) needUpdate = true;
         QApplication::processEvents(); // Update text in log
     }
 
@@ -366,13 +366,13 @@ void UpdateDialog::doCheck() {
         QJsonObject asset = assets[key].toObject();
 
         // Check each asset file
-        checkSumm = asset["hash"].toString();
+        checkSum = asset["hash"].toString();
         size = asset["size"].toInt();
-        url = assetsUrlPrefix + checkSumm.mid(0, 2) + "/" + checkSumm;
-        fileName = assetsFilePrefix + checkSumm.mid(0, 2) + "/" + checkSumm;
+        url = assetsUrlPrefix + checkSum.mid(0, 2) + "/" + checkSum;
+        fileName = assetsFilePrefix + checkSum.mid(0, 2) + "/" + checkSum;
         displayName = "ресурс " + key;
 
-        if (addToQueryIfNeed(url, fileName, displayName, checkSumm, size)) needUpdate = true;
+        if (addToQueryIfNeed(url, fileName, displayName, checkSum, size)) needUpdate = true;
         QApplication::processEvents(); // Update text in log
     }
 
@@ -388,7 +388,7 @@ void UpdateDialog::doCheck() {
         if (QFile::exists(settings->getClientPrefix(clientVersion) + "/installed_data.json")) {
 
             ui->log->appendPlainText("Проверка наличия устаревших файлов...");
-            logger->append("UpdateDialog", "Makeing deletion list...\n");
+            logger->append("UpdateDialog", "Making deletion list...\n");
 
             QFile* installedDataFile = new QFile(settings->getClientPrefix(clientVersion) + "/installed_data.json");
             if (!installedDataFile->open(QIODevice::ReadOnly)) {
@@ -440,9 +440,9 @@ void UpdateDialog::doCheck() {
 
         // Check custom files
         ui->log->appendPlainText("Проверка файлов модификаций...");
-        logger->append("UpdateDialog", "Checing needed custom files...\n");
+        logger->append("UpdateDialog", "Checking needed custom files...\n");
 
-        // Make mutable files list (that checks only by existion)
+        // Make mutable files list (that checks only by existence)
         QStringList mutableList;
         foreach (QJsonValue value, dataJson.object()["files"].toObject()["mutables"].toArray()) {
             mutableList.append(value.toString());
@@ -457,15 +457,15 @@ void UpdateDialog::doCheck() {
                     = dataJson.object()["files"].toObject()["index"].toObject()[key].toObject();
 
             // Check each custom file
-            checkSumm = customFile["hash"].toString();
+            checkSum = customFile["hash"].toString();
             size = customFile["size"].toInt();
             url = filesUrlPrefix + key;
             fileName = filesFilePrefix + key;
             displayName = "файл " + key;
 
-            if (mutableList.contains(key)) checkSumm = "mutable"; // Download only if not exists
+            if (mutableList.contains(key)) checkSum = "mutable"; // Download only if not exists
 
-            if (addToQueryIfNeed(url, fileName, displayName, checkSumm, size)) needUpdate = true;
+            if (addToQueryIfNeed(url, fileName, displayName, checkSum, size)) needUpdate = true;
             QApplication::processEvents(); // Update text in log
         }
     }
@@ -538,7 +538,7 @@ void UpdateDialog::doUpdate() {
     if (dm->getDownloadsSize() != 0) {
 
         ui->log->appendPlainText("\n # Загрузка обновлений:");
-        logger->append("UpdateDialog", "Downloads started...\n");
+        logger->append("UpdateDialog", "Downloading started...\n");
         dm->startDownloads();
 
     } else {
@@ -601,20 +601,20 @@ bool UpdateDialog::downloadNow(QString url, QString fileName) {
     return true;
 }
 
-bool UpdateDialog::addToQueryIfNeed(QString url, QString fileName, QString displayName, QString checkSumm, quint64 size) {
+bool UpdateDialog::addToQueryIfNeed(QString url, QString fileName, QString displayName, QString checkSum, quint64 size) {
 
     ui->log->appendPlainText("Проверка: " + displayName);
     logger->append("UpdateDialog", "Checking " + fileName + "\n");
 
     if (!QFile::exists(fileName)) {
 
-        logger->append("UpdateDialog", "Checking: file not exists\n");
+        logger->append("UpdateDialog", "Checking: file does not exist\n");
         dm->addEntry(url, fileName, displayName, size);
         ui->log->appendPlainText(" >> Необходимо загрузить " + displayName + " ("
                                  + QString::number((float(size) / 1024 / 1024), 'f', 2) + " МиБ)" );
         return true;
 
-    } else if (checkSumm != "mutable") {
+    } else if (checkSum != "mutable") {
 
         QString fileHash;
         QFile* file = new QFile(fileName);
@@ -629,9 +629,9 @@ bool UpdateDialog::addToQueryIfNeed(QString url, QString fileName, QString displ
             file->close();
             delete file;
 
-            if (fileHash != checkSumm) {
+            if (fileHash != checkSum) {
 
-                logger->append("UpdateDialog", "Checking: bad checksumm\n");
+                logger->append("UpdateDialog", "Checking: bad checksum\n");
                 dm->addEntry(url, fileName, displayName, size);
                 ui->log->appendPlainText(" >> Необходимо загрузить " + displayName + " ("
                                          + QString::number((float(size) / 1024 / 1024), 'f', 2) + " МиБ)" );
