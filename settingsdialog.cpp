@@ -164,7 +164,7 @@ void SettingsDialog::saveSettings() {
     logger->append("SettingsDialog", "\tClientArgs: " + ui->argsEdit->text() + "\n");
     logger->append("SettingsDialog", "\tMinecraftGeometry: " +
                    QString::number(settings->loadMinecraftWindowGeometry().width()) + "," +
-                   QString::number(settings->loadMinecraftWindowGeometry().height()));
+                   QString::number(settings->loadMinecraftWindowGeometry().height()) + "\n");
     this->close();
 
 }
