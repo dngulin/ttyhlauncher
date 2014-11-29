@@ -75,6 +75,11 @@ public:
     void saveWindowGeometry(QRect geom);
     bool loadMaximizedState();
 
+    QRect loadMinecraftWindowGeometry();
+    void saveMinecraftWindowGeometry(QRect g);
+    bool loadMinecraftSizeState();
+    void saveMinecraftSizeState(bool s);
+
     // Offline mode
     void saveOfflineModeState(bool offlineState);
     bool loadOfflineModeState();

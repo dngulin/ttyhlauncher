@@ -152,6 +152,8 @@ void SettingsDialog::saveSettings() {
     settings->saveClientJava(ui->javapathEdit->text());
     settings->saveClientJavaArgsState(ui->argsBox->isChecked());
     settings->saveClientJavaArgs(ui->argsEdit->text());
+    settings->saveMinecraftWindowGeometry(QRect(-1, -1, ui->widthSpinBox->value(), ui->heightSpinBox->value()));
+    settings->saveMinecraftSizeState(ui->sizeBox->isChecked());
 
     logger->append("SettingsDialog", "Settings saved\n");
     logger->append("SettingsDialog", "\tClient: " + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
@@ -160,7 +162,9 @@ void SettingsDialog::saveSettings() {
     logger->append("SettingsDialog", "\tClientJava: " + ui->javapathEdit->text() + "\n");
     logger->append("SettingsDialog", "\tUseClientArgs: " + QString(ui->argsBox->isChecked() ? "true" : "false") + "\n");
     logger->append("SettingsDialog", "\tClientArgs: " + ui->argsEdit->text() + "\n");
-
+    logger->append("SettingsDialog", "\tMinecraftGeometry: " +
+                   QString::number(settings->loadMinecraftWindowGeometry().width()) + "," +
+                   QString::number(settings->loadMinecraftWindowGeometry().height()));
     this->close();
 
 }
@@ -172,6 +176,9 @@ void SettingsDialog::loadSettings() {
     ui->javapathEdit->setText(settings->loadClientJava());
     ui->argsBox->setChecked(settings->loadClientJavaArgsState());
     ui->argsEdit->setText(settings->loadClientJavaArgs());
+    ui->widthSpinBox->setValue(settings->loadMinecraftWindowGeometry().width());
+    ui->heightSpinBox->setValue(settings->loadMinecraftWindowGeometry().height());
+    ui->sizeBox->setChecked(settings->loadMinecraftSizeState());
 
     logger->append("SettingsDialog", "Settings loaded\n");
     logger->append("SettingsDialog", "\tClient: " + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
@@ -180,6 +187,9 @@ void SettingsDialog::loadSettings() {
     logger->append("SettingsDialog", "\tClientJava: " + ui->javapathEdit->text() + "\n");
     logger->append("SettingsDialog", "\tUseClientArgs: " + QString(ui->argsBox->isChecked() ? "true" : "false") + "\n");
     logger->append("SettingsDialog", "\tClientArgs: " + ui->argsEdit->text() + "\n");
+    logger->append("SettingsDialog", "\tMinecraftGeometry: " +
+                   QString::number(ui->widthSpinBox->value())  + "," +
+                   QString::number(ui->heightSpinBox->value()) + "\n");
 }
 
 void SettingsDialog::openFileDialog() {
