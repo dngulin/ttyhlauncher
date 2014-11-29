@@ -182,10 +182,14 @@ void SettingsDialog::loadSettings() {
     ui->widthSpinBox->setValue(settings->loadClientWindowGeometry().width());
     ui->heightSpinBox->setValue(settings->loadClientWindowGeometry().height());
     ui->sizeBox->setChecked(settings->loadClientSizeState());
-    ui->useLauncherRadio->setChecked(settings->loadUseLauncherSizeState());
 
     bool fullscreen = settings->loadClientFullscreenState();
+    bool useLauncherSize = settings->loadUseLauncherSizeState();
     ui->fullscreenRadio->setChecked(fullscreen);
+    ui->useLauncherRadio->setChecked(useLauncherSize);
+    if(!fullscreen && !useLauncherSize) {
+        ui->customSizeRadio->setChecked(true);
+    }
 
     logger->append("SettingsDialog", "Settings loaded\n");
     logger->append("SettingsDialog", "\tClient: " + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
