@@ -30,6 +30,7 @@ private:
 
 
 private slots:
+    void toggleFullscreen(bool b);
     void saveSettings();
     void loadSettings();
     void openFileDialog();

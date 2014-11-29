@@ -36,7 +36,6 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
         emit ui->clientCombo->activated(ui->clientCombo->currentIndex());
     }
 
-
     connect(ui->javapathButton, SIGNAL(clicked()), this, SLOT(openFileDialog()));
     connect(ui->saveButton, SIGNAL(clicked()), this, SLOT(saveSettings()));
     connect(ui->opendirButton, SIGNAL(clicked()), this, SLOT(openClientDirectory()));
@@ -152,6 +151,10 @@ void SettingsDialog::saveSettings() {
     settings->saveClientJava(ui->javapathEdit->text());
     settings->saveClientJavaArgsState(ui->argsBox->isChecked());
     settings->saveClientJavaArgs(ui->argsEdit->text());
+    settings->saveClientWindowGeometry(QRect(-1, -1, ui->widthSpinBox->value(), ui->heightSpinBox->value()));
+    settings->saveClientSizeState(ui->sizeBox->isChecked());
+    settings->saveClientFullscreenState(ui->fullscreenRadio->isChecked());
+    settings->saveUseLauncherSizeState(ui->useLauncherRadio->isChecked());
 
     logger->append("SettingsDialog", "Settings saved\n");
     logger->append("SettingsDialog", "\tClient: " + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
@@ -160,7 +163,11 @@ void SettingsDialog::saveSettings() {
     logger->append("SettingsDialog", "\tClientJava: " + ui->javapathEdit->text() + "\n");
     logger->append("SettingsDialog", "\tUseClientArgs: " + QString(ui->argsBox->isChecked() ? "true" : "false") + "\n");
     logger->append("SettingsDialog", "\tClientArgs: " + ui->argsEdit->text() + "\n");
-
+    logger->append("SettingsDialog", "\tMinecraftGeometry: " +
+                   QString::number(settings->loadClientWindowGeometry().width()) + "," +
+                   QString::number(settings->loadClientWindowGeometry().height()) + "\n");
+    logger->append("SettingsDialog", "\tFullscreen: " + QString(ui->fullscreenRadio->isChecked() ? "true" : "false")+"\n");
+    logger->append("SettingsDialog", "\tUseLauncherSize: " + QString(ui->useLauncherRadio->isChecked() ? "true" : "false")+"\n");
     this->close();
 
 }
@@ -172,6 +179,13 @@ void SettingsDialog::loadSettings() {
     ui->javapathEdit->setText(settings->loadClientJava());
     ui->argsBox->setChecked(settings->loadClientJavaArgsState());
     ui->argsEdit->setText(settings->loadClientJavaArgs());
+    ui->widthSpinBox->setValue(settings->loadClientWindowGeometry().width());
+    ui->heightSpinBox->setValue(settings->loadClientWindowGeometry().height());
+    ui->sizeBox->setChecked(settings->loadClientSizeState());
+    ui->useLauncherRadio->setChecked(settings->loadUseLauncherSizeState());
+
+    bool fullscreen = settings->loadClientFullscreenState();
+    ui->fullscreenRadio->setChecked(fullscreen);
 
     logger->append("SettingsDialog", "Settings loaded\n");
     logger->append("SettingsDialog", "\tClient: " + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
@@ -180,6 +194,11 @@ void SettingsDialog::loadSettings() {
     logger->append("SettingsDialog", "\tClientJava: " + ui->javapathEdit->text() + "\n");
     logger->append("SettingsDialog", "\tUseClientArgs: " + QString(ui->argsBox->isChecked() ? "true" : "false") + "\n");
     logger->append("SettingsDialog", "\tClientArgs: " + ui->argsEdit->text() + "\n");
+    logger->append("SettingsDialog", "\tMinecraftGeometry: " +
+                   QString::number(ui->widthSpinBox->value())  + "," +
+                   QString::number(ui->heightSpinBox->value()) + "\n");
+    logger->append("SettingsDialog", "\tFullscreen: " + QString(ui->fullscreenRadio->isChecked() ? "true" : "false")+"\n");
+    logger->append("SettingsDialog", "\tUseLauncherSize: " + QString(ui->useLauncherRadio->isChecked() ? "true" : "false")+"\n");
 }
 
 void SettingsDialog::openFileDialog() {
