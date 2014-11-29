@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>463</width>
-    <height>410</height>
+    <width>494</width>
+    <height>502</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -96,32 +96,39 @@
      <property name="checked">
       <bool>false</bool>
      </property>
-     <layout class="QHBoxLayout" name="hzLayout">
-      <item>
-       <widget class="QLabel" name="widthLabel">
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="customSizeRadio">
         <property name="text">
-         <string>Ширина</string>
+         <string>Свой:  </string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
-      <item>
-       <widget class="QSpinBox" name="widthSpinBox">
-        <property name="maximum">
-         <number>10000</number>
-        </property>
-        <property name="value">
-         <number>854</number>
+      <item row="4" column="0" colspan="6">
+       <widget class="QRadioButton" name="useLauncherRadio">
+        <property name="text">
+         <string>Использовать размер лаунчера</string>
         </property>
        </widget>
       </item>
-      <item>
+      <item row="3" column="0" colspan="6">
+       <widget class="QRadioButton" name="fullscreenRadio">
+        <property name="text">
+         <string>На весь экран</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
        <widget class="QLabel" name="heightLabel">
         <property name="text">
-         <string>Высота</string>
+         <string>Высота:</string>
         </property>
        </widget>
       </item>
-      <item>
+      <item row="2" column="2">
        <widget class="QSpinBox" name="heightSpinBox">
         <property name="maximum">
          <number>10000</number>
@@ -131,25 +138,22 @@
         </property>
        </widget>
       </item>
-      <item>
-       <widget class="QCheckBox" name="fullscreenCheckbox">
+      <item row="0" column="1">
+       <widget class="QLabel" name="widthLabel">
         <property name="text">
-         <string>На весь экран</string>
+         <string>Ширина:</string>
         </property>
        </widget>
       </item>
-      <item>
-       <spacer name="shspc">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+      <item row="0" column="2">
+       <widget class="QSpinBox" name="widthSpinBox">
+        <property name="maximum">
+         <number>10000</number>
         </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
+        <property name="value">
+         <number>854</number>
         </property>
-       </spacer>
+       </widget>
       </item>
      </layout>
     </widget>

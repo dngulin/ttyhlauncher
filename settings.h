@@ -75,10 +75,10 @@ public:
     void saveWindowGeometry(QRect geom);
     bool loadMaximizedState();
 
-    QRect loadMinecraftWindowGeometry();
-    void saveMinecraftWindowGeometry(QRect g);
-    bool loadMinecraftSizeState();
-    void saveMinecraftSizeState(bool s);
+    QRect loadClientWindowGeometry();
+    void saveClientWindowGeometry(QRect g);
+    bool loadClientSizeState();
+    void saveClientSizeState(bool s);
 
     // Offline mode
     void saveOfflineModeState(bool offlineState);
@@ -102,6 +102,9 @@ public:
 
     bool loadClientFullscreenState();
     void saveClientFullscreenState(bool state);
+
+    bool loadUseLauncherSizeState();
+    void saveUseLauncherSizeState(bool state);
 
     // Custom
     QString makeMinecraftUuid();

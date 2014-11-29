@@ -198,17 +198,32 @@ QString Settings::makeMinecraftUuid() {
     return QString(QByteArray::fromBase64(encoded));
 }
 // Minecraft window geometry
-QRect Settings::loadMinecraftWindowGeometry() {
+QRect Settings::loadClientWindowGeometry() {
     int c = loadActiveClientId();
     return qvariant_cast<QRect>(settings->value("client-" + getClientStrId(c) + "/window_geometry", QRect(-1, -1, 854, 480)));
 }
-void Settings::saveMinecraftWindowGeometry(QRect g) {
+void Settings::saveClientWindowGeometry(QRect g) {
     int c = loadActiveClientId();
     settings->setValue("client-" + getClientStrId(c) + "/window_geometry", g);
 }
 
-bool Settings::loadMinecraftSizeState() {return settings->value("minecraft/window_geometry_state", false).toBool(); }
-void Settings::saveMinecraftSizeState(bool s) { settings->setValue("minecraft/window_geometry_state", s); }
+bool Settings::loadClientSizeState() {
+    int c = loadActiveClientId();
+    return settings->value("client-" + getClientStrId(c) + "/window_geometry_state", false).toBool();
+}
+void Settings::saveClientSizeState(bool state) {
+    int c = loadActiveClientId();
+    settings->setValue("client-" + getClientStrId(c) + "/window_geometry_state", state);
+}
+
+bool Settings::loadUseLauncherSizeState() {
+    int c = loadActiveClientId();
+    return settings->value("client-" + getClientStrId(c) + "/use_launcher_size_state", false).toBool();
+}
+void Settings::saveUseLauncherSizeState(bool state) {
+    int c = loadActiveClientId();
+    return settings->setValue("client-" + getClientStrId(c) + "/use_launcher_size_state", state);
+}
 
 bool Settings::loadClientFullscreenState() {
     int c = loadActiveClientId();
