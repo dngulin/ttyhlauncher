@@ -753,7 +753,7 @@ void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVers
         } else {
             QRect mcRect;
             if(settings->loadUseLauncherSizeState()) {
-                mcRect = settings->loadWindowGeometry();
+                mcRect = this->geometry();
             } else {
                 mcRect = settings->loadClientWindowGeometry();
             }
