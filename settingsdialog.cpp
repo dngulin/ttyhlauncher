@@ -191,6 +191,10 @@ void SettingsDialog::loadSettings() {
         ui->customSizeRadio->setChecked(true);
     }
 
+    ui->useLauncherRadio->setText(ui->useLauncherRadio->text() + " (" +
+                                  QString::number(settings->loadWindowGeometry().width())  + "x" +
+                                  QString::number(settings->loadWindowGeometry().height()) + ")");
+
     logger->append("SettingsDialog", "Settings loaded\n");
     logger->append("SettingsDialog", "\tClient: " + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
     logger->append("SettingsDialog", "\tVersion: " + settings->loadClientVersion() + "\n");
