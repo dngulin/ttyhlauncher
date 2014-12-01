@@ -140,18 +140,16 @@ void FetchDialog::makeFetch() {
             QString assetsVer = index["assets"].toString();
 
             if (assetsVer.isEmpty()) {
+
                 ui->log->appendPlainText("Ошибка: не указан файл ресурсов (assets)");
                 logger->append("FetchDialog", "Error assets id not found in version.jar \n");
+
             } else {
+
+                Util::downloadFile("https://s3.amazonaws.com/Minecraft.Download/indexes/" + assetsVer + ".json",
+                                                     assetsDir + "/indexes/" + assetsVer + ".json");
                 QFile assetsFile(assetsDir + "/indexes/" + assetsVer + ".json");
 
-                // Try to download if index not exists
-                if (!assetsFile.exists()) {
-                    Util::downloadFile(settings->getAssetsUrl() + "indexes/" + assetsVer + ".json",
-                                        assetsDir + "/indexes/" + assetsVer + ".json");
-                }
-
-                // If downloaded, read the index!
                 if (assetsFile.exists()) {
                     if (assetsFile.open(QIODevice::ReadOnly)) {
 
@@ -162,14 +160,14 @@ void FetchDialog::makeFetch() {
                         if (error.error == QJsonParseError::NoError) {
 
                             QJsonObject assetsObjects = assetsDoc.object()["objects"].toObject();
-
                             QStringList keys = assetsObjects.keys();
+
                             foreach (QString key, keys) {
 
                                 QApplication::processEvents();
 
                                 QString hash = assetsObjects[key].toObject()["hash"].toString();
-                                QString objectsUrl = "http://resources.download.minecraft.net/objects/" + hash.mid(0, 2) + "/" + hash;
+                                QString objectsUrl = "http://resources.download.minecraft.net/" + hash.mid(0, 2) + "/" + hash;
                                 QString objectsDir = settings->getAssetsDir() + "/objects/" + hash.mid(0, 2) + "/" + hash;
 
                                 downloadFile(objectsUrl, objectsDir);
@@ -184,15 +182,18 @@ void FetchDialog::makeFetch() {
                         ui->log->appendPlainText("Ошибка: не удалось открыть файл " + assetsFile.fileName());
                         logger->append("FetchDialog", "Error: can't open file " + assetsFile.fileName() + "\n");
                     }
+
+                } else {
+                    ui->log->appendPlainText("Ошибка: не удалось загрузить " + assetsVer + ".json");
+                    logger->append("FetchDialog", "Error: can't get file " + assetsDir + "/indexes/" + assetsVer + ".json\n");
                 }
-
             }
-
 
         } else {
             ui->log->appendPlainText("Ошибка: не удалось разобрать JSON файл " + indexName);
             logger->append("FetchDialog", "Error: can't parse JSON file " + indexName + "\n");
         }
+
     } else {
         ui->log->appendPlainText("Ошибка: не удалось открыть файл " + indexName);
         logger->append("FetchDialog", "Error: can't open file " + indexName + "\n");
