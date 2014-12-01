@@ -203,6 +203,7 @@ bool Util::downloadFile(QString url, QString fileName) {
 
     Reply reply = makeGet(url);
     if (!reply.isOK()) {
+        Logger::logger()->append("Util", "Error: " + reply.getErrorString() + "\n");
         return false;
     } else {
         QFile* file = new QFile(fileName);
