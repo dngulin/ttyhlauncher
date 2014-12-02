@@ -184,8 +184,8 @@ void FetchDialog::makeFetch() {
                     }
 
                 } else {
-                    ui->log->appendPlainText("Ошибка: не удалось загрузить " + assetsVer + ".json");
-                    logger->append("FetchDialog", "Error: can't get file " + assetsDir + "/indexes/" + assetsVer + ".json\n");
+                    ui->log->appendPlainText("Ошибка: отсутсвует " + assetsVer + ".json");
+                    logger->append("FetchDialog", "Error: no file: " + assetsDir + "/indexes/" + assetsVer + ".json\n");
                 }
             }
 
