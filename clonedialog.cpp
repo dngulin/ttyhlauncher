@@ -51,6 +51,7 @@ bool CloneDialog::loadVersionList() {
 
 void CloneDialog::makeClone() {
 
+    ui->log->clear();
     ui->log->appendPlainText("Начинаю клонирование версии...");
     logger->append("CloneDialog", "Begin version clone...\n");
 
