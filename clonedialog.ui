@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>348</width>
-    <height>294</height>
+    <width>643</width>
+    <height>366</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -216,17 +216,6 @@
     </layout>
    </item>
   </layout>
-  <zorder>layoutWidget</zorder>
-  <zorder>log</zorder>
-  <zorder>sourceLabel</zorder>
-  <zorder>sourceCombo</zorder>
-  <zorder>clientCombo</zorder>
-  <zorder>clientLabel</zorder>
-  <zorder>versionLabel</zorder>
-  <zorder>versionEdit</zorder>
-  <zorder>sourceSep</zorder>
-  <zorder>destSep</zorder>
-  <zorder>cloneButton</zorder>
  </widget>
  <resources/>
  <connections/>
