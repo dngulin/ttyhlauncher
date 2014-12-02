@@ -22,6 +22,8 @@ private:
     Settings* settings;
     Logger* logger;
 
+    QStringList errList;
+
     void downloadFile(QString url, QString fname);
 
 private slots:

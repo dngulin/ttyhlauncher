@@ -33,6 +33,7 @@ void FetchDialog::downloadFile(QString url, QString fname) {
         if (!Util::downloadFile(url, fname)) {
             ui->log->appendPlainText("Ошибка: не удалось загрузить файл");
             logger->append("FetchDialog", "Error can't get file\n");
+            errList << QString("Не удалось загрузить: ") + fname.split('/').last();
         }
     } else {
         ui->log->appendPlainText("Пропуск: файл уже существует ");
@@ -49,6 +50,10 @@ void FetchDialog::makeFetch() {
     ui->clientCombo->setEnabled(false);
     ui->versionCombo->setEnabled(false);
     ui->fetchButton->setEnabled(false);
+
+    ui->log->clear();
+    errList.clear();
+    errList << "-----" << "Список ошибок возникших при полной загрузке файлов:";
 
     QString indexName = settings->getBaseDir()
                       + "/client_"
@@ -197,6 +202,11 @@ void FetchDialog::makeFetch() {
     } else {
         ui->log->appendPlainText("Ошибка: не удалось открыть файл " + indexName);
         logger->append("FetchDialog", "Error: can't open file " + indexName + "\n");
+    }
+
+    // Explode error list
+    foreach (QString errStr, errList) {
+        ui->log->appendPlainText(errStr);
     }
 
     ui->clientCombo->setEnabled(true);
