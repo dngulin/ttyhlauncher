@@ -184,7 +184,7 @@ void FetchDialog::makeFetch() {
                     }
 
                 } else {
-                    ui->log->appendPlainText("Ошибка: отсутсвует " + assetsVer + ".json");
+                    ui->log->appendPlainText("Ошибка: отсутствует " + assetsVer + ".json");
                     logger->append("FetchDialog", "Error: no file: " + assetsDir + "/indexes/" + assetsVer + ".json\n");
                 }
             }
