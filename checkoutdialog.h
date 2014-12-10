@@ -2,6 +2,8 @@
 #define CHECKOUTDIALOG_H
 
 #include <QDialog>
+#include "settings.h"
+#include "logger.h"
 
 namespace Ui {
 class CheckoutDialog;
@@ -17,6 +19,14 @@ public:
 
 private:
     Ui::CheckoutDialog *ui;
+    Settings* settings;
+    Logger* logger;
+
+    QStringList errList;
+
+private slots:
+    void makeCheckout();
+    void makeVersionList();
 };
 
 #endif // CHECKOUTDIALOG_H
