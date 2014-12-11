@@ -109,6 +109,39 @@ void FetchDialog::makeFetch() {
 
                         QApplication::processEvents();
 
+                        // Check allow-disallow rules
+                        bool allow = true;
+                        QJsonArray rules = lib.toObject()["rules"].toArray();
+
+                        if (!rules.isEmpty()) {
+
+                            allow = false;
+                            foreach (QJsonValue rule, rules) {
+
+                                // Global allow-disallow
+                                if (rule.toObject()["os"].isNull()) {
+                                    if (rule.toObject()["action"].toString() == "allow") {
+                                        allow = false;
+                                    } else {
+                                        allow = true;
+                                    }
+                                }
+
+                                // OS-specific allow-disallow
+                                if (rule.toObject()["os"] == os) {
+                                    if (rule.toObject()["action"].toString() == "allow") {
+                                        allow = false;
+                                    } else {
+                                        allow = true;
+                                    }
+                                }
+
+                            }
+                        }
+
+                        // Skip disallowed libraries
+                        if (!allow) { continue; }
+
                         if (!lib.toObject()["natives"].toObject()[os].isNull()) {
                             QString natives = lib.toObject()["natives"].toObject()[os].toString();
                             if (natives.contains("${arch}")) {
