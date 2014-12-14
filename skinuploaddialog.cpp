@@ -60,10 +60,12 @@ void SkinUploadDialog::uploadSkin() {
 
     if (ui->nickEdit->text().isEmpty()) {
         ui->messageLabel->setText("Ошибка: игровое имя не может быть пустым");
+        logger->append("SkinUploadDialog", "Error: empty nickname\n");
         return;
     }
     if (ui->passEdit->text().isEmpty()) {
         ui->messageLabel->setText("Ошибка: пароль не может быть пустым");
+        logger->append("SkinUploadDialog", "Error: empty password\n");
         return;
     }
 
