@@ -52,9 +52,20 @@ void SkinUploadDialog::uploadSkin() {
     int imageWidth = skinImage->width();
     delete skinImage;
 
-    if(imageHeight != 32 || imageWidth != 64) {
+    if (imageHeight != 32 || imageWidth != 64) {
         ui->messageLabel->setText("Ошибка: скин имеет неверное разрешение :(");
         logger->append("SkinUploadDialog", "Error: skin file has incorrect resolution\n");
+        return;
+    }
+
+    if (ui->nickEdit->text().isEmpty()) {
+        ui->messageLabel->setText("Ошибка: игровое имя не может быть пустым");
+        logger->append("SkinUploadDialog", "Error: empty nickname\n");
+        return;
+    }
+    if (ui->passEdit->text().isEmpty()) {
+        ui->messageLabel->setText("Ошибка: пароль не может быть пустым");
+        logger->append("SkinUploadDialog", "Error: empty password\n");
         return;
     }
 
