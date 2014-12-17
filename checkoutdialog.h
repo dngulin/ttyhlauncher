@@ -24,6 +24,8 @@ private:
 
     QStringList errList;
 
+    QPair<QString, int> getHashAndSize(QString fname);
+
 private slots:
     void makeCheckout();
     void makeVersionList();
