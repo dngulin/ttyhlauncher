@@ -110,37 +110,37 @@ void FetchDialog::makeFetch() {
                         QApplication::processEvents();
 
                         // Check allow-disallow rules
-                        bool allow = true;
                         QJsonArray rules = lib.toObject()["rules"].toArray();
 
+                        bool allowLib = true;
                         if (!rules.isEmpty()) {
 
-                            allow = false;
-                            foreach (QJsonValue rule, rules) {
+                            // Disallow libray if not in allow list
+                            allowLib = false;
 
-                                // Global allow-disallow
-                                if (rule.toObject()["os"].isNull()) {
-                                    if (rule.toObject()["action"].toString() == "allow") {
-                                        allow = false;
-                                    } else {
-                                        allow = true;
+                            foreach (QJsonValue ruleValue, rules) {
+                                QJsonObject rule = ruleValue.toObject();
+
+                                // Process allow variants (all or specified)
+                                if (rule["action"].toString() == "allow") {
+                                    if (rule["os"].toObject().isEmpty()) {
+                                        allowLib = true;
+                                    } else if (rule["os"].toObject()["name"].toString() == os) {
+                                        allowLib = true;
                                     }
                                 }
 
-                                // OS-specific allow-disallow
-                                if (rule.toObject()["os"] == os) {
-                                    if (rule.toObject()["action"].toString() == "allow") {
-                                        allow = false;
-                                    } else {
-                                        allow = true;
+                                // Make exclusions from allow-list
+                                if (rule["action"].toString() == "disallow") {
+                                    if (rule["os"].toObject()["name"].toString() == os) {
+                                        allowLib = false;
                                     }
                                 }
-
                             }
                         }
 
-                        // Skip disallowed libraries
-                        if (!allow) { continue; }
+                        // Go to next lib entry, if this are disallowed
+                        if (!allowLib) { continue; }
 
                         if (!lib.toObject()["natives"].toObject()[os].isNull()) {
                             QString natives = lib.toObject()["natives"].toObject()[os].toString();
