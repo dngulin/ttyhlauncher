@@ -223,7 +223,6 @@ void CheckoutDialog::makeCheckout() {
                 } else {
 
                     // Do checksumm
-                    // downloadFile(url + ".jar", fname + ".jar");
                     QPair<QString, int> hashAndSize = getHashAndSize(fname + ".jar");
 
                     QJsonObject libObj;
