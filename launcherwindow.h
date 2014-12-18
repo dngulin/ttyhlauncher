@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QActionGroup>
+#include <QWebPage>
 
 #include "settings.h"
 #include "logger.h"
@@ -54,6 +55,9 @@ private:
 
     Settings* settings;
     Logger* logger;
+
+    QWebPage* page;
+    QWebPage* loadingPage;
 
     void loadPage(const QUrl& url);
     void storeParameters();

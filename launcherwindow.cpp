@@ -19,6 +19,7 @@
 #include <QDesktopWidget>
 #include <QMessageBox>
 #include <QShortcut>
+#include <QWebFrame>
 
 LauncherWindow::LauncherWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -30,6 +31,11 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     // Setup settings and logger
     settings = Settings::instance();
     logger = Logger::logger();
+
+    page = new QWebPage();
+
+    loadingPage = new QWebPage();
+    loadingPage->mainFrame()->load(QUrl("qrc:/resources/loading.html"));
 
     // Make news menuitems like radiobuttons (it's impossible from qt-designer)
     newsGroup = new QActionGroup(this);
@@ -227,21 +233,25 @@ void LauncherWindow::linkClicked(const QUrl& url) {
 // Load webpage method
 void LauncherWindow::loadPage(const QUrl& url) {
     // Show "loading..." during webpage load
-    // FIXME: this is not working
-    ui->webView->load(QUrl("qrc:/resources/loading.html"));
-    ui->webView->load(url);
+    ui->webView->setPage(loadingPage);
+
+    page->mainFrame()->load(url);
 
     // Setup timeout timer
-    QTimer* ptimer = new QTimer(ui->webView);
+    QTimer* ptimer = new QTimer(page);
     connect(ptimer, SIGNAL(timeout()), SLOT(loadPageTimeout()));                // Show error page on timeout
-    connect(ui->webView, SIGNAL(loadFinished(bool)), SLOT(pageLoaded(bool)));   // Show error page on loading fail
-    connect(ui->webView, SIGNAL(loadFinished(bool)), ptimer, SLOT(stop()));
+    connect(page, SIGNAL(loadFinished(bool)), SLOT(pageLoaded(bool)));   // Show loaded page
+    connect(page, SIGNAL(loadFinished(bool)), ptimer, SLOT(stop()));
     ptimer->start(15000); // Timeout value
 }
 
 // Slots used by LoadPage method
 void LauncherWindow::loadPageTimeout() {ui->webView->load(QUrl("qrc:/resources/error.html"));}
-void LauncherWindow::pageLoaded(bool loaded) {if (!loaded) ui->webView->load(QUrl("qrc:/resources/error.html"));}
+void LauncherWindow::pageLoaded(bool loaded) {
+    if (loaded) {
+        ui->webView->setPage(page);
+    }
+}
 
 void LauncherWindow::playButtonClicked() {
 
