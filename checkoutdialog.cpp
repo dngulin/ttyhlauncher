@@ -54,6 +54,22 @@ QPair<QString, int> CheckoutDialog::getHashAndSize(QString fname) {
     return rvalue;
 }
 
+void CheckoutDialog::recursiveFlist(QStringList *list, QString prefix, QString dpath) {
+
+    QDir dir(dpath);
+    QStringList fileList = dir.entryList(QDir::Files);
+    foreach (QString fname, fileList) {
+        list->append(prefix + fname);
+    }
+
+    QStringList dirList = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+    foreach (QString dname, dirList) {
+        QDir subdir(dpath + "/" + dname);
+        recursiveFlist(list, prefix + dname + "/", dpath + "/" + dname);
+    }
+
+}
+
 void CheckoutDialog::makeCheckout() {
 
     ui->log->clear();
@@ -110,6 +126,7 @@ void CheckoutDialog::makeCheckout() {
         QJsonParseError error;
 
         indexDoc = QJsonDocument::fromJson(indexFile.readAll(), &error);
+        indexFile.close();
 
         if (error.error != QJsonParseError::NoError) {
 
@@ -122,8 +139,6 @@ void CheckoutDialog::makeCheckout() {
             libsIndex = indexDoc.object()["libraries"].toArray();
 
             foreach (QJsonValue lib, libsIndex) {
-
-                QApplication::processEvents();
 
                 QString baseDir = settings->getLibsDir() + "/";
                 QString codedName = lib.toObject()["name"].toString();
@@ -140,15 +155,11 @@ void CheckoutDialog::makeCheckout() {
 
                 if (!lib.toObject()["natives"].isNull()) {
 
-                    ui->log->appendPlainText("DBG: enter natives sec");
-
                     // Get all os and architecture natives
                     QStringList oslist;
                     oslist << "linux" << "windows" << "osx";
 
                     foreach (QString os, oslist) {
-
-                        QApplication::processEvents();
 
                         // Check allow-disallow rules
                         QJsonArray rules = lib.toObject()["rules"].toArray();
@@ -171,7 +182,6 @@ void CheckoutDialog::makeCheckout() {
                                     }
                                 }
 
-                                ui->log->appendPlainText("DBG: making allow list exclusions");
                                 // Make exclusions from allow-list
                                 if (rule["action"].toString() == "disallow") {
                                     if (rule["os"].toObject()["name"].toString() == os) {
@@ -220,6 +230,8 @@ void CheckoutDialog::makeCheckout() {
                         }
                     }
 
+                    QApplication::processEvents();
+
                 } else {
 
                     // Do checksumm
@@ -231,6 +243,9 @@ void CheckoutDialog::makeCheckout() {
                     libs[suffix + ".jar"] = libObj;
 
                 }
+
+                QApplication::processEvents();
+
             }
         }
     }
@@ -250,7 +265,29 @@ void CheckoutDialog::makeCheckout() {
     }
 
     // Make index
-    // FIXME: make index!
+    QDir filesDir(dataDir + "files/");
+    if (!filesDir.exists()) {
+
+        ui->log->appendPlainText("Ошибка: директория не сущетвувет: " + dataDir + "files/");
+        logger->append("CheckoutDialog", "Error: files directory not exists\n");
+        errList << QString("Директория модификаций не существует: " + dataDir + "files/");
+
+    } else {
+
+        QStringList fileList;
+        recursiveFlist(&fileList, "", dataDir + "files/");
+
+        foreach (QString file, fileList) {
+
+            QJsonObject fileObj;
+            QPair<QString, int> hashAndSize = getHashAndSize(dataDir + "files/" + file);
+            fileObj["hash"] = hashAndSize.first;
+            fileObj["size"] = hashAndSize.second;
+
+            index[file] = fileObj;
+        }
+
+    }
 
     files["mutables"] = mutables;
     files["index"] = index;
@@ -270,6 +307,86 @@ void CheckoutDialog::makeCheckout() {
         dataFile.write(dataJson.toJson());
         dataFile.close();
     }
+
+    // Setup client-side prefix (for build testing)
+    ui->log->appendPlainText("Установка префикса...");
+    logger->append("CheckoutDialog", "Setup prefix...\n");
+
+    QString prefixDir = settings->getBaseDir() + "/client_"
+                   + settings->getClientStrId(ui->clientCombo->currentIndex()) + "/"
+                   + "prefixes/" + version + "/";
+
+    QFile installedDataFile(prefixDir + "installed_data.json");
+    if (!installedDataFile.open(QIODevice::ReadOnly)) {
+
+        ui->log->appendPlainText("Установка префикса: не удалось открыть installed_data.json");
+        logger->append("CheckoutDialog", "Setup prefix: cant open installed_data.json\n");
+
+
+    } else {
+
+        QJsonDocument installedDoc;
+        QJsonParseError error;
+
+        installedDoc = QJsonDocument::fromJson(installedDataFile.readAll(), &error);
+        installedDataFile.close();
+
+        if (error.error != QJsonParseError::NoError) {
+
+            ui->log->appendPlainText("Ошибка: невозможно разобрать installed_data.json! Префикс повреждён!");
+            logger->append("CheckoutDialog", "Error: can't parse installed_data.json! Broken prefix!\n");
+            errList << QString("Ошибка разбора installed_data.json! Префикс повреждён!");
+
+
+        } else {
+
+            // Remove old files, that not exists in new data.json
+            QStringList oldFileList = installedDoc.object()["files"].toObject()["index"].toObject().keys();
+            QStringList newFileList = index.keys();
+
+            foreach (QString file, oldFileList) {
+                if (newFileList.indexOf(file) == -1) {
+
+                    ui->log->appendPlainText("Удаление файла: " + file);
+                    logger->append("CheckoutDialog", "Removing file: " + prefixDir + file + "\n");
+                    QFile::remove(prefixDir + file);
+
+                }
+            }
+        }
+    }
+
+    ui->log->appendPlainText("Копирование новых файлов...");
+    logger->append("CheckoutDialog", "Begin prefix installation...");
+
+    // Copy data.json to installed_data.json
+    QFileInfo fileInf(prefixDir + "installed_data.json");
+    if (fileInf.exists()) {
+        QFile::remove(prefixDir + "installed_data.json");
+    } else {
+        QDir fdir = fileInf.absoluteDir();
+        fdir.mkpath(fdir.absolutePath());
+    }
+    QFile::copy(dataDir + "data.json", prefixDir + "installed_data.json");
+
+    // Copy files
+    foreach (QString fname, index.keys()) {
+        ui->log->appendPlainText("Копирование: " + fname);
+        logger->append("CheckoutDialog", "Copy: " + fname);
+
+        QFileInfo fileInf(prefixDir + fname);
+        if (fileInf.exists()) {
+            QFile::remove(prefixDir + fname);
+        } else {
+            QDir fdir = fileInf.absoluteDir();
+            fdir.mkpath(fdir.absolutePath());
+        }
+
+        QFile::copy(dataDir + "files/" + fname, prefixDir + fname);
+    }
+
+    ui->log->appendPlainText("Вычисление контрольных сумм завершено!");
+    logger->append("CheckoutDialog", "Checkout completed!");
 
     // Explode error list
     foreach (QString errStr, errList) {
