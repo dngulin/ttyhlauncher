@@ -38,13 +38,14 @@ void FeedbackDialog::sendFeedback() {
 
     // Users input and logs trnslated to Base64
 
-    QByteArray desc; desc.append(ui->descEdit->toPlainText());
-    payload["desc"] = QString(desc.toBase64());
+    //QByteArray desc; desc.append(ui->descEdit->toPlainText());
+    //payload["desc"] = QString(desc.toBase64());
+    payload["desc"] = "GZIP DATA";
 
     logger->append("FeedBackDialog", "Prepare diagnostic log...\n");
     Settings* settings = Settings::instance();
 
-    QByteArray log;
+    QByteArray log;    
     log.append("## ============================= ##\n");
     log.append("    TTYHLAUNCHER DIAGNOSTIC LOG\n");
     log.append("## ============================= ##\n");
@@ -53,6 +54,14 @@ void FeedbackDialog::sendFeedback() {
     log.append(settings->getOsName() + ", ");
     log.append(settings->getOsVersion() + ", ");
     log.append("arch: " + settings->getWordSize() + ".\n");
+    log.append("\n");
+
+    log.append("## ============================= ##\n");
+    log.append("        TROUBLE DESCRIPTION\n");
+    log.append("## ============================= ##\n");
+    log.append("\n");
+
+    log.append(ui->descEdit->toPlainText() + "\n");
     log.append("\n");
 
     log.append("## ============================= ##\n");
@@ -98,7 +107,7 @@ void FeedbackDialog::sendFeedback() {
     QJsonDocument jsonRequest(payload);
 
     logger->append("FeedBackDialog", "Making request...\n");
-    Reply serverReply = Util::makePost(Settings::feedbackUrl, jsonRequest.toJson());
+    Reply serverReply = Util::makePost(Settings::feedbackUrl + ".gz", jsonRequest.toJson());
 
     if (!serverReply.isOK()) {
 
