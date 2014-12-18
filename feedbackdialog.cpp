@@ -91,7 +91,9 @@ void FeedbackDialog::sendFeedback() {
         log.append("\n");
     }
 
-    payload["log"] = QString(log.toBase64());
+    // Gzip and base-64 encode log
+    QByteArray zlog = Util::makeGzip(log);
+    payload["log"] = QString(zlog.toBase64());
 
     QJsonDocument jsonRequest(payload);
 

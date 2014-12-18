@@ -10,6 +10,8 @@ Reply makeGet(QString url);
 Reply makePost(QString url, QByteArray postData);
 quint64 getFileSize(QString url);
 
+QByteArray makeGzip(const QByteArray& data);
+
 QString getCommandOutput(QString command, QStringList args);
 QString getFileContetnts(QString path);
 

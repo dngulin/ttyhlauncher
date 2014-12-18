@@ -5,6 +5,7 @@
 
 #include <quazip/quazip.h>
 #include <quazip/quazipfile.h>
+#include <quazip/quacrc32.h>
 
 quint64 Util::getFileSize(QString url) {
     QNetworkAccessManager* manager = new QNetworkAccessManager();
@@ -93,6 +94,35 @@ Reply Util::makePost(QString url, QByteArray postData) {
     return Reply(success, errStr, data);
 }
 
+// Realisation from: http://stackoverflow.com/questions/20734831/compress-string-with-gzip-using-qcompress
+QByteArray Util::makeGzip(const QByteArray& data) {
+
+    QByteArray compressedData = qCompress(data);
+    //  Strip the first six bytes (a 4-byte length put on by qCompress and a 2-byte zlib header)
+    // and the last four bytes (a zlib integrity check).
+    compressedData.remove(0, 6);
+    compressedData.chop(4);
+
+    QByteArray header;
+    QDataStream ds1(&header, QIODevice::WriteOnly);
+    // Prepend a generic 10-byte gzip header (see RFC 1952),
+    ds1 << quint16(0x1f8b)
+        << quint16(0x0800)
+        << quint16(0x0000)
+        << quint16(0x0000)
+        << quint16(0x000b);
+
+    // Append a four-byte CRC-32 of the uncompressed data
+    // Append 4 bytes uncompressed input size modulo 2^32
+    QByteArray footer;
+    QDataStream ds2(&footer, QIODevice::WriteOnly);
+    ds2.setByteOrder(QDataStream::LittleEndian);
+    QuaCrc32 crc32;
+    ds2 << crc32.calculate(data)
+        << quint32(data.size());
+
+    return header + compressedData + footer;
+}
 
 void Util::removeAll(QString filePath) {
 
