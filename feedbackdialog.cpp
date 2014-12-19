@@ -107,7 +107,7 @@ void FeedbackDialog::sendFeedback() {
     QJsonDocument jsonRequest(payload);
 
     logger->append("FeedBackDialog", "Making request...\n");
-    Reply serverReply = Util::makePost(Settings::feedbackUrl + ".gz", jsonRequest.toJson());
+    Reply serverReply = Util::makePost(Settings::feedbackUrl, jsonRequest.toJson());
 
     if (!serverReply.isOK()) {
 
