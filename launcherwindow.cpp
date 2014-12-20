@@ -35,7 +35,9 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     page = new QWebPage();
 
     loadingPage = new QWebPage();
+    errorPage = new QWebPage();
     loadingPage->mainFrame()->load(QUrl("qrc:/resources/loading.html"));
+    errorPage->mainFrame()->load(QUrl("qrc:/resources/error.html"));
 
     // Make news menuitems like radiobuttons (it's impossible from qt-designer)
     newsGroup = new QActionGroup(this);
@@ -246,7 +248,7 @@ void LauncherWindow::loadPage(const QUrl& url) {
 }
 
 // Slots used by LoadPage method
-void LauncherWindow::loadPageTimeout() {ui->webView->load(QUrl("qrc:/resources/error.html"));}
+void LauncherWindow::loadPageTimeout() {ui->webView->setPage(errorPage);}
 void LauncherWindow::pageLoaded(bool loaded) {
     if (loaded) {
         ui->webView->setPage(page);
