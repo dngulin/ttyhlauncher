@@ -58,6 +58,7 @@ private:
 
     QWebPage* page;
     QWebPage* loadingPage;
+    QWebPage* errorPage;
 
     void loadPage(const QUrl& url);
     void storeParameters();
