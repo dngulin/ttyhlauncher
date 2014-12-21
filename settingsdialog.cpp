@@ -163,6 +163,7 @@ void SettingsDialog::saveSettings() {
     logger->append("SettingsDialog", "\tClientJava: " + ui->javapathEdit->text() + "\n");
     logger->append("SettingsDialog", "\tUseClientArgs: " + QString(ui->argsBox->isChecked() ? "true" : "false") + "\n");
     logger->append("SettingsDialog", "\tClientArgs: " + ui->argsEdit->text() + "\n");
+    logger->append("SettingsDialog", "\tUseCustomGeometry: " + QString(ui->sizeBox->isChecked() ? "true" : "false") + "\n");
     logger->append("SettingsDialog", "\tMinecraftGeometry: " +
                    QString::number(settings->loadClientWindowGeometry().width()) + "," +
                    QString::number(settings->loadClientWindowGeometry().height()) + "\n");
@@ -198,6 +199,7 @@ void SettingsDialog::loadSettings() {
     logger->append("SettingsDialog", "\tClientJava: " + ui->javapathEdit->text() + "\n");
     logger->append("SettingsDialog", "\tUseClientArgs: " + QString(ui->argsBox->isChecked() ? "true" : "false") + "\n");
     logger->append("SettingsDialog", "\tClientArgs: " + ui->argsEdit->text() + "\n");
+    logger->append("SettingsDialog", "\tUseCustomGeometry: " + QString(ui->sizeBox->isChecked() ? "true" : "false") + "\n");
     logger->append("SettingsDialog", "\tMinecraftGeometry: " +
                    QString::number(ui->widthSpinBox->value())  + "," +
                    QString::number(ui->heightSpinBox->value()) + "\n");
