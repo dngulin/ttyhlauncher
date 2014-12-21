@@ -62,7 +62,7 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     connect(ui->bugReport, SIGNAL(triggered()), SLOT(showFeedBackDialog()));
     connect(ui->aboutLauncher, SIGNAL(triggered()), SLOT(showAboutDialog()));
 
-    // Client builder menu visibility and connect entryes
+    // Client builder menu visibility and connect entries
     ui->builderMenu->menuAction()->setVisible(false);
     new QShortcut(QKeySequence(Qt::SHIFT + Qt::Key_B), this, SLOT(switchBuilderMenuVisibility()));
 
@@ -229,7 +229,7 @@ void LauncherWindow::loadOfficial() {loadPage(QUrl("http://mcupdate.tumblr.com/"
 void LauncherWindow::linkClicked(const QUrl& url) {
     logger->append(this->objectName(), "Try to open url in external browser. " + url.toString() + "\n");
     if (!QDesktopServices::openUrl(url))
-        logger->append(this->objectName(), "Failed to open system browser!");
+        logger->append(this->objectName(), "Failed to open system browser!\n");
 }
 
 // Load webpage method
