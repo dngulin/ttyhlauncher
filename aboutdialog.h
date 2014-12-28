@@ -17,6 +17,8 @@ public:
 
 private:
     Ui::AboutDialog *ui;
+private slots:
+    void showLicense();
 };
 
 #endif // ABOUTDIALOG_H
