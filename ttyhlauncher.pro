@@ -28,7 +28,8 @@ SOURCES += main.cpp \
     clonedialog.cpp \
     fetchdialog.cpp \
     checkoutdialog.cpp \
-    exportdialog.cpp
+    exportdialog.cpp \
+    licensedialog.cpp
 
 HEADERS += launcherwindow.h \
     skinuploaddialog.h \
@@ -44,7 +45,8 @@ HEADERS += launcherwindow.h \
     clonedialog.h \
     fetchdialog.h \
     checkoutdialog.h \
-    exportdialog.h
+    exportdialog.h \
+    licensedialog.h
 
 FORMS += launcherwindow.ui \
     skinuploaddialog.ui \
@@ -55,7 +57,8 @@ FORMS += launcherwindow.ui \
     clonedialog.ui \
     fetchdialog.ui \
     checkoutdialog.ui \
-    exportdialog.ui
+    exportdialog.ui \
+    licensedialog.ui
 
 RESOURCES += \
     resources.qrc

@@ -10,5 +10,6 @@
         <file>resources/skin.png</file>
         <file>resources/loading.html</file>
         <file>resources/error.html</file>
+        <file>resources/license.txt</file>
     </qresource>
 </RCC>
