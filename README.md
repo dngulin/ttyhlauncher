@@ -10,8 +10,8 @@ We are against the use of the launcher for illegal purposes, it is written just 
 This minecraft launcher is designed for using custom update and session servers. For details see [ttyhstore](https://github.com/betrok/ttyhstore) and [minecraft-master](https://github.com/krotebot/minecraft-master) repositories.
 
 
-### Dependecies
+### Dependencies
 
-1. Qt-5.3.1 (core, gui, widgets, webkitwidgets)
+1. Qt-5.3.1 or higher (core, gui, widgets, webkitwidgets)
 2. libquazip
 
