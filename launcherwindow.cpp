@@ -44,8 +44,8 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     newsGroup->addAction(ui->ttyhNews);
     newsGroup->addAction(ui->officialNews);
 
-    ui->webView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
-    connect(ui->webView, SIGNAL(linkClicked(const QUrl&)), SLOT(linkClicked(const QUrl&)));
+    page->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+    connect(page, SIGNAL(linkClicked(const QUrl&)), SLOT(linkClicked(const QUrl&)));
 
     // News Menu connections
     connect(ui->ttyhNews, SIGNAL(changed()), SLOT(loadTtyh()));
