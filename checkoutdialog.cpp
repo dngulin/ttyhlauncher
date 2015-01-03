@@ -1,6 +1,7 @@
 #include "checkoutdialog.h"
 #include "ui_checkoutdialog.h"
 
+#include "util.h"
 #include <QCryptographicHash>
 
 CheckoutDialog::CheckoutDialog(QWidget *parent) :
@@ -52,22 +53,6 @@ QPair<QString, int> CheckoutDialog::getHashAndSize(QString fname) {
     rvalue.second = size;
 
     return rvalue;
-}
-
-void CheckoutDialog::recursiveFlist(QStringList *list, QString prefix, QString dpath) {
-
-    QDir dir(dpath);
-    QStringList fileList = dir.entryList(QDir::Files);
-    foreach (QString fname, fileList) {
-        list->append(prefix + fname);
-    }
-
-    QStringList dirList = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
-    foreach (QString dname, dirList) {
-        QDir subdir(dpath + "/" + dname);
-        recursiveFlist(list, prefix + dname + "/", dpath + "/" + dname);
-    }
-
 }
 
 void CheckoutDialog::makeCheckout() {
@@ -275,7 +260,7 @@ void CheckoutDialog::makeCheckout() {
     } else {
 
         QStringList fileList;
-        recursiveFlist(&fileList, "", dataDir + "files/");
+        Util::recursiveFlist(&fileList, "", dataDir + "files/");
 
         foreach (QString file, fileList) {
 

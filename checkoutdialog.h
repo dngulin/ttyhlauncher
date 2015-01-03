@@ -25,7 +25,6 @@ private:
     QStringList errList;
 
     QPair<QString, int> getHashAndSize(QString fname);
-    void recursiveFlist(QStringList* list, QString prefix, QString dpath);
 
 private slots:
     void makeCheckout();

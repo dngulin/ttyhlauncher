@@ -17,6 +17,7 @@ QString getFileContetnts(QString path);
 
 bool downloadFile(QString url, QString fileName);
 void removeAll(QString filePath);
+void recursiveFlist(QStringList *list, QString prefix, QString dpath);
 void unzipArchive(QString zipFilePath, QString extractionPath);
 
 }

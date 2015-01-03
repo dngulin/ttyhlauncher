@@ -143,6 +143,22 @@ void Util::removeAll(QString filePath) {
     }
 }
 
+void Util::recursiveFlist(QStringList *list, QString prefix, QString dpath) {
+
+    QDir dir(dpath);
+    QStringList fileList = dir.entryList(QDir::Files);
+    foreach (QString fname, fileList) {
+        list->append(prefix + fname);
+    }
+
+    QStringList dirList = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+    foreach (QString dname, dirList) {
+        QDir subdir(dpath + "/" + dname);
+        recursiveFlist(list, prefix + dname + "/", dpath + "/" + dname);
+    }
+
+}
+
 
 void Util::unzipArchive(QString zipFilePath, QString extractionPath) {
 
