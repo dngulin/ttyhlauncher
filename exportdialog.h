@@ -2,6 +2,8 @@
 #define EXPORTDIALOG_H
 
 #include <QDialog>
+#include "settings.h"
+#include "logger.h"
 
 namespace Ui {
 class ExportDialog;
@@ -17,6 +19,15 @@ public:
 
 private:
     Ui::ExportDialog *ui;
+    Settings* settings;
+    Logger* logger;
+
+    bool copyFile(QString from, QString to);
+
+private slots:
+    void openDirDialog();
+    void makeVersionList();
+    void makeExport();
 };
 
 #endif // EXPORTDIALOG_H
