@@ -52,7 +52,7 @@ void SkinUploadDialog::uploadSkin() {
     int imageWidth = skinImage->width();
     delete skinImage;
 
-    if (imageHeight != 32 || imageWidth != 64) {
+    if ((imageHeight != 32 && imageHeight !=64) || imageWidth != 64) {
         ui->messageLabel->setText("Ошибка: скин имеет неверное разрешение :(");
         logger->append("SkinUploadDialog", "Error: skin file has incorrect resolution\n");
         return;
