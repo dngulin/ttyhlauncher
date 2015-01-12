@@ -229,11 +229,36 @@ void ExportDialog::makeExport() {
                 QApplication::processEvents();
             }
 
+            QJsonArray mutables = dataDoc.object()["files"].toObject()["mutables"].toArray();
+            QByteArray mutablesList;
+            foreach (QJsonValue file, mutables) {
+                mutablesList.append(file.toString() + '\n');
+            }
+
+            ui->log->appendPlainText("Генерация mutables.list");
+            logger->append("ExportDialog", "Making mutables.list\n");
+
+            QFile mutablesFile(ui->dirEdit->text() + "/"
+                               + settings->getClientStrId(ui->clientCombo->currentIndex())
+                               + "/" + ver + "/" + "mutables.list");
+
+            // Create directory
+            QFileInfo mutFinfo(mutablesFile);
+            mutFinfo.absoluteDir().mkpath(mutFinfo.absoluteDir().path());
+
+            if (mutablesFile.open(QIODevice::WriteOnly)) {
+                mutablesFile.write(mutablesList);
+                mutablesFile.close();
+            } else {
+                ui->log->appendPlainText("Ошибка: не удалось записать mutables.list!");
+                logger->append("ExportDialog", "Error: cant write mutables.list!\n");
+            }
+
         }
 
     }
 
-    // Export main files (<ver>.jar, <ver>.json, data.json)
+    // Export main files (<ver>.jar, <ver>.json)
     ui->log->appendPlainText(" >> Экспорт: основные файлы");
     logger->append("ExportDialog", "Section: main files\n");
 
@@ -250,13 +275,6 @@ void ExportDialog::makeExport() {
              ui->dirEdit->text() + "/"
              + settings->getClientStrId(ui->clientCombo->currentIndex())
              + "/" + ver + "/" + ver + ".json");
-
-    copyFile(settings->getBaseDir() + "/client_"
-             + settings->getClientStrId(ui->clientCombo->currentIndex())
-             + "/versions/" + ver + "/" + "data.json",
-             ui->dirEdit->text() + "/"
-             + settings->getClientStrId(ui->clientCombo->currentIndex())
-             + "/" + ver + "/" + "data.json");
 
     ui->clientCombo->setEnabled(true);
     ui->versionCombo->setEnabled(true);
