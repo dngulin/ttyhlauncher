@@ -31,10 +31,10 @@ ExportDialog::~ExportDialog() {
 
 bool ExportDialog::copyFile(QString from, QString to) {
 
-    QFileInfo finfo(to);
-    QDir(finfo.absoluteDir().absolutePath()).mkpath(finfo.absoluteDir().absolutePath());
+    QFileInfo toInfo(to);
+    QDir(toInfo.absoluteDir().absolutePath()).mkpath(toInfo.absoluteDir().absolutePath());
 
-    if (finfo.exists()) {
+    if (toInfo.exists()) {
 
         ui->log->appendPlainText("Файл существует: " + to);
         logger->append("ExportDialog", "File exists: " + to + "\n");
@@ -211,6 +211,18 @@ void ExportDialog::makeExport() {
             foreach (QString suffix, libs.keys()) {
                 copyFile(settings->getLibsDir() + "/" + suffix,
                          ui->dirEdit->text() + "/libraries/" + suffix);
+
+                // Make libaray hash file
+                QFile shaFile(ui->dirEdit->text() + "/libraries/" + suffix + ".sha1");
+                if (!shaFile.exists()) {
+                    if (shaFile.open(QIODevice::WriteOnly)) {
+                        QByteArray hashData;
+                        hashData.append(libs[suffix].toObject()["hash"].toString());
+                        shaFile.write(hashData);
+                        shaFile.close();
+                    }
+                }
+
                 QApplication::processEvents();
             }
 
