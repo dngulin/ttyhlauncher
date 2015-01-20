@@ -73,8 +73,8 @@
    </item>
    <item>
     <widget class="QPlainTextEdit" name="descEdit">
-     <property name="plainText">
-      <string>Краткое описание проблемы.</string>
+     <property name="placeholderText">
+      <string>Краткое описание проблемы</string>
      </property>
     </widget>
    </item>
