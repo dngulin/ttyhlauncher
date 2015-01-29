@@ -224,11 +224,6 @@
     <string>Играть оффлайн</string>
    </property>
   </action>
-  <action name="action_3">
-   <property name="text">
-    <string>Показывать все клиенты</string>
-   </property>
-  </action>
   <action name="runSettings">
    <property name="icon">
     <iconset resource="resources.qrc">
@@ -272,16 +267,6 @@
    </property>
    <property name="text">
     <string>Обновление клиента</string>
-   </property>
-  </action>
-  <action name="action_10">
-   <property name="text">
-    <string>Клиента</string>
-   </property>
-  </action>
-  <action name="action_11">
-   <property name="text">
-    <string>Лаунчера</string>
    </property>
   </action>
   <action name="aboutLauncher">
