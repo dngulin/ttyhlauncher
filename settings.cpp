@@ -50,7 +50,7 @@ void Settings::loadClientList() {
 
     QFile* prefixesFile = new QFile(dataPath + "/prefixes.json");
 
-    logger->append("Settings", "Updating local clisent list...\n");
+    logger->append("Settings", "Updating local client list...\n");
     Reply prefixesReply = Util::makeGet(updateServer + "/prefixes.json");
 
     if (prefixesReply.isOK()) {
