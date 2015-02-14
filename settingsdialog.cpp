@@ -22,9 +22,9 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     // Setup client combobox
     ui->clientCombo->addItems(settings->getClientsNames());
     ui->clientCombo->setCurrentIndex(settings->loadActiveClientId());
-    connect(ui->clientCombo, SIGNAL(activated(int)), settings, SLOT(saveActiveClientId(int)));
-    connect(ui->clientCombo, SIGNAL(activated(int)), this, SLOT(loadSettings()));
-    connect(ui->clientCombo, SIGNAL(activated(int)), this, SLOT(loadVersionList()));
+    connect(ui->clientCombo, SIGNAL(currentIndexChanged(int)), settings, SLOT(saveActiveClientId(int)));
+    connect(ui->clientCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(loadSettings()));
+    connect(ui->clientCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(loadVersionList()));
 
     if (ui->clientCombo->count() == 0) {
         ui->saveButton->setEnabled(false);
@@ -33,7 +33,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
         logger->append("SettingsDialog", "Error: empty client list!\n");
         ui->stateEdit->setText("Не удалось получить список клиентов");
     } else {
-        emit ui->clientCombo->activated(ui->clientCombo->currentIndex());
+        emit ui->clientCombo->currentIndexChanged(ui->clientCombo->currentIndex());
     }
 
     connect(ui->javapathButton, SIGNAL(clicked()), this, SLOT(openFileDialog()));
