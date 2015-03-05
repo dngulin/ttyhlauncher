@@ -294,6 +294,13 @@ void Settings::saveClientJavaArgs(QString args) {
     int cid = loadActiveClientId();
     settings->setValue("client-" + getClientStrId(cid) + "/args", args);
 }
+// News
+int Settings::loadNewsId() {
+    return settings->value("launcher/newsId", 0).toInt();
+}
+void Settings::saveNewsId(int i) {
+    settings->setValue("launcher/newsId", i);
+}
 
 // Directories
 QString Settings::getBaseDir() {

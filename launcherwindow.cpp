@@ -94,8 +94,18 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     connect(ui->clientCombo, SIGNAL(activated(int)), settings, SLOT(saveActiveClientId(int)));
 
     // Setup news set
-    ui->ttyhNews->setChecked(true);
-    emit ui->ttyhNews->changed();
+    switch(settings->loadNewsId()) {
+    case 0:
+        ui->ttyhNews->setChecked(true);
+        emit ui->ttyhNews->changed();
+        break;
+    case 1:
+        ui->officialNews->setChecked(true);
+        emit ui->officialNews->changed();
+        break;
+    }
+
+
 
     // Setup window parameters
     QRect geometry = settings->loadWindowGeometry();
@@ -222,8 +232,14 @@ void LauncherWindow::showUpdateDialog(QString message) {
 }
 
 // Load webpage slots
-void LauncherWindow::loadTtyh() {loadPage(QUrl("http://ttyh.ru/misc.php?page=newsfeed"));}
-void LauncherWindow::loadOfficial() {loadPage(QUrl("http://mcupdate.tumblr.com/"));}
+void LauncherWindow::loadTtyh() {
+    settings->saveNewsId(0);
+    loadPage(QUrl("http://ttyh.ru/misc.php?page=newsfeed"));
+}
+void LauncherWindow::loadOfficial() {
+    settings->saveNewsId(1);
+    loadPage(QUrl("http://mcupdate.tumblr.com/"));
+}
 
 // Open external browser slot
 void LauncherWindow::linkClicked(const QUrl& url) {
