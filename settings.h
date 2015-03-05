@@ -106,6 +106,9 @@ public:
     bool loadUseLauncherSizeState();
     void saveUseLauncherSizeState(bool state);
 
+    int loadNewsId();
+    void saveNewsId(int i);
+
     // Custom
     QString makeMinecraftUuid();
 
