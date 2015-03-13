@@ -86,7 +86,7 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     if (ui->savePassword->isChecked())
         ui->passEdit->setText(settings->loadPassword());
     // Password are saved on login or exit if savePassword is checked
-    connect(ui->savePassword, SIGNAL(clicked(bool)), settings, SLOT(savePassStore(bool)));
+    connect(ui->savePassword, SIGNAL(clicked(bool)), settings, SLOT(savePassStoreState(bool)));
 
     // Setup client combobox
     ui->clientCombo->addItems(settings->getClientsNames());
