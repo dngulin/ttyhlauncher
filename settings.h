@@ -110,6 +110,9 @@ public:
     bool loadClientUseLauncherSizeState();
     void saveClientUseLauncherSizeState(bool state);
 
+    bool loadClientCheckAssetsState();
+    void saveClientCheckAssetsState(bool state);
+
     // Custom
     QString makeMinecraftUuid();
 

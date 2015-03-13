@@ -732,17 +732,22 @@ void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVers
             return;
         }
 
-        QString assetsPrefix = settings->getAssetsDir() + "/objects/";
-        foreach (QString key, assetIndex.keys()) {
+        // Check game resources if this setting enabled
+        if (settings->loadClientCheckAssetsState()) {
 
-            QString hash = assetIndex[key].toObject()["hash"].toString();;
-            QString assetSuffix = hash.mid(0, 2);
+            QString assetsPrefix = settings->getAssetsDir() + "/objects/";
+            foreach (QString key, assetIndex.keys()) {
 
-            if (!isValidGameFile(assetsPrefix + assetSuffix + "/" + hash, hash)) {
-                showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
-                                 + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
-                return;
+                QString hash = assetIndex[key].toObject()["hash"].toString();;
+                QString assetSuffix = hash.mid(0, 2);
+
+                if (!isValidGameFile(assetsPrefix + assetSuffix + "/" + hash, hash)) {
+                    showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
+                                     + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
+                    return;
+                }
             }
+
         }
     }
 

@@ -155,6 +155,7 @@ void SettingsDialog::saveSettings() {
     settings->saveClientWindowSizeState(ui->sizeBox->isChecked());
     settings->saveClientFullscreenState(ui->fullscreenRadio->isChecked());
     settings->saveClientUseLauncherSizeState(ui->useLauncherRadio->isChecked());
+    settings->saveClientCheckAssetsState(ui->checkAssetsCombo->isChecked());
 
     logger->append("SettingsDialog", "Settings saved\n");
     logger->append("SettingsDialog", "\tClient: " + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
@@ -191,6 +192,9 @@ void SettingsDialog::loadSettings() {
     if(!fullscreen && !useLauncherSize) {
         ui->customSizeRadio->setChecked(true);
     }
+
+    bool checkAssets = settings->loadClientCheckAssetsState();
+    ui->checkAssetsCombo->setChecked(checkAssets);
 
     logger->append("SettingsDialog", "Settings loaded\n");
     logger->append("SettingsDialog", "\tClient: " + settings->getClientStrId(settings->loadActiveClientId()) + "\n");

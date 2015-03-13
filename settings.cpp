@@ -296,6 +296,17 @@ void Settings::saveClientJavaArgs(QString args) {
     settings->setValue("client-" + getClientStrId(cid) + "/cutsom_args", args);
 }
 
+bool Settings::loadClientCheckAssetsState()
+{
+    int cid = loadActiveClientId();
+    return settings->value("client-" + getClientStrId(cid) + "/check_assets", true).toBool();
+}
+void Settings::saveClientCheckAssetsState(bool state)
+{
+    int cid = loadActiveClientId();
+    settings->setValue("client-" + getClientStrId(cid) + "/check_assets", state);
+}
+
 // News
 int Settings::loadNewsId() {
     return settings->value("launcher/news_id", 0).toInt();

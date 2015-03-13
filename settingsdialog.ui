@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>494</width>
-    <height>502</height>
+    <width>445</width>
+    <height>460</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -161,7 +161,7 @@
    <item>
     <widget class="QGroupBox" name="javapathBox">
      <property name="title">
-      <string>Указать путь к Java вручную</string>
+      <string>Указать путь к &amp;Java вручную</string>
      </property>
      <property name="checkable">
       <bool>true</bool>
@@ -193,7 +193,7 @@
    <item>
     <widget class="QGroupBox" name="argsBox">
      <property name="title">
-      <string>Указать дополнительные параметры Java</string>
+      <string>Указать дополнительные параметры J&amp;ava</string>
      </property>
      <property name="checkable">
       <bool>true</bool>
@@ -216,7 +216,20 @@
     </widget>
    </item>
    <item>
+    <widget class="QCheckBox" name="checkAssetsCombo">
+     <property name="text">
+      <string>Проверять игровые ресурсы перед запуском</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QGroupBox" name="serviceBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="title">
       <string>Сервис</string>
      </property>
