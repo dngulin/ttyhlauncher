@@ -63,26 +63,24 @@ public:
     QString getNativesDir();
     QString getConfigDir();
 
-    // Mainwindow login form
+    // Launcher settings
+    int loadActiveClientId();
     QString loadLogin();
-    bool loadPassStore();
+    bool loadPassStoreState();
+    bool loadMaximizedState();
+    // save-pairs in slots section
+
     QString loadPassword();
     void savePassword(QString password);
-    int loadActiveClientId();
 
-    // Window parameters
     QRect loadWindowGeometry();
     void saveWindowGeometry(QRect geom);
-    bool loadMaximizedState();
 
-    QRect loadClientWindowGeometry();
-    void saveClientWindowGeometry(QRect g);
-    bool loadClientSizeState();
-    void saveClientSizeState(bool s);
-
-    // Offline mode
-    void saveOfflineModeState(bool offlineState);
     bool loadOfflineModeState();
+    void saveOfflineModeState(bool offlineState);
+
+    int loadNewsId();
+    void saveNewsId(int i);
 
     // Client settings
     QString loadClientVersion();
@@ -100,14 +98,17 @@ public:
     QString loadClientJavaArgs();
     void saveClientJavaArgs(QString args);
 
+    bool loadClientWindowSizeState();
+    void saveClientWindowSizeState(bool s);
+
+    QRect loadClientWindowGeometry();
+    void saveClientWindowGeometry(QRect g);
+
     bool loadClientFullscreenState();
     void saveClientFullscreenState(bool state);
 
-    bool loadUseLauncherSizeState();
-    void saveUseLauncherSizeState(bool state);
-
-    int loadNewsId();
-    void saveNewsId(int i);
+    bool loadClientUseLauncherSizeState();
+    void saveClientUseLauncherSizeState(bool state);
 
     // Custom
     QString makeMinecraftUuid();
@@ -119,7 +120,7 @@ public:
 public slots:
     void saveActiveClientId(int id);
     void saveLogin(QString login);
-    void savePassStore(bool state);
+    void savePassStoreState(bool state);
     void saveMaximizedState(bool state);
 
 

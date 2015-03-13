@@ -82,7 +82,7 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     connect(ui->nickEdit, SIGNAL(textChanged(QString)), settings, SLOT(saveLogin(QString)));
 
     // Setup password field
-    ui->savePassword->setChecked(settings->loadPassStore());
+    ui->savePassword->setChecked(settings->loadPassStoreState());
     if (ui->savePassword->isChecked())
         ui->passEdit->setText(settings->loadPassword());
     // Password are saved on login or exit if savePassword is checked
@@ -775,12 +775,12 @@ void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVers
         mcArgList << mcArg;
     }
     // Width & height/fullscreen args
-    if(settings->loadClientSizeState()) {
+    if(settings->loadClientWindowSizeState()) {
         if(settings->loadClientFullscreenState()) {
             mcArgList << "--fullscreen";
         } else {
             QRect mcRect;
-            if(settings->loadUseLauncherSizeState()) {
+            if(settings->loadClientUseLauncherSizeState()) {
                 mcRect = this->geometry();
             } else {
                 mcRect = settings->loadClientWindowGeometry();

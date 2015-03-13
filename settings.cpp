@@ -175,8 +175,8 @@ void Settings::saveActiveClientId(int id) {
 QString Settings::loadLogin() { return settings->value("launcher/login", "Player").toString(); }
 void Settings::saveLogin(QString login) { settings->setValue("launcher/login", login); }
 
-bool Settings::loadPassStore() { return settings->value("launcher/save_password", false).toBool(); }
-void Settings::savePassStore(bool state) { settings->setValue("launcher/save_password", state); }
+bool Settings::loadPassStoreState() { return settings->value("launcher/save_password", false).toBool(); }
+void Settings::savePassStoreState(bool state) { settings->setValue("launcher/save_password", state); }
 
 // Password stored as base64-encoded string
 QString Settings::loadPassword() {
@@ -197,41 +197,42 @@ QString Settings::makeMinecraftUuid() {
     QByteArray encoded; encoded.append(id);
     return QString(QByteArray::fromBase64(encoded));
 }
+
 // Minecraft window geometry
 QRect Settings::loadClientWindowGeometry() {
     int c = loadActiveClientId();
-    return qvariant_cast<QRect>(settings->value("client-" + getClientStrId(c) + "/window_geometry", QRect(-1, -1, 854, 480)));
+    return qvariant_cast<QRect>(settings->value("client-" + getClientStrId(c) + "/window_geometry_custom", QRect(-1, -1, 854, 480)));
 }
 void Settings::saveClientWindowGeometry(QRect g) {
     int c = loadActiveClientId();
-    settings->setValue("client-" + getClientStrId(c) + "/window_geometry", g);
+    settings->setValue("client-" + getClientStrId(c) + "/window_geometry_custom", g);
 }
 
-bool Settings::loadClientSizeState() {
+bool Settings::loadClientWindowSizeState() {
     int c = loadActiveClientId();
-    return settings->value("client-" + getClientStrId(c) + "/window_geometry_state", false).toBool();
+    return settings->value("client-" + getClientStrId(c) + "/window_geometry_set", false).toBool();
 }
-void Settings::saveClientSizeState(bool state) {
+void Settings::saveClientWindowSizeState(bool state) {
     int c = loadActiveClientId();
-    settings->setValue("client-" + getClientStrId(c) + "/window_geometry_state", state);
+    settings->setValue("client-" + getClientStrId(c) + "/window_geometry_set", state);
 }
 
-bool Settings::loadUseLauncherSizeState() {
+bool Settings::loadClientUseLauncherSizeState() {
     int c = loadActiveClientId();
-    return settings->value("client-" + getClientStrId(c) + "/use_launcher_size_state", false).toBool();
+    return settings->value("client-" + getClientStrId(c) + "/window_geometry_from_launcher", false).toBool();
 }
-void Settings::saveUseLauncherSizeState(bool state) {
+void Settings::saveClientUseLauncherSizeState(bool state) {
     int c = loadActiveClientId();
-    return settings->setValue("client-" + getClientStrId(c) + "/use_launcher_size_state", state);
+    return settings->setValue("client-" + getClientStrId(c) + "/window_geometry_from_launcher", state);
 }
 
 bool Settings::loadClientFullscreenState() {
     int c = loadActiveClientId();
-    return settings->value("client-" + getClientStrId(c) + "/fullscreen", false).toBool();
+    return settings->value("client-" + getClientStrId(c) + "/window_geometry_fullscreen", false).toBool();
 }
 void Settings::saveClientFullscreenState(bool state) {
     int c = loadActiveClientId();
-    settings->setValue("client-" + getClientStrId(c) + "/fullscreen", state);
+    settings->setValue("client-" + getClientStrId(c) + "/window_geometry_fullscreen", state);
 }
 
 // Launcher window geometry
@@ -257,49 +258,51 @@ void Settings::saveClientVersion(QString strid) {
 
 bool Settings::loadClientJavaState() {
     int cid = loadActiveClientId();
-    return settings->value("client-" + getClientStrId(cid) + "/custom_java", false).toBool();
+    return settings->value("client-" + getClientStrId(cid) + "/custom_java_enabled", false).toBool();
 }
 
 void Settings::saveClientJavaState(bool state) {
     int cid = loadActiveClientId();
-    settings->setValue("client-" + getClientStrId(cid) + "/custom_java", state);
+    settings->setValue("client-" + getClientStrId(cid) + "/custom_java_enabled", state);
 }
 
 QString Settings::loadClientJava() {
     int cid = loadActiveClientId();
-    return settings->value("client-" + getClientStrId(cid) + "/java", "").toString();
+    return settings->value("client-" + getClientStrId(cid) + "/custom_java", "").toString();
 }
 
 void Settings::saveClientJava(QString java) {
     int cid = loadActiveClientId();
-    settings->setValue("client-" + getClientStrId(cid) + "/java", java);
+    settings->setValue("client-" + getClientStrId(cid) + "/custom_java", java);
 }
 
 bool Settings::loadClientJavaArgsState() {
     int cid = loadActiveClientId();
-    return settings->value("client-" + getClientStrId(cid) + "/add_args", false).toBool();
+    return settings->value("client-" + getClientStrId(cid) + "/cutsom_args_enabled", false).toBool();
 }
 
 void Settings::saveClientJavaArgsState(bool state) {
     int cid = loadActiveClientId();
-    settings->setValue("client-" + getClientStrId(cid) + "/add_args", state);
+    settings->setValue("client-" + getClientStrId(cid) + "/cutsom_args_enabled", state);
 }
 
 QString Settings::loadClientJavaArgs() {
     int cid = loadActiveClientId();
-    return settings->value("client-" + getClientStrId(cid) + "/args", "").toString();
+    return settings->value("client-" + getClientStrId(cid) + "/cutsom_args", "").toString();
 }
 
 void Settings::saveClientJavaArgs(QString args) {
     int cid = loadActiveClientId();
-    settings->setValue("client-" + getClientStrId(cid) + "/args", args);
+    settings->setValue("client-" + getClientStrId(cid) + "/cutsom_args", args);
 }
+
 // News
 int Settings::loadNewsId() {
-    return settings->value("launcher/newsId", 0).toInt();
+    return settings->value("launcher/news_id", 0).toInt();
 }
+
 void Settings::saveNewsId(int i) {
-    settings->setValue("launcher/newsId", i);
+    settings->setValue("launcher/news_id", i);
 }
 
 // Directories

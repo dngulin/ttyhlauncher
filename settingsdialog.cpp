@@ -152,9 +152,9 @@ void SettingsDialog::saveSettings() {
     settings->saveClientJavaArgsState(ui->argsBox->isChecked());
     settings->saveClientJavaArgs(ui->argsEdit->text());
     settings->saveClientWindowGeometry(QRect(-1, -1, ui->widthSpinBox->value(), ui->heightSpinBox->value()));
-    settings->saveClientSizeState(ui->sizeBox->isChecked());
+    settings->saveClientWindowSizeState(ui->sizeBox->isChecked());
     settings->saveClientFullscreenState(ui->fullscreenRadio->isChecked());
-    settings->saveUseLauncherSizeState(ui->useLauncherRadio->isChecked());
+    settings->saveClientUseLauncherSizeState(ui->useLauncherRadio->isChecked());
 
     logger->append("SettingsDialog", "Settings saved\n");
     logger->append("SettingsDialog", "\tClient: " + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
@@ -182,10 +182,10 @@ void SettingsDialog::loadSettings() {
     ui->argsEdit->setText(settings->loadClientJavaArgs());
     ui->widthSpinBox->setValue(settings->loadClientWindowGeometry().width());
     ui->heightSpinBox->setValue(settings->loadClientWindowGeometry().height());
-    ui->sizeBox->setChecked(settings->loadClientSizeState());
+    ui->sizeBox->setChecked(settings->loadClientWindowSizeState());
 
     bool fullscreen = settings->loadClientFullscreenState();
-    bool useLauncherSize = settings->loadUseLauncherSizeState();
+    bool useLauncherSize = settings->loadClientUseLauncherSizeState();
     ui->fullscreenRadio->setChecked(fullscreen);
     ui->useLauncherRadio->setChecked(useLauncherSize);
     if(!fullscreen && !useLauncherSize) {
