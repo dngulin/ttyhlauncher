@@ -27,7 +27,7 @@ private:
     Logger* logger;
 
     void appendVersionList(QString reason);
-
+    void logCurrentSettings();
 
 private slots:
     void saveSettings();
