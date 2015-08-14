@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = ttyhlauncher
 TEMPLATE = app
 
-LIBS += -lquazip
+LIBS += -lquazip5
 
 SOURCES += main.cpp \
     launcherwindow.cpp \

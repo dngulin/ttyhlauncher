@@ -3,9 +3,9 @@
 
 #include <QtNetwork>
 
-#include <quazip/quazip.h>
-#include <quazip/quazipfile.h>
-#include <quazip/quacrc32.h>
+#include <quazip5/quazip.h>
+#include <quazip5/quazipfile.h>
+#include <quazip5/quacrc32.h>
 
 quint64 Util::getFileSize(QString url) {
     QNetworkAccessManager* manager = new QNetworkAccessManager();
