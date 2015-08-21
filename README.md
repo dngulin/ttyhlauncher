@@ -7,7 +7,7 @@ We are against the use of the launcher for illegal purposes, it is written just 
 
 ### Custom services
 
-This minecraft launcher is designed for using custom update and session servers. For details see [ttyhstore](https://github.com/betrok/ttyhstore) and [minecraft-master](https://github.com/krotebot/minecraft-master) repositories.
+This minecraft launcher is designed for using custom update and session servers. For details see [ttyhstore](https://github.com/betrok/ttyhstore) and [minecraft-master](https://github.com/GeorgeFilipkin/minecraft-master) repositories.
 
 
 ### Dependencies
