@@ -19,7 +19,6 @@
 #include <QDesktopWidget>
 #include <QMessageBox>
 #include <QShortcut>
-#include <QWebFrame>
 
 LauncherWindow::LauncherWindow(QWidget *parent) :
     QMainWindow(parent),

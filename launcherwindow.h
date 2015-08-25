@@ -3,7 +3,6 @@
 
 #include <QMainWindow>
 #include <QActionGroup>
-#include <QWebPage>
 
 #include "settings.h"
 #include "logger.h"
