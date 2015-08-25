@@ -24,12 +24,7 @@ public:
 
 
 private slots:
-    void loadPageTimeout();
-    void pageLoaded(bool loaded);
     void linkClicked(const QUrl& url);
-
-    void loadOfficial();
-    void loadTtyh();
 
     void showSettingsDialog();
     void showSkinLoadDialog();
@@ -56,11 +51,6 @@ private:
     Settings* settings;
     Logger* logger;
 
-    QWebPage* page;
-    QWebPage* loadingPage;
-    QWebPage* errorPage;
-
-    void loadPage(const QUrl& url);
     void storeParameters();
 
     bool isValidGameFile(QString fileName, QString hash);

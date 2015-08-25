@@ -32,25 +32,6 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     settings = Settings::instance();
     logger = Logger::logger();
 
-    page = new QWebPage();
-
-    loadingPage = new QWebPage();
-    errorPage = new QWebPage();
-    loadingPage->mainFrame()->load(QUrl("qrc:/resources/loading.html"));
-    errorPage->mainFrame()->load(QUrl("qrc:/resources/error.html"));
-
-    // Make news menuitems like radiobuttons (it's impossible from qt-designer)
-    newsGroup = new QActionGroup(this);
-    newsGroup->addAction(ui->ttyhNews);
-    newsGroup->addAction(ui->officialNews);
-
-    page->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
-    connect(page, SIGNAL(linkClicked(const QUrl&)), SLOT(linkClicked(const QUrl&)));
-
-    // News Menu connections
-    connect(ui->ttyhNews, SIGNAL(changed()), SLOT(loadTtyh()));
-    connect(ui->officialNews, SIGNAL(changed()), SLOT(loadOfficial()));
-
     // Options Menu connections
     connect(ui->runSettings, SIGNAL(triggered()), SLOT(showSettingsDialog()));
 
@@ -92,20 +73,6 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     ui->clientCombo->addItems(settings->getClientsNames());
     ui->clientCombo->setCurrentIndex(settings->loadActiveClientId());
     connect(ui->clientCombo, SIGNAL(activated(int)), settings, SLOT(saveActiveClientId(int)));
-
-    // Setup news set
-    switch(settings->loadNewsId()) {
-    case 0:
-        ui->ttyhNews->setChecked(true);
-        emit ui->ttyhNews->changed();
-        break;
-    case 1:
-        ui->officialNews->setChecked(true);
-        emit ui->officialNews->changed();
-        break;
-    }
-
-
 
     // Setup window parameters
     QRect geometry = settings->loadWindowGeometry();
@@ -231,44 +198,11 @@ void LauncherWindow::showUpdateDialog(QString message) {
     ui->clientCombo->setCurrentIndex(settings->loadActiveClientId());
 }
 
-// Load webpage slots
-void LauncherWindow::loadTtyh() {
-    settings->saveNewsId(0);
-    loadPage(QUrl("http://ttyh.ru/misc.php?page=newsfeed"));
-}
-void LauncherWindow::loadOfficial() {
-    settings->saveNewsId(1);
-    loadPage(QUrl("http://mcupdate.tumblr.com/"));
-}
-
 // Open external browser slot
 void LauncherWindow::linkClicked(const QUrl& url) {
     logger->append(this->objectName(), "Try to open url in external browser. " + url.toString() + "\n");
     if (!QDesktopServices::openUrl(url))
         logger->append(this->objectName(), "Failed to open system browser!\n");
-}
-
-// Load webpage method
-void LauncherWindow::loadPage(const QUrl& url) {
-    // Show "loading..." during webpage load
-    ui->webView->setPage(loadingPage);
-
-    page->mainFrame()->load(url);
-
-    // Setup timeout timer
-    QTimer* ptimer = new QTimer(page);
-    connect(ptimer, SIGNAL(timeout()), SLOT(loadPageTimeout()));                // Show error page on timeout
-    connect(page, SIGNAL(loadFinished(bool)), SLOT(pageLoaded(bool)));   // Show loaded page
-    connect(page, SIGNAL(loadFinished(bool)), ptimer, SLOT(stop()));
-    ptimer->start(15000); // Timeout value
-}
-
-// Slots used by LoadPage method
-void LauncherWindow::loadPageTimeout() {ui->webView->setPage(errorPage);}
-void LauncherWindow::pageLoaded(bool loaded) {
-    if (loaded) {
-        ui->webView->setPage(page);
-    }
 }
 
 void LauncherWindow::playButtonClicked() {
@@ -951,5 +885,4 @@ bool LauncherWindow::isValidGameFile(QString fileName, QString hash) {
 LauncherWindow::~LauncherWindow() {
 
     delete ui;
-    delete newsGroup;
 }
