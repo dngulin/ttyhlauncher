@@ -45,7 +45,7 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
 
     // Client builder menu visibility and connect entries
     ui->builderMenu->menuAction()->setVisible(false);
-    new QShortcut(QKeySequence(Qt::SHIFT + Qt::Key_B), this, SLOT(switchBuilderMenuVisibility()));
+    new QShortcut(QKeySequence(Qt::ALT + Qt::Key_B), this, SLOT(switchBuilderMenuVisibility()));
 
     connect(ui->doClone, SIGNAL(triggered()), this, SLOT(showCloneDialog()));
     connect(ui->doFetch, SIGNAL(triggered()), this, SLOT(showFetchDialog()));
