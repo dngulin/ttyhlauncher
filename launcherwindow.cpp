@@ -31,7 +31,7 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     settings = Settings::instance();
     logger = Logger::logger();
 
-    ui->logDisplay->appendPlainText("Поздравляем, вы запустили ttyhlauncher. Следите за новстями и обновлениями на ttyh.ru.");
+    ui->logDisplay->appendPlainText("Поздравляем, вы запустили ttyhlauncher. Следите за новостями и обновлениями на ttyh.ru.");
 
     ui->logDisplay->appendPlainText("  _   _         _     _                        _               ");
     ui->logDisplay->appendPlainText(" | |_| |_ _   _| |__ | | __ _ _   _ _ __   ___| |__   ___ _ __ ");
