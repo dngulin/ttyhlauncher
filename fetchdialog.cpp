@@ -10,6 +10,8 @@ FetchDialog::FetchDialog(QWidget *parent) :
     settings = Settings::instance();
     logger = Logger::logger();
 
+    ui->log->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
+
     connect(ui->fetchButton, SIGNAL(clicked()), this, SLOT(makeFetch()));
 
     ui->clientCombo->addItems(settings->getClientsNames());

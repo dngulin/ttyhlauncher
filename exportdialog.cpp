@@ -14,6 +14,8 @@ ExportDialog::ExportDialog(QWidget *parent) :
 
     logger->append("ExportDialog", "Export dialog opened\n");
 
+    ui->log->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
+
     ui->clientCombo->addItems(settings->getClientsNames());
     ui->dirEdit->setText(QDir::homePath());
 

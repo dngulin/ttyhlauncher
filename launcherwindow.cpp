@@ -31,6 +31,7 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     settings = Settings::instance();
     logger = Logger::logger();
 
+    ui->logDisplay->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
     ui->logDisplay->appendPlainText("Поздравляем, вы запустили ttyhlauncher. Следите за новостями и обновлениями на ttyh.ru.");
 
     ui->logDisplay->appendPlainText("  _   _         _     _                        _               ");

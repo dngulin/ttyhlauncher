@@ -42,12 +42,6 @@
     </property>
     <item>
      <widget class="QPlainTextEdit" name="logDisplay">
-      <property name="font">
-       <font>
-        <family>Courier New</family>
-        <pointsize>9</pointsize>
-       </font>
-      </property>
       <property name="frameShape">
        <enum>QFrame::Box</enum>
       </property>
@@ -188,11 +182,7 @@
    </layout>
    <zorder>logDisplay</zorder>
    <zorder>line</zorder>
-   <zorder>runPanel</zorder>
-   <zorder>logo</zorder>
-   <zorder>horizontalSpacer_2</zorder>
    <zorder></zorder>
-   <zorder>horizontalSpacer</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -200,7 +190,7 @@
      <x>0</x>
      <y>0</y>
      <width>785</width>
-     <height>18</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="optionsMenu">

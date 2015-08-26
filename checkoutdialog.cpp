@@ -12,6 +12,9 @@ CheckoutDialog::CheckoutDialog(QWidget *parent) :
     settings = Settings::instance();
     logger = Logger::logger();
 
+    ui->mutableList->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
+    ui->log->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
+
     ui->clientCombo->addItems(settings->getClientsNames());
 
     connect(ui->clientCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(makeVersionList()));

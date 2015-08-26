@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>335</width>
+    <width>360</width>
     <height>305</height>
    </rect>
   </property>
@@ -73,6 +73,12 @@
    </item>
    <item>
     <widget class="QPlainTextEdit" name="descEdit">
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
      <property name="placeholderText">
       <string>Краткое описание проблемы</string>
      </property>

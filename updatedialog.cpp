@@ -29,6 +29,7 @@ UpdateDialog::UpdateDialog(QString displayMessage, QWidget *parent) :
     connect(ui->clientCombo, SIGNAL(activated(int)), this, SLOT(clientChanged()));
 
     state = canCheck;
+    ui->log->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
     ui->log->setPlainText(displayMessage);
     ui->updateButton->setText("Проверить");
     connect(ui->updateButton, SIGNAL(clicked()), this, SLOT(doCheck()));

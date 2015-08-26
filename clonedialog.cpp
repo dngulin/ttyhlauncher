@@ -15,6 +15,8 @@ CloneDialog::CloneDialog(QWidget *parent) :
 
     logger->append("CloneDialog", "Version clone dialog opened\n");
 
+    ui->log->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
+
     loadVersionList();
 
     ui->clientCombo->addItems(settings->getClientsNames());
