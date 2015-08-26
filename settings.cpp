@@ -245,6 +245,9 @@ void Settings::saveMaximizedState(bool state) { settings->setValue("launcher/win
 bool Settings::loadOfflineModeState() { return settings->value("launcher/offline_mode", false).toBool(); }
 void Settings::saveOfflineModeState(bool offlineState) { settings->setValue("launcher/offline_mode", offlineState); }
 
+bool Settings::loadHideWindowModeState() { return settings->value("launcher/hide_on_run", true).toBool(); }
+void Settings::saveHideWindowModeState(bool hideState) { settings->setValue("launcher/hide_on_run", hideState); }
+
 // Client settings
 QString Settings::loadClientVersion() {
     int cid = loadActiveClientId();

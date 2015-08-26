@@ -32,6 +32,7 @@ private slots:
     void showAboutDialog();
 
     void offlineModeChanged();
+    void hideWindowModeChanged();
 
     void freezeInterface();
     void unfreezeInterface();

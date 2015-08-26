@@ -72,6 +72,11 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     this->offlineModeChanged();
     connect(ui->playOffline, SIGNAL(triggered()), SLOT(offlineModeChanged()));
 
+    // Setup hidewindow entry
+    ui->hideLauncher->setChecked(settings->loadHideWindowModeState());
+    this->hideWindowModeChanged();
+    connect(ui->hideLauncher, SIGNAL(triggered()), SLOT(hideWindowModeChanged()));
+
     // Setup login field
     ui->nickEdit->setText(settings->loadLogin());
     // Save login when changed
@@ -202,6 +207,10 @@ void LauncherWindow::offlineModeChanged() {
     settings->saveOfflineModeState(ui->playOffline->isChecked());
     settings->loadOfflineModeState() ? ui->playButton->setText("Играть (оффлайн)") :
                                        ui->playButton->setText("Играть");
+}
+
+void LauncherWindow::hideWindowModeChanged() {
+    settings->saveHideWindowModeState(ui->hideLauncher->isChecked());
 }
 
 void LauncherWindow::freezeInterface() {

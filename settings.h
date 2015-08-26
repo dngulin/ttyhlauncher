@@ -79,6 +79,9 @@ public:
     bool loadOfflineModeState();
     void saveOfflineModeState(bool offlineState);
 
+    bool loadHideWindowModeState();
+    void saveHideWindowModeState(bool hideState);
+
     int loadNewsId();
     void saveNewsId(int i);
 
