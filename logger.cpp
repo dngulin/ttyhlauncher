@@ -4,6 +4,7 @@
 #include <QTime>
 #include <QDate>
 #include <QTextStream>
+#include <QApplication>
 
 Logger* Logger::myInstance = 0;
 Logger* Logger::logger() {
@@ -44,4 +45,6 @@ void Logger::append(QString sender, QString text)
     QTextStream textout(logFile);
     if (logFile != 0) textout << prefix << text;
 
+    emit textAppended(prefix + text.trimmed());
+    QApplication::processEvents();
 }

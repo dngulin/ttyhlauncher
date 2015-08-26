@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>402</width>
-    <height>259</height>
+    <width>785</width>
+    <height>467</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -25,71 +25,39 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>4</number>
+    </property>
+    <property name="leftMargin">
+     <number>5</number>
+    </property>
+    <property name="topMargin">
+     <number>5</number>
+    </property>
+    <property name="rightMargin">
+     <number>5</number>
+    </property>
+    <property name="bottomMargin">
+     <number>5</number>
+    </property>
     <item>
-     <spacer name="verticalSpacer_2">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
+     <widget class="QPlainTextEdit" name="logDisplay">
+      <property name="font">
+       <font>
+        <family>Courier New</family>
+        <pointsize>9</pointsize>
+       </font>
       </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>5</width>
-        <height>0</height>
-       </size>
+      <property name="frameShape">
+       <enum>QFrame::Box</enum>
       </property>
-     </spacer>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>5</width>
-          <height>5</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QLabel" name="logo">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="pixmap">
-         <pixmap resource="resources.qrc">:/resources/logo.png</pixmap>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>5</width>
-          <height>5</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
+      <property name="readOnly">
+       <bool>true</bool>
       </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>5</width>
-        <height>0</height>
-       </size>
+      <property name="textInteractionFlags">
+       <set>Qt::TextSelectableByMouse</set>
       </property>
-     </spacer>
+     </widget>
     </item>
     <item>
      <widget class="Line" name="line">
@@ -99,91 +67,142 @@
      </widget>
     </item>
     <item>
-     <layout class="QGridLayout" name="loginForm">
-      <property name="verticalSpacing">
-       <number>4</number>
-      </property>
-      <item row="2" column="0">
-       <widget class="QLabel" name="clienttypeLabel">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="logo">
+        <property name="cursor">
+         <cursorShape>PointingHandCursor</cursorShape>
+        </property>
         <property name="text">
-         <string>Тип клиента</string>
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="resources.qrc">:/resources/logo.png</pixmap>
         </property>
        </widget>
       </item>
-      <item row="1" column="1" colspan="2">
-       <widget class="QLineEdit" name="passEdit">
-        <property name="echoMode">
-         <enum>QLineEdit::Password</enum>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="nickLabel">
-        <property name="text">
-         <string>Игровое имя</string>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
         </property>
-       </widget>
+       </spacer>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="passLabel">
-        <property name="text">
-         <string>Пароль</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" colspan="2">
-       <widget class="QComboBox" name="clientCombo"/>
-      </item>
-      <item row="3" column="2">
-       <layout class="QHBoxLayout" name="playbuttonLayout">
-        <item>
-         <spacer name="btnSpc">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QPushButton" name="playButton">
-          <property name="text">
-           <string>Играть!</string>
-          </property>
-          <property name="autoDefault">
-           <bool>true</bool>
-          </property>
-          <property name="default">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="0" column="1" colspan="2">
-       <widget class="QLineEdit" name="nickEdit"/>
-      </item>
-      <item row="3" column="0" colspan="2">
-       <widget class="QCheckBox" name="savePassword">
-        <property name="text">
-         <string>Запомнить пароль</string>
-        </property>
+      <item>
+       <widget class="QWidget" name="runPanel" native="true">
+        <layout class="QGridLayout" name="gridLayout">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>4</number>
+         </property>
+         <item row="2" column="1" colspan="2">
+          <widget class="QComboBox" name="clientCombo"/>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="clienttypeLabel">
+           <property name="text">
+            <string>Тип клиента</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="nickLabel">
+           <property name="text">
+            <string>Игровое имя</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" colspan="2">
+          <widget class="QLineEdit" name="passEdit">
+           <property name="echoMode">
+            <enum>QLineEdit::Password</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="passLabel">
+           <property name="text">
+            <string>Пароль</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="2">
+          <layout class="QHBoxLayout" name="playbuttonLayout">
+           <item>
+            <spacer name="btnSpc">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="playButton">
+             <property name="text">
+              <string>Играть!</string>
+             </property>
+             <property name="autoDefault">
+              <bool>true</bool>
+             </property>
+             <property name="default">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="3" column="0" colspan="2">
+          <widget class="QCheckBox" name="savePassword">
+           <property name="text">
+            <string>Запомнить пароль</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" colspan="2">
+          <widget class="QLineEdit" name="nickEdit"/>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>
     </item>
    </layout>
+   <zorder>logDisplay</zorder>
+   <zorder>line</zorder>
+   <zorder>runPanel</zorder>
+   <zorder>logo</zorder>
+   <zorder>horizontalSpacer_2</zorder>
+   <zorder></zorder>
+   <zorder>horizontalSpacer</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>402</width>
+     <width>785</width>
      <height>18</height>
     </rect>
    </property>
@@ -192,6 +211,7 @@
      <string>Опции</string>
     </property>
     <addaction name="playOffline"/>
+    <addaction name="hideLauncher"/>
     <addaction name="runSettings"/>
    </widget>
    <widget class="QMenu" name="addMenu">
@@ -222,22 +242,6 @@
    <addaction name="helpMenu"/>
    <addaction name="builderMenu"/>
   </widget>
-  <action name="ttyhNews">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Новости ттюха</string>
-   </property>
-  </action>
-  <action name="officialNews">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Новости Minecraft</string>
-   </property>
-  </action>
   <action name="playOffline">
    <property name="checkable">
     <bool>true</bool>
@@ -318,6 +322,14 @@
   <action name="doExport">
    <property name="text">
     <string>Экспорт</string>
+   </property>
+  </action>
+  <action name="hideLauncher">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Прятать лаунчер при запуске игры</string>
    </property>
   </action>
  </widget>

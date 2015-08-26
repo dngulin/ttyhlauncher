@@ -20,6 +20,9 @@ public:
     static Logger* logger();
     void append(QString sender, QString text);
 
+signals:
+    void textAppended(QString text);
+
 };
 
 #endif // LOGGER_H

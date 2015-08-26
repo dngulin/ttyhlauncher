@@ -31,6 +31,22 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     settings = Settings::instance();
     logger = Logger::logger();
 
+    ui->logDisplay->appendPlainText("Поздравляем, вы запустили ttyhlauncher. Следите за новстями и обновлениями на ttyh.ru.");
+
+    ui->logDisplay->appendPlainText("  _   _         _     _                        _               ");
+    ui->logDisplay->appendPlainText(" | |_| |_ _   _| |__ | | __ _ _   _ _ __   ___| |__   ___ _ __ ");
+    ui->logDisplay->appendPlainText(" | __| __| | | | '_ \\| |/ _` | | | | '_ \\ / __| '_ \\ / _ \\ '__|");
+    ui->logDisplay->appendPlainText(" | |_| |_| |_| | | | | | (_| | |_| | | | | (__| | | |  __/ |   ");
+    ui->logDisplay->appendPlainText("  \\__|\\__|\\__, |_| |_|_|\\__,_|\\__,_|_| |_|\\___|_| |_|\\___|_|   ");
+    ui->logDisplay->appendPlainText("          |___/                                                ");
+    ui->logDisplay->appendPlainText("        Sources: https://github.com/dngulin/ttyhlauncher");
+    ui->logDisplay->appendPlainText("");
+
+    ui->logDisplay->appendPlainText("Начинаю чтение лог-файла...");
+
+
+    connect(logger, SIGNAL(textAppended(QString)), ui->logDisplay, SLOT(appendPlainText(QString)));
+
     // Options Menu connections
     connect(ui->runSettings, SIGNAL(triggered()), SLOT(showSettingsDialog()));
 
@@ -210,7 +226,7 @@ void LauncherWindow::playButtonClicked() {
     logger->append(this->objectName(), "Client id: "
                    + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
 
-    ui->centralWidget->setEnabled(false);
+    ui->runPanel->setEnabled(false);
     ui->menuBar->setEnabled(false);
 
     if (!ui->playOffline->isChecked()) {
@@ -399,7 +415,7 @@ void LauncherWindow::playButtonClicked() {
 
     }
 
-    ui->centralWidget->setEnabled(true);
+    ui->runPanel->setEnabled(true);
     ui->menuBar->setEnabled(true);
 }
 
@@ -817,26 +833,33 @@ void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVers
 
     } else { // Game successful started
 
-        logger->append(this->objectName(), "Main window hidden\n");
-        this->hide();
+        if (ui->hideLauncher->isChecked()) {
+            this->hide();
+            logger->append(this->objectName(), "Main window hidden\n");
+        }
+
 
         while (minecraft->state() == QProcess::Running) {
             if (minecraft->waitForReadyRead()) {
+                QApplication::processEvents();
                 logger->append("Client", minecraft->readAll());
             }
         }
 
         logger->append(this->objectName(), "Game process finished!\n");
+
+        if (this->isHidden()) {
+            this->show();
+            logger->append(this->objectName(), "Main window showed\n");
+        }
+        ui->menuBar->setEnabled(true);
+        ui->runPanel->setEnabled(true);
+
         if (minecraft->exitCode() != 0) {
 
-            this->show();
             QMessageBox::critical(this, "Ну вот!",  "Кажется игра некорректно завершилась, посмотрите лог-файл.\n");
             logger->append(this->objectName(), "Error: not null game exit code: " + QString::number(minecraft->exitCode()) + "\n");
             logger->append(this->objectName(), "Main window showed\n");
-
-        } else {
-
-            this->close();
 
         }
     }
