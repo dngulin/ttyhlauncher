@@ -70,9 +70,6 @@
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QLabel" name="logo">
-        <property name="cursor">
-         <cursorShape>PointingHandCursor</cursorShape>
-        </property>
         <property name="text">
          <string/>
         </property>
