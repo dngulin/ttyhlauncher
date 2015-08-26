@@ -33,7 +33,14 @@ private slots:
 
     void offlineModeChanged();
 
+    void freezeInterface();
+    void unfreezeInterface();
+
     void playButtonClicked();
+    void gameRunError(QProcess::ProcessError error);
+    void gameRunSuccess();
+    void gameRunReadyOutput();
+    void gameRunFinished(int exitCode);
 
     void switchBuilderMenuVisibility();
 
@@ -49,6 +56,8 @@ private:
 
     Settings* settings;
     Logger* logger;
+
+    QProcess* minecraft;
 
     void storeParameters();
 

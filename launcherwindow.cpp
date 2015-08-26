@@ -204,6 +204,18 @@ void LauncherWindow::offlineModeChanged() {
                                        ui->playButton->setText("Играть");
 }
 
+void LauncherWindow::freezeInterface() {
+
+    ui->runPanel->setEnabled(false);
+    ui->menuBar->setEnabled(false);
+}
+
+void LauncherWindow::unfreezeInterface() {
+
+    ui->runPanel->setEnabled(true);
+    ui->menuBar->setEnabled(true);
+}
+
 void LauncherWindow::showUpdateDialog(QString message) {
 
     UpdateDialog* d = new UpdateDialog(message, this);
@@ -226,8 +238,13 @@ void LauncherWindow::playButtonClicked() {
     logger->append(this->objectName(), "Client id: "
                    + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
 
-    ui->runPanel->setEnabled(false);
-    ui->menuBar->setEnabled(false);
+    freezeInterface();
+
+    // Prepare run data
+    bool canRun = true;
+    QString uuid;
+    QString accessToken;
+    QString gameVersion;
 
     if (!ui->playOffline->isChecked()) {
         logger->append(this->objectName(), "Online mode is selected\n");
@@ -256,6 +273,7 @@ void LauncherWindow::playButtonClicked() {
 
         if (!loginReply.isOK()) {
 
+            canRun = false;
             QMessageBox::critical(this, "У нас проблема :(", "Упс... Вот ведь незадача...\n"
                                   + loginReply.getErrorString());
             logger->append(this->objectName(), "Error: " + loginReply.getErrorString() + "\n");
@@ -267,6 +285,7 @@ void LauncherWindow::playButtonClicked() {
 
             if (!(error.error == QJsonParseError::NoError)) {
 
+                canRun = false;
                 QMessageBox::critical(this, "У нас проблема :(", "При попытке логина сервер овтетил ерунду...\n\n"
                                       + error.errorString() + " в позиции " + QString::number(error.offset));
                 logger->append(this->objectName(), "JSON parse error: " + error.errorString()
@@ -278,6 +297,7 @@ void LauncherWindow::playButtonClicked() {
 
                 if (!loginReplyData["error"].isNull()) {
 
+                    canRun = false;
                     QMessageBox::critical(this, "У нас проблема :(", loginReplyData["errorMessage"].toString());
                     logger->append(this->objectName(), "Error: " + loginReplyData["errorMessage"].toString() + "\n");
 
@@ -286,12 +306,11 @@ void LauncherWindow::playButtonClicked() {
                     // Prepare to run game in online-mode
                     logger->append(this->objectName(), "OK\n");
 
-                    QString uuid = loginReplyData["clientToken"].toString();
-                    QString accessToken = loginReplyData["accessToken"].toString();
-                    QString gameVersion = settings->loadClientVersion();
+                    uuid = loginReplyData["clientToken"].toString();
+                    accessToken = loginReplyData["accessToken"].toString();
+                    gameVersion = settings->loadClientVersion();
 
                     // Switch from "latest" to real version
-                    bool run = true;
                     if (gameVersion == "latest") {
 
                         logger->append(this->objectName(), "Looking for 'latest' version on update server...\n");
@@ -299,10 +318,10 @@ void LauncherWindow::playButtonClicked() {
 
                         if (!versionReply.isOK()) {
 
+                            canRun = false;
                             QMessageBox::critical(this, "У нас проблема :(", "Не удалось определить версию для запуска!\n"
                                                   + versionReply.getErrorString());
                             logger->append(this->objectName(), "Error: " + versionReply.getErrorString() + "\n");
-                            run = false;
 
                         } else { // Successful version request
 
@@ -311,18 +330,18 @@ void LauncherWindow::playButtonClicked() {
 
                             if (!(error.error == QJsonParseError::NoError)) {
 
+                                canRun = false;
                                 QMessageBox::critical(this, "У нас проблема :(", "Не удалось понять что же нужно запустить...\n"
                                                       + error.errorString() + " в поз. "  + QString::number(error.offset));
                                 logger->append(this->objectName(), "JSON parse error: " + error.errorString()
                                                + " в поз. "  + QString::number(error.offset) + "\n");
-                                run = false;
 
                             } else { // Correct version reply
 
                                 QJsonObject latest = jsonVersionReply.object()["latest"].toObject();
                                 if (latest["release"].isNull()) {
 
-                                    run = false;
+                                    canRun = false;
                                     QMessageBox::critical(this, "У нас проблема :(", "Не удалось определить версию для запуска!\n");
                                     logger->append(this->objectName(), "Error: empty game version\n");
 
@@ -353,8 +372,6 @@ void LauncherWindow::playButtonClicked() {
                         Util::downloadFile(settings->getAssetsUrl() + "indexes/" + assets + ".json",
                                            settings->getAssetsDir() + "/indexes/" + assets + ".json");
                     }
-
-                    if (run) runGame(uuid, accessToken, gameVersion);
                 }
             }
         }
@@ -363,11 +380,10 @@ void LauncherWindow::playButtonClicked() {
 
         logger->append(this->objectName(), "Offline mode is selected\n");
 
-        QString uuid = QString(QUuid::createUuid().toByteArray()).remove('{').remove('}');
-        QString accessToken = QString(QUuid::createUuid().toByteArray()).remove('{').remove('}');
-        QString gameVersion = settings->loadClientVersion();
+        uuid = QString(QUuid::createUuid().toByteArray()).remove('{').remove('}');
+        accessToken = QString(QUuid::createUuid().toByteArray()).remove('{').remove('}');
+        gameVersion = settings->loadClientVersion();
 
-        bool run = true;
         if (gameVersion == "latest") {
             logger->append(this->objectName(), "Looking for 'latest' local version\n");
 
@@ -404,19 +420,19 @@ void LauncherWindow::playButtonClicked() {
             }
 
             if (gameVersion == "latest") {
+                canRun = false;
                 logger->append(this->objectName(), "Error: no local versions\n");
                 showUpdateDialog(QString("Похоже, что не установлено ни одной версии клиента. Выполните обновление.\n")
                                  + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
-                run = false;
             }
         }
-
-        if (run) runGame(uuid, accessToken, gameVersion);
-
     }
 
-    ui->runPanel->setEnabled(true);
-    ui->menuBar->setEnabled(true);
+    // Game runned in another thread
+    if (canRun)
+        runGame(uuid, accessToken, gameVersion);
+    else
+        unfreezeInterface();
 }
 
 void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVersion) {
@@ -445,6 +461,7 @@ void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVers
         QMessageBox::critical(this, "У нас проблема :(",
                               "Не удалось подготовить LIBRARY_PATH. Извините :(");
         logger->append(this->objectName(), "Error: can't create natives directory!\n");
+        unfreezeInterface();
         return;
     }
 
@@ -472,6 +489,7 @@ void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVers
                               + error.errorString() + "  поз. " + QString::number(error.offset));
         logger->append(this->objectName(), "JSON parse error: " + error.errorString() + " в поз. "
                        + QString::number(error.offset) + "\n");
+        unfreezeInterface();
         return;
     }
 
@@ -498,6 +516,7 @@ void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVers
                               + error.errorString() + "  поз. " + QString::number(error.offset));
         logger->append(this->objectName(), "JSON parse error: " + error.errorString() + " в поз. "
                        + QString::number(error.offset) + "\n");
+        unfreezeInterface();
         return;
     }
 
@@ -558,6 +577,7 @@ void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVers
 
                 showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
                                  + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
+                unfreezeInterface();
                 return;
             }
 
@@ -581,6 +601,7 @@ void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVers
 
                 showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
                                  + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
+                unfreezeInterface();
                 return;
             }
             Util::unzipArchive(settings->getLibsDir() + "/" + libSuffix, settings->getNativesDir());
@@ -596,6 +617,7 @@ void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVers
     if (!isValidGameFile(settings->getVersionsDir() + "/" + gameVersion + "/" + gameVersion + ".jar", jarHash)) {
         showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
                          + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
+        unfreezeInterface();
         return;
     }
 
@@ -625,6 +647,7 @@ void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVers
             if (!isValidGameFile(filesPrefix + "/" + file, hash)) {
                 showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
                                  + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
+                unfreezeInterface();
                 return;
             }
         }
@@ -635,6 +658,7 @@ void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVers
 
         QMessageBox::critical(this, "У нас проблема :(", "Вот беда. В конфигурационном файле не указан mainClass.");
         logger->append(this->objectName(), "Error: can't read mainClass\n");
+        unfreezeInterface();
         return;
 
     } else {
@@ -649,6 +673,7 @@ void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVers
 
         QMessageBox::critical(this, "У нас проблема !!!",  "Аааа! В конфигурационном файле не указаны ресурсы игры!");
         logger->append(this->objectName(), "Error: can't read assets index name\n");
+        unfreezeInterface();
         return;
 
     } else {
@@ -665,6 +690,7 @@ void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVers
             showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
                              + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
             delete assetIndexFile;
+            unfreezeInterface();
             return;
         }
 
@@ -678,6 +704,7 @@ void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVers
                                   + error.errorString() + "  поз. " + QString::number(error.offset));
             logger->append(this->objectName(), "JSON parse error: " + error.errorString() + " в поз. "
                            + QString::number(error.offset) + "\n");
+            unfreezeInterface();
             return;
         }
 
@@ -693,6 +720,7 @@ void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVers
                 if (!isValidGameFile(assetsPrefix + assetSuffix + "/" + hash, hash)) {
                     showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
                                      + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
+                    unfreezeInterface();
                     return;
                 }
             }
@@ -705,6 +733,7 @@ void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVers
 
         QMessageBox::critical(this, "У нас проблема :(", "В конфигурационном файле не указаны аргументы запуска.");
         logger->append(this->objectName(), "Error: can't read minecraft arguments\n");
+        unfreezeInterface();
         return;
 
     } else {
@@ -728,6 +757,7 @@ void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVers
 
         mcArgList << mcArg;
     }
+
     // Width & height/fullscreen args
     if(settings->loadClientWindowSizeState()) {
         if(settings->loadClientFullscreenState()) {
@@ -769,103 +799,113 @@ void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVers
     logger->append(this->objectName(), "Run string: " + java + " " + stringargs + "\n");
 
     logger->append(this->objectName(), "Try to launch game...\n");
-    QProcess* minecraft = new QProcess(this);
+    minecraft = new QProcess(this);
     minecraft->setProcessChannelMode(QProcess::MergedChannels);
 
     // Set working directory
     QDir(settings->getClientPrefix(gameVersion)).mkpath(settings->getClientPrefix(gameVersion));
     minecraft->setWorkingDirectory(settings->getClientPrefix(gameVersion));
 
+    connect(minecraft, SIGNAL(error(QProcess::ProcessError)), this, SLOT(gameRunError(QProcess::ProcessError)));
+    connect(minecraft, SIGNAL(finished(int)), this, SLOT(gameRunFinished(int)));
+    connect(minecraft, SIGNAL(started()), this, SLOT(gameRunSuccess()));
+    connect(minecraft, SIGNAL(readyReadStandardOutput()), this, SLOT(gameRunReadyOutput()));
+    connect(minecraft, SIGNAL(readyReadStandardError()), this, SLOT(gameRunReadyOutput()));
+
     minecraft->start(java, argList);
 
-    if (!minecraft->waitForStarted()) {
+}
 
-        switch(minecraft->error()) {
-        case QProcess::FailedToStart:
-            QMessageBox::critical(this, "Проблема!",
-                                  "Смерть на взлёте! Игра не запускается!\n"
-                                  + minecraft->errorString());
-            logger->append(this->objectName(), "Error: failed to start: "
-                           + minecraft->errorString() + "\n");
-            break;
+void LauncherWindow::gameRunSuccess() {
 
-        case QProcess::Crashed:
-            QMessageBox::critical(this, "Проблема!",
-                                  "Игра упала и не подымается :(\n"
-                                  + minecraft->errorString());
-            logger->append(this->objectName(), "Error: crashed: "
-                           + minecraft->errorString() + "\n");
-            break;
+    if (ui->hideLauncher->isChecked()) {
+        this->hide();
+        logger->append(this->objectName(), "Main window hidden\n");
+    }
+}
 
-        case QProcess::Timedout:
-            QMessageBox::critical(this, "Проблема!",
-                                  "Что-то долго игра не может запуститься...\n"
-                                  + minecraft->errorString());
-            logger->append(this->objectName(), "Error: timeout: "
-                           + minecraft->errorString() + "\n");
-            break;
+void LauncherWindow::gameRunReadyOutput() {
+    logger->append("Game", QString(minecraft->readAll()));
+}
 
-        case QProcess::WriteError:
-            QMessageBox::critical(this, "Проблема!",
-                                  "Игра не может писать :(\n"
-                                  + minecraft->errorString());
-            logger->append(this->objectName(), "Error: write error: "
-                           + minecraft->errorString() + "\n");
-            break;
+void LauncherWindow::gameRunError(QProcess::ProcessError error) {
 
-        case QProcess::ReadError:
-            QMessageBox::critical(this, "Проблема!",
-                                  "Игра не может читать :(!\n"
-                                  + minecraft->errorString());
-            logger->append(this->objectName(), "Error: read error: "
-                           + minecraft->errorString() + "\n");
-            break;
+    logger->append(this->objectName(), "Running game error!\n");
 
-        case QProcess::UnknownError:
-        default:
-            QMessageBox::critical(this, "Проблема!",
-                                  "Произошло что-то странное и игра не запустилась!\n"
-                                  + minecraft->errorString());
-            logger->append(this->objectName(), "Error: "
-                           + minecraft->errorString() + "\n");
-            break;
-        }
+    switch(error) {
+    case QProcess::FailedToStart:
+        QMessageBox::critical(this, "Проблема!",
+                              "Смерть на взлёте! Игра не запускается!\n"
+                              + minecraft->errorString());
+        logger->append(this->objectName(), "Error: failed to start: "
+                       + minecraft->errorString() + "\n");
+        break;
 
-    } else { // Game successful started
+    case QProcess::Crashed:
+        QMessageBox::critical(this, "Проблема!",
+                              "Игра упала и не подымается :(\n"
+                              + minecraft->errorString());
+        logger->append(this->objectName(), "Error: crashed: "
+                       + minecraft->errorString() + "\n");
+        break;
 
-        if (ui->hideLauncher->isChecked()) {
-            this->hide();
-            logger->append(this->objectName(), "Main window hidden\n");
-        }
+    case QProcess::Timedout:
+        QMessageBox::critical(this, "Проблема!",
+                              "Что-то долго игра не может запуститься...\n"
+                              + minecraft->errorString());
+        logger->append(this->objectName(), "Error: timeout: "
+                       + minecraft->errorString() + "\n");
+        break;
 
+    case QProcess::WriteError:
+        QMessageBox::critical(this, "Проблема!",
+                              "Игра не может писать :(\n"
+                              + minecraft->errorString());
+        logger->append(this->objectName(), "Error: write error: "
+                       + minecraft->errorString() + "\n");
+        break;
 
-        while (minecraft->state() == QProcess::Running) {
-            if (minecraft->waitForReadyRead()) {
-                QApplication::processEvents();
-                logger->append("Client", minecraft->readAll());
-            }
-        }
+    case QProcess::ReadError:
+        QMessageBox::critical(this, "Проблема!",
+                              "Игра не может читать :(!\n"
+                              + minecraft->errorString());
+        logger->append(this->objectName(), "Error: read error: "
+                       + minecraft->errorString() + "\n");
+        break;
 
-        logger->append(this->objectName(), "Game process finished!\n");
-
-        if (this->isHidden()) {
-            this->show();
-            logger->append(this->objectName(), "Main window showed\n");
-        }
-        ui->menuBar->setEnabled(true);
-        ui->runPanel->setEnabled(true);
-
-        if (minecraft->exitCode() != 0) {
-
-            QMessageBox::critical(this, "Ну вот!",  "Кажется игра некорректно завершилась, посмотрите лог-файл.\n");
-            logger->append(this->objectName(), "Error: not null game exit code: " + QString::number(minecraft->exitCode()) + "\n");
-            logger->append(this->objectName(), "Main window showed\n");
-
-        }
+    case QProcess::UnknownError:
+    default:
+        QMessageBox::critical(this, "Проблема!",
+                              "Произошло что-то странное и игра не запустилась!\n"
+                              + minecraft->errorString());
+        logger->append(this->objectName(), "Error: "
+                       + minecraft->errorString() + "\n");
+        break;
     }
 
+    unfreezeInterface();
     delete minecraft;
+}
 
+void LauncherWindow::gameRunFinished(int exitCode) {
+
+    logger->append(this->objectName(), "Game process finished!\n");
+
+    if (this->isHidden()) {
+        this->show();
+        logger->append(this->objectName(), "Main window showed\n");
+    }
+
+    if (exitCode != 0) {
+
+        QMessageBox::critical(this, "Ну вот!",  "Кажется игра некорректно завершилась, посмотрите лог-файл.\n");
+        logger->append(this->objectName(), "Error: not null game exit code: " + QString::number(minecraft->exitCode()) + "\n");
+        logger->append(this->objectName(), "Main window showed\n");
+
+    }
+
+    unfreezeInterface();
+    delete minecraft;
 }
 
 bool LauncherWindow::isValidGameFile(QString fileName, QString hash) {
