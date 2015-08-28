@@ -792,6 +792,7 @@ void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVers
     argList << "-Djavax.net.ssl.trustStore=" + settings->getConfigDir() + "/keystore.ks"
             << "-Djavax.net.ssl.trustStorePassword=123456";
     argList << "-Dline.separator=\r\n";
+    argList << "-Dfile.encoding=UTF8";
 
     // Setup user args
     QStringList userArgList;
