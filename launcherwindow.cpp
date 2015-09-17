@@ -14,6 +14,7 @@
 
 #include "settings.h"
 #include "util.h"
+#include "jsonparser.h"
 
 #include <QtGui>
 #include <QDesktopWidget>
@@ -161,6 +162,11 @@ void LauncherWindow::showExportDialog() {
     delete d;
 }
 
+void LauncherWindow::showError(const QString &title, const QString &message)
+{
+    QMessageBox::critical(this, title, message);
+}
+
 // Run this method on close window and run game
 void LauncherWindow::storeParameters() {
     settings->saveWindowGeometry(this->geometry());
@@ -242,21 +248,25 @@ void LauncherWindow::linkClicked(const QUrl& url) {
         logger->append(this->objectName(), "Failed to open system browser!\n");
 }
 
-void LauncherWindow::playButtonClicked() {
-
+void LauncherWindow::playButtonClicked()
+{
     logger->append(this->objectName(), "Try to start game...\n");
     logger->append(this->objectName(), "Client id: "
-                   + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
+                   + settings->getClientStrId(settings->loadActiveClientId())
+                   + "\n");
 
     freezeInterface();
 
     // Prepare run data
-    bool canRun = true;
     QString uuid;
     QString accessToken;
     QString gameVersion;
 
-    if (!ui->playOffline->isChecked()) {
+    bool canRun = true;
+
+    // Online mode
+    if (!ui->playOffline->isChecked())
+    {
         logger->append(this->objectName(), "Online mode is selected\n");
 
         // Make JSON login request, see: http://wiki.vg/Authentication
@@ -273,120 +283,148 @@ void LauncherWindow::playButtonClicked() {
         payload["platform"] = platform;
         payload["username"] = ui->nickEdit->text();
         payload["password"] = ui->passEdit->text();
-        payload["ticket"] = settings->makeMinecraftUuid().remove('{').remove('}');
+        payload["ticket"] =
+                settings->makeMinecraftUuid().remove('{').remove('}');
         payload["launcherVersion"] = Settings::launcherVersion;
 
         QJsonDocument jsonRequest(payload);
 
         logger->append(this->objectName(), "Making login request...\n");
-        Reply loginReply = Util::makePost(Settings::authUrl, jsonRequest.toJson());
+        Reply loginReply =
+                Util::makePost(Settings::authUrl, jsonRequest.toJson());
 
-        if (!loginReply.isOK()) {
+        // Check for success reply
+        if (!loginReply.isOK())
+        {
+            showError("У нас проблема :(", "Упс... Вот ведь незадача...\n"
+                      + loginReply.getErrorString());
 
-            canRun = false;
-            QMessageBox::critical(this, "У нас проблема :(", "Упс... Вот ведь незадача...\n"
-                                  + loginReply.getErrorString());
-            logger->append(this->objectName(), "Error: " + loginReply.getErrorString() + "\n");
+            logger->append(this->objectName(), "Error: "
+                           + loginReply.getErrorString() + "\n");
 
-        } else { // Successful login request
+            unfreezeInterface(); return;
+        }
 
-            QJsonParseError error;
-            QJsonDocument jsonLoginReply = QJsonDocument::fromJson(loginReply.reply(), &error);
+        // Check for valid JSON reply
+        JsonParser jsonParser;
+        if ( !jsonParser.setJson(loginReply.reply()) )
+        {
+            showError("У нас проблема :(", "При попытке логина сервер овтетил "
+                      "ерунду...\n\n" + jsonParser.getParserError());
 
-            if (!(error.error == QJsonParseError::NoError)) {
+            logger->append(this->objectName(), "JSON parse error: "
+                           + jsonParser.getParserError() + "\n");
 
-                canRun = false;
-                QMessageBox::critical(this, "У нас проблема :(", "При попытке логина сервер овтетил ерунду...\n\n"
-                                      + error.errorString() + " в позиции " + QString::number(error.offset));
-                logger->append(this->objectName(), "JSON parse error: " + error.errorString()
-                               + " в поз. "  + QString::number(error.offset) + "\n");
+            unfreezeInterface(); return;
+        }
 
-            } else { // Correct login request
+        // Check for error response
+        if (jsonParser.hasServerResponseError())
+        {
+            showError("У нас проблема :(",
+                      jsonParser.getServerResponseError());
 
-                QJsonObject loginReplyData = jsonLoginReply.object();
+            logger->append(this->objectName(), "Error: "
+                           + jsonParser.getServerResponseError() + "\n");
 
-                if (!loginReplyData["error"].isNull()) {
+            unfreezeInterface(); return;
+        }
 
-                    canRun = false;
-                    QMessageBox::critical(this, "У нас проблема :(", loginReplyData["errorMessage"].toString());
-                    logger->append(this->objectName(), "Error: " + loginReplyData["errorMessage"].toString() + "\n");
+        logger->append(this->objectName(), "Login OK\n");
 
-                } else { // No "error" field in responce
+        // Get reply data
+        uuid = jsonParser.getClientToken();
+        accessToken = jsonParser.getAccessToken();
+        gameVersion = settings->loadClientVersion();
 
-                    // Prepare to run game in online-mode
-                    logger->append(this->objectName(), "OK\n");
+        // Get latest version from server
+        if (gameVersion == "latest")
+        {
+            logger->append(this->objectName(),"Looking for 'latest' version "
+                           "on update server...\n");
 
-                    uuid = loginReplyData["clientToken"].toString();
-                    accessToken = loginReplyData["accessToken"].toString();
-                    gameVersion = settings->loadClientVersion();
+            Reply versionReply = Util::makeGet(settings->getVersionsUrl());
 
-                    // Switch from "latest" to real version
-                    if (gameVersion == "latest") {
+            // Chect for success reply
+            if (!versionReply.isOK())
+            {
+                showError("У нас проблема :(",
+                          "Ошибка при запросе последней версии!\n"
+                          + versionReply.getErrorString());
 
-                        logger->append(this->objectName(), "Looking for 'latest' version on update server...\n");
-                        Reply versionReply = Util::makeGet(settings->getVersionsUrl());
+                logger->append(this->objectName(), "Error: "
+                               + versionReply.getErrorString() + "\n");
 
-                        if (!versionReply.isOK()) {
+                unfreezeInterface(); return;
+            }
 
-                            canRun = false;
-                            QMessageBox::critical(this, "У нас проблема :(", "Не удалось определить версию для запуска!\n"
-                                                  + versionReply.getErrorString());
-                            logger->append(this->objectName(), "Error: " + versionReply.getErrorString() + "\n");
+            // Check for valid JSON
+            if ( !jsonParser.setJson(versionReply.reply()) )
+            {
+                showError("У нас проблема :(",
+                          "Некорректный ответ сервера о последней версии!\n");
 
-                        } else { // Successful version request
+                logger->append(this->objectName(),"Error: can't parse "
+                               "'latest' version response\n");
 
-                            QJsonParseError error;
-                            QJsonDocument jsonVersionReply = QJsonDocument::fromJson(versionReply.reply(), &error);
+                unfreezeInterface(); return;
+            }
 
-                            if (!(error.error == QJsonParseError::NoError)) {
+            // Check for latest version in responce
+            if (!jsonParser.hasLatestReleaseVersion())
+            {
+                showError("У нас проблема :(",
+                          "Ответ сервера не содержит последней версии!\n");
 
-                                canRun = false;
-                                QMessageBox::critical(this, "У нас проблема :(", "Не удалось понять что же нужно запустить...\n"
-                                                      + error.errorString() + " в поз. "  + QString::number(error.offset));
-                                logger->append(this->objectName(), "JSON parse error: " + error.errorString()
-                                               + " в поз. "  + QString::number(error.offset) + "\n");
+                logger->append(this->objectName(),"Error: can't find "
+                               "'latest' version in response\n");
 
-                            } else { // Correct version reply
+                unfreezeInterface(); return;
+            }
 
-                                QJsonObject latest = jsonVersionReply.object()["latest"].toObject();
-                                if (latest["release"].isNull()) {
+            gameVersion = jsonParser.getLatestReleaseVersion();
+            logger->append(this->objectName(), "Latest game version is "
+                           + gameVersion + "\n");
+        }
 
-                                    canRun = false;
-                                    QMessageBox::critical(this, "У нас проблема :(", "Не удалось определить версию для запуска!\n");
-                                    logger->append(this->objectName(), "Error: empty game version\n");
+        // Update json indexes before run (version, data, assets)
+        // FIXME: need to rewrite w/o eventLoop lock
+        logger->append(this->objectName(),
+                       "Updating game indexes..." + gameVersion + "\n");
 
-                                } else {
+        QString versionUrl = settings->getVersionUrl(gameVersion);
+        QString versionDir =
+                settings->getVersionsDir() + "/" + gameVersion + "/";
 
-                                    gameVersion = latest["release"].toString();
-                                    logger->append(this->objectName(), "Game version is " + gameVersion + "\n");
+        // Update version JSON
+        QString verJsonUrl  = versionUrl + gameVersion + ".json";
+        QString verJsonPath = versionDir + gameVersion + ".json";
+        Util::downloadFile(verJsonUrl, verJsonPath);
 
-                                }
-                            }
-                        }
-                    }
+        // Update data JSON
+        QString dataJsonUrl  = versionUrl + "data.json";
+        QString dataJsonPath = versionDir + "data.json";
+        Util::downloadFile(dataJsonUrl, dataJsonPath);
 
-                    // update json indexes before run (version, data, assets)
-                    logger->append(this->objectName(), "Updating game indexes..." + gameVersion + "\n");
+        // Update assets JSON
+        if (jsonParser.setJsonFromFile(verJsonPath))
+        {
+            if (jsonParser.hasAssets())
+            {
+                QString assets = jsonParser.getAssets();
+                QString assetsUrl  = settings->getAssetsUrl()
+                        + "indexes/" + assets + ".json";
+                QString assetsPath = settings->getAssetsDir()
+                        + "/indexes/" + assets + ".json";
 
-                    QString currentVersionDir = settings->getVersionsDir() + "/" + gameVersion + "/" ;
-
-                    Util::downloadFile(settings->getVersionUrl(gameVersion) + gameVersion + ".json", currentVersionDir + gameVersion + ".json");
-                    Util::downloadFile(settings->getVersionUrl(gameVersion) + "data.json", currentVersionDir + "data.json");
-
-                    QByteArray jsonData;
-                    jsonData.append(Util::getFileContetnts(currentVersionDir + gameVersion + ".json"));
-                    QJsonObject versionIndex = QJsonDocument::fromJson(jsonData).object();
-
-                    if (!versionIndex["assets"].isNull()) {
-                        QString assets = versionIndex["assets"].toString();
-                        Util::downloadFile(settings->getAssetsUrl() + "indexes/" + assets + ".json",
-                                           settings->getAssetsDir() + "/indexes/" + assets + ".json");
-                    }
-                }
+                Util::downloadFile(assetsUrl, assetsPath);
             }
         }
 
-    } else { // Offline mode
+    }
+    // Offline mode
+    else
+    {
 
         logger->append(this->objectName(), "Offline mode is selected\n");
 

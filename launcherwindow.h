@@ -50,6 +50,8 @@ private slots:
     void showCheckoutDialog();
     void showExportDialog();
 
+    void showError(const QString & title, const QString & message);
+
 
 private:
     Ui::LauncherWindow *ui;
