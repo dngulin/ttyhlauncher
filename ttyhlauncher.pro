@@ -27,7 +27,10 @@ SOURCES += main.cpp \
     fetchdialog.cpp \
     checkoutdialog.cpp \
     exportdialog.cpp \
-    licensedialog.cpp
+    licensedialog.cpp \
+    jsonparser.cpp \
+    libraryinfo.cpp \
+    fileinfo.cpp
 
 HEADERS += launcherwindow.h \
     skinuploaddialog.h \
@@ -44,7 +47,10 @@ HEADERS += launcherwindow.h \
     fetchdialog.h \
     checkoutdialog.h \
     exportdialog.h \
-    licensedialog.h
+    licensedialog.h \
+    jsonparser.h \
+    libraryinfo.h \
+    fileinfo.h
 
 FORMS += launcherwindow.ui \
     skinuploaddialog.ui \
