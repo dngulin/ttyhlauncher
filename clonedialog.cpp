@@ -31,9 +31,9 @@ CloneDialog::~CloneDialog() {
 bool CloneDialog::loadVersionList() {
 
     Reply reply = Util::makeGet("http://s3.amazonaws.com/Minecraft.Download/versions/versions.json");
-    if (reply.isOK()) {
+    if (reply.isSuccess()) {
         QJsonParseError error;
-        QJsonDocument vjson = QJsonDocument::fromJson(reply.reply(), &error);
+        QJsonDocument vjson = QJsonDocument::fromJson(reply.getData(), &error);
         if (error.error == QJsonParseError::NoError) {
             QJsonArray vlist = vjson.object()["versions"].toArray();
             foreach (QJsonValue ver, vlist) {
@@ -98,10 +98,10 @@ void CloneDialog::makeClone() {
         Reply reply = Util::makeGet("http://s3.amazonaws.com/Minecraft.Download/versions/"
                                     + ui->sourceCombo->currentText() + "/"
                                     + ui->sourceCombo->currentText() + ext);
-        if (reply.isOK()) {
+        if (reply.isSuccess()) {
             QFile file(path + ui->versionEdit->text() + ext);
             if (file.open(QIODevice::WriteOnly)) {
-                file.write(reply.reply());
+                file.write(reply.getData());
                 file.close();
             } else {
                 // cant open file

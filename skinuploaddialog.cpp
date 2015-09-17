@@ -84,7 +84,7 @@ void SkinUploadDialog::uploadSkin() {
     logger->append("SkinUploadDialog", "Making request...\n");
     Reply serverReply = Util::makePost(Settings::skinUploadUrl, jsonRequest.toJson());
 
-    if (!serverReply.isOK()) {
+    if (!serverReply.isSuccess()) {
 
         ui->messageLabel->setText("Ошибка: " + serverReply.getErrorString());
         logger->append("SkinUploadDialog", "Error: " + serverReply.getErrorString() + "\n");
@@ -93,7 +93,7 @@ void SkinUploadDialog::uploadSkin() {
 
         logger->append("SkinUploadDialog", "OK\n");
         QJsonParseError error;
-        QJsonDocument json = QJsonDocument::fromJson(serverReply.reply(), &error);
+        QJsonDocument json = QJsonDocument::fromJson(serverReply.getData(), &error);
 
         // Check for incorrect JSON
         if (error.error == QJsonParseError::NoError) {

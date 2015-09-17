@@ -294,7 +294,7 @@ void LauncherWindow::playButtonClicked()
                 Util::makePost(Settings::authUrl, jsonRequest.toJson());
 
         // Check for success reply
-        if (!loginReply.isOK())
+        if (!loginReply.isSuccess())
         {
             showError("У нас проблема :(", "Упс... Вот ведь незадача...\n"
                       + loginReply.getErrorString());
@@ -307,7 +307,7 @@ void LauncherWindow::playButtonClicked()
 
         // Check for valid JSON reply
         JsonParser jsonParser;
-        if ( !jsonParser.setJson(loginReply.reply()) )
+        if ( !jsonParser.setJson(loginReply.getData()) )
         {
             showError("У нас проблема :(", "При попытке логина сервер овтетил "
                       "ерунду...\n\n" + jsonParser.getParserError());
@@ -346,7 +346,7 @@ void LauncherWindow::playButtonClicked()
             Reply versionReply = Util::makeGet(settings->getVersionsUrl());
 
             // Chect for success reply
-            if (!versionReply.isOK())
+            if (!versionReply.isSuccess())
             {
                 showError("У нас проблема :(",
                           "Ошибка при запросе последней версии!\n"
@@ -359,7 +359,7 @@ void LauncherWindow::playButtonClicked()
             }
 
             // Check for valid JSON
-            if ( !jsonParser.setJson(versionReply.reply()) )
+            if ( !jsonParser.setJson(versionReply.getData()) )
             {
                 showError("У нас проблема :(",
                           "Некорректный ответ сервера о последней версии!\n");

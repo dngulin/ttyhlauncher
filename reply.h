@@ -6,11 +6,11 @@
 class Reply
 {
 public:
-    Reply(bool state, QString errStr, QByteArray data);
+    Reply(bool state, const QString & errStr, const QByteArray & data);
 
-    bool isOK();
+    bool isSuccess();
     QString getErrorString();
-    QByteArray reply();
+    QByteArray getData();
 
 private:
     bool status;

@@ -101,10 +101,10 @@ void UpdateDialog::doCheck() {
         logger->append("UpdateDialog", "Looking for latest version...\n");
 
         Reply versionReply = Util::makeGet(settings->getVersionsUrl());
-        if (versionReply.isOK()) {
+        if (versionReply.isSuccess()) {
 
             QJsonParseError error;
-            QJsonDocument jsonVersionReply = QJsonDocument::fromJson(versionReply.reply(), &error);
+            QJsonDocument jsonVersionReply = QJsonDocument::fromJson(versionReply.getData(), &error);
 
             if (error.error == QJsonParseError::NoError) {
 
@@ -576,7 +576,7 @@ bool UpdateDialog::downloadNow(QString url, QString fileName) {
     logger->append("UpdateDialog", "Downloading "  + fileName.split("/").last() + "\n");
 
     Reply reply = Util::makeGet(url);
-    if (!reply.isOK()) {
+    if (!reply.isSuccess()) {
         ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось загрузить файл");
         logger->append("UpdateDialog", "Error: " + reply.getErrorString() + "\n");
         return false;
@@ -587,7 +587,7 @@ bool UpdateDialog::downloadNow(QString url, QString fileName) {
         fdir.mkpath(fdir.absolutePath());
 
         if (file->open(QIODevice::WriteOnly)) {
-            file->write(reply.reply());
+            file->write(reply.getData());
             file->close();
             delete file;
             return true;

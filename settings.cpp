@@ -53,11 +53,11 @@ void Settings::loadClientList() {
     logger->append("Settings", "Updating local client list...\n");
     Reply prefixesReply = Util::makeGet(updateServer + "/prefixes.json");
 
-    if (prefixesReply.isOK()) {
+    if (prefixesReply.isSuccess()) {
 
         logger->append("Settings", "OK. Saving local copy...\n");
         if (prefixesFile->open(QIODevice::WriteOnly)) {
-            prefixesFile->write(prefixesReply.reply());
+            prefixesFile->write(prefixesReply.getData());
             prefixesFile->close();
 
         } else {
@@ -106,11 +106,11 @@ void Settings::loadCustomKeystore() {
     logger->append("Settings", "Updating local java keystore...\n");
     Reply keystoreReply = Util::makeGet(updateServer + "/store.ks");
 
-    if (keystoreReply.isOK()) {
+    if (keystoreReply.isSuccess()) {
 
         logger->append("Settings", "OK. Saving local copy...\n");
         if (keystoreFile->open(QIODevice::WriteOnly)) {
-            keystoreFile->write(keystoreReply.reply());
+            keystoreFile->write(keystoreReply.getData());
             keystoreFile->close();
 
         } else {

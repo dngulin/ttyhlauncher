@@ -248,7 +248,7 @@ QString Util::getFileContetnts(QString path) {
 bool Util::downloadFile(QString url, QString fileName) {
 
     Reply reply = makeGet(url);
-    if (!reply.isOK()) {
+    if (!reply.isSuccess()) {
         Logger::logger()->append("Util", "Error: " + reply.getErrorString() + "\n");
         return false;
     } else {
@@ -258,7 +258,7 @@ bool Util::downloadFile(QString url, QString fileName) {
         fdir.mkpath(fdir.absolutePath());
 
         if (file->open(QIODevice::WriteOnly)) {
-            file->write(reply.reply());
+            file->write(reply.getData());
             file->close();
             delete file;
             return true;

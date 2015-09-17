@@ -109,7 +109,7 @@ void FeedbackDialog::sendFeedback() {
     logger->append("FeedBackDialog", "Making request...\n");
     Reply serverReply = Util::makePost(Settings::feedbackUrl, jsonRequest.toJson());
 
-    if (!serverReply.isOK()) {
+    if (!serverReply.isSuccess()) {
 
         ui->messageLabel->setText("Ошибка: " + serverReply.getErrorString());
         logger->append("FeedBackDialog", "Error: " + serverReply.getErrorString() + "\n");
@@ -119,7 +119,7 @@ void FeedbackDialog::sendFeedback() {
         logger->append("FeedBackDialog", "OK\n");
 
         QJsonParseError error;
-        QJsonDocument json = QJsonDocument::fromJson(serverReply.reply(), &error);
+        QJsonDocument json = QJsonDocument::fromJson(serverReply.getData(), &error);
 
         if (error.error == QJsonParseError::NoError) {
 

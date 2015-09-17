@@ -1,13 +1,13 @@
 #include "reply.h"
 
-Reply::Reply(bool state, QString errStr, QByteArray data)
+Reply::Reply(bool state, const QString &errStr, const QByteArray &data)
 {
     status = state;
     errorString = errStr;
     replyData = data;
 }
 
-bool Reply::isOK() {
+bool Reply::isSuccess() {
     return status;
 }
 
@@ -15,6 +15,6 @@ QString Reply::getErrorString() {
     return errorString;
 }
 
-QByteArray Reply::reply() {
+QByteArray Reply::getData() {
     return replyData;
 }
