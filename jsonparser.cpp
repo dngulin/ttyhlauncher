@@ -35,17 +35,29 @@ bool JsonParser::setJsonFromFile(const QString & fileName)
 {
     QFile jsonFile(fileName);
 
-    if (jsonFile.open(QIODevice::ReadOnly))
+    if (jsonFile.exists())
     {
-        bool setJsonResult = setJson(jsonFile.readAll());
-        jsonFile.close();
-        return setJsonResult;
+        if (jsonFile.open(QIODevice::ReadOnly))
+        {
+            bool setJsonResult = setJson(jsonFile.readAll());
+            jsonFile.close();
+            return setJsonResult;
+        }
+        // Can't open file
+        else
+        {
+            errorString = "Can't open JSON file "
+                        + fileName + ": "
+                        + jsonFile.errorString();
+            return false;
+        }
     }
+    // File not exists
     else
     {
         errorString = "Can't open JSON file "
                     + fileName + ": "
-                    + jsonFile.errorString();
+                    + "file not exists.";
         return false;
     }
 }
@@ -72,6 +84,26 @@ QString JsonParser::getServerResponseError() const
         return jsonObject["errorMessage"].toString();
     else
         return jsonObject["error"].toString();
+}
+
+bool JsonParser::hasClientToken() const
+{
+    return hasStringKey("clientToken");
+}
+
+QString JsonParser::getClientToken() const
+{
+    return getStringKey("clientToken");
+}
+
+bool JsonParser::hasAccessToken() const
+{
+    return hasStringKey("accessToken");
+}
+
+QString JsonParser::getAccessToken() const
+{
+    return getStringKey("accessToken");
 }
 
 bool JsonParser::hasVersionList() const
@@ -152,6 +184,16 @@ bool JsonParser::hasMainClass() const
 QString JsonParser::getMainClass() const
 {
     return getStringKey("mainClass");
+}
+
+bool JsonParser::hasAssets() const
+{
+    return hasStringKey("assets");
+}
+
+QString JsonParser::getAssets() const
+{
+    return getStringKey("assets");
 }
 
 bool JsonParser::hasMinecraftArgs() const

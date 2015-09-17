@@ -27,6 +27,12 @@ public:
     bool hasServerResponseError() const;
     QString getServerResponseError() const;
 
+    bool hasClientToken() const;
+    QString getClientToken() const;
+
+    bool hasAccessToken() const;
+    QString getAccessToken() const;
+
     // Parse versions json
     bool hasVersionList() const;
     QStringList getReleaseVersonList() const;
@@ -38,7 +44,7 @@ public:
     bool hasPrefixesList() const;
     QMap<QString, QString> getPrefixesList() const;
 
-    // Parse <version>.json
+    // Parse version.json
     bool hasReleaseTime() const;
     QDateTime getReleaseTime() const;
 
@@ -47,6 +53,9 @@ public:
 
     bool hasMainClass() const;
     QString getMainClass() const;
+
+    bool hasAssets() const;
+    QString getAssets() const;
 
     bool hasMinecraftArgs() const;
     QString getMinecraftArgs() const;
