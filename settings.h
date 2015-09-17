@@ -2,6 +2,7 @@
 #define SETTINGS_H
 
 #include <QtCore>
+#include <QNetworkAccessManager>
 
 #include "logger.h"
 
@@ -26,9 +27,11 @@ private:
     Settings();
     QSettings* settings;
 
+    QNetworkAccessManager* nam;
+
     QStringList clientStrIDs;
     QStringList clientNames;
-    void appendClient(QString strid, QString name);
+    void appendClient(const QString & strid, const QString & name);
 
     QString dataPath;
     QString configPath;
@@ -37,7 +40,7 @@ private:
 public:
     // Update URLs
     QString getVersionsUrl();
-    QString getVersionUrl(QString version);
+    QString getVersionUrl(const QString & version);
     QString getLibsUrl();
     QString getAssetsUrl();
 
@@ -56,7 +59,7 @@ public:
     // Directories
     QString getBaseDir();
     QString getClientDir();
-    QString getClientPrefix(QString version);
+    QString getClientPrefix(const QString & version);
     QString getAssetsDir();
     QString getLibsDir();
     QString getVersionsDir();
@@ -71,10 +74,10 @@ public:
     // save-pairs in slots section
 
     QString loadPassword();
-    void savePassword(QString password);
+    void savePassword(const QString & password);
 
     QRect loadWindowGeometry();
-    void saveWindowGeometry(QRect geom);
+    void saveWindowGeometry(const QRect & geom);
 
     bool loadOfflineModeState();
     void saveOfflineModeState(bool offlineState);
@@ -87,25 +90,25 @@ public:
 
     // Client settings
     QString loadClientVersion();
-    void saveClientVersion(QString strid);
+    void saveClientVersion(const QString & strid);
 
     bool loadClientJavaState();
     void saveClientJavaState(bool state);
 
     QString loadClientJava();
-    void saveClientJava(QString java);
+    void saveClientJava(const QString & java);
 
     bool loadClientJavaArgsState();
     void saveClientJavaArgsState(bool state);
 
     QString loadClientJavaArgs();
-    void saveClientJavaArgs(QString args);
+    void saveClientJavaArgs(const QString & args);
 
     bool loadClientWindowSizeState();
     void saveClientWindowSizeState(bool s);
 
     QRect loadClientWindowGeometry();
-    void saveClientWindowGeometry(QRect g);
+    void saveClientWindowGeometry(const QRect & g);
 
     bool loadClientFullscreenState();
     void saveClientFullscreenState(bool state);
@@ -123,9 +126,11 @@ public:
     QString getOsVersion();
     QString getWordSize();
 
+    QNetworkAccessManager *getNetworkAccessManager();
+
 public slots:
     void saveActiveClientId(int id);
-    void saveLogin(QString login);
+    void saveLogin(const QString & login);
     void savePassStoreState(bool state);
     void saveMaximizedState(bool state);
 

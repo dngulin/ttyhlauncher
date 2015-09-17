@@ -16,7 +16,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
     logger->append("SettingsDialog", "Settings dialog opened\n");
 
-    nam = new QNetworkAccessManager(this);
+    nam = settings->getNetworkAccessManager();
     connect(nam, SIGNAL(finished(QNetworkReply*)), this, SLOT(makeVersionList(QNetworkReply*)));
 
     // Setup client combobox

@@ -32,6 +32,8 @@ Settings* Settings::instance() {
 
 Settings::Settings() : QObject()
 {
+    nam = new QNetworkAccessManager(this);
+
     updateServer = "http://store.ttyh.ru";
 
     dataPath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/ttyh_minecraft";
@@ -124,7 +126,7 @@ void Settings::loadCustomKeystore() {
     delete keystoreFile;
 }
 
-void Settings::appendClient(QString strid, QString name) {
+void Settings::appendClient(const QString &strid, const QString &name) {
     clientStrIDs.append(strid);
     clientNames.append(name);
 }
@@ -134,7 +136,7 @@ QString Settings::getVersionsUrl() {
     return updateServer + "/" + client + "/versions/versions.json";
 }
 
-QString Settings::getVersionUrl(QString version) {
+QString Settings::getVersionUrl(const QString &version) {
     QString client = getClientStrId(loadActiveClientId());
     return updateServer + "/" + client + "/" + version + "/";
 }
@@ -173,7 +175,7 @@ void Settings::saveActiveClientId(int id) {
 }
 
 QString Settings::loadLogin() { return settings->value("launcher/login", "Player").toString(); }
-void Settings::saveLogin(QString login) { settings->setValue("launcher/login", login); }
+void Settings::saveLogin(const QString &login) { settings->setValue("launcher/login", login); }
 
 bool Settings::loadPassStoreState() { return settings->value("launcher/save_password", false).toBool(); }
 void Settings::savePassStoreState(bool state) { settings->setValue("launcher/save_password", state); }
@@ -185,7 +187,7 @@ QString Settings::loadPassword() {
     return QByteArray::fromBase64(ba);
 }
 
-void Settings::savePassword(QString password) {
+void Settings::savePassword(const QString &password) {
     QByteArray ba; ba.append(password);
     settings->setValue("launcher/password", QString(ba.toBase64()));
 }
@@ -203,7 +205,7 @@ QRect Settings::loadClientWindowGeometry() {
     int c = loadActiveClientId();
     return qvariant_cast<QRect>(settings->value("client-" + getClientStrId(c) + "/window_geometry_custom", QRect(-1, -1, 854, 480)));
 }
-void Settings::saveClientWindowGeometry(QRect g) {
+void Settings::saveClientWindowGeometry(const QRect &g) {
     int c = loadActiveClientId();
     settings->setValue("client-" + getClientStrId(c) + "/window_geometry_custom", g);
 }
@@ -237,7 +239,7 @@ void Settings::saveClientFullscreenState(bool state) {
 
 // Launcher window geometry
 QRect Settings::loadWindowGeometry() {return qvariant_cast<QRect>(settings->value("launcher/window_geometry", QRect(-1, -1, 600, 400))); }
-void Settings::saveWindowGeometry(QRect geom) { settings->setValue("launcher/window_geometry", geom); }
+void Settings::saveWindowGeometry(const QRect &geom) { settings->setValue("launcher/window_geometry", geom); }
 
 bool Settings::loadMaximizedState() {return settings->value("launcher/window_maximized", false).toBool();}
 void Settings::saveMaximizedState(bool state) { settings->setValue("launcher/window_maximized", state); }
@@ -254,7 +256,7 @@ QString Settings::loadClientVersion() {
     return settings->value("client-" + getClientStrId(cid) + "/version", "latest").toString();
 }
 
-void Settings::saveClientVersion(QString strid) {
+void Settings::saveClientVersion(const QString &strid) {
     int cid = loadActiveClientId();
     settings->setValue("client-" + getClientStrId(cid) + "/version", strid);
 }
@@ -274,7 +276,7 @@ QString Settings::loadClientJava() {
     return settings->value("client-" + getClientStrId(cid) + "/custom_java", "").toString();
 }
 
-void Settings::saveClientJava(QString java) {
+void Settings::saveClientJava(const QString &java) {
     int cid = loadActiveClientId();
     settings->setValue("client-" + getClientStrId(cid) + "/custom_java", java);
 }
@@ -294,7 +296,7 @@ QString Settings::loadClientJavaArgs() {
     return settings->value("client-" + getClientStrId(cid) + "/cutsom_args", "").toString();
 }
 
-void Settings::saveClientJavaArgs(QString args) {
+void Settings::saveClientJavaArgs(const QString &args) {
     int cid = loadActiveClientId();
     settings->setValue("client-" + getClientStrId(cid) + "/cutsom_args", args);
 }
@@ -328,7 +330,7 @@ QString Settings::getClientDir() {
     return dataPath + "/client_" + getClientStrId(loadActiveClientId());
 }
 
-QString Settings::getClientPrefix(QString version) {
+QString Settings::getClientPrefix(const QString &version) {
     return getClientDir() + "/prefixes/" + version;
 }
 
@@ -411,4 +413,9 @@ QString Settings::getOsVersion() {
 
 QString Settings::getWordSize() {
     return QString::number(QSysInfo::WordSize);
+}
+
+QNetworkAccessManager *Settings::getNetworkAccessManager()
+{
+    return nam;
 }

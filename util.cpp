@@ -1,14 +1,16 @@
-#include "util.h"
-#include "logger.h"
-
 #include <QtNetwork>
 
 #include <quazip5/quazip.h>
 #include <quazip5/quazipfile.h>
 #include <quazip5/quacrc32.h>
 
+#include "util.h"
+#include "logger.h"
+#include "settings.h"
+
 quint64 Util::getFileSize(QString url) {
-    QNetworkAccessManager* manager = new QNetworkAccessManager();
+    QNetworkAccessManager* manager =
+            Settings::instance()->getNetworkAccessManager();
     QNetworkRequest request;
     request.setUrl(QUrl(url));
 
@@ -17,6 +19,7 @@ quint64 Util::getFileSize(QString url) {
     QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
 
+    reply->deleteLater();
     return reply->header(QNetworkRequest::ContentLengthHeader).toULongLong();
 }
 
@@ -29,7 +32,8 @@ Reply Util::makeGet(QString url) {
     QString errStr;
     QByteArray data;
 
-    QNetworkAccessManager* manager = new QNetworkAccessManager();
+    QNetworkAccessManager* manager =
+            Settings::instance()->getNetworkAccessManager();
     QNetworkRequest request;
     request.setUrl(QUrl(url));
     QNetworkReply* reply = manager->get(request);
@@ -51,7 +55,7 @@ Reply Util::makeGet(QString url) {
         }
     }
 
-    delete manager;
+    reply->deleteLater();
     return Reply(success, errStr, data);
 }
 
@@ -64,7 +68,8 @@ Reply Util::makePost(QString url, QByteArray postData) {
     QString errStr;
     QByteArray data;
 
-    QNetworkAccessManager* manager = new QNetworkAccessManager();
+    QNetworkAccessManager* manager =
+            Settings::instance()->getNetworkAccessManager();
 
     QNetworkRequest request;
     request.setUrl(QUrl(url));
@@ -90,7 +95,7 @@ Reply Util::makePost(QString url, QByteArray postData) {
         }
     }
 
-    delete manager;
+    reply->deleteLater();
     return Reply(success, errStr, data);
 }
 

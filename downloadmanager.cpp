@@ -1,4 +1,5 @@
 #include "downloadmanager.h"
+#include "settings.h"
 
 DownloadManager::DownloadManager(QObject *parent) :
     QObject(parent)
@@ -6,15 +7,12 @@ DownloadManager::DownloadManager(QObject *parent) :
     downloadTotal = 0;
     downloaded = 0;
 
-    nam = new QNetworkAccessManager(this);
+    nam = Settings::instance()->getNetworkAccessManager();
 
     logger = Logger::logger();
 }
 
-DownloadManager::~DownloadManager()
-{
-    delete nam;
-}
+DownloadManager::~DownloadManager() {}
 
 // Methods
 void DownloadManager::addEntry(QString url, QString filename, QString displayname, quint64 size) {
