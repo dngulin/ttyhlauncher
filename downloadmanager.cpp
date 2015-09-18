@@ -83,8 +83,10 @@ void DownloadManager::downloadNextFile() {
     }
 
     // Disconnect old reply connections
-    connect(downloadReply, SIGNAL(finished()), this, SLOT(downloadNextFile()));
-    connect(downloadReply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(fileProgress(qint64,qint64)));
+    disconnect(downloadReply, SIGNAL(finished()), this, SLOT(downloadNextFile()));
+    disconnect(downloadReply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(fileProgress(qint64,qint64)));
+    downloadReply->close();
+    downloadReply->deleteLater();
 
     // Remove completed entry
     fileNames.removeFirst();

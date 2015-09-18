@@ -19,10 +19,14 @@ quint64 Util::getFileSize(QString url) {
     QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
 
-    reply->deleteLater();
-    return reply->header(QNetworkRequest::ContentLengthHeader).toULongLong();
-}
+    quint64 result =
+            reply->header(QNetworkRequest::ContentLengthHeader).toULongLong();
 
+    reply->close();
+    delete reply;
+
+    return result;
+}
 
 Reply Util::makeGet(QString url) {
 
@@ -55,7 +59,9 @@ Reply Util::makeGet(QString url) {
         }
     }
 
-    reply->deleteLater();
+    reply->close();
+    delete reply;
+
     return Reply(success, errStr, data);
 }
 
@@ -95,7 +101,9 @@ Reply Util::makePost(QString url, QByteArray postData) {
         }
     }
 
-    reply->deleteLater();
+    reply->close();
+    delete reply;
+
     return Reply(success, errStr, data);
 }
 
