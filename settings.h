@@ -138,7 +138,6 @@ public slots:
 private:
     Settings& operator=(Settings const&);
     Settings(Settings const&);
-
 };
 
 
