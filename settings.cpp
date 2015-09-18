@@ -53,7 +53,7 @@ void Settings::loadClientList() {
     QFile* prefixesFile = new QFile(dataPath + "/prefixes.json");
 
     logger->append("Settings", "Updating local client list...\n");
-    Reply prefixesReply = Util::makeGet(updateServer + "/prefixes.json");
+    Reply prefixesReply = Util::makeGet(nam, updateServer + "/prefixes.json");
 
     if (prefixesReply.isSuccess()) {
 
@@ -106,7 +106,7 @@ void Settings::loadCustomKeystore() {
     QFile* keystoreFile = new QFile(configPath + "/keystore.ks");
 
     logger->append("Settings", "Updating local java keystore...\n");
-    Reply keystoreReply = Util::makeGet(updateServer + "/store.ks");
+    Reply keystoreReply = Util::makeGet(nam, updateServer + "/store.ks");
 
     if (keystoreReply.isSuccess()) {
 

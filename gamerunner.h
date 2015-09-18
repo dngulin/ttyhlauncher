@@ -2,7 +2,6 @@
 #define GAMERUNNER_H
 
 #include <QThread>
-#include <QNetworkAccessManager>
 
 #include "settings.h"
 #include "logger.h"
@@ -21,6 +20,7 @@ public:
 signals:
     void error(const QString &message);
     void needUpdate(const QString &message);
+    void started();
     void finished(int exitCode);
 
 private:
@@ -31,7 +31,6 @@ private:
 
     Settings* settings;
     Logger* logger;
-    QNetworkAccessManager* nam;
 
     void emitError(const QString &message);
     void emitNeedUpdate(const QString &message);

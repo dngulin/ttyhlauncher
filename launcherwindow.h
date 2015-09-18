@@ -6,6 +6,7 @@
 
 #include "settings.h"
 #include "logger.h"
+#include "gamerunner.h"
 
 namespace Ui {
 class LauncherWindow;
@@ -23,8 +24,6 @@ public:
 
 
 private slots:
-    void linkClicked(const QUrl& url);
-
     void showSettingsDialog();
     void showSkinLoadDialog();
     void showUpdateManagerDialog();
@@ -38,10 +37,10 @@ private slots:
     void unfreezeInterface();
 
     void playButtonClicked();
-    void gameRunError(QProcess::ProcessError error);
-    void gameRunSuccess();
-    void gameRunReadyOutput();
-    void gameRunFinished(int exitCode);
+    void gameRunnerError(const QString& message);
+    void gameRunnerNeedUpdate(const QString& message);
+    void gameRunnerStarted();
+    void gameRunnerFinished(int exitCode);
 
     void switchBuilderMenuVisibility();
 
@@ -60,15 +59,9 @@ private:
     Settings* settings;
     Logger* logger;
 
-    QProcess* minecraft;
+    GameRunner* gameRunner;
 
     void storeParameters();
-
-    bool isValidGameFile(QString fileName, QString hash);
-    void runGame(QString uuid, QString accessToken, QString gameVersion);
-
-    void unzipAllFiles(QString zipFilePath, QString extractionPath);
-    void recursiveDelete(QString filePath);
 
     void showUpdateDialog(const QString message);
 };

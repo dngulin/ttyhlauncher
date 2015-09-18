@@ -82,7 +82,9 @@ void SkinUploadDialog::uploadSkin() {
     QJsonDocument jsonRequest(payload);
 
     logger->append("SkinUploadDialog", "Making request...\n");
-    Reply serverReply = Util::makePost(Settings::skinUploadUrl, jsonRequest.toJson());
+    Reply serverReply =
+            Util::makePost(Settings::instance()->getNetworkAccessManager(),
+                           Settings::skinUploadUrl, jsonRequest.toJson());
 
     if (!serverReply.isSuccess()) {
 

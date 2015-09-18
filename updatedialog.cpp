@@ -100,7 +100,8 @@ void UpdateDialog::doCheck() {
         ui->log->appendPlainText("Определение последней версии клиента...");
         logger->append("UpdateDialog", "Looking for latest version...\n");
 
-        Reply versionReply = Util::makeGet(settings->getVersionsUrl());
+        Reply versionReply = Util::makeGet(settings->getNetworkAccessManager(),
+                                           settings->getVersionsUrl());
         if (versionReply.isSuccess()) {
 
             QJsonParseError error;
@@ -575,7 +576,7 @@ bool UpdateDialog::downloadNow(QString url, QString fileName) {
     ui->log->appendPlainText("Загрузка: " + fileName.split("/").last());
     logger->append("UpdateDialog", "Downloading "  + fileName.split("/").last() + "\n");
 
-    Reply reply = Util::makeGet(url);
+    Reply reply = Util::makeGet(settings->getNetworkAccessManager(), url);
     if (!reply.isSuccess()) {
         ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось загрузить файл");
         logger->append("UpdateDialog", "Error: " + reply.getErrorString() + "\n");

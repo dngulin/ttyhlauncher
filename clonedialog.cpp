@@ -30,8 +30,12 @@ CloneDialog::~CloneDialog() {
 
 bool CloneDialog::loadVersionList() {
 
-    Reply reply = Util::makeGet("http://s3.amazonaws.com/Minecraft.Download/versions/versions.json");
-    if (reply.isSuccess()) {
+    Reply reply =
+            Util::makeGet(settings->getNetworkAccessManager(),
+                          "http://s3.amazonaws.com/Minecraft.Download/"
+                          "versions/versions.json");
+    if (reply.isSuccess())
+    {
         QJsonParseError error;
         QJsonDocument vjson = QJsonDocument::fromJson(reply.getData(), &error);
         if (error.error == QJsonParseError::NoError) {
@@ -95,7 +99,9 @@ void CloneDialog::makeClone() {
     foreach (QString ext, exts) {
         ui->log->appendPlainText("Загрузка файла " + ui->sourceCombo->currentText() + ext + "...");
         QApplication::processEvents();
-        Reply reply = Util::makeGet("http://s3.amazonaws.com/Minecraft.Download/versions/"
+        Reply reply = Util::makeGet(settings->getNetworkAccessManager(),
+                                    "http://s3.amazonaws.com/"
+                                    "Minecraft.Download/versions/"
                                     + ui->sourceCombo->currentText() + "/"
                                     + ui->sourceCombo->currentText() + ext);
         if (reply.isSuccess()) {

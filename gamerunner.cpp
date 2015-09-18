@@ -1,5 +1,7 @@
 #include "gamerunner.h"
 
+#include <QNetworkAccessManager>
+
 #include "util.h"
 #include "jsonparser.h"
 
@@ -22,6 +24,7 @@ GameRunner::GameRunner(const QString &playerLogin,
 void GameRunner::run()
 {
     logger->append("GameRunner", "Prepare game running...\n");
+    QNetworkAccessManager* nam = new QNetworkAccessManager();
 
     // Prepare run data
     QString uuid;
@@ -55,7 +58,7 @@ void GameRunner::run()
 
         logger->append("GameRunner", "Making login request...\n");
         Reply loginReply =
-                Util::makePost(Settings::authUrl, jsonRequest.toJson());
+                Util::makePost(nam, Settings::authUrl, jsonRequest.toJson());
 
         // Check for success reply
         if (!loginReply.isSuccess())
@@ -89,7 +92,7 @@ void GameRunner::run()
         // Get latest version from server
         if (gameVersion == "latest")
         {
-            Reply versionReply = Util::makeGet(settings->getVersionsUrl());
+            Reply versionReply = Util::makeGet(nam, settings->getVersionsUrl());
 
             // Chect for success reply
             if (!versionReply.isSuccess())
@@ -129,12 +132,12 @@ void GameRunner::run()
         // Update version JSON
         QString verJsonUrl  = versionUrl + gameVersion + ".json";
         QString verJsonPath = versionDir + gameVersion + ".json";
-        Util::downloadFile(verJsonUrl, verJsonPath);
+        Util::downloadFile(nam, verJsonUrl, verJsonPath);
 
         // Update data JSON
         QString dataJsonUrl  = versionUrl + "data.json";
         QString dataJsonPath = versionDir + "data.json";
-        Util::downloadFile(dataJsonUrl, dataJsonPath);
+        Util::downloadFile(nam, dataJsonUrl, dataJsonPath);
 
         // Update assets JSON
         if (jsonParser.setJsonFromFile(verJsonPath))
@@ -147,7 +150,7 @@ void GameRunner::run()
                 QString assetsPath = settings->getAssetsDir()
                         + "/indexes/" + assets + ".json";
 
-                Util::downloadFile(assetsUrl, assetsPath);
+                Util::downloadFile(nam, assetsUrl, assetsPath);
             }
         }
 
@@ -259,7 +262,7 @@ void GameRunner::run()
         }
         else
         {
-            classpath += libInfo.name + cpSep;
+            classpath += settings->getLibsDir() + "/" + libInfo.name + cpSep;
         }
     }
 
@@ -295,7 +298,7 @@ void GameRunner::run()
         emitError(message);
         return;
     }
-    assetsName = versionParser.getMinecraftArgs();
+    minecraftArguments = versionParser.getMinecraftArgs();
 
     QStringList mcArgList;
     foreach (QString mcArg, minecraftArguments.split(" "))
@@ -366,19 +369,30 @@ void GameRunner::run()
             .mkpath(settings->getClientPrefix(gameVersion));
     minecraft.setWorkingDirectory(settings->getClientPrefix(gameVersion));
 
+    logger->append("GameRunner",
+                   "Run string: " + java + " " + argList.join(' ') + "\n");
+
+    logger->append("GameRunner", "Try to start game...\n");
     minecraft.start(java, argList);
     if (!minecraft.waitForStarted())
     {
-        QString message = "Can't start game: ";
-        emit error(message + minecraft.errorString());
+        QString message = "Can't run game: ";
+        emitError(message + minecraft.errorString());
         return;
     }
+
+    logger->append("GameRunner", "Process started\n");
+    emit started();
 
     while (minecraft.state() == QProcess::Running)
         if (minecraft.waitForReadyRead())
             logger->append("Client", minecraft.readAll());
 
+    logger->append("GameRunner", "Process finished with exit code "
+                   + QString::number(minecraft.exitCode()) + "\n");
     emit finished(minecraft.exitCode());
+
+    delete nam;
 }
 
 void GameRunner::emitError(const QString &message)

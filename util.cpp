@@ -8,13 +8,12 @@
 #include "logger.h"
 #include "settings.h"
 
-quint64 Util::getFileSize(QString url) {
-    QNetworkAccessManager* manager =
-            Settings::instance()->getNetworkAccessManager();
+quint64 Util::getFileSize(QNetworkAccessManager *nam, const QString &url)
+{
     QNetworkRequest request;
     request.setUrl(QUrl(url));
 
-    QNetworkReply *reply = manager->head(request);
+    QNetworkReply *reply = nam->head(request);
     QEventLoop loop;
     QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
@@ -28,35 +27,32 @@ quint64 Util::getFileSize(QString url) {
     return result;
 }
 
-Reply Util::makeGet(QString url) {
-
+Reply Util::makeGet(QNetworkAccessManager *nam, const QString &url)
+{
     Logger::logger()->append("Util", "Make GET: " + url + "\n");
 
     bool success = true;
     QString errStr;
     QByteArray data;
 
-    QNetworkAccessManager* manager =
-            Settings::instance()->getNetworkAccessManager();
     QNetworkRequest request;
     request.setUrl(QUrl(url));
-    QNetworkReply* reply = manager->get(request);
+    QNetworkReply* reply = nam->get(request);
 
     QEventLoop loop;
     QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
 
-    if (reply->error() == QNetworkReply::NoError) {
+    if (reply->error() == QNetworkReply::NoError)
         data.append(reply->readAll());
-    } else {
-
+    else
+    {
         success = false;
 
-        if (reply->error() == QNetworkReply::AuthenticationRequiredError) {
-            errStr = "Неправильный логин или пароль";
-        } else {
+        if (reply->error() == QNetworkReply::AuthenticationRequiredError)
+            errStr = "Bad login";
+        else
             errStr = reply->errorString();
-        }
     }
 
     reply->close();
@@ -66,7 +62,8 @@ Reply Util::makeGet(QString url) {
 }
 
 
-Reply Util::makePost(QString url, QByteArray postData) {
+Reply Util::makePost(QNetworkAccessManager *nam,
+                     const QString &url, const QByteArray &postData) {
 
     Logger::logger()->append("Util", "Make POST: " + url + "\n");
 
@@ -74,31 +71,27 @@ Reply Util::makePost(QString url, QByteArray postData) {
     QString errStr;
     QByteArray data;
 
-    QNetworkAccessManager* manager =
-            Settings::instance()->getNetworkAccessManager();
-
     QNetworkRequest request;
     request.setUrl(QUrl(url));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setHeader(QNetworkRequest::ContentLengthHeader, postData.size());
 
-    QNetworkReply* reply = manager->post(request, postData);
+    QNetworkReply* reply = nam->post(request, postData);
 
     QEventLoop loop;
     QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
 
-    if (reply->error() == QNetworkReply::NoError) {
+    if (reply->error() == QNetworkReply::NoError)
         data.append(reply->readAll());
-    } else {
-
+    else
+    {
         success = false;
 
-        if (reply->error() == QNetworkReply::AuthenticationRequiredError) {
-            errStr = "Неправильный логин или пароль";
-        } else {
+        if (reply->error() == QNetworkReply::AuthenticationRequiredError)
+            errStr = "Bad login";
+        else
             errStr = reply->errorString();
-        }
     }
 
     reply->close();
@@ -258,9 +251,9 @@ QString Util::getFileContetnts(QString path) {
 }
 
 
-bool Util::downloadFile(QString url, QString fileName) {
+bool Util::downloadFile(QNetworkAccessManager *nam, const QString &url, const QString &fileName) {
 
-    Reply reply = makeGet(url);
+    Reply reply = makeGet(nam, url);
     if (!reply.isSuccess()) {
         Logger::logger()->append("Util", "Error: " + reply.getErrorString() + "\n");
         return false;

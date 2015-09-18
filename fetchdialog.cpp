@@ -32,7 +32,8 @@ void FetchDialog::downloadFile(QString url, QString fname) {
 
     QFile file(fname);
     if (!file.exists()) {
-        if (!Util::downloadFile(url, fname)) {
+        if (!Util::downloadFile(settings->getNetworkAccessManager(), url, fname))
+        {
             ui->log->appendPlainText("Ошибка: не удалось загрузить файл");
             logger->append("FetchDialog", "Error can't get file\n");
             errList << QString("Не удалось загрузить: ") + fname.split('/').last();
@@ -186,8 +187,12 @@ void FetchDialog::makeFetch() {
 
             } else {
 
-                Util::downloadFile("https://s3.amazonaws.com/Minecraft.Download/indexes/" + assetsVer + ".json",
-                                                     assetsDir + "/indexes/" + assetsVer + ".json");
+                Util::downloadFile(settings->getNetworkAccessManager(),
+                                   "https://s3.amazonaws.com/"
+                                   "Minecraft.Download/indexes/"
+                                   + assetsVer + ".json",
+                                   assetsDir + "/indexes/"
+                                   + assetsVer + ".json");
                 QFile assetsFile(assetsDir + "/indexes/" + assetsVer + ".json");
 
                 if (assetsFile.exists()) {
