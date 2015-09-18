@@ -261,6 +261,7 @@ void LauncherWindow::playButtonClicked()
             this,       SLOT(gameRunnerStarted()));
     connect(gameRunner, SIGNAL(finished(int)),
             this,       SLOT(gameRunnerFinished(int)));
+    freezeInterface();
     gameRunner->start();
 
 }
