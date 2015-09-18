@@ -30,7 +30,8 @@ SOURCES += main.cpp \
     licensedialog.cpp \
     jsonparser.cpp \
     libraryinfo.cpp \
-    fileinfo.cpp
+    fileinfo.cpp \
+    gamerunner.cpp
 
 HEADERS += launcherwindow.h \
     skinuploaddialog.h \
@@ -50,7 +51,8 @@ HEADERS += launcherwindow.h \
     licensedialog.h \
     jsonparser.h \
     libraryinfo.h \
-    fileinfo.h
+    fileinfo.h \
+    gamerunner.h
 
 FORMS += launcherwindow.ui \
     skinuploaddialog.ui \
