@@ -396,17 +396,16 @@ QString Settings::getOsVersion() {
 #endif
 
 #ifdef Q_OS_LINUX
-    QProcess* lsbRelease = new QProcess(this);
-    lsbRelease->start("lsb_release", QStringList() << "-d");
+    QProcess lsbRelease;
+    lsbRelease.start("lsb_release", QStringList() << "-d");
 
-    if (!lsbRelease->waitForStarted())  return "NO_LSB_DISTRO";
-    if (!lsbRelease->waitForFinished()) return "ERROR";
+    if (!lsbRelease.waitForStarted())  return "NO_LSB_DISTRO";
+    if (!lsbRelease.waitForFinished()) return "ERROR";
 
     // Get value from output: "Description:\t<value>\n"
-    QString releaseInfo = lsbRelease->readLine().split('\t').last();
+    QString releaseInfo = lsbRelease.readLine().split('\t').last();
     releaseInfo = releaseInfo.split('\n').first();
 
-    delete lsbRelease;
     return releaseInfo;
 #endif
 }
