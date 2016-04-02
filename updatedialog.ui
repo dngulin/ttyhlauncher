@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>694</width>
-    <height>483</height>
+    <width>443</width>
+    <height>287</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,7 +41,7 @@
      <item>
       <widget class="QLabel" name="clientLabel">
        <property name="text">
-        <string>Обновляемый игровой клиент</string>
+        <string>Client for update</string>
        </property>
       </widget>
      </item>
@@ -79,6 +79,13 @@
    <item>
     <layout class="QHBoxLayout" name="bottomLayout">
      <item>
+      <widget class="QPushButton" name="cancelButton">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="hspc">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -94,7 +101,7 @@
      <item>
       <widget class="QPushButton" name="updateButton">
        <property name="text">
-        <string>Обновить</string>
+        <string>Update</string>
        </property>
       </widget>
      </item>

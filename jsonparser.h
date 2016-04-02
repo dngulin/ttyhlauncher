@@ -17,11 +17,11 @@ public:
 
     // Generic methods
     QString getParserError() const;
-    bool setJson(const QByteArray & json);
-    bool setJsonFromFile(const QString & fileName);
+    bool setJson(const QByteArray &json);
+    bool setJsonFromFile(const QString &fileName);
 
-    bool hasStringKey(const QString & key) const;
-    QString getStringKey(const QString & key) const;
+    bool hasStringKey(const QString &key) const;
+    QString getStringKey(const QString &key) const;
 
     // Parse master-server responces
     bool hasServerResponseError() const;
@@ -42,7 +42,7 @@ public:
 
     // Parse prefixes json
     bool hasPrefixesList() const;
-    QMap<QString, QString> getPrefixesList() const;
+    QHash<QString, QString> getPrefixesList() const;
 
     // Parse version.json
     bool hasReleaseTime() const;
@@ -54,8 +54,8 @@ public:
     bool hasMainClass() const;
     QString getMainClass() const;
 
-    bool hasAssets() const;
-    QString getAssets() const;
+    bool hasAssetsVersion() const;
+    QString getAssetsVesrsion() const;
 
     bool hasMinecraftArgs() const;
     QString getMinecraftArgs() const;
@@ -70,8 +70,17 @@ public:
     bool hasLibsFileInfo() const;
     QList<FileInfo> getLibsFileInfo() const;
 
-    bool hasAddonsFileInfo() const;
-    QList<FileInfo> getAddonsFileInfo() const;
+    bool hasLibFileInfo(const QString &lib) const;
+    FileInfo getLibFileInfo(const QString &lib) const;
+
+    bool hasAddonsFilesInfo() const;
+    QList<FileInfo> getAddonsFilesInfo() const;
+
+    QHash<QString, FileInfo> getAddonsFilesInfoHashMap() const;
+
+    // Parse assets json
+    bool hasAssetsList() const;
+    QList<FileInfo> getAssetsList() const;
 
 private:
     QString errorString;

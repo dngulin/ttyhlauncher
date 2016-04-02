@@ -9,5 +9,6 @@
         <file>resources/reporting.png</file>
         <file>resources/skin.png</file>
         <file>resources/license.txt</file>
+        <file>resources/logo.txt</file>
     </qresource>
 </RCC>

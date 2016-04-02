@@ -43,8 +43,8 @@ void Logger::append(QString sender, QString text)
 
     QTextStream(stdout) << prefix << text;
     QTextStream textout(logFile);
-    if (logFile != 0) textout << prefix << text;
+    if (logFile != NULL) textout << prefix << text;
 
-    emit textAppended(prefix + text.trimmed());
+    emit textAppended(prefix + text);
     QApplication::processEvents();
 }

@@ -141,9 +141,9 @@ bool JsonParser::hasPrefixesList() const
     return jsonObject["prefixes"].isObject();
 }
 
-QMap<QString,QString> JsonParser::getPrefixesList() const
+QHash<QString, QString> JsonParser::getPrefixesList() const
 {
-    QMap<QString,QString> result;
+    QHash<QString,QString> result;
     QJsonObject prefixes = jsonObject["prefixes"].toObject();
 
     foreach (QString key, prefixes.keys())
@@ -186,12 +186,12 @@ QString JsonParser::getMainClass() const
     return getStringKey("mainClass");
 }
 
-bool JsonParser::hasAssets() const
+bool JsonParser::hasAssetsVersion() const
 {
     return hasStringKey("assets");
 }
 
-QString JsonParser::getAssets() const
+QString JsonParser::getAssetsVesrsion() const
 {
     return getStringKey("assets");
 }
@@ -332,13 +332,30 @@ QList<FileInfo> JsonParser::getLibsFileInfo() const
     return result;
 }
 
-bool JsonParser::hasAddonsFileInfo() const
+bool JsonParser::hasLibFileInfo(const QString &lib) const
+{
+    return jsonObject["libs"].toObject()[lib].isObject();
+}
+
+FileInfo JsonParser::getLibFileInfo(const QString &lib) const
+{
+    QJsonObject libs = jsonObject["libs"].toObject();
+
+    FileInfo info;
+    info.name = lib;
+    info.hash = libs[lib].toObject()["hash"].toString();
+    info.size = libs[lib].toObject()["size"].toInt();
+
+    return info;
+}
+
+bool JsonParser::hasAddonsFilesInfo() const
 {
     return (jsonObject["files"].toObject()["index"].isObject() &&
             jsonObject["files"].toObject()["mutables"].isArray());
 }
 
-QList<FileInfo> JsonParser::getAddonsFileInfo() const
+QList<FileInfo> JsonParser::getAddonsFilesInfo() const
 {
     QList<FileInfo> result;
 
@@ -356,6 +373,58 @@ QList<FileInfo> JsonParser::getAddonsFileInfo() const
         info.size = files[key].toObject()["size"].toInt();
 
         if (mutablesList.contains(key)) info.isMutable = true;
+
+        result << info;
+    }
+
+    return result;
+}
+
+QHash<QString, FileInfo> JsonParser::getAddonsFilesInfoHashMap() const
+{
+    QHash<QString, FileInfo> result;
+
+    QJsonArray mutables = jsonObject["files"].toObject()["mutables"].toArray();
+    QStringList mutablesList;
+    foreach(QJsonValue value, mutables)
+        mutablesList << value.toString();
+
+    QJsonObject files = jsonObject["files"].toObject()["index"].toObject();
+    foreach(QString key, files.keys())
+    {
+        FileInfo info;
+        info.name = key;
+        info.hash = files[key].toObject()["hash"].toString();
+        info.size = files[key].toObject()["size"].toInt();
+
+        if (mutablesList.contains(key)) info.isMutable = true;
+
+        result.insert(key, info);
+    }
+
+    return result;
+}
+
+bool JsonParser::hasAssetsList() const
+{
+    return jsonObject["objects"].isObject();
+}
+
+QList<FileInfo> JsonParser::getAssetsList() const
+{
+    QList<FileInfo> result;
+
+    QJsonObject files = jsonObject["objects"].toObject();
+    foreach(QString key, files.keys())
+    {
+        QString hash = files[key].toObject()["hash"].toString();
+        QString name = hash.mid(0, 2) + "/" + hash;
+        quint64 size = files[key].toObject()["size"].toInt();
+
+        FileInfo info;
+        info.hash = hash;
+        info.name = name;
+        info.size = size;
 
         result << info;
     }

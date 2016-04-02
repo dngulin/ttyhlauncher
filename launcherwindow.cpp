@@ -21,6 +21,8 @@
 #include <QMessageBox>
 #include <QShortcut>
 
+#include <QDebug>
+
 LauncherWindow::LauncherWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::LauncherWindow)
@@ -33,21 +35,25 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     logger = Logger::logger();
 
     ui->logDisplay->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
-    ui->logDisplay->appendPlainText("Поздравляем, вы запустили ttyhlauncher. Следите за новостями и обновлениями на ttyh.ru.");
 
-    ui->logDisplay->appendPlainText("  _   _         _     _                        _               ");
-    ui->logDisplay->appendPlainText(" | |_| |_ _   _| |__ | | __ _ _   _ _ __   ___| |__   ___ _ __ ");
-    ui->logDisplay->appendPlainText(" | __| __| | | | '_ \\| |/ _` | | | | '_ \\ / __| '_ \\ / _ \\ '__|");
-    ui->logDisplay->appendPlainText(" | |_| |_| |_| | | | | | (_| | |_| | | | | (__| | | |  __/ |   ");
-    ui->logDisplay->appendPlainText("  \\__|\\__|\\__, |_| |_|_|\\__,_|\\__,_|_| |_|\\___|_| |_|\\___|_|   ");
-    ui->logDisplay->appendPlainText("          |___/                                                ");
-    ui->logDisplay->appendPlainText("        Sources: https://github.com/dngulin/ttyhlauncher");
-    ui->logDisplay->appendPlainText("");
+    appendToLog( tr("Welcome to the ttyhlauncher.\n") );
 
-    ui->logDisplay->appendPlainText("Начинаю чтение лог-файла...");
+    QFile logoFile(":/resources/logo.txt");
+    if (logoFile.open(QFile::ReadOnly | QFile::Text))
+    {
+        QTextStream logoStream(&logoFile);
+        while (!logoStream.atEnd())
+        {
+            appendToLog(logoStream.readLine() + QString("\n"));
+        }
+        logoFile.close();
+    }
+    else
+    {
+        logger->append(this->objectName(), tr("Can't open logo resource.\n"));
+    }
 
-
-    connect(logger, SIGNAL(textAppended(QString)), ui->logDisplay, SLOT(appendPlainText(QString)));
+    connect(logger, SIGNAL(textAppended(QString)), this, SLOT(appendToLog(QString)));
 
     // Options Menu connections
     connect(ui->runSettings, SIGNAL(triggered()), SLOT(showSettingsDialog()));
@@ -121,6 +127,7 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
 
 void LauncherWindow::closeEvent (QCloseEvent* event) {
     logger->append(this->objectName(), "Launcher window closed\n");
+    emit windowClosed();
     storeParameters();
     event->accept();
 }
@@ -128,6 +135,61 @@ void LauncherWindow::closeEvent (QCloseEvent* event) {
 void LauncherWindow::keyPressEvent(QKeyEvent* pe) {
     if(pe->key() == Qt::Key_Return) playButtonClicked();
     pe->accept();
+}
+
+void LauncherWindow::appendToLog(const QString &text)
+{
+    QRegularExpression urlRegEx("((?:https?)://\\S+)");
+
+    QRegularExpressionMatch urlMatch = urlRegEx.match(text);
+
+    ui->logDisplay->moveCursor(QTextCursor::End);
+
+    if (urlMatch.hasMatch())
+    {
+        int matches = urlMatch.lastCapturedIndex();
+
+        int lastIndex = 0;
+        for (int i = 1; i <= matches; i++)
+        {
+            int from = urlMatch.capturedStart(i);
+            int to   = urlMatch.capturedEnd(i);
+
+            // Add before link part
+            if (lastIndex < from)
+            {
+                QString sub = text.mid(lastIndex, from - lastIndex);
+                ui->logDisplay->insertHtml(escapeString(sub));
+            }
+
+            // Add link
+            QString url = text.mid(from, to - from);
+            QString link = QString(" <a href='") + url + QString("'>"  )
+                                                 + url + QString("</a>");
+
+            ui->logDisplay->insertHtml(link);
+            lastIndex = to;
+
+            // Append last after link part
+            if (i == matches && lastIndex < text.length())
+            {
+                QString sub = text.mid(lastIndex, text.length() - lastIndex);
+                ui->logDisplay->insertHtml(escapeString(sub));
+            }
+        }
+    }
+    else
+    {
+        ui->logDisplay->insertHtml(escapeString(text));
+    }
+}
+
+QString LauncherWindow::escapeString(const QString &string)
+{
+    return string
+            .toHtmlEscaped()
+            .replace("\n", "<br>\n")
+            .replace(" ", "&nbsp;");
 }
 
 void LauncherWindow::switchBuilderMenuVisibility() {
@@ -249,10 +311,14 @@ void LauncherWindow::playButtonClicked()
                    + settings->getClientStrId(settings->loadActiveClientId())
                    + "\n");
 
+    QRect geometry = settings->loadClientWindowGeometry();
+
     gameRunner = new GameRunner(ui->nickEdit->text(),
                                 ui->passEdit->text(),
-                                "NOT NOW",
-                                !ui->playOffline->isChecked());
+                                QString( "NOT NOW" ),
+                                !ui->playOffline->isChecked(),
+                                 geometry );
+
     connect(gameRunner, SIGNAL(error(QString)),
             this,       SLOT(gameRunnerError(QString)));
     connect(gameRunner, SIGNAL(needUpdate(QString)),
@@ -261,8 +327,11 @@ void LauncherWindow::playButtonClicked()
             this,       SLOT(gameRunnerStarted()));
     connect(gameRunner, SIGNAL(finished(int)),
             this,       SLOT(gameRunnerFinished(int)));
+    //connect(this, &LauncherWindow::windowClosed,
+            //gameRunner, &GameRunner::stopRunner);
+
     freezeInterface();
-    gameRunner->start();
+    gameRunner->startRunner();
 
 }
 

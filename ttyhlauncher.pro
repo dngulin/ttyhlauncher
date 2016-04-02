@@ -22,7 +22,6 @@ SOURCES += main.cpp \
     logger.cpp \
     util.cpp \
     reply.cpp \
-    downloadmanager.cpp \
     clonedialog.cpp \
     fetchdialog.cpp \
     checkoutdialog.cpp \
@@ -31,7 +30,10 @@ SOURCES += main.cpp \
     jsonparser.cpp \
     libraryinfo.cpp \
     fileinfo.cpp \
-    gamerunner.cpp
+    gamerunner.cpp \
+    filefetcher.cpp \
+    datafetcher.cpp \
+    hashchecker.cpp
 
 HEADERS += launcherwindow.h \
     skinuploaddialog.h \
@@ -43,7 +45,6 @@ HEADERS += launcherwindow.h \
     logger.h \
     util.h \
     reply.h \
-    downloadmanager.h \
     clonedialog.h \
     fetchdialog.h \
     checkoutdialog.h \
@@ -52,7 +53,10 @@ HEADERS += launcherwindow.h \
     jsonparser.h \
     libraryinfo.h \
     fileinfo.h \
-    gamerunner.h
+    gamerunner.h \
+    filefetcher.h \
+    datafetcher.h \
+    hashchecker.h
 
 FORMS += launcherwindow.ui \
     skinuploaddialog.ui \

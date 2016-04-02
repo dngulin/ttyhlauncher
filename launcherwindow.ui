@@ -41,15 +41,15 @@
      <number>5</number>
     </property>
     <item>
-     <widget class="QPlainTextEdit" name="logDisplay">
+     <widget class="QTextBrowser" name="logDisplay">
       <property name="frameShape">
        <enum>QFrame::Box</enum>
       </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
       <property name="textInteractionFlags">
-       <set>Qt::TextSelectableByMouse</set>
+       <set>Qt::TextBrowserInteraction</set>
+      </property>
+      <property name="openExternalLinks">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -103,22 +103,36 @@
          <property name="spacing">
           <number>4</number>
          </property>
-         <item row="2" column="1" colspan="2">
-          <widget class="QComboBox" name="clientCombo"/>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="clienttypeLabel">
+         <item row="3" column="0" colspan="2">
+          <widget class="QCheckBox" name="savePassword">
            <property name="text">
-            <string>Тип клиента</string>
+            <string>Remeber password</string>
            </property>
           </widget>
          </item>
          <item row="0" column="0">
           <widget class="QLabel" name="nickLabel">
            <property name="text">
-            <string>Игровое имя</string>
+            <string>Player Name</string>
            </property>
           </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="passLabel">
+           <property name="text">
+            <string>Password</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="clienttypeLabel">
+           <property name="text">
+            <string>Clinet</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" colspan="2">
+          <widget class="QComboBox" name="clientCombo"/>
          </item>
          <item row="1" column="1" colspan="2">
           <widget class="QLineEdit" name="passEdit">
@@ -127,12 +141,8 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="passLabel">
-           <property name="text">
-            <string>Пароль</string>
-           </property>
-          </widget>
+         <item row="0" column="1" colspan="2">
+          <widget class="QLineEdit" name="nickEdit"/>
          </item>
          <item row="3" column="2">
           <layout class="QHBoxLayout" name="playbuttonLayout">
@@ -152,7 +162,7 @@
            <item>
             <widget class="QPushButton" name="playButton">
              <property name="text">
-              <string>Играть!</string>
+              <string>Play!</string>
              </property>
              <property name="autoDefault">
               <bool>true</bool>
@@ -163,16 +173,6 @@
             </widget>
            </item>
           </layout>
-         </item>
-         <item row="3" column="0" colspan="2">
-          <widget class="QCheckBox" name="savePassword">
-           <property name="text">
-            <string>Запомнить пароль</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1" colspan="2">
-          <widget class="QLineEdit" name="nickEdit"/>
          </item>
         </layout>
        </widget>
@@ -187,34 +187,35 @@
      <x>0</x>
      <y>0</y>
      <width>785</width>
-     <height>24</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="optionsMenu">
     <property name="title">
-     <string>Опции</string>
+     <string>&amp;Options</string>
     </property>
     <addaction name="playOffline"/>
     <addaction name="hideLauncher"/>
-    <addaction name="runSettings"/>
+    <addaction name="loadNews"/>
    </widget>
    <widget class="QMenu" name="addMenu">
     <property name="title">
-     <string>Дополнительно</string>
+     <string>&amp;Additional</string>
     </property>
+    <addaction name="runSettings"/>
     <addaction name="changeSkin"/>
     <addaction name="updateManager"/>
    </widget>
    <widget class="QMenu" name="helpMenu">
     <property name="title">
-     <string>Помощь</string>
+     <string>&amp;Help</string>
     </property>
     <addaction name="bugReport"/>
     <addaction name="aboutLauncher"/>
    </widget>
    <widget class="QMenu" name="builderMenu">
     <property name="title">
-     <string>Инструменты сборщика</string>
+     <string>&amp;Build tools</string>
     </property>
     <addaction name="doClone"/>
     <addaction name="doFetch"/>
@@ -231,7 +232,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Играть оффлайн</string>
+    <string>&amp;Play offline</string>
    </property>
   </action>
   <action name="runSettings">
@@ -240,7 +241,7 @@
      <normaloff>:/resources/configure.png</normaloff>:/resources/configure.png</iconset>
    </property>
    <property name="text">
-    <string>Параметры запуска</string>
+    <string>&amp;Client manager</string>
    </property>
   </action>
   <action name="bugReport">
@@ -249,7 +250,7 @@
      <normaloff>:/resources/reporting.png</normaloff>:/resources/reporting.png</iconset>
    </property>
    <property name="text">
-    <string>Сообщить об ошибке</string>
+    <string>&amp;Report a bug</string>
    </property>
   </action>
   <action name="changePassword">
@@ -267,7 +268,7 @@
      <normaloff>:/resources/skin.png</normaloff>:/resources/skin.png</iconset>
    </property>
    <property name="text">
-    <string>Загрузить скин</string>
+    <string>&amp;Upload skin</string>
    </property>
   </action>
   <action name="updateManager">
@@ -276,7 +277,7 @@
      <normaloff>:/resources/minecraft.png</normaloff>:/resources/minecraft.png</iconset>
    </property>
    <property name="text">
-    <string>Обновление клиента</string>
+    <string>Update &amp;manager</string>
    </property>
   </action>
   <action name="aboutLauncher">
@@ -285,27 +286,27 @@
      <normaloff>:/resources/about.png</normaloff>:/resources/about.png</iconset>
    </property>
    <property name="text">
-    <string>О программе</string>
+    <string>&amp;About</string>
    </property>
   </action>
   <action name="doClone">
    <property name="text">
-    <string>Клонирование</string>
+    <string>&amp;Clone</string>
    </property>
   </action>
   <action name="doFetch">
    <property name="text">
-    <string>Полная загрузка</string>
+    <string>&amp;Fetch</string>
    </property>
   </action>
   <action name="doCheckout">
    <property name="text">
-    <string>Контрольные суммы</string>
+    <string>C&amp;hecksumms</string>
    </property>
   </action>
   <action name="doExport">
    <property name="text">
-    <string>Экспорт</string>
+    <string>&amp;Export</string>
    </property>
   </action>
   <action name="hideLauncher">
@@ -313,7 +314,15 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Прятать лаунчер при запуске игры</string>
+    <string>&amp;Hide launcher window</string>
+   </property>
+  </action>
+  <action name="loadNews">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Load news</string>
    </property>
   </action>
  </widget>

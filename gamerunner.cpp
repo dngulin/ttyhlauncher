@@ -8,34 +8,34 @@
 GameRunner::GameRunner(const QString &playerLogin,
                        const QString &playerPassword,
                        const QString &gamePrefix,
-                       bool onlineMode, QObject *parent)
+                       bool onlineMode,
+                       const QRect &windowGeometry,
+                       QObject *parent)
 {
     setParent(parent);
 
     settings = Settings::instance();
-    logger = Logger::logger();
+    logger   = Logger::logger();
 
     name = playerLogin;
     password = playerPassword;
     prefix = gamePrefix;
     isOnline = onlineMode;
+    geometry = windowGeometry;
+
+    gameVersion = settings->loadClientVersion();
 }
 
-void GameRunner::run()
+
+void GameRunner::getAccessToken()
 {
-    logger->append("GameRunner", "Prepare game running...\n");
-    QNetworkAccessManager* nam = new QNetworkAccessManager();
-
-    // Prepare run data
-    QString uuid;
-    QString accessToken;
-    QString gameVersion;
-
-    JsonParser jsonParser;
-
     // Online mode
     if (isOnline)
-    {
+    {        
+        logger->append("GameRunner", "Prepare for run in online mode...\n");
+
+        JsonParser jsonParser;
+
         // Make JSON login request, see: http://wiki.vg/Authentication
         QJsonObject payload, agent, platform;
 
@@ -58,7 +58,7 @@ void GameRunner::run()
 
         logger->append("GameRunner", "Making login request...\n");
         Reply loginReply =
-                Util::makePost(nam, Settings::authUrl, jsonRequest.toJson());
+                Util::makePost(&nam, Settings::authUrl, jsonRequest.toJson());
 
         // Check for success reply
         if (!loginReply.isSuccess())
@@ -84,127 +84,156 @@ void GameRunner::run()
             return;
         }
 
+        logger->append("GameRunner", "Login OK\n");
+
         // Get reply data
-        uuid = jsonParser.getClientToken();
+        clientToken = jsonParser.getClientToken();
         accessToken = jsonParser.getAccessToken();
-        gameVersion = settings->loadClientVersion();
-
-        // Get latest version from server
-        if (gameVersion == "latest")
-        {
-            Reply versionReply = Util::makeGet(nam, settings->getVersionsUrl());
-
-            // Chect for success reply
-            if (!versionReply.isSuccess())
-            {
-                QString message = "Can't parse latest version: ";
-                emitError(message + jsonParser.getParserError());
-                return;
-            }
-
-            // Check for valid JSON
-            if ( !jsonParser.setJson(versionReply.getData()) )
-            {
-                QString message = "Can't parse latest version: ";
-                emitError(message + versionReply.getErrorString());
-                return;
-            }
-
-            // Check for latest version in response
-            if (!jsonParser.hasLatestReleaseVersion())
-            {
-                QString message = "No latest version info in server response";
-                emitError(message);
-                return;
-            }
-
-            gameVersion = jsonParser.getLatestReleaseVersion();
-        }
-
-        // Update json indexes before run (version, data, assets)
-        logger->append(this->objectName(),
-                       "Updating game indexes..." + gameVersion + "\n");
-
-        QString versionUrl = settings->getVersionUrl(gameVersion);
-        QString versionDir =
-                settings->getVersionsDir() + "/" + gameVersion + "/";
-
-        // Update version JSON
-        QString verJsonUrl  = versionUrl + gameVersion + ".json";
-        QString verJsonPath = versionDir + gameVersion + ".json";
-        Util::downloadFile(nam, verJsonUrl, verJsonPath);
-
-        // Update data JSON
-        QString dataJsonUrl  = versionUrl + "data.json";
-        QString dataJsonPath = versionDir + "data.json";
-        Util::downloadFile(nam, dataJsonUrl, dataJsonPath);
-
-        // Update assets JSON
-        if (jsonParser.setJsonFromFile(verJsonPath))
-        {
-            if (jsonParser.hasAssets())
-            {
-                QString assets = jsonParser.getAssets();
-                QString assetsUrl  = settings->getAssetsUrl()
-                        + "indexes/" + assets + ".json";
-                QString assetsPath = settings->getAssetsDir()
-                        + "/indexes/" + assets + ".json";
-
-                Util::downloadFile(nam, assetsUrl, assetsPath);
-            }
-        }
 
     }
     // Offline mode
     else
     {
-        QByteArray uuidArray = QUuid::createUuid().toByteArray();
-        uuid = QString(uuidArray).remove('{').remove('}');
+        logger->append("GameRunner", "Prepare for run in offline mode...\n");
 
-        QByteArray atArray = QUuid::createUuid().toByteArray();
-        accessToken = QString(atArray).remove('{').remove('}');
+        QByteArray clientArray = QUuid::createUuid().toByteArray();
+        QByteArray accessArray = QUuid::createUuid().toByteArray();
 
-        gameVersion = settings->loadClientVersion();
+        clientToken = QString(clientArray).remove('{').remove('}');
+        accessToken = QString(accessArray).remove('{').remove('}');
+    }
+}
 
-        if (gameVersion == "latest") {
-            // Great old date for comparsion
-            QDateTime oldTime =
-                    QDateTime::fromString("1991-05-18T13:15:00+07:00",
-                                          Qt::ISODate);
+void GameRunner::findLatestVersion()
+{
+    JsonParser jsonParser;
 
-            QDir versionDir = QDir(settings->getVersionsDir());
-            QStringList versionList = versionDir.entryList();
+    // Online mode
+    if (isOnline)
+    {
+        logger->append("GameRunner", "Looking for latest version...\n");
+        Reply versionReply = Util::makeGet(&nam, settings->getVersionsUrl());
 
-            foreach (QString currentVersion, versionList)
+        // Chect for success reply
+        if (!versionReply.isSuccess())
+        {
+            QString message = "Can't parse latest version: ";
+            emitError(message + jsonParser.getParserError());
+            return;
+        }
+
+        // Check for valid JSON
+        if ( !jsonParser.setJson(versionReply.getData()) )
+        {
+            QString message = "Can't parse latest version: ";
+            emitError(message + versionReply.getErrorString());
+            return;
+        }
+
+        // Check for latest version in response
+        if (!jsonParser.hasLatestReleaseVersion())
+        {
+            QString message = "No latest version info in server response";
+            emitError(message);
+            return;
+        }
+
+        gameVersion = jsonParser.getLatestReleaseVersion();
+        logger->append("GameRunner",
+                       "Latest version is " + gameVersion + "\n");
+    }
+    // Offline-mode
+    else
+    {
+        logger->append("GameRunner", "Looking for local latest version...\n");
+
+        // Great old date for comparsion
+        QDateTime oldTime =
+                QDateTime::fromString("1991-05-18T13:15:00+07:00", Qt::ISODate);
+
+        QDir versionDir = QDir(settings->getVersionsDir());
+        QStringList versionList = versionDir.entryList();
+
+        foreach (QString currentVersion, versionList)
+        {
+            QFile versionFile(settings->getVersionsDir()
+                              + "/" + currentVersion
+                              + "/" + currentVersion + ".json");
+
+            if (versionFile.open(QIODevice::ReadOnly))
             {
-                QFile versionFile(settings->getVersionsDir()
-                                  + "/" + currentVersion
-                                  + "/" + currentVersion + ".json");
-
-                if (versionFile.open(QIODevice::ReadOnly))
-                {
-                    if (jsonParser.setJson(versionFile.readAll()))
-                        if (jsonParser.hasReleaseTime())
+                if (jsonParser.setJson(versionFile.readAll()))
+                    if (jsonParser.hasReleaseTime())
+                    {
+                        QDateTime relTime = jsonParser.getReleaseTime();
+                        if (relTime.isValid() && (relTime > oldTime))
                         {
-                            QDateTime relTime = jsonParser.getReleaseTime();
-                            if (relTime.isValid() && (relTime > oldTime))
-                            {
-                                oldTime = relTime;
-                                gameVersion = currentVersion;
-                            }
+                            oldTime = relTime;
+                            gameVersion = currentVersion;
                         }
-                    versionFile.close();
-                }
-            }
-
-            if (gameVersion == "latest")
-            {
-                QString message = "Not found any local version";
-                emitNeedUpdate(message);
-                return;
+                    }
+                versionFile.close();
             }
         }
+
+        if (gameVersion == "latest")
+        {
+            QString message = "Not found any local version";
+            emitNeedUpdate(message);
+            return;
+        }
     }
+}
+
+void GameRunner::updateIndexes()
+{
+    // Update json indexes before run (version, data, assets)
+    logger->append(this->objectName(),
+                   "Updating game indexes..." + gameVersion + "\n");
+
+    QString versionUrl = settings->getVersionUrl(gameVersion);
+    QString versionDir =
+            settings->getVersionsDir() + "/" + gameVersion + "/";
+
+    // Update version JSON
+    QString verJsonUrl  = versionUrl + gameVersion + ".json";
+    QString verJsonPath = versionDir + gameVersion + ".json";
+    Util::downloadFile(&nam, verJsonUrl, verJsonPath);
+
+    // Update data JSON
+    QString dataJsonUrl  = versionUrl + "data.json";
+    QString dataJsonPath = versionDir + "data.json";
+    Util::downloadFile(&nam, dataJsonUrl, dataJsonPath);
+
+    JsonParser jsonParser;
+
+    // Update assets JSON
+    if (jsonParser.setJsonFromFile(verJsonPath))
+    {
+        if (jsonParser.hasAssetsVersion())
+        {
+            QString assets = jsonParser.getAssetsVesrsion();
+            QString assetsUrl  = settings->getAssetsUrl()
+                    + "indexes/" + assets + ".json";
+            QString assetsPath = settings->getAssetsDir()
+                    + "/indexes/" + assets + ".json";
+
+            Util::downloadFile(&nam, assetsUrl, assetsPath);
+        }
+    }
+}
+
+void GameRunner::startRunner()
+{
+    logger->append("GameRunner", "GameRunner started\n");
+
+    getAccessToken();
+    if (gameVersion == "latest") findLatestVersion();
+    if (isOnline) updateIndexes();
+
+    //readVersionIndex();
+    //makeFileChecks();
+    //runGame();
 
     // Run game with known uuid, acess token and game version
     QString java, nativesPath, classpath, cpSep,
@@ -281,13 +310,13 @@ void GameRunner::run()
     mainClass = versionParser.getMainClass();
 
     // Check for assets
-    if (!versionParser.hasAssets())
+    if (!versionParser.hasAssetsVersion())
     {
         QString message = "No assets in " + gameVersion + ".json: ";
         emitError(message);
         return;
     }
-    assetsName = versionParser.getAssets();
+    assetsName = versionParser.getAssetsVesrsion();
 
     // FIXME: implement checker: mainClass, libs, assets, addons
 
@@ -308,7 +337,7 @@ void GameRunner::run()
         mcArg.replace("${game_directory}",    settings->getClientPrefix(gameVersion));
         mcArg.replace("${assets_root}",       settings->getAssetsDir());
         mcArg.replace("${assets_index_name}", assetsName);
-        mcArg.replace("${auth_uuid}",         uuid);
+        mcArg.replace("${auth_uuid}",         clientToken);
         mcArg.replace("${auth_access_token}", accessToken);
         mcArg.replace("${user_properties}",   "{}");
         mcArg.replace("${user_type}",         "mojang");
@@ -382,7 +411,7 @@ void GameRunner::run()
     }
 
     logger->append("GameRunner", "Process started\n");
-    emit started();
+    emit gameStarted();
 
     while (minecraft.state() == QProcess::Running)
         if (minecraft.waitForReadyRead())
@@ -390,16 +419,15 @@ void GameRunner::run()
 
     logger->append("GameRunner", "Process finished with exit code "
                    + QString::number(minecraft.exitCode()) + "\n");
-    emit finished(minecraft.exitCode());
+    emit gameFinished(minecraft.exitCode());
 
-    delete nam;
 }
 
 void GameRunner::emitError(const QString &message)
 {
     QString pre = "Error: ";
     logger->append("GameRunner", pre + message + "\n");
-    emit error(message);
+    emit runError(message);
 }
 
 void GameRunner::emitNeedUpdate(const QString &message)

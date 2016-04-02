@@ -22,8 +22,13 @@ public:
     void closeEvent (QCloseEvent* event);
     void keyPressEvent(QKeyEvent* pe);
 
+signals:
+    void windowClosed();
 
 private slots:
+    void appendToLog(const QString& text);
+    QString escapeString(const QString& string);
+
     void showSettingsDialog();
     void showSkinLoadDialog();
     void showUpdateManagerDialog();
