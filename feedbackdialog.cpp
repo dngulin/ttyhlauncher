@@ -17,20 +17,20 @@ FeedbackDialog::FeedbackDialog(QWidget *parent) :
     ui->nickEdit->setText(settings->loadLogin());
 
     connect(ui->sendButton, SIGNAL(clicked()), this, SLOT(sendFeedback()));
-    logger->append("FeedBackDialog", "Feedback dialog dialog opened\n");
+    logger->appendLine("FeedBackDialog", "Feedback dialog dialog opened\n");
 }
 
 FeedbackDialog::~FeedbackDialog()
 {
-    logger->append("FeedBackDialog", "Feedback dialog dialog closed\n");
+    logger->appendLine("FeedBackDialog", "Feedback dialog dialog closed\n");
     delete ui;
 }
 
 void FeedbackDialog::sendFeedback() {
 
     ui->sendButton->setEnabled(false);
-    logger->append("FeedBackDialog", "Sending feedback, description:\n");
-    logger->append("FeedBackDialog", "\"" + ui->descEdit->toPlainText() + "\"\n");
+    logger->appendLine("FeedBackDialog", "Sending feedback, description:\n");
+    logger->appendLine("FeedBackDialog", "\"" + ui->descEdit->toPlainText() + "\"\n");
 
     QJsonObject payload;
     payload["username"] = ui->nickEdit->text();
@@ -42,7 +42,7 @@ void FeedbackDialog::sendFeedback() {
     //payload["desc"] = QString(desc.toBase64());
     payload["desc"] = "GZIP DATA";
 
-    logger->append("FeedBackDialog", "Prepare diagnostic log...\n");
+    logger->appendLine("FeedBackDialog", "Prepare diagnostic log...\n");
     Settings* settings = Settings::instance();
 
     QByteArray log;    
@@ -106,7 +106,7 @@ void FeedbackDialog::sendFeedback() {
 
     QJsonDocument jsonRequest(payload);
 
-    logger->append("FeedBackDialog", "Making request...\n");
+    logger->appendLine("FeedBackDialog", "Making request...\n");
     Reply serverReply =
             Util::makePost(Settings::instance()->getNetworkAccessManager(),
                            Settings::feedbackUrl, jsonRequest.toJson());
@@ -114,11 +114,11 @@ void FeedbackDialog::sendFeedback() {
     if (!serverReply.isSuccess()) {
 
         ui->messageLabel->setText("Ошибка: " + serverReply.getErrorString());
-        logger->append("FeedBackDialog", "Error: " + serverReply.getErrorString() + "\n");
+        logger->appendLine("FeedBackDialog", "Error: " + serverReply.getErrorString() + "\n");
 
     } else {
 
-        logger->append("FeedBackDialog", "OK\n");
+        logger->appendLine("FeedBackDialog", "OK\n");
 
         QJsonParseError error;
         QJsonDocument json = QJsonDocument::fromJson(serverReply.getData(), &error);
@@ -130,19 +130,19 @@ void FeedbackDialog::sendFeedback() {
             if (responce["error"].isNull()) {
 
                 ui->messageLabel->setText("Сообщение об ошибке доставлено!");
-                logger->append("FeedBackDialog", "Feedback sended\n");
+                logger->appendLine("FeedBackDialog", "Feedback sended\n");
 
             } else {
                 // Error answer handler
                 ui->messageLabel->setText("Ошибка: " + responce["error"].toString());
-                logger->append("FeedBackDialog", "Error:"
+                logger->appendLine("FeedBackDialog", "Error:"
                                          + responce["error"].toString() + "\n");
             }
 
         } else {
             // JSON parse error
             ui->messageLabel->setText("Ошибка: сервер ответил ерунду...");
-            logger->append("FeedBackDialog", "JSON parse error!\n");
+            logger->appendLine("FeedBackDialog", "JSON parse error!\n");
         }
     }
 

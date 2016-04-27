@@ -26,43 +26,40 @@ private:
     Ui::UpdateDialog *ui;
     Settings *settings;
     Logger *logger;
-    FileFetcher *fetcher;
 
     QThread checkThread;
     HashChecker* checker;
 
     DataFetcher versionsFetcher;
+    FileFetcher indexFetcher, assetsFetcher, fileFetcher;
 
     JsonParser versionParser, dataParser;
 
     QString clientVersion;
 
     QStringList removeList;
-    QList<QPair<QString, QString> > checkList;
-    QHash< QString, QPair< QUrl, quint64 > > checkInfo;
-
-    void addToCheckList(const QString &fileName, const QString &checkSumm,
-                        quint64 size, const QString &url);
+    QList<FileInfo> checkList;
 
     enum UpdaterState {CanCheck, Checking, CanUpdate, Updating, CanClose};
 
     UpdaterState state;
     void setState(UpdaterState newState);
 
+    void resetUpdateData();
+
     void log(const QString &line, bool hidden = false);
     void error(const QString &line);
     void setInteractable(bool state);
 
-    void getUpdateSize();
-    void doUpdate();
-
-    void checkStart();
+    void doCheck();
     void updateVersionIndex();
     void processClientFiles();
     void processAssets();
 
+    void doUpdate();
+
 signals:
-    void checkFiles( const QList<QPair<QString, QString> > list );
+    void checkFiles( const QList<FileInfo>  list );
 
 private slots:
     void clientChanged();
@@ -74,10 +71,10 @@ private slots:
     void versionIndexUpdated(bool result);
     void assetsIndexUpdated(bool result);
 
-    void addToFetchList(const QString &file);
+    void addToFetchList(const FileInfo fileInfo);
     void checkFinished();
 
-    void updateFinished();
+    void updateComplete(bool result);
 };
 
 #endif // UPDATEDIALOG_H

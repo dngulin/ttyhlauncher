@@ -9,20 +9,21 @@ class Logger : public QObject
 private:
     explicit Logger(QObject *parent = 0);
 
-    static Logger* myInstance;
+    static Logger *myInstance;
 
-    QFile* logFile;
+    QFile logFile;
+    QIODevice::OpenMode mode = QIODevice::Text | QIODevice::Append
+                               | QIODevice::WriteOnly;
 
-    Logger& operator=(Logger const&);
-    Logger(Logger const&);
+    Logger &operator=(Logger const &);
+    Logger(Logger const &);
 
 public:
-    static Logger* logger();
-    void append(QString sender, QString text);
+    static Logger *logger();
+    void appendLine(const QString &sender, const QString &text);
 
 signals:
-    void textAppended(QString text);
-
+    void lineAppended(const QString &text);
 };
 
 #endif // LOGGER_H

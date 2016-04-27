@@ -15,7 +15,7 @@ LicenseDialog::LicenseDialog(QWidget *parent) :
     // load license from resources
     QFile licenseFile(":/resources/license.txt");
     if (!licenseFile.open(QFile::ReadOnly | QFile::Text)) {
-        logger->append("LicenseDialog", "Can't open license\n");
+        logger->appendLine("LicenseDialog", "Can't open license.");
     }
     QTextStream textStream(&licenseFile);
     ui->licenseText->setPlainText(textStream.readAll());

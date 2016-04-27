@@ -52,25 +52,25 @@ void Settings::loadClientList() {
 
     QFile* prefixesFile = new QFile(dataPath + "/prefixes.json");
 
-    logger->append("Settings", "Updating local client list...\n");
+    logger->appendLine("Settings", "Updating local client list...");
     Reply prefixesReply = Util::makeGet(nam, updateServer + "/prefixes.json");
 
     if (prefixesReply.isSuccess()) {
 
-        logger->append("Settings", "OK. Saving local copy...\n");
+        logger->appendLine("Settings", "OK. Saving local copy...");
         if (prefixesFile->open(QIODevice::WriteOnly)) {
             prefixesFile->write(prefixesReply.getData());
             prefixesFile->close();
 
         } else {
-            logger->append("Settings", "Error: save list: " + prefixesFile->errorString() + "\n");
+            logger->appendLine("Settings", "Error: save list: " + prefixesFile->errorString());
         }
 
     } else {
-        logger->append("Settings", "Error: " + prefixesReply.getErrorString() + "\n");
+        logger->appendLine("Settings", "Error: " + prefixesReply.getErrorString());
     }
 
-    logger->append("Settings", "Loading local client list...\n");
+    logger->appendLine("Settings", "Loading local client list...");
     if (prefixesFile->open(QIODevice::ReadOnly)) {
 
         QJsonParseError error;
@@ -83,18 +83,18 @@ void Settings::loadClientList() {
                 QJsonObject client = clients[key].toObject();
                 if (client["type"] == "public") {
                     appendClient(key, client["about"].toString());
-                    logger->append("Settings", "Add client: " + key + "\n");
+                    logger->appendLine("Settings", "Add client: " + key);
                 }
             }
 
         } else {
-            logger->append("Settings", "Error: JSON: " + error.errorString() + " at " + QString::number(error.offset) + "\n");
+            logger->appendLine("Settings", "Error: JSON: " + error.errorString() + " at " + QString::number(error.offset));
         }
 
         prefixesFile->close();
 
     } else {
-        logger->append("Settings", "Error: open list: " + prefixesFile->errorString() + "\n");
+        logger->appendLine("Settings", "Error: open list: " + prefixesFile->errorString());
     }
 
     delete prefixesFile;
@@ -105,22 +105,22 @@ void Settings::loadCustomKeystore() {
     Logger* logger = Logger::logger();
     QFile* keystoreFile = new QFile(configPath + "/keystore.ks");
 
-    logger->append("Settings", "Updating local java keystore...\n");
+    logger->appendLine("Settings", "Updating local java keystore...");
     Reply keystoreReply = Util::makeGet(nam, updateServer + "/store.ks");
 
     if (keystoreReply.isSuccess()) {
 
-        logger->append("Settings", "OK. Saving local copy...\n");
+        logger->appendLine("Settings", "OK. Saving local copy...");
         if (keystoreFile->open(QIODevice::WriteOnly)) {
             keystoreFile->write(keystoreReply.getData());
             keystoreFile->close();
 
         } else {
-            logger->append("Settings", "Error: save keystore: " + keystoreFile->errorString() + "\n");
+            logger->appendLine("Settings", "Error: save keystore: " + keystoreFile->errorString());
         }
 
     } else {
-        logger->append("Settings", "Error: " + keystoreReply.getErrorString() + "\n");
+        logger->appendLine("Settings", "Error: " + keystoreReply.getErrorString());
     }
 
     delete keystoreFile;
@@ -381,6 +381,7 @@ QString Settings::getOsVersion() {
         case QSysInfo::WV_WINDOWS7:     return "7";
         case QSysInfo::WV_WINDOWS8:     return "8";
         case QSysInfo::WV_WINDOWS8_1:   return "8.1";
+        case QSysInfo::WV_WINDOWS10:    return "10";
         default:                        return "unknown";
     }
 #endif

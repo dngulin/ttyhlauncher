@@ -14,7 +14,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     settings = Settings::instance();
     logger = Logger::logger();
 
-    logger->append("SettingsDialog", "Settings dialog opened\n");
+    logger->appendLine("SettingsDialog", "Settings dialog opened\n");
 
     nam = settings->getNetworkAccessManager();
     connect(nam, SIGNAL(finished(QNetworkReply*)), this, SLOT(makeVersionList(QNetworkReply*)));
@@ -30,7 +30,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
         ui->saveButton->setEnabled(false);
         ui->opendirButton->setEnabled(false);
 
-        logger->append("SettingsDialog", "Error: empty client list!\n");
+        logger->appendLine("SettingsDialog", "Error: empty client list!\n");
         ui->stateEdit->setText("Не удалось получить список клиентов");
     } else {
         emit ui->clientCombo->currentIndexChanged(ui->clientCombo->currentIndex());
@@ -43,14 +43,14 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
 SettingsDialog::~SettingsDialog()
 {
-    logger->append("SettingsDialog", "Settings dialog closed\n");
+    logger->appendLine("SettingsDialog", "Settings dialog closed\n");
     delete ui;
 }
 
 
 void SettingsDialog::loadVersionList() {
     ui->stateEdit->setText("Составляется список версий...");
-    logger->append("SettingsDialog", "Making version list...\n");
+    logger->appendLine("SettingsDialog", "Making version list...\n");
 
     ui->versionCombo->setEnabled(false);
     ui->versionCombo->clear();
@@ -59,8 +59,8 @@ void SettingsDialog::loadVersionList() {
     QNetworkRequest request;
     // FIXME: in release url depended at activeClient value
     request.setUrl(QUrl(settings->getVersionsUrl()));
-    logger->append("SettingsDialog", "Making version list request...\n");
-    logger->append("SettingsDialog", "URL: " + settings->getVersionsUrl() +"\n");
+    logger->appendLine("SettingsDialog", "Making version list request...\n");
+    logger->appendLine("SettingsDialog", "URL: " + settings->getVersionsUrl() +"\n");
     nam->get(request);
 }
 
@@ -68,7 +68,7 @@ void SettingsDialog::makeVersionList(QNetworkReply* reply) {
 
     // Check for connection error
     if (reply->error() == QNetworkReply::NoError) {
-        logger->append("SettingsDialog", "OK\n");
+        logger->appendLine("SettingsDialog", "OK\n");
 
         QByteArray rawResponce = reply->readAll();
         QJsonParseError error;
@@ -83,12 +83,12 @@ void SettingsDialog::makeVersionList(QNetworkReply* reply) {
             if (responce["error"].toString() != "") {
                 // Error in answer handler
                 ui->stateEdit->setText("Ошибка! " + responce["errorMessage"].toString());
-                logger->append("SettingsDialog", "Error: "
+                logger->appendLine("SettingsDialog", "Error: "
                                + responce["errorMessage"].toString() + "\n");
 
             } else {
                 // Correct login
-                logger->append("SettingsDialog", "List downloaded\n");
+                logger->appendLine("SettingsDialog", "List downloaded\n");
 
                 // Make remote version list
                 QJsonArray versions = responce["versions"].toArray();
@@ -105,21 +105,21 @@ void SettingsDialog::makeVersionList(QNetworkReply* reply) {
 
         } else {
             // JSON parse error
-            logger->append("SettingsDialog", "JSON parse error!\n");
+            logger->appendLine("SettingsDialog", "JSON parse error!\n");
             appendVersionList("Локальные версии (ошибка обмена с севрером)");
         }
 
 
     } else {
         // Connection error
-        logger->append("SettingsDialog", "Error: " + reply->errorString() +"\n");
+        logger->appendLine("SettingsDialog", "Error: " + reply->errorString() +"\n");
         appendVersionList("Локальные версии (сервер недоступен)");
     }
 
 }
 
 void SettingsDialog::appendVersionList(QString reason) {
-    logger->append("SettingsDialog", "Append local version list...\n");
+    logger->appendLine("SettingsDialog", "Append local version list...\n");
     ui->stateEdit->setText(reason);
 
     QString prefix = settings->getClientDir() + "/versions";
@@ -142,19 +142,19 @@ void SettingsDialog::appendVersionList(QString reason) {
 }
 
 void SettingsDialog::logCurrentSettings() {
-    logger->append("SettingsDialog", "\tClient: " + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
-    logger->append("SettingsDialog", "\tVersion: " + settings->loadClientVersion() + "\n");
-    logger->append("SettingsDialog", "\tUseCustomJava: " + QString(ui->javapathBox->isChecked() ? "true" : "false") + "\n");
-    logger->append("SettingsDialog", "\tCustomJava: " + ui->javapathEdit->text() + "\n");
-    logger->append("SettingsDialog", "\tUseCustomArgs: " + QString(ui->argsBox->isChecked() ? "true" : "false") + "\n");
-    logger->append("SettingsDialog", "\tCustomArgs: " + ui->argsEdit->text() + "\n");
-    logger->append("SettingsDialog", "\tSetWindowGeometry: " + QString(ui->sizeBox->isChecked() ? "true" : "false") + "\n");
-    logger->append("SettingsDialog", "\tCustomGeometry: " +
+    logger->appendLine("SettingsDialog", "\tClient: " + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
+    logger->appendLine("SettingsDialog", "\tVersion: " + settings->loadClientVersion() + "\n");
+    logger->appendLine("SettingsDialog", "\tUseCustomJava: " + QString(ui->javapathBox->isChecked() ? "true" : "false") + "\n");
+    logger->appendLine("SettingsDialog", "\tCustomJava: " + ui->javapathEdit->text() + "\n");
+    logger->appendLine("SettingsDialog", "\tUseCustomArgs: " + QString(ui->argsBox->isChecked() ? "true" : "false") + "\n");
+    logger->appendLine("SettingsDialog", "\tCustomArgs: " + ui->argsEdit->text() + "\n");
+    logger->appendLine("SettingsDialog", "\tSetWindowGeometry: " + QString(ui->sizeBox->isChecked() ? "true" : "false") + "\n");
+    logger->appendLine("SettingsDialog", "\tCustomGeometry: " +
                    QString::number(ui->widthSpinBox->value())  + "," +
                    QString::number(ui->heightSpinBox->value()) + "\n");
-    logger->append("SettingsDialog", "\tMakeFullscreen: " + QString(ui->fullscreenRadio->isChecked() ? "true" : "false")+"\n");
-    logger->append("SettingsDialog", "\tUseLauncherSize: " + QString(ui->useLauncherRadio->isChecked() ? "true" : "false")+"\n");
-    logger->append("SettingsDialog", "\tCheckAssets: " + QString(ui->checkAssetsCombo->isChecked() ? "true" : "false")+"\n");
+    logger->appendLine("SettingsDialog", "\tMakeFullscreen: " + QString(ui->fullscreenRadio->isChecked() ? "true" : "false")+"\n");
+    logger->appendLine("SettingsDialog", "\tUseLauncherSize: " + QString(ui->useLauncherRadio->isChecked() ? "true" : "false")+"\n");
+    logger->appendLine("SettingsDialog", "\tCheckAssets: " + QString(ui->checkAssetsCombo->isChecked() ? "true" : "false")+"\n");
 }
 
 void SettingsDialog::saveSettings() {
@@ -173,7 +173,7 @@ void SettingsDialog::saveSettings() {
     settings->saveClientUseLauncherSizeState(ui->useLauncherRadio->isChecked());
     settings->saveClientCheckAssetsState(ui->checkAssetsCombo->isChecked());
 
-    logger->append("SettingsDialog", "Settings saved\n");
+    logger->appendLine("SettingsDialog", "Settings saved\n");
     logCurrentSettings();
     this->close();
 
@@ -201,7 +201,7 @@ void SettingsDialog::loadSettings() {
     bool checkAssets = settings->loadClientCheckAssetsState();
     ui->checkAssetsCombo->setChecked(checkAssets);
 
-    logger->append("SettingsDialog", "Settings loaded\n");
+    logger->appendLine("SettingsDialog", "Settings loaded\n");
     logCurrentSettings();
 }
 
@@ -219,7 +219,7 @@ void SettingsDialog::openClientDirectory() {
     } else {
         QMessageBox::critical(this, "У нас проблема :(", "Директория ещё не существует.\n"
                               + clientDir->fileName());
-        logger->append("SettingsDialog", "Error: can't open client directory (not exists)\n");
+        logger->appendLine("SettingsDialog", "Error: can't open client directory (not exists)\n");
     }
     delete clientDir;
 }

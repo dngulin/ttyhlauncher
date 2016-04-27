@@ -32,7 +32,7 @@ void GameRunner::getAccessToken()
     // Online mode
     if (isOnline)
     {        
-        logger->append("GameRunner", "Prepare for run in online mode...\n");
+        logger->appendLine("GameRunner", "Prepare for run in online mode...\n");
 
         JsonParser jsonParser;
 
@@ -56,7 +56,7 @@ void GameRunner::getAccessToken()
 
         QJsonDocument jsonRequest(payload);
 
-        logger->append("GameRunner", "Making login request...\n");
+        logger->appendLine("GameRunner", "Making login request...\n");
         Reply loginReply =
                 Util::makePost(&nam, Settings::authUrl, jsonRequest.toJson());
 
@@ -84,7 +84,7 @@ void GameRunner::getAccessToken()
             return;
         }
 
-        logger->append("GameRunner", "Login OK\n");
+        logger->appendLine("GameRunner", "Login OK\n");
 
         // Get reply data
         clientToken = jsonParser.getClientToken();
@@ -94,7 +94,7 @@ void GameRunner::getAccessToken()
     // Offline mode
     else
     {
-        logger->append("GameRunner", "Prepare for run in offline mode...\n");
+        logger->appendLine("GameRunner", "Prepare for run in offline mode...\n");
 
         QByteArray clientArray = QUuid::createUuid().toByteArray();
         QByteArray accessArray = QUuid::createUuid().toByteArray();
@@ -111,7 +111,7 @@ void GameRunner::findLatestVersion()
     // Online mode
     if (isOnline)
     {
-        logger->append("GameRunner", "Looking for latest version...\n");
+        logger->appendLine("GameRunner", "Looking for latest version...\n");
         Reply versionReply = Util::makeGet(&nam, settings->getVersionsUrl());
 
         // Chect for success reply
@@ -139,13 +139,13 @@ void GameRunner::findLatestVersion()
         }
 
         gameVersion = jsonParser.getLatestReleaseVersion();
-        logger->append("GameRunner",
+        logger->appendLine("GameRunner",
                        "Latest version is " + gameVersion + "\n");
     }
     // Offline-mode
     else
     {
-        logger->append("GameRunner", "Looking for local latest version...\n");
+        logger->appendLine("GameRunner", "Looking for local latest version...\n");
 
         // Great old date for comparsion
         QDateTime oldTime =
@@ -188,7 +188,7 @@ void GameRunner::findLatestVersion()
 void GameRunner::updateIndexes()
 {
     // Update json indexes before run (version, data, assets)
-    logger->append(this->objectName(),
+    logger->appendLine(this->objectName(),
                    "Updating game indexes..." + gameVersion + "\n");
 
     QString versionUrl = settings->getVersionUrl(gameVersion);
@@ -225,7 +225,7 @@ void GameRunner::updateIndexes()
 
 void GameRunner::startRunner()
 {
-    logger->append("GameRunner", "GameRunner started\n");
+    logger->appendLine("GameRunner", "GameRunner started\n");
 
     getAccessToken();
     if (gameVersion == "latest") findLatestVersion();
@@ -398,10 +398,10 @@ void GameRunner::startRunner()
             .mkpath(settings->getClientPrefix(gameVersion));
     minecraft.setWorkingDirectory(settings->getClientPrefix(gameVersion));
 
-    logger->append("GameRunner",
+    logger->appendLine("GameRunner",
                    "Run string: " + java + " " + argList.join(' ') + "\n");
 
-    logger->append("GameRunner", "Try to start game...\n");
+    logger->appendLine("GameRunner", "Try to start game...\n");
     minecraft.start(java, argList);
     if (!minecraft.waitForStarted())
     {
@@ -410,14 +410,14 @@ void GameRunner::startRunner()
         return;
     }
 
-    logger->append("GameRunner", "Process started\n");
+    logger->appendLine("GameRunner", "Process started\n");
     emit gameStarted();
 
     while (minecraft.state() == QProcess::Running)
         if (minecraft.waitForReadyRead())
-            logger->append("Client", minecraft.readAll());
+            logger->appendLine("Client", minecraft.readAll());
 
-    logger->append("GameRunner", "Process finished with exit code "
+    logger->appendLine("GameRunner", "Process finished with exit code "
                    + QString::number(minecraft.exitCode()) + "\n");
     emit gameFinished(minecraft.exitCode());
 
@@ -426,13 +426,13 @@ void GameRunner::startRunner()
 void GameRunner::emitError(const QString &message)
 {
     QString pre = "Error: ";
-    logger->append("GameRunner", pre + message + "\n");
+    logger->appendLine("GameRunner", pre + message + "\n");
     emit runError(message);
 }
 
 void GameRunner::emitNeedUpdate(const QString &message)
 {
     QString pre = "Need update: ";
-    logger->append("GameRunner", pre + message + "\n");
+    logger->appendLine("GameRunner", pre + message + "\n");
     emit needUpdate(message);
 }

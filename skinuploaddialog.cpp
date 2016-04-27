@@ -14,7 +14,7 @@ SkinUploadDialog::SkinUploadDialog(QWidget *parent) :
     ui->setupUi(this);
 
     logger = Logger::logger();
-    logger->append("SkinUploadDialog", "Skin upload dialog opened\n");
+    logger->appendLine("SkinUploadDialog", "Skin upload dialog opened\n");
 
     Settings* settings = Settings::instance();
     ui->nickEdit->setText(settings->loadLogin());
@@ -25,24 +25,24 @@ SkinUploadDialog::SkinUploadDialog(QWidget *parent) :
 
 SkinUploadDialog::~SkinUploadDialog()
 {
-    logger->append("SkinUploadDialog", "Skin upload dialog closed\n");
+    logger->appendLine("SkinUploadDialog", "Skin upload dialog closed\n");
     delete ui;
 }
 
 void SkinUploadDialog::uploadSkin() {
 
-    logger->append("SkinUploadDialog", "Try to upload skin\n");
+    logger->appendLine("SkinUploadDialog", "Try to upload skin\n");
 
     QFile* skinfile = new QFile(ui->pathEdit->text());
     if (!skinfile->exists()) {
         ui->messageLabel->setText("Ошибка: файл скина не существует :(");
-        logger->append("SkinUploadDialog", "Error: skin file not exists\n");
+        logger->appendLine("SkinUploadDialog", "Error: skin file not exists\n");
         return;
     }
 
     if (!skinfile->open(QIODevice::ReadOnly)) {
         ui->messageLabel->setText("Ошибка: не удалось открыть файл скина :(");
-        logger->append("SkinUploadDialog", "Error: can't open skinfile\n");
+        logger->appendLine("SkinUploadDialog", "Error: can't open skinfile\n");
         return;
     }
 
@@ -54,18 +54,18 @@ void SkinUploadDialog::uploadSkin() {
 
     if ((imageHeight != 32 && imageHeight !=64) || imageWidth != 64) {
         ui->messageLabel->setText("Ошибка: скин имеет неверное разрешение :(");
-        logger->append("SkinUploadDialog", "Error: skin file has incorrect resolution\n");
+        logger->appendLine("SkinUploadDialog", "Error: skin file has incorrect resolution\n");
         return;
     }
 
     if (ui->nickEdit->text().isEmpty()) {
         ui->messageLabel->setText("Ошибка: игровое имя не может быть пустым");
-        logger->append("SkinUploadDialog", "Error: empty nickname\n");
+        logger->appendLine("SkinUploadDialog", "Error: empty nickname\n");
         return;
     }
     if (ui->passEdit->text().isEmpty()) {
         ui->messageLabel->setText("Ошибка: пароль не может быть пустым");
-        logger->append("SkinUploadDialog", "Error: empty password\n");
+        logger->appendLine("SkinUploadDialog", "Error: empty password\n");
         return;
     }
 
@@ -81,7 +81,7 @@ void SkinUploadDialog::uploadSkin() {
 
     QJsonDocument jsonRequest(payload);
 
-    logger->append("SkinUploadDialog", "Making request...\n");
+    logger->appendLine("SkinUploadDialog", "Making request...\n");
     Reply serverReply =
             Util::makePost(Settings::instance()->getNetworkAccessManager(),
                            Settings::skinUploadUrl, jsonRequest.toJson());
@@ -89,11 +89,11 @@ void SkinUploadDialog::uploadSkin() {
     if (!serverReply.isSuccess()) {
 
         ui->messageLabel->setText("Ошибка: " + serverReply.getErrorString());
-        logger->append("SkinUploadDialog", "Error: " + serverReply.getErrorString() + "\n");
+        logger->appendLine("SkinUploadDialog", "Error: " + serverReply.getErrorString() + "\n");
 
     } else {
 
-        logger->append("SkinUploadDialog", "OK\n");
+        logger->appendLine("SkinUploadDialog", "OK\n");
         QJsonParseError error;
         QJsonDocument json = QJsonDocument::fromJson(serverReply.getData(), &error);
 
@@ -105,18 +105,18 @@ void SkinUploadDialog::uploadSkin() {
             if (!responce["error"].isNull()) {
 
                 ui->messageLabel->setText("Ошибка: " + responce["error"].toString());
-                logger->append("SkinUploadDialog", "Error: " + responce["error"].toString() + "\n");
+                logger->appendLine("SkinUploadDialog", "Error: " + responce["error"].toString() + "\n");
 
             } else {
                 // Correct request
                 ui->messageLabel->setText("Поздравляем! Скин успешно изменён!");
-                logger->append("SkinUploadDialog", "Skin changed!\n");
+                logger->appendLine("SkinUploadDialog", "Skin changed!\n");
             }
 
         } else {
             // JSON parse error
             ui->messageLabel->setText("Ошибка: сервер ответил ерунду...");
-            logger->append("SkinUploadDialog", "JSON parse error\n");
+            logger->appendLine("SkinUploadDialog", "JSON parse error\n");
         }
     }
 
@@ -126,6 +126,6 @@ void SkinUploadDialog::uploadSkin() {
 void SkinUploadDialog::openFileDialog() {
     QString path = QFileDialog::getOpenFileName(this, "Выберите файл скина", QDir::homePath(), "*.png");
     ui->pathEdit->setText(path);
-    logger->append("SkinUploadDialog", "Selected skin-file: " + path + "\n");
+    logger->appendLine("SkinUploadDialog", "Selected skin-file: " + path + "\n");
 }
 

@@ -3,14 +3,51 @@
 
 DataFetcher::DataFetcher(QObject *parent) : QObject(parent)
 {
-    reply = NULL;
+    waiting = false;
+    reset();
+
     nam = Settings::instance()->getNetworkAccessManager();
     logger = Logger::logger();
 }
 
 void DataFetcher::log(const QString &text)
 {
-    logger->append( tr("DataFetcher"), text + QString("\n") );
+    logger->appendLine( tr("DataFetcher"), text );
+}
+
+void DataFetcher::reset()
+{
+    size = 0;
+    data.clear();
+    error.clear();
+
+    if ( waiting )
+    {
+        unhandleReply();
+    }
+}
+
+void DataFetcher::handleReply()
+{
+    connect(reply, &QNetworkReply::finished,
+            this, &DataFetcher::requestFinished);
+
+    connect(reply, &QNetworkReply::downloadProgress,
+            this, &DataFetcher::fetchProgress);
+
+    waiting = true;
+}
+
+void DataFetcher::unhandleReply()
+{
+    disconnect(reply, &QNetworkReply::finished,
+               this, &DataFetcher::requestFinished);
+
+    disconnect(reply, &QNetworkReply::downloadProgress,
+               this, &DataFetcher::fetchProgress);
+
+    waiting = false;
+    reply->deleteLater();
 }
 
 const QByteArray &DataFetcher::getData() const
@@ -18,19 +55,32 @@ const QByteArray &DataFetcher::getData() const
     return data;
 }
 
-const QString &DataFetcher::getError() const
+quint64 DataFetcher::getSize()
+{
+    return size;
+}
+
+const QString &DataFetcher::errorString() const
 {
     return error;
+}
+
+void DataFetcher::makeHead(const QUrl &url)
+{
+    log( tr("Make HEAD request: ") + url.toString() );
+
+    reset();
+    reply = nam->head( QNetworkRequest(url) );
+    handleReply();
 }
 
 void DataFetcher::makeGet(const QUrl &url)
 {
     log( tr("Make GET request: ") + url.toString() );
 
+    reset();
     reply = nam->get(QNetworkRequest(url));
-
-    connect(reply, &QNetworkReply::finished,
-            this, &DataFetcher::requestFinished);
+    handleReply();
 }
 
 void DataFetcher::makePost(const QUrl &url, const QByteArray &postData)
@@ -41,18 +91,21 @@ void DataFetcher::makePost(const QUrl &url, const QByteArray &postData)
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setHeader(QNetworkRequest::ContentLengthHeader, postData.size());
 
+    reset();
     reply = nam->post(request, postData);
-
-    connect(reply, &QNetworkReply::finished,
-            this, &DataFetcher::requestFinished);
+    handleReply();
 }
 
 void DataFetcher::requestFinished()
 {
+    bool result = true;
+
     if (reply->error() == QNetworkReply::NoError)
     {
         data = reply->readAll();
-        emit finished(true);
+
+        QNetworkRequest::KnownHeaders cl = QNetworkRequest::ContentLengthHeader;
+        size = reply->header(cl).toULongLong();
     }
     else
     {
@@ -65,18 +118,21 @@ void DataFetcher::requestFinished()
            error = reply->errorString();
         }
 
+        result = false;
         log( tr("Error: ") + error );
-        emit finished(false);
     }
 
-    reply->close();
-    reply->deleteLater();
+    unhandleReply();
+
+    emit finished(result);
+}
+
+void DataFetcher::fetchProgress(qint64 bytesReceived, qint64 bytesTotal)
+{
+    emit progress(bytesReceived, bytesTotal);
 }
 
 void DataFetcher::cancel()
 {
-    if ( (reply != NULL) && reply->isRunning() )
-    {
-        reply->abort();
-    }
+    reset();
 }

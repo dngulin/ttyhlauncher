@@ -47,13 +47,6 @@ private slots:
     void gameRunnerStarted();
     void gameRunnerFinished(int exitCode);
 
-    void switchBuilderMenuVisibility();
-
-    void showCloneDialog();
-    void showFetchDialog();
-    void showCheckoutDialog();
-    void showExportDialog();
-
     void showError(const QString & title, const QString & message);
 
 
@@ -65,6 +58,8 @@ private:
     Logger* logger;
 
     GameRunner* gameRunner;
+
+    void appendLineToLog(const QString& line);
 
     void storeParameters();
 

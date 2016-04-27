@@ -1,29 +1,30 @@
 #include "hashchecker.h"
 
-void HashChecker::checkFiles(const QList<QPair<QString, QString> > &list)
+HashChecker::HashChecker()
+{
+    qRegisterMetaType<QList<FileInfo>>("QList<FileInfo>");
+}
+
+void HashChecker::checkFiles(const QList<FileInfo> &list)
 {
     cancelled = false;
 
     int total = list.count();
     int current = 0;
 
-    QPair<QString, QString> entry;
-    foreach (entry, list)
+    foreach (const FileInfo entry, list)
     {
         if (cancelled)
         {
             break;
         }
 
-        QString name = entry.first;
-        QString hash = entry.second;
-
         current++;
         emit progress( current / total * 100 );
 
-        if ( !checkFile(name, hash) )
+        if ( !hashIsValid(entry) )
         {
-            emit verificationFailed(name);
+            emit verificationFailed(entry);
         }
     }
 
@@ -38,15 +39,15 @@ void HashChecker::cancel()
     cancelled = true;
 }
 
-bool HashChecker::checkFile(const QString &name, const QString &hash)
+bool HashChecker::hashIsValid(const FileInfo fileInfo) const
 {
-    if ( !QFile::exists(name) )
+    if ( !QFile::exists(fileInfo.name) )
     {
         return false;
     }
-    else if (hash != "mutable")
+    else if (!fileInfo.isMutable)
     {
-        QFile file(name);
+        QFile file(fileInfo.name);
         if ( !file.open(QIODevice::ReadOnly) )
         {
             return false;
@@ -59,7 +60,7 @@ bool HashChecker::checkFile(const QString &name, const QString &hash)
             QCryptographicHash::Algorithm alg = QCryptographicHash::Sha1;
             QByteArray sha = QCryptographicHash::hash(data, alg).toHex();
 
-            if ( hash != QString(sha) )
+            if ( fileInfo.hash != QString(sha) )
             {
                 return false;
             }

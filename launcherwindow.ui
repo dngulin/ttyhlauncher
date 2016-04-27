@@ -41,15 +41,24 @@
      <number>5</number>
     </property>
     <item>
-     <widget class="QTextBrowser" name="logDisplay">
+     <widget class="QPlainTextEdit" name="logDisplay">
       <property name="frameShape">
        <enum>QFrame::Box</enum>
+      </property>
+      <property name="undoRedoEnabled">
+       <bool>false</bool>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+      <property name="plainText">
+       <string notr="true"/>
       </property>
       <property name="textInteractionFlags">
        <set>Qt::TextBrowserInteraction</set>
       </property>
-      <property name="openExternalLinks">
-       <bool>true</bool>
+      <property name="maximumBlockCount">
+       <number>1000</number>
       </property>
      </widget>
     </item>
@@ -200,7 +209,7 @@
    </widget>
    <widget class="QMenu" name="addMenu">
     <property name="title">
-     <string>&amp;Additional</string>
+     <string>&amp;Tools</string>
     </property>
     <addaction name="runSettings"/>
     <addaction name="changeSkin"/>
@@ -213,19 +222,9 @@
     <addaction name="bugReport"/>
     <addaction name="aboutLauncher"/>
    </widget>
-   <widget class="QMenu" name="builderMenu">
-    <property name="title">
-     <string>&amp;Build tools</string>
-    </property>
-    <addaction name="doClone"/>
-    <addaction name="doFetch"/>
-    <addaction name="doCheckout"/>
-    <addaction name="doExport"/>
-   </widget>
    <addaction name="optionsMenu"/>
    <addaction name="addMenu"/>
    <addaction name="helpMenu"/>
-   <addaction name="builderMenu"/>
   </widget>
   <action name="playOffline">
    <property name="checkable">

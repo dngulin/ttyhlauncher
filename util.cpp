@@ -29,7 +29,7 @@ quint64 Util::getFileSize(QNetworkAccessManager *nam, const QString &url)
 
 Reply Util::makeGet(QNetworkAccessManager *nam, const QString &url)
 {
-    Logger::logger()->append("Util", "Make GET: " + url + "\n");
+    Logger::logger()->appendLine("Util", "Make GET: " + url + "\n");
 
     bool success = true;
     QString errStr;
@@ -65,7 +65,7 @@ Reply Util::makeGet(QNetworkAccessManager *nam, const QString &url)
 Reply Util::makePost(QNetworkAccessManager *nam,
                      const QString &url, const QByteArray &postData) {
 
-    Logger::logger()->append("Util", "Make POST: " + url + "\n");
+    Logger::logger()->appendLine("Util", "Make POST: " + url + "\n");
 
     bool success = true;
     QString errStr;
@@ -132,7 +132,7 @@ QByteArray Util::makeGzip(const QByteArray& data) {
 
 void Util::removeAll(QString filePath) {
 
-    Logger::logger()->append("Util", "Removing " + filePath + "\n");
+    Logger::logger()->appendLine("Util", "Removing " + filePath + "\n");
 
     QFileInfo fileInfo = QFileInfo(filePath);
 
@@ -169,7 +169,7 @@ void Util::recursiveFlist(QStringList *list, QString prefix, QString dpath) {
 void Util::unzipArchive(QString zipFilePath, QString extractionPath) {
 
     Logger* logger = Logger::logger();
-    logger->append("Util", "Unzip archive " + zipFilePath + "\n");
+    logger->appendLine("Util", "Unzip archive " + zipFilePath + "\n");
 
     QuaZip zip(zipFilePath);
     if (zip.open(QuaZip::mdUnzip)) {
@@ -188,13 +188,13 @@ void Util::unzipArchive(QString zipFilePath, QString extractionPath) {
 
             if (!rfInfo.isDir()) {
 
-                logger->append("Util", "Extracting file " + realFile->fileName() + "\n");
+                logger->appendLine("Util", "Extracting file " + realFile->fileName() + "\n");
 
                 if (realFile->open(QIODevice::WriteOnly)) {
                     realFile->write(zipFile.readAll());
                     realFile->close();
                 } else {
-                    logger->append("Util", "Unzip error: " + realFile->errorString() + "\n");
+                    logger->appendLine("Util", "Unzip error: " + realFile->errorString() + "\n");
                 }
             }
 
@@ -216,7 +216,7 @@ QString Util::getCommandOutput(QString command, QStringList args) {
     toRun += command;
     toRun += " " + args.join(" ");
 
-    logger->append("Util", "Running: " + toRun + "\n");
+    logger->appendLine("Util", "Running: " + toRun + "\n");
     result = "Output of \"" + toRun + "\":\n";
 
     QProcess* process = new QProcess(0);
@@ -224,10 +224,10 @@ QString Util::getCommandOutput(QString command, QStringList args) {
     process->start(command, args);
 
     if (!process->waitForStarted()) result += "FAILED_TO_START\n";
-    logger->append("Util", "Process started\n");
+    logger->appendLine("Util", "Process started\n");
 
     process->waitForFinished();
-    logger->append("Util", "Process terminated!\n");
+    logger->appendLine("Util", "Process terminated!\n");
 
     result += process->readAll();
 
@@ -255,7 +255,7 @@ bool Util::downloadFile(QNetworkAccessManager *nam, const QString &url, const QS
 
     Reply reply = makeGet(nam, url);
     if (!reply.isSuccess()) {
-        Logger::logger()->append("Util", "Error: " + reply.getErrorString() + "\n");
+        Logger::logger()->appendLine("Util", "Error: " + reply.getErrorString() + "\n");
         return false;
     } else {
         QFile* file = new QFile(fileName);

@@ -22,10 +22,6 @@ SOURCES += main.cpp \
     logger.cpp \
     util.cpp \
     reply.cpp \
-    clonedialog.cpp \
-    fetchdialog.cpp \
-    checkoutdialog.cpp \
-    exportdialog.cpp \
     licensedialog.cpp \
     jsonparser.cpp \
     libraryinfo.cpp \
@@ -45,10 +41,6 @@ HEADERS += launcherwindow.h \
     logger.h \
     util.h \
     reply.h \
-    clonedialog.h \
-    fetchdialog.h \
-    checkoutdialog.h \
-    exportdialog.h \
     licensedialog.h \
     jsonparser.h \
     libraryinfo.h \
@@ -64,10 +56,6 @@ FORMS += launcherwindow.ui \
     updatedialog.ui \
     feedbackdialog.ui \
     aboutdialog.ui \
-    clonedialog.ui \
-    fetchdialog.ui \
-    checkoutdialog.ui \
-    exportdialog.ui \
     licensedialog.ui
 
 RESOURCES += \

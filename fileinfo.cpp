@@ -1,7 +1,10 @@
+#include <QtCore>
 #include "fileinfo.h"
 
 FileInfo::FileInfo()
 {
+    qRegisterMetaType<FileInfo>("FileInfo");
+
     name = "";
     hash = "";
     size = 0;

@@ -3,22 +3,27 @@
 
 #include <QtCore>
 
+#include "fileinfo.h"
+
 class HashChecker : public QObject
 {
     Q_OBJECT
 
+public:
+    HashChecker();
+
 public slots:
-    void checkFiles(const QList< QPair< QString, QString > > &list);
+    void checkFiles(const QList< FileInfo > &list);
     void cancel();
 
 private:
-    bool checkFile(const QString &name, const QString &hash);
+    bool hashIsValid(const FileInfo fileInfo) const;
 
     bool cancelled;
 
 signals:
     void progress( int percents );
-    void verificationFailed(const QString &name);
+    void verificationFailed(const FileInfo fileInfo);
     void finished();
 };
 

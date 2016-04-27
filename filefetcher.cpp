@@ -1,8 +1,6 @@
 #include "filefetcher.h"
 #include "settings.h"
 
-#include <QDebug>
-
 FileFetcher::FileFetcher(QObject *parent) :
     QObject(parent)
 {
@@ -13,9 +11,9 @@ FileFetcher::FileFetcher(QObject *parent) :
 
     hasFetchErrors = false;
 
-    fetchReply = NULL;
-    nam = Settings::instance()->getNetworkAccessManager();
     logger = Logger::logger();
+
+    prefix = Settings::instance()->getBaseDir();
 }
 
 FileFetcher::~FileFetcher()
@@ -24,12 +22,14 @@ FileFetcher::~FileFetcher()
 
 void FileFetcher::log(const QString &text)
 {
-    logger->append( tr("FileFetcher"), text + QString("\n") );
+    logger->appendLine( tr("FileFetcher"), text );
 }
 
 void FileFetcher::add(QUrl url, QString filename)
 {
-    log(tr("Add to download list: ") + filename);
+    QString shortName = filename.mid( prefix.length() + 1 );
+
+    log(tr("Add to download list ") + shortName);
     fetchData.append( QPair<QUrl, QString >(url, filename) );
 }
 
@@ -41,8 +41,6 @@ void FileFetcher::add(QUrl url, QString filename, quint64 size)
 
 void FileFetcher::reset()
 {
-    qDebug() << "RESET";
-
     fetched = 0;
     fetchSize = 0;
 
@@ -53,12 +51,7 @@ void FileFetcher::reset()
 
 void FileFetcher::cancel()
 {
-    qDebug() << "CANCEL";
-
-    if ( (fetchReply != NULL) && fetchReply->isRunning() )
-    {
-        fetchReply->abort();
-    }
+    df.cancel();
     reset();
 }
 
@@ -68,6 +61,8 @@ void FileFetcher::fetchSizes()
     if (fetchData.count() > 0)
     {
         log( tr("Request downloads sizes...") );
+
+        connect(&df, &DataFetcher::finished, this, &FileFetcher::sizeFetched);
 
         current = 0;
         fetchSize = 0;
@@ -83,43 +78,33 @@ void FileFetcher::fetchSizes()
 void FileFetcher::fetchCurrentSize()
 {
     QUrl url = fetchData[current].first;
-    log( tr("Fetch size for ") + url.toString() );
-
-    fetchReply = nam->head( QNetworkRequest(url) );
-
-    connect(fetchReply, &QNetworkReply::finished,
-            this, &FileFetcher::updateFetchSize);
+    df.makeHead(url);
 }
 
-void FileFetcher::updateFetchSize()
+void FileFetcher::sizeFetched(bool result)
 {
-    if (fetchReply->error() == QNetworkReply::NoError)
+    if (result)
     {
-        quint64 fileSize = fetchReply->
-                           header(QNetworkRequest::ContentLengthHeader)
-                           .toULongLong();
+        fetchSize += df.getSize();
 
-        fetchSize += fileSize;
-
-        float percents = ( float(current) / fetchData.count() ) * 100;
+        float percents = ( float(current + 1) / fetchData.count() ) * 100;
         emit sizesFetchProgress( int(percents) );
     }
     else
     {
-        log( tr("Error: ") + fetchReply->errorString() );
-        emit sizesFetchError( fetchReply->errorString() );
+        emit sizesFetchError( df.errorString() );
     }
 
-    fetchReply->close();
-    fetchReply->deleteLater();
-
     current++;
-    if ( current <= fetchData.count() )
+    if ( current < fetchData.count() )
     {
         fetchCurrentSize();
     }
     else
     {
+        disconnect(&df, &DataFetcher::finished,
+                   this, &FileFetcher::sizeFetched);
+
         current = 0;
         log( tr("Downloading finished.") );
         emit sizesFetchFinished();
@@ -143,6 +128,11 @@ void FileFetcher::fetchFiles()
     {
         log( tr("Begin downloading files...") );
 
+        connect(&df, &DataFetcher::finished, this, &FileFetcher::fileFetched);
+        connect(&df, &DataFetcher::progress,
+                this, &FileFetcher::fileFetchProgress);
+
+        hasFetchErrors = false;
         current = 0;
         fetchCurrentFile();
     }
@@ -158,37 +148,9 @@ void FileFetcher::fetchCurrentFile()
     QUrl url = fetchData[current].first;
     QString fname = fetchData[current].second;
 
-    log( tr("Downloading ") + url.toString() + QString(" ...") );
     emit filesFetchNewTarget(url.toString(), fname);
 
-    fetchReply = nam->get( QNetworkRequest(url) );
-
-    qDebug() << "pre connect";
-    qDebug() << "open" << fetchReply->isOpen();
-    qDebug() << "run"  << fetchReply->isRunning();
-    qDebug() << "fin" << fetchReply->isFinished();
-    qDebug() << "err" << fetchReply->error();
-
-    // FIXME: No one slot will be invoked. Why?
-    // I don't know how to fix this shit...
-
-    connect(fetchReply, &QNetworkReply::downloadProgress,
-            this, &FileFetcher::fileFetchProgress);
-
-    connect(fetchReply, &QNetworkReply::finished,
-            this, &FileFetcher::saveCurrentFile);
-
-    connect( fetchReply, SIGNAL( error(QNetworkReply::NetworkError) ),
-             this, SLOT( fetchError(QNetworkReply::NetworkError) ) );
-
-    connect( fetchReply, SIGNAL( sslErrors(QList<QSslError>)),
-             this, SLOT( fetchSslError(QList<QSslError>)) );
-
-    qDebug() << "post connect";
-    qDebug() << "open" << fetchReply->isOpen();
-    qDebug() << "run"  << fetchReply->isRunning();
-    qDebug() << "fin" << fetchReply->isFinished();
-    qDebug() << "err" << fetchReply->error();
+    df.makeGet(url);
 }
 
 void FileFetcher::fileFetchProgress(qint64 bytesReceived, qint64 bytesTotal)
@@ -201,23 +163,12 @@ void FileFetcher::fileFetchProgress(qint64 bytesReceived, qint64 bytesTotal)
     emit filesFetchProgress( int(baseValue + addValue) );
 }
 
-void FileFetcher::fetchError(QNetworkReply::NetworkError error)
+void FileFetcher::fileFetched(bool result)
 {
-    qDebug() << "ERR" << error;
-}
-
-void FileFetcher::fetchSslError(QList<QSslError> err)
-{
-    qDebug() << "SSL ERR" << err;
-}
-
-void FileFetcher::saveCurrentFile()
-{
-    qDebug() << "SAVE";
 
     QString fname = fetchData[current].second;
 
-    if (fetchReply->error() == QNetworkReply::NoError)
+    if (result)
     {
         QFile file(fname);
         QDir fdir = QFileInfo(fname).absoluteDir();
@@ -232,28 +183,25 @@ void FileFetcher::saveCurrentFile()
         }
         else
         {
-            file.write( fetchReply->readAll() );
+            file.write( df.getData() );
             file.close();
 
             fetched += file.size();
 
-            log( tr("OK") );
+            QString shortName = fname.mid( prefix.length() + 1 );
+            log( tr("Saved file: ") + shortName );
+
             emit filesFetchProgress( int(float(fetched) / fetchSize * 100) );
         }
     }
     else
     {
         hasFetchErrors = true;
-
-        log( tr("Error: ") + fetchReply->errorString() );
-        emit filesFetchError( fetchReply->errorString() );
+        emit filesFetchError( df.errorString() );
     }
 
-    fetchReply->close();
-    fetchReply->deleteLater();
-
     current++;
-    if ( current <= fetchData.count() )
+    if ( current < fetchData.count() )
     {
         fetchCurrentFile();
     }
@@ -262,7 +210,13 @@ void FileFetcher::saveCurrentFile()
         current = 0;
         log( tr("Downloading finished.") );
 
+        disconnect(&df, &DataFetcher::finished, this,
+                   &FileFetcher::fileFetched);
+
+        disconnect(&df, &DataFetcher::progress,
+                   this, &FileFetcher::fileFetchProgress);
+
         emit filesFetchFinished();
-        emit filesFetchResult(hasFetchErrors);
+        emit filesFetchResult(!hasFetchErrors);
     }
 }

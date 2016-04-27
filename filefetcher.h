@@ -5,6 +5,7 @@
 #include <QtNetwork>
 
 #include "logger.h"
+#include "datafetcher.h"
 
 class FileFetcher : public QObject
 {
@@ -33,13 +34,13 @@ private:
     QList< QPair<QUrl, QString> > fetchData;
     int current;
 
-    QNetworkAccessManager *nam;
-    QNetworkReply *fetchReply;
-
+    DataFetcher df;
     bool hasFetchErrors;
 
     Logger *logger;
     void log(const QString &text);
+
+    QString prefix;
 
 signals:
     void sizesFetchProgress(int progress);
@@ -54,12 +55,10 @@ signals:
 
 private slots:
     void fetchCurrentSize();
-    void updateFetchSize();
+    void sizeFetched(bool result);
 
     void fetchCurrentFile();
-    void fetchError(QNetworkReply::NetworkError error);
-    void fetchSslError(QList<QSslError> err);
-    void saveCurrentFile();
+    void fileFetched(bool result);
     void fileFetchProgress(qint64 bytesReceived, qint64 bytesTotal);
 };
 

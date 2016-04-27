@@ -5,13 +5,13 @@
 #include "logger.h"
 #include "util.h"
 
+#include <QDebug>
+
 UpdateDialog::UpdateDialog(QString displayMessage, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::UpdateDialog)
 {
     ui->setupUi(this);
-
-    fetcher = new FileFetcher(this);
 
     checker = new HashChecker();
     checker->moveToThread(&checkThread);
@@ -34,13 +34,6 @@ UpdateDialog::UpdateDialog(QString displayMessage, QWidget *parent) :
             checker, &HashChecker::cancel);
 
     checkThread.start();
-
-    // Fecth files conections
-    connect(fetcher, &FileFetcher::filesFetchProgress,
-            ui->progressBar, &QProgressBar::setValue);
-
-    connect(fetcher, &FileFetcher::filesFetchFinished,
-            this, &UpdateDialog::updateFinished);
 
     settings = Settings::instance();
     logger = Logger::logger();
@@ -69,6 +62,18 @@ UpdateDialog::UpdateDialog(QString displayMessage, QWidget *parent) :
     connect(&versionsFetcher, &DataFetcher::finished,
             this, &UpdateDialog::versionListRequested);
 
+    connect(&indexFetcher, &FileFetcher::filesFetchResult,
+            this, &UpdateDialog::versionIndexUpdated);
+
+    connect(&assetsFetcher, &FileFetcher::filesFetchResult,
+            this, &UpdateDialog::assetsIndexUpdated);
+
+    connect(&fileFetcher, &FileFetcher::filesFetchResult,
+            this, &UpdateDialog::updateComplete);
+
+    connect(&fileFetcher, &FileFetcher::filesFetchProgress,
+            ui->progressBar, &QProgressBar::setValue);
+
     setState(CanCheck);
 
     if (ui->clientCombo->count() == 0)
@@ -80,7 +85,7 @@ UpdateDialog::UpdateDialog(QString displayMessage, QWidget *parent) :
 
 void UpdateDialog::log(const QString &line, bool hidden)
 {
-    logger->append(tr("UpdateDialog"), line + "\n");
+    logger->appendLine(tr("UpdateDialog"), line);
     if (!hidden)
     {
         ui->log->appendPlainText(line);
@@ -90,13 +95,23 @@ void UpdateDialog::log(const QString &line, bool hidden)
 void UpdateDialog::error(const QString &line)
 {
     log(line);
-    setState(CanClose);
+    setState(CanCheck);
 }
 
 void UpdateDialog::setInteractable(bool state)
 {
     ui->clientCombo->setEnabled(state);
     ui->updateButton->setEnabled(state);
+}
+
+void UpdateDialog::resetUpdateData()
+{
+    indexFetcher.cancel();
+    assetsFetcher.cancel();
+    fileFetcher.cancel();
+
+    removeList.clear();
+    checkList.clear();
 }
 
 void UpdateDialog::setState(UpdaterState newState)
@@ -107,12 +122,7 @@ void UpdateDialog::setState(UpdaterState newState)
     switch (state)
     {
     case CanCheck:
-        fetcher->cancel();
-
-        removeList.clear();
-        checkList.clear();
-        checkInfo.clear();
-
+        resetUpdateData();
         ui->updateButton->setText( tr("Check for updates") );
         setInteractable(true);
 
@@ -120,7 +130,7 @@ void UpdateDialog::setState(UpdaterState newState)
 
     case Checking:
         setInteractable(false);
-        checkStart();
+        doCheck();
         break;
 
     case CanUpdate:
@@ -185,6 +195,7 @@ void UpdateDialog::cancelClicked()
 
     case Checking:
     case Updating:
+        log( tr("The operation is canceled!") );
         setState(CanCheck);
         break;
 
@@ -197,13 +208,14 @@ void UpdateDialog::cancelClicked()
 
 // Checking sequence
 
-void UpdateDialog::checkStart()
+void UpdateDialog::doCheck()
 {
     int clientId = settings->loadActiveClientId();
     QString clientString = settings->getClientStrId(clientId);
 
     clientVersion = settings->loadClientVersion();
 
+    ui->log->clear();
     log( tr("Checking for updates... ") );
     log(tr("Client: ") + clientString + tr(", version: ") + clientVersion);
 
@@ -260,13 +272,8 @@ void UpdateDialog::updateVersionIndex()
 
     log( tr("Requesting actual version indexes...") );
 
-    FileFetcher indexFetcher;
     indexFetcher.add(versionUrl, versionFile);
     indexFetcher.add(dataUrl, dataFile);
-
-    connect(&indexFetcher, &FileFetcher::filesFetchResult,
-            this, &UpdateDialog::versionIndexUpdated);
-
     indexFetcher.fetchFiles();
 }
 
@@ -301,10 +308,6 @@ void UpdateDialog::processClientFiles()
         return;
     }
 
-    // Check files
-    QString name, hash, url;
-    quint64 size;
-
     // I. JAR
     log( tr("Append main JAR to check list...") );
     if ( !dataParser.hasJarFileInfo() )
@@ -313,11 +316,14 @@ void UpdateDialog::processClientFiles()
         return;
     }
 
-    name = indexDir + clientVersion + ".jar";
-    hash = dataParser.getJarFileInfo().hash;
-    size = dataParser.getJarFileInfo().size;
-    url = settings->getVersionUrl(clientVersion) + clientVersion + ".jar";
-    addToCheckList(name, hash, size, url);
+    FileInfo jar;
+
+    jar.name = indexDir + clientVersion + ".jar";
+    jar.hash = dataParser.getJarFileInfo().hash;
+    jar.size = dataParser.getJarFileInfo().size;
+    jar.url = settings->getVersionUrl(clientVersion) + clientVersion + ".jar";
+
+    checkList.append(jar);
 
     // II. LIBS
     log( tr("Append libraries to checklist...") );
@@ -331,9 +337,9 @@ void UpdateDialog::processClientFiles()
     QString libUrl = settings->getLibsUrl();
 
     QList<LibraryInfo> liblist = versionParser.getLibraryList();
-    foreach (LibraryInfo libInfo, liblist)
+    foreach (LibraryInfo entry, liblist)
     {
-        QString lib = libInfo.name;
+        QString lib = entry.name;
 
         if ( !dataParser.hasLibFileInfo(lib) )
         {
@@ -341,11 +347,12 @@ void UpdateDialog::processClientFiles()
             return;
         }
 
-        name = libDir + lib;
-        hash = dataParser.getLibFileInfo(lib).hash;
-        size = dataParser.getLibFileInfo(lib).size;
-        url = libUrl + lib;
-        addToCheckList(name, hash, size, url);
+        FileInfo fileInfo = dataParser.getLibFileInfo(lib);
+
+        fileInfo.name = libDir + lib;
+        fileInfo.url = libUrl + lib;
+
+        checkList.append(fileInfo);
     }
 
     // III. ADDONS
@@ -362,39 +369,34 @@ void UpdateDialog::processClientFiles()
     QList<FileInfo> addons = dataParser.getAddonsFilesInfo();
     foreach (FileInfo addon, addons)
     {
-        name = clientPrefix + addon.name;
-        hash = addon.hash;
-        size = addon.size;
-        url = addonsUrl + addon.name;
+        QString shortName = addon.name;
+        addon.name = clientPrefix + shortName;
+        addon.url = addonsUrl + shortName;
 
-        if (addon.isMutable)
-        {
-            hash = "mutable";
-        }
-
-        addToCheckList(name, hash, size, url);
+        checkList.append(addon);
     }
 
     log( tr("Checking for obsolete addons...") );
     QString installedIndex = clientPrefix + "installed_data.json";
 
     JsonParser installedParser;
-    if ( !installedParser.setJsonFromFile(installedIndex) )
+    if ( installedParser.setJsonFromFile(installedIndex) )
     {
-        log(versionParser.getParserError(), true);
-        error( tr("Error! Can't read installed addons index.") );
-        return;
-    }
+        auto newFiles = dataParser.getAddonsFilesInfoHashMap();
+        auto oldFiles = installedParser.getAddonsFilesInfoHashMap();
 
-    auto newFiles = dataParser.getAddonsFilesInfoHashMap();
-    auto oldFiles = installedParser.getAddonsFilesInfoHashMap();
-
-    foreach ( QString oldFile, oldFiles.keys() )
-    {
-        if ( !newFiles.contains(oldFile) )
+        foreach ( QString oldFile, oldFiles.keys() )
         {
-            removeList.append(oldFile);
+            if ( !newFiles.contains(oldFile) )
+            {
+                removeList.append(oldFile);
+            }
         }
+    }
+    else
+    {
+        log( tr("Can't read installed data index: ") +  installedIndex, true );
+        log(installedParser.getParserError(), true);
     }
 
     // IV. ASSETS
@@ -409,13 +411,8 @@ void UpdateDialog::processClientFiles()
     QString assetsDir = settings->getAssetsDir() + "/indexes/";
     QString assetsUrl = settings->getAssetsUrl() + "indexes/";
 
-    FileFetcher indexFetcher;
-    indexFetcher.add(assetsUrl + assetsName, assetsDir + assetsName);
-
-    connect(&indexFetcher, &FileFetcher::filesFetchResult,
-            this, &UpdateDialog::assetsIndexUpdated);
-
-    indexFetcher.fetchFiles();
+    assetsFetcher.add(assetsUrl + assetsName, assetsDir + assetsName);
+    assetsFetcher.fetchFiles();
 }
 
 void UpdateDialog::assetsIndexUpdated(bool result)
@@ -431,37 +428,35 @@ void UpdateDialog::assetsIndexUpdated(bool result)
 
 void UpdateDialog::processAssets()
 {
-    QString assetsDir = settings->getAssetsDir() + "/indexes/";
-    QString assetsUrl = settings->getAssetsUrl() + "indexes/";
+    QString assetsIndexDir = settings->getAssetsDir() + "/indexes/";
     QString assetsName = versionParser.getAssetsVesrsion() + ".json";
 
     JsonParser assetsParser;
-    if ( !assetsParser.setJsonFromFile(assetsDir + assetsName) )
+    if ( !assetsParser.setJsonFromFile(assetsIndexDir + assetsName) )
     {
         log(assetsParser.getParserError(), true);
         error( tr("Error! Can't read assets index.") );
         return;
     }
 
-    log( tr("Add assets files to check list...") );
+    log( tr("Append assets files to check list...") );
     if ( !assetsParser.hasAssetsList() )
     {
         error( tr("Error! Assets list are not described in index.") );
         return;
     }
 
-    QString name, hash, url;
-    quint64 size;
+    QString assetsDir = settings->getAssetsDir() + "/objects/";
+    QString assetsUrl = settings->getAssetsUrl() + "objects/";
 
     QList<FileInfo> assets = assetsParser.getAssetsList();
     foreach (FileInfo asset, assets)
     {
-        name = assetsDir + asset.name;
-        hash = asset.hash;
-        size = asset.size;
-        url = assetsUrl + asset.name;
+        QString shortName = asset.name;
+        asset.name = assetsDir + shortName;
+        asset.url = assetsUrl + shortName;
 
-        addToCheckList(name, hash, size, url);
+        checkList.append( asset );
     }
 
     log( tr("Checking files...") );
@@ -470,12 +465,14 @@ void UpdateDialog::processAssets()
 
 void UpdateDialog::checkFinished()
 {
-    bool need_fetch = fetcher->getCount() > 0 ;
+    log( tr("Done!") );
+
+    bool need_fetch = fileFetcher.getCount() > 0 ;
     bool need_remove = !removeList.empty();
 
     if (need_fetch || need_remove)
     {
-        log( tr("Client checking completed, no need update.") );
+        ui->log->appendPlainText("");
 
         if ( need_remove )
         {
@@ -487,9 +484,9 @@ void UpdateDialog::checkFinished()
 
         if ( need_fetch )
         {
-            int count = fetcher->getCount();
+            int count = fileFetcher.getCount();
 
-            double size = fetcher->getFetchSize() / 1024;
+            double size = fileFetcher.getFetchSize() / 1024;
             QString suffix = tr(" KiB");
 
             if ( size > 1024 * 1024 )
@@ -522,87 +519,68 @@ void UpdateDialog::checkFinished()
 
 void UpdateDialog::doUpdate()
 {
-    ui->clientCombo->setEnabled(false);
-    ui->updateButton->setEnabled(false);
+    ui->log->appendPlainText("");
 
-    if ( !removeList.isEmpty() )
+    bool need_fetch = fileFetcher.getCount() > 0 ;
+    bool need_remove = !removeList.empty();
+
+    QString clientDir = settings->getClientPrefix(clientVersion) + "/";
+    QString versionDir = settings->getVersionsDir() + "/" + clientVersion + "/";
+
+    if (need_remove)
     {
-        ui->log->appendPlainText("\n # Удаление устаревших модификаций:");
-        logger->append("UpdateDialog", "Removing files...\n");
+        log( tr("Removing obsolete files...") );
+
+        int total   = removeList.size();
+        int current = 1;
 
         foreach (QString entry, removeList)
         {
-            ui->log->appendPlainText("Удаление: " + entry);
-            logger->append("UpdateDialog", "Remove " + entry + "\n");
+            log( tr("Removing: ") + entry );
+            QFile::remove(clientDir + entry);
 
-            QFile::remove(settings->getClientPrefix(clientVersion) + "/"
-                          + entry);
-            ui->progressBar->setValue( int( ( float(removeList.indexOf(entry)
-                                                    + 1) / removeList.size() )
-                                            * 100 ) );
+            current++;
+            ui->progressBar->setValue( int(float(current) * 100 / total) );
         }
+
+        removeList.clear();
     }
 
     // Replace custom files index
-    QFile::remove(settings->getClientPrefix(
-                      clientVersion) + "/installed_data.json");
+    QFile::remove(clientDir + "installed_data.json");
+    QDir(clientDir).mkpath(clientDir);
+    QFile::copy( versionDir + "data.json", clientDir + "installed_data.json");
 
-    QDir(settings->getClientPrefix(clientVersion) + "/").mkpath(settings->getClientPrefix(
-                                                                    clientVersion)
-                                                                + "/");
-    QFile::copy(settings->getVersionsDir() + "/" + clientVersion + "/data.json",
-                settings->getClientPrefix(
-                    clientVersion) + "/installed_data.json");
-
-    if (fetcher->getFetchSize() != 0)
+    if (need_fetch)
     {
-        ui->log->appendPlainText("\n # Загрузка обновлений:");
-        logger->append("UpdateDialog", "Downloading started...\n");
-        fetcher->fetchFiles();
+        log( tr("Downloading files...") );
+        fileFetcher.fetchFiles();
     }
     else
     {
-        updateFinished();
+        updateComplete(true);
     }
 }
 
-void UpdateDialog::updateFinished()
+void UpdateDialog::updateComplete(bool result)
 {
-    ui->log->appendPlainText("\nОбновление выполнено!");
-    logger->append("UpdateDialog", "Update completed\n");
+    ui->log->appendPlainText("");
 
-    disconnect( ui->updateButton, SIGNAL( clicked() ), this,
-                SLOT( doUpdate() ) );
-    ui->updateButton->setText("Закрыть");
-    connect( ui->updateButton, SIGNAL( clicked() ), this, SLOT( close() ) );
-    state = CanUpdate;
-
-    ui->clientCombo->setEnabled(true);
-    ui->updateButton->setEnabled(true);
-}
-
-void UpdateDialog::addToCheckList(const QString &fileName,
-                                  const QString &checkSumm, quint64 size,
-                                  const QString &url)
-{
-    log(tr("Add to check list: ") + fileName, true);
-    checkList.append( QPair< QString, QString >(fileName, checkSumm) );
-    checkInfo[ fileName ] = QPair< QUrl, quint64 >(QUrl(url), size);
-}
-
-void UpdateDialog::addToFetchList(const QString &file)
-{
-    if (checkInfo.contains(file))
+    if (result)
     {
-        QUrl url = checkInfo[file].first;
-        quint64 size = checkInfo[file].second;
-
-        fetcher->add(url, file, size);
+        log( tr("Update complete!") );
     }
     else
     {
-        log(tr("Error: need to fetch unknown file: ") +  file);
+        log( tr("Update not completed. Some files was not downloaded.") );
+
     }
+    setState(CanClose);
+}
+
+void UpdateDialog::addToFetchList(const FileInfo fileInfo)
+{
+    fileFetcher.add(fileInfo.url, fileInfo.name, fileInfo.size);
 }
 
 UpdateDialog::~UpdateDialog()

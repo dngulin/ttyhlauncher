@@ -2,7 +2,7 @@
 #define FILEINFO_H
 
 #include <QString>
-
+#include <QUrl>
 
 class FileInfo
 {
@@ -15,6 +15,7 @@ public:
     QString hash;
     int size;
     bool isMutable;
+    QUrl url;
 };
 
 #endif // FILEINFO_H

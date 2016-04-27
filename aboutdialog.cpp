@@ -2,7 +2,6 @@
 #include "ui_aboutdialog.h"
 
 #include "settings.h"
-#include "logger.h"
 #include "licensedialog.h"
 
 AboutDialog::AboutDialog(QWidget *parent) :
@@ -16,8 +15,6 @@ AboutDialog::AboutDialog(QWidget *parent) :
 
     connect(ui->closeButton, SIGNAL(clicked()), this, SLOT(close()));
     connect(ui->licenseButton, SIGNAL(clicked()), this, SLOT(showLicense()));
-
-    Logger::logger()->append("AboutDialog", "About dialog opened\n");
 }
 
 void AboutDialog::showLicense() {
@@ -28,6 +25,5 @@ void AboutDialog::showLicense() {
 
 AboutDialog::~AboutDialog()
 {
-    Logger::logger()->append("AboutDialog", "About dialog closed\n");
     delete ui;
 }
