@@ -2,20 +2,13 @@
 #include <QStandardPaths>
 #include <QSysInfo>
 
-
 #include "settings.h"
+#include "filefetcher.h"
+#include "jsonparser.h"
+
 #include "util.h"
 
-/*
- * Versions feature plan:
- *     - 0.1 -- implemented settings;
- *     - 0.2 -- implemented interaction with master-server;
- *     - 0.3 -- implemented interaction with update-server;
- *     - 0.4 -- implemented game launch;
- *     - 0.5 -- implemented logger, some bugfixes, code cleanups;
- *     - 0.6 -- ????
- *     - 1.0 -- PROFIT^WRELEASE!
-*/
+
 const QString Settings::launcherVersion = "0.9";
 
 // Master-server links
@@ -46,98 +39,58 @@ Settings::Settings() : QObject()
     settings = new QSettings(configPath + "/config.ini", QSettings::IniFormat);
 }
 
-void Settings::loadClientList() {
-
-    Logger* logger = Logger::logger();
-
-    QFile* prefixesFile = new QFile(dataPath + "/prefixes.json");
-
-    logger->appendLine("Settings", "Updating local client list...");
-    Reply prefixesReply = Util::makeGet(nam, updateServer + "/prefixes.json");
-
-    if (prefixesReply.isSuccess()) {
-
-        logger->appendLine("Settings", "OK. Saving local copy...");
-        if (prefixesFile->open(QIODevice::WriteOnly)) {
-            prefixesFile->write(prefixesReply.getData());
-            prefixesFile->close();
-
-        } else {
-            logger->appendLine("Settings", "Error: save list: " + prefixesFile->errorString());
-        }
-
-    } else {
-        logger->appendLine("Settings", "Error: " + prefixesReply.getErrorString());
-    }
-
-    logger->appendLine("Settings", "Loading local client list...");
-    if (prefixesFile->open(QIODevice::ReadOnly)) {
-
-        QJsonParseError error;
-        QJsonDocument json = QJsonDocument::fromJson(prefixesFile->readAll(), &error);
-
-        if (error.error == QJsonParseError::NoError) {
-
-            QJsonObject clients = json.object()["prefixes"].toObject();
-            foreach (QString key, clients.keys()) {
-                QJsonObject client = clients[key].toObject();
-                if (client["type"] == "public") {
-                    appendClient(key, client["about"].toString());
-                    logger->appendLine("Settings", "Add client: " + key);
-                }
-            }
-
-        } else {
-            logger->appendLine("Settings", "Error: JSON: " + error.errorString() + " at " + QString::number(error.offset));
-        }
-
-        prefixesFile->close();
-
-    } else {
-        logger->appendLine("Settings", "Error: open list: " + prefixesFile->errorString());
-    }
-
-    delete prefixesFile;
-
+void Settings::log(const QString &text)
+{
+    Logger::logger()->appendLine( tr("Settings"), text );
 }
 
-void Settings::loadCustomKeystore() {
-    Logger* logger = Logger::logger();
-    QFile* keystoreFile = new QFile(configPath + "/keystore.ks");
+void Settings::updateLocalData() {
 
-    logger->appendLine("Settings", "Updating local java keystore...");
-    Reply keystoreReply = Util::makeGet(nam, updateServer + "/store.ks");
+    QUrl keystoreUrl(updateServer + "/store.ks");
+    QString keystorePath = configPath + "/keystore.ks";
 
-    if (keystoreReply.isSuccess()) {
+    QUrl clientsUrl(updateServer + "/prefixes.json");
+    QString clientsPath = dataPath + "/prefixes.json";
 
-        logger->appendLine("Settings", "OK. Saving local copy...");
-        if (keystoreFile->open(QIODevice::WriteOnly)) {
-            keystoreFile->write(keystoreReply.getData());
-            keystoreFile->close();
+    log( tr("Updating local data...") );
 
-        } else {
-            logger->appendLine("Settings", "Error: save keystore: " + keystoreFile->errorString());
+    FileFetcher fetcher;
+    fetcher.setHiddenLenght(0);
+    fetcher.add(keystoreUrl, keystorePath);
+    fetcher.add(clientsUrl, clientsPath);
+
+    QEventLoop loop;
+    QObject::connect(&fetcher, &FileFetcher::filesFetchFinished,
+                     &loop, &QEventLoop::quit);
+
+    fetcher.fetchFiles();
+    loop.exec();
+
+    JsonParser parser;
+    if ( parser.setJsonFromFile(clientsPath) )
+    {
+        if ( parser.hasPrefixesList() )
+        {
+            clients = parser.getPrefixesList();
         }
-
-    } else {
-        logger->appendLine("Settings", "Error: " + keystoreReply.getErrorString());
+        else
+        {
+            log( tr("Error: no prefixes in prefixes.json") );
+        }
     }
-
-    delete keystoreFile;
-}
-
-void Settings::appendClient(const QString &strid, const QString &name) {
-    clientStrIDs.append(strid);
-    clientNames.append(name);
+    else
+    {
+        log( tr("Error: ") + parser.getParserError() );
+    }
 }
 
 QString Settings::getVersionsUrl() {
-    QString client = getClientStrId(loadActiveClientId());
+    QString client = getClientName(loadActiveClientID());
     return updateServer + "/" + client + "/versions/versions.json";
 }
 
 QString Settings::getVersionUrl(const QString &version) {
-    QString client = getClientStrId(loadActiveClientId());
+    QString client = getClientName(loadActiveClientID());
     return updateServer + "/" + client + "/" + version + "/";
 }
 
@@ -149,28 +102,41 @@ QString Settings::getAssetsUrl() {
     return updateServer + "/assets/";
 }
 
-QStringList Settings::getClientsNames() { return clientNames; }
-int Settings::getClientId(QString name) { return clientNames.indexOf(name); }
-int Settings::strIDtoID(QString strid) { return clientStrIDs.indexOf(strid); }
-
-QString Settings::getClientName(int id) {
-    if (id < 0) return "Unknown client";
-    if (clientNames.size() <= id) return "Unknown client";
-    return clientNames.at(id);
-}
-QString Settings::getClientStrId(int id) {
-    if (id < 0) return "unknown";
-    if (clientStrIDs.size() <= id) return "unknown";
-    return clientStrIDs.at(id);
+QStringList Settings::getClientCaptions()
+{
+    return clients.values();
 }
 
-int Settings::loadActiveClientId() {
+int Settings::getClientID(QString strid)
+{
+    return clients.keys().indexOf(strid);
+}
+
+QString Settings::getClientCaption(int index)
+{
+    QString name = getClientName(index);
+
+    if ( clients.contains(name) )
+    {
+        return clients[name];
+    }
+
+    return "Unknown client";
+}
+QString Settings::getClientName(int index)
+{
+    if (index < 0 || clients.size() <= index) return "unknown";
+
+    return clients.keys()[index];
+}
+
+int Settings::loadActiveClientID() {
     QString strid = settings->value("launcher/client", "default").toString();
-    return strIDtoID(strid);
+    return getClientID(strid);
 }
 
-void Settings::saveActiveClientId(int id) {
-    QString client = getClientStrId(id);
+void Settings::saveActiveClientID(int id) {
+    QString client = getClientName(id);
     settings->setValue("launcher/client", client);
 }
 
@@ -202,39 +168,39 @@ QString Settings::makeMinecraftUuid() {
 
 // Minecraft window geometry
 QRect Settings::loadClientWindowGeometry() {
-    int c = loadActiveClientId();
-    return qvariant_cast<QRect>(settings->value("client-" + getClientStrId(c) + "/window_geometry_custom", QRect(-1, -1, 854, 480)));
+    int c = loadActiveClientID();
+    return qvariant_cast<QRect>(settings->value("client-" + getClientName(c) + "/window_geometry_custom", QRect(-1, -1, 854, 480)));
 }
 void Settings::saveClientWindowGeometry(const QRect &g) {
-    int c = loadActiveClientId();
-    settings->setValue("client-" + getClientStrId(c) + "/window_geometry_custom", g);
+    int c = loadActiveClientID();
+    settings->setValue("client-" + getClientName(c) + "/window_geometry_custom", g);
 }
 
 bool Settings::loadClientWindowSizeState() {
-    int c = loadActiveClientId();
-    return settings->value("client-" + getClientStrId(c) + "/window_geometry_set", false).toBool();
+    int c = loadActiveClientID();
+    return settings->value("client-" + getClientName(c) + "/window_geometry_set", false).toBool();
 }
 void Settings::saveClientWindowSizeState(bool state) {
-    int c = loadActiveClientId();
-    settings->setValue("client-" + getClientStrId(c) + "/window_geometry_set", state);
+    int c = loadActiveClientID();
+    settings->setValue("client-" + getClientName(c) + "/window_geometry_set", state);
 }
 
 bool Settings::loadClientUseLauncherSizeState() {
-    int c = loadActiveClientId();
-    return settings->value("client-" + getClientStrId(c) + "/window_geometry_from_launcher", false).toBool();
+    int c = loadActiveClientID();
+    return settings->value("client-" + getClientName(c) + "/window_geometry_from_launcher", false).toBool();
 }
 void Settings::saveClientUseLauncherSizeState(bool state) {
-    int c = loadActiveClientId();
-    return settings->setValue("client-" + getClientStrId(c) + "/window_geometry_from_launcher", state);
+    int c = loadActiveClientID();
+    return settings->setValue("client-" + getClientName(c) + "/window_geometry_from_launcher", state);
 }
 
 bool Settings::loadClientFullscreenState() {
-    int c = loadActiveClientId();
-    return settings->value("client-" + getClientStrId(c) + "/window_geometry_fullscreen", false).toBool();
+    int c = loadActiveClientID();
+    return settings->value("client-" + getClientName(c) + "/window_geometry_fullscreen", false).toBool();
 }
 void Settings::saveClientFullscreenState(bool state) {
-    int c = loadActiveClientId();
-    settings->setValue("client-" + getClientStrId(c) + "/window_geometry_fullscreen", state);
+    int c = loadActiveClientID();
+    settings->setValue("client-" + getClientName(c) + "/window_geometry_fullscreen", state);
 }
 
 // Launcher window geometry
@@ -252,64 +218,64 @@ void Settings::saveHideWindowModeState(bool hideState) { settings->setValue("lau
 
 // Client settings
 QString Settings::loadClientVersion() {
-    int cid = loadActiveClientId();
-    return settings->value("client-" + getClientStrId(cid) + "/version", "latest").toString();
+    int cid = loadActiveClientID();
+    return settings->value("client-" + getClientName(cid) + "/version", "latest").toString();
 }
 
 void Settings::saveClientVersion(const QString &strid) {
-    int cid = loadActiveClientId();
-    settings->setValue("client-" + getClientStrId(cid) + "/version", strid);
+    int cid = loadActiveClientID();
+    settings->setValue("client-" + getClientName(cid) + "/version", strid);
 }
 
 bool Settings::loadClientJavaState() {
-    int cid = loadActiveClientId();
-    return settings->value("client-" + getClientStrId(cid) + "/custom_java_enabled", false).toBool();
+    int cid = loadActiveClientID();
+    return settings->value("client-" + getClientName(cid) + "/custom_java_enabled", false).toBool();
 }
 
 void Settings::saveClientJavaState(bool state) {
-    int cid = loadActiveClientId();
-    settings->setValue("client-" + getClientStrId(cid) + "/custom_java_enabled", state);
+    int cid = loadActiveClientID();
+    settings->setValue("client-" + getClientName(cid) + "/custom_java_enabled", state);
 }
 
 QString Settings::loadClientJava() {
-    int cid = loadActiveClientId();
-    return settings->value("client-" + getClientStrId(cid) + "/custom_java", "").toString();
+    int cid = loadActiveClientID();
+    return settings->value("client-" + getClientName(cid) + "/custom_java", "").toString();
 }
 
 void Settings::saveClientJava(const QString &java) {
-    int cid = loadActiveClientId();
-    settings->setValue("client-" + getClientStrId(cid) + "/custom_java", java);
+    int cid = loadActiveClientID();
+    settings->setValue("client-" + getClientName(cid) + "/custom_java", java);
 }
 
 bool Settings::loadClientJavaArgsState() {
-    int cid = loadActiveClientId();
-    return settings->value("client-" + getClientStrId(cid) + "/cutsom_args_enabled", false).toBool();
+    int cid = loadActiveClientID();
+    return settings->value("client-" + getClientName(cid) + "/cutsom_args_enabled", false).toBool();
 }
 
 void Settings::saveClientJavaArgsState(bool state) {
-    int cid = loadActiveClientId();
-    settings->setValue("client-" + getClientStrId(cid) + "/cutsom_args_enabled", state);
+    int cid = loadActiveClientID();
+    settings->setValue("client-" + getClientName(cid) + "/cutsom_args_enabled", state);
 }
 
 QString Settings::loadClientJavaArgs() {
-    int cid = loadActiveClientId();
-    return settings->value("client-" + getClientStrId(cid) + "/cutsom_args", "").toString();
+    int cid = loadActiveClientID();
+    return settings->value("client-" + getClientName(cid) + "/cutsom_args", "").toString();
 }
 
 void Settings::saveClientJavaArgs(const QString &args) {
-    int cid = loadActiveClientId();
-    settings->setValue("client-" + getClientStrId(cid) + "/cutsom_args", args);
+    int cid = loadActiveClientID();
+    settings->setValue("client-" + getClientName(cid) + "/cutsom_args", args);
 }
 
 bool Settings::loadClientCheckAssetsState()
 {
-    int cid = loadActiveClientId();
-    return settings->value("client-" + getClientStrId(cid) + "/check_assets", true).toBool();
+    int cid = loadActiveClientID();
+    return settings->value("client-" + getClientName(cid) + "/check_assets", true).toBool();
 }
 void Settings::saveClientCheckAssetsState(bool state)
 {
-    int cid = loadActiveClientId();
-    settings->setValue("client-" + getClientStrId(cid) + "/check_assets", state);
+    int cid = loadActiveClientID();
+    settings->setValue("client-" + getClientName(cid) + "/check_assets", state);
 }
 
 // News
@@ -327,7 +293,7 @@ QString Settings::getBaseDir() {
 }
 
 QString Settings::getClientDir() {
-    return dataPath + "/client_" + getClientStrId(loadActiveClientId());
+    return dataPath + "/client_" + getClientName(loadActiveClientID());
 }
 
 QString Settings::getClientPrefix(const QString &version) {

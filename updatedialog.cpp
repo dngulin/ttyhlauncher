@@ -5,8 +5,6 @@
 #include "logger.h"
 #include "util.h"
 
-#include <QDebug>
-
 UpdateDialog::UpdateDialog(QString displayMessage, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::UpdateDialog)
@@ -38,12 +36,12 @@ UpdateDialog::UpdateDialog(QString displayMessage, QWidget *parent) :
     settings = Settings::instance();
     logger = Logger::logger();
 
-    ui->clientCombo->addItems( settings->getClientsNames() );
-    ui->clientCombo->setCurrentIndex( settings->loadActiveClientId() );
+    ui->clientCombo->addItems( settings->getClientCaptions() );
+    ui->clientCombo->setCurrentIndex( settings->loadActiveClientID() );
 
     // Old-style connection for overloaded signals
     connect( ui->clientCombo, SIGNAL( activated(int) ),
-             settings, SLOT( saveActiveClientId(int) ) );
+             settings, SLOT( saveActiveClientID(int) ) );
 
     connect( ui->clientCombo, SIGNAL( activated(int) ),
              this, SLOT( clientChanged() ) );
@@ -210,8 +208,8 @@ void UpdateDialog::cancelClicked()
 
 void UpdateDialog::doCheck()
 {
-    int clientId = settings->loadActiveClientId();
-    QString clientString = settings->getClientStrId(clientId);
+    int index = settings->loadActiveClientID();
+    QString clientString = settings->getClientName(index);
 
     clientVersion = settings->loadClientVersion();
 

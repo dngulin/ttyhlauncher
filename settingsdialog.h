@@ -6,6 +6,7 @@
 
 #include "settings.h"
 #include "logger.h"
+#include "datafetcher.h"
 
 namespace Ui {
 class SettingsDialog;
@@ -21,13 +22,19 @@ public:
 
 private:
     Ui::SettingsDialog *ui;
-    QNetworkAccessManager* nam;
+
+    DataFetcher fetcher;
 
     Settings* settings;
     Logger* logger;
 
-    void appendVersionList(QString reason);
+    void msg(const QString &text);
+    void log(const QString &text);
+
+    void appendVersionList(const QString &reason);
     void logCurrentSettings();
+
+    bool isVersionInstalled(const QString &name);
 
 private slots:
     void saveSettings();
@@ -35,7 +42,7 @@ private slots:
     void openFileDialog();
     void openClientDirectory();
     void loadVersionList();
-    void makeVersionList(QNetworkReply* reply);
+    void makeVersionList(bool result);
 };
 
 #endif // SETTINGSDIALOG_H

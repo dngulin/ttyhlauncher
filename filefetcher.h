@@ -23,6 +23,8 @@ public:
     quint64 getFetchSize();
     int getCount();
 
+    void setHiddenLenght( int len );
+
 public slots:
     void reset();
     void cancel();
@@ -40,7 +42,7 @@ private:
     Logger *logger;
     void log(const QString &text);
 
-    QString prefix;
+    int hiddenLenght;
 
 signals:
     void sizesFetchProgress(int progress);

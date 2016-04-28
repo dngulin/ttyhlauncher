@@ -93,10 +93,10 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
              SLOT( savePassStoreState(bool) ) );
 
     // Setup client combobox
-    ui->clientCombo->addItems( settings->getClientsNames() );
-    ui->clientCombo->setCurrentIndex( settings->loadActiveClientId() );
+    ui->clientCombo->addItems( settings->getClientCaptions() );
+    ui->clientCombo->setCurrentIndex( settings->loadActiveClientID() );
     connect( ui->clientCombo, SIGNAL( activated(int) ), settings,
-             SLOT( saveActiveClientId(int) ) );
+             SLOT( saveActiveClientID(int) ) );
 
     // Setup window parameters
     QRect geometry = settings->loadWindowGeometry();
@@ -241,7 +241,7 @@ void LauncherWindow::showSettingsDialog()
     d->exec();
     delete d;
 
-    ui->clientCombo->setCurrentIndex( settings->loadActiveClientId() );
+    ui->clientCombo->setCurrentIndex( settings->loadActiveClientID() );
 }
 
 void LauncherWindow::showSkinLoadDialog()
@@ -302,14 +302,14 @@ void LauncherWindow::showUpdateDialog(QString message)
     d->exec();
     delete d;
 
-    ui->clientCombo->setCurrentIndex( settings->loadActiveClientId() );
+    ui->clientCombo->setCurrentIndex( settings->loadActiveClientID() );
 }
 
 void LauncherWindow::playButtonClicked()
 {
     logger->appendLine(this->objectName(), "Try to start game...");
     logger->appendLine(this->objectName(), "Client id: "
-                   + settings->getClientStrId( settings->loadActiveClientId() ) );
+                   + settings->getClientName( settings->loadActiveClientID() ) );
 
     QRect geometry = settings->loadClientWindowGeometry();
 

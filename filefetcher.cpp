@@ -13,7 +13,7 @@ FileFetcher::FileFetcher(QObject *parent) :
 
     logger = Logger::logger();
 
-    prefix = Settings::instance()->getBaseDir();
+    hiddenLenght = Settings::instance()->getBaseDir().length() + 1;
 }
 
 FileFetcher::~FileFetcher()
@@ -27,9 +27,6 @@ void FileFetcher::log(const QString &text)
 
 void FileFetcher::add(QUrl url, QString filename)
 {
-    QString shortName = filename.mid( prefix.length() + 1 );
-
-    log(tr("Add to download list ") + shortName);
     fetchData.append( QPair<QUrl, QString >(url, filename) );
 }
 
@@ -121,6 +118,11 @@ int FileFetcher::getCount()
     return fetchData.count();
 }
 
+void FileFetcher::setHiddenLenght(int len)
+{
+    hiddenLenght = len;
+}
+
 // Fetch files
 void FileFetcher::fetchFiles()
 {
@@ -188,7 +190,7 @@ void FileFetcher::fileFetched(bool result)
 
             fetched += file.size();
 
-            QString shortName = fname.mid( prefix.length() + 1 );
+            QString shortName = fname.mid( hiddenLenght );
             log( tr("Saved file: ") + shortName );
 
             emit filesFetchProgress( int(float(fetched) / fetchSize * 100) );

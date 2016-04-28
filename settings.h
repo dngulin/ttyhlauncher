@@ -4,8 +4,6 @@
 #include <QtCore>
 #include <QNetworkAccessManager>
 
-#include "logger.h"
-
 class Settings : public QObject
 {
     Q_OBJECT
@@ -29,13 +27,13 @@ private:
 
     QNetworkAccessManager* nam;
 
-    QStringList clientStrIDs;
-    QStringList clientNames;
-    void appendClient(const QString & strid, const QString & name);
+    QHash<QString,QString> clients; // str_id, title
 
     QString dataPath;
     QString configPath;
     QString updateServer;
+
+    void log(const QString &text);
 
 public:
     // Update URLs
@@ -44,17 +42,13 @@ public:
     QString getLibsUrl();
     QString getAssetsUrl();
 
+    void updateLocalData();
+
     // Clients
-    void loadClientList();
-
-    // Keystore
-    void loadCustomKeystore();
-
-    QStringList getClientsNames();
-    int getClientId(QString name);
-    int strIDtoID(QString strid);
-    QString getClientStrId(int id);
-    QString getClientName(int id);
+    QStringList getClientCaptions();
+    int getClientID(QString strid);
+    QString getClientName(int index);
+    QString getClientCaption(int index);
 
     // Directories
     QString getBaseDir();
@@ -67,11 +61,10 @@ public:
     QString getConfigDir();
 
     // Launcher settings
-    int loadActiveClientId();
+    int loadActiveClientID();
     QString loadLogin();
     bool loadPassStoreState();
     bool loadMaximizedState();
-    // save-pairs in slots section
 
     QString loadPassword();
     void savePassword(const QString & password);
@@ -129,7 +122,7 @@ public:
     QNetworkAccessManager *getNetworkAccessManager();
 
 public slots:
-    void saveActiveClientId(int id);
+    void saveActiveClientID(int id);
     void saveLogin(const QString & login);
     void savePassStoreState(bool state);
     void saveMaximizedState(bool state);

@@ -73,19 +73,19 @@ void FeedbackDialog::sendFeedback() {
     log.append("\n");
 
     // Show custom java -version if exists
-    int activeClientId = settings->loadActiveClientId();
-    QStringList clientList = settings->getClientsNames();
+    int activeClientId = settings->loadActiveClientID();
+    QStringList clientList = settings->getClientCaptions();
     foreach (QString client, clientList) {
-        settings->saveActiveClientId(clientList.indexOf(client));
+        settings->saveActiveClientID(clientList.indexOf(client));
 
         if (settings->loadClientJavaState()) {
-            log.append(" >> Client \"" + settings->getClientStrId(clientList.indexOf(client)) + "\" has custom java:\n");
+            log.append(" >> Client \"" + settings->getClientName(clientList.indexOf(client)) + "\" has custom java:\n");
             log.append(Util::getCommandOutput(settings->loadClientJava(), QStringList() << "-version"));
             log.append("\n");
         }
 
     }
-    settings->saveActiveClientId(activeClientId);
+    settings->saveActiveClientID(activeClientId);
 
     // Show logs
     log.append("## ============================= ##\n");
