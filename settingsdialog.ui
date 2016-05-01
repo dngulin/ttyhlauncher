@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>445</width>
-    <height>460</height>
+    <height>554</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,7 +39,7 @@
    <item>
     <widget class="QGroupBox" name="genericBox">
      <property name="title">
-      <string>Клиент</string>
+      <string>Version selection</string>
      </property>
      <layout class="QFormLayout" name="formLayout_2">
       <property name="fieldGrowthPolicy">
@@ -48,7 +48,7 @@
       <item row="0" column="0">
        <widget class="QLabel" name="clientLabel">
         <property name="text">
-         <string>Тип клиента</string>
+         <string>Client</string>
         </property>
        </widget>
       </item>
@@ -58,7 +58,7 @@
       <item row="2" column="0">
        <widget class="QLabel" name="stateLabel">
         <property name="text">
-         <string>Статус</string>
+         <string>State</string>
         </property>
        </widget>
       </item>
@@ -75,7 +75,7 @@
       <item row="1" column="0">
        <widget class="QLabel" name="versionLabel">
         <property name="text">
-         <string>Требуемая версия</string>
+         <string>Version</string>
         </property>
        </widget>
       </item>
@@ -88,7 +88,7 @@
    <item>
     <widget class="QGroupBox" name="sizeBox">
      <property name="title">
-      <string>Указать размер окна</string>
+      <string>&amp;Set game window size</string>
      </property>
      <property name="checkable">
       <bool>true</bool>
@@ -100,7 +100,7 @@
       <item row="0" column="0">
        <widget class="QRadioButton" name="customSizeRadio">
         <property name="text">
-         <string>Свой:  </string>
+         <string>&amp;Own:</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -110,21 +110,21 @@
       <item row="4" column="0" colspan="6">
        <widget class="QRadioButton" name="useLauncherRadio">
         <property name="text">
-         <string>Использовать размер лаунчера</string>
+         <string>&amp;Launcher window size</string>
         </property>
        </widget>
       </item>
       <item row="3" column="0" colspan="6">
        <widget class="QRadioButton" name="fullscreenRadio">
         <property name="text">
-         <string>На весь экран</string>
+         <string>&amp;Fullscreen</string>
         </property>
        </widget>
       </item>
       <item row="2" column="1">
        <widget class="QLabel" name="heightLabel">
         <property name="text">
-         <string>Высота:</string>
+         <string>Height:</string>
         </property>
        </widget>
       </item>
@@ -141,7 +141,7 @@
       <item row="0" column="1">
        <widget class="QLabel" name="widthLabel">
         <property name="text">
-         <string>Ширина:</string>
+         <string>Width:</string>
         </property>
        </widget>
       </item>
@@ -161,7 +161,7 @@
    <item>
     <widget class="QGroupBox" name="javapathBox">
      <property name="title">
-      <string>Указать путь к &amp;Java вручную</string>
+      <string>Set &amp;path to Java executable</string>
      </property>
      <property name="checkable">
       <bool>true</bool>
@@ -173,7 +173,7 @@
       <item>
        <widget class="QLabel" name="javapathLabel">
         <property name="text">
-         <string>Путь к Java</string>
+         <string>Path</string>
         </property>
        </widget>
       </item>
@@ -193,7 +193,7 @@
    <item>
     <widget class="QGroupBox" name="argsBox">
      <property name="title">
-      <string>Указать дополнительные параметры J&amp;ava</string>
+      <string>Set &amp;Java runtime parameters</string>
      </property>
      <property name="checkable">
       <bool>true</bool>
@@ -205,7 +205,7 @@
       <item>
        <widget class="QLabel" name="argsLabel">
         <property name="text">
-         <string>Параметры</string>
+         <string>Parameters</string>
         </property>
        </widget>
       </item>
@@ -218,7 +218,7 @@
    <item>
     <widget class="QCheckBox" name="checkAssetsCombo">
      <property name="text">
-      <string>Проверять игровые ресурсы перед запуском</string>
+      <string>Check assets before run</string>
      </property>
     </widget>
    </item>
@@ -237,7 +237,7 @@
       <item>
        <widget class="QPushButton" name="opendirButton">
         <property name="text">
-         <string>Открыть каталог клиента...</string>
+         <string>Open client directory...</string>
         </property>
        </widget>
       </item>
@@ -257,7 +257,7 @@
       <item>
        <widget class="QPushButton" name="saveButton">
         <property name="text">
-         <string>Сохранить</string>
+         <string>Save</string>
         </property>
         <property name="default">
          <bool>true</bool>

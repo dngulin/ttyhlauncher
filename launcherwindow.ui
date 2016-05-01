@@ -240,7 +240,7 @@
      <normaloff>:/resources/configure.png</normaloff>:/resources/configure.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Client manager</string>
+    <string>&amp;Client settings</string>
    </property>
   </action>
   <action name="bugReport">
