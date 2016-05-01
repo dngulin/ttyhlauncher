@@ -115,7 +115,7 @@
          <item row="3" column="0" colspan="2">
           <widget class="QCheckBox" name="savePassword">
            <property name="text">
-            <string>Remeber password</string>
+            <string>Remember password</string>
            </property>
           </widget>
          </item>

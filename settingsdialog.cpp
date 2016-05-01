@@ -20,7 +20,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui->clientCombo->setCurrentIndex( settings->loadActiveClientID() );
 
     connect(&fetcher, &DataFetcher::finished,
-            this, &SettingsDialog::makeVersionList );
+            this, &SettingsDialog::makeVersionList);
 
     connect( ui->clientCombo, SIGNAL( currentIndexChanged(int) ), settings,
              SLOT( saveActiveClientID(int) ) );
@@ -110,7 +110,7 @@ void SettingsDialog::makeVersionList(bool result)
                     QString title = id;
                     if ( isVersionInstalled(id) )
                     {
-                        title += tr(" [installed]");
+                        title += tr(" [prefix installed]");
                     }
                     ui->versionCombo->addItem(title, id);
                 }
@@ -140,9 +140,9 @@ void SettingsDialog::appendVersionList(const QString &reason)
                 QString title = id + tr(" [local]");
                 if ( isVersionInstalled(id) )
                 {
-                    title += tr(" [installed]");
+                    title += tr(" [prefix installed]");
                 }
-                ui->versionCombo->addItem(title , id);
+                ui->versionCombo->addItem(title, id);
             }
         }
     }
@@ -193,19 +193,23 @@ bool SettingsDialog::isVersionInstalled(const QString &name)
 void SettingsDialog::saveSettings()
 {
     int id = ui->versionCombo->currentIndex();
-    QString strid = ui->versionCombo->itemData(id).toString();
-    settings->saveClientVersion(strid);
+    QString version = ui->versionCombo->itemData(id).toString();
+    settings->saveClientVersion(version);
 
     settings->saveClientJavaState( ui->javapathBox->isChecked() );
     settings->saveClientJava( ui->javapathEdit->text() );
     settings->saveClientJavaArgsState( ui->argsBox->isChecked() );
     settings->saveClientJavaArgs( ui->argsEdit->text() );
-    settings->saveClientWindowGeometry( QRect( -1, -1,
-                                               ui->widthSpinBox->value(),
-                                               ui->heightSpinBox->value() ) );
+
+    QRect g( -1, -1, ui->widthSpinBox->value(), ui->heightSpinBox->value() );
+    settings->saveClientWindowGeometry(g);
+
     settings->saveClientWindowSizeState( ui->sizeBox->isChecked() );
     settings->saveClientFullscreenState( ui->fullscreenRadio->isChecked() );
-    settings->saveClientUseLauncherSizeState( ui->useLauncherRadio->isChecked() );
+
+    bool launcherSizeState = ui->useLauncherRadio->isChecked() ;
+    settings->saveClientUseLauncherSizeState(launcherSizeState);
+
     settings->saveClientCheckAssetsState( ui->checkAssetsCombo->isChecked() );
 
     log( tr("Settings saved") );
@@ -220,8 +224,11 @@ void SettingsDialog::loadSettings()
     ui->javapathEdit->setText( settings->loadClientJava() );
     ui->argsBox->setChecked( settings->loadClientJavaArgsState() );
     ui->argsEdit->setText( settings->loadClientJavaArgs() );
-    ui->widthSpinBox->setValue( settings->loadClientWindowGeometry().width() );
-    ui->heightSpinBox->setValue( settings->loadClientWindowGeometry().height() );
+
+    QRect g = settings->loadClientWindowGeometry();
+    ui->widthSpinBox->setValue( g.width() );
+    ui->heightSpinBox->setValue( g.height() );
+
     ui->sizeBox->setChecked( settings->loadClientWindowSizeState() );
 
     bool fullscreen = settings->loadClientFullscreenState();

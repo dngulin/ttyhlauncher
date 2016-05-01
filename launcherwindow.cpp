@@ -185,7 +185,7 @@ void LauncherWindow::appendLineToLog(const QString &line)
             // URL
             int urlLen = urlEnd - urlBegin;
             QString url = line.mid(urlBegin, urlLen);
-            htmlLine += QString("<a href='*'>*</a>\n").replace("*", url);
+            htmlLine += QString("<a href='*'>*</a>\n\n").replace("*", url);
 
             current = urlEnd;
 
