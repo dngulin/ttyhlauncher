@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Лицензия</string>
+   <string>License</string>
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
@@ -68,7 +68,7 @@
      <item>
       <widget class="QPushButton" name="closeButton">
        <property name="text">
-        <string>Закрыть</string>
+        <string>Close</string>
        </property>
       </widget>
      </item>

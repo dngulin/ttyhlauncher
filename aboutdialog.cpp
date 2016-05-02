@@ -11,14 +11,16 @@ AboutDialog::AboutDialog(QWidget *parent) :
     ui->setupUi(this);
     ui->ttyhlauncherLabel->setText("ttyhlauncher " + Settings::launcherVersion);
 
-    ui->linkLabel->setOpenExternalLinks(true); // open link in external browser
+    ui->linkLabel->setOpenExternalLinks(true);
 
-    connect(ui->closeButton, SIGNAL(clicked()), this, SLOT(close()));
-    connect(ui->licenseButton, SIGNAL(clicked()), this, SLOT(showLicense()));
+    connect(ui->closeButton, &QPushButton::clicked, this, &AboutDialog::close);
+    connect(ui->licenseButton, &QPushButton::clicked, this,
+            &AboutDialog::showLicense);
 }
 
-void AboutDialog::showLicense() {
-    LicenseDialog* d = new LicenseDialog(this);
+void AboutDialog::showLicense()
+{
+    LicenseDialog *d = new LicenseDialog(this);
     d->exec();
     delete d;
 }
