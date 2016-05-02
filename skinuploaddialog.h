@@ -4,6 +4,7 @@
 #include <QDialog>
 
 #include "logger.h"
+#include "datafetcher.h"
 
 namespace Ui {
 class SkinUploadDialog;
@@ -20,10 +21,15 @@ public:
 private:
     Ui::SkinUploadDialog *ui;
 
-    Logger* logger;
+    Logger *logger;
+    DataFetcher uploader;
+
+    void log(const QString &text);
+    void msg(const QString &text);
 
 private slots:
     void uploadSkin();
+    void requestFinished(bool result);
     void openFileDialog();
 };
 

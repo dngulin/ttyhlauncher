@@ -15,49 +15,49 @@ QString JsonParser::getParserError() const
     return errorString;
 }
 
-bool JsonParser::setJson(const QByteArray & json)
+bool JsonParser::setJson(const QByteArray &json)
 {
     QJsonParseError error;
     jsonObject = QJsonDocument::fromJson(json, &error).object();
 
     if (error.error == QJsonParseError::NoError)
+    {
         return true;
+    }
     else
     {
         errorString = "JSON parisng error: "
-                    + error.errorString() + " at "
-                    + QString::number(error.offset);
+                      + error.errorString() + " at "
+                      + QString::number(error.offset);
         return false;
     }
 }
 
-bool JsonParser::setJsonFromFile(const QString & fileName)
+bool JsonParser::setJsonFromFile(const QString &fileName)
 {
     QFile jsonFile(fileName);
 
-    if (jsonFile.exists())
+    if ( jsonFile.exists() )
     {
-        if (jsonFile.open(QIODevice::ReadOnly))
+        if ( jsonFile.open(QIODevice::ReadOnly) )
         {
-            bool setJsonResult = setJson(jsonFile.readAll());
+            bool setJsonResult = setJson( jsonFile.readAll() );
             jsonFile.close();
             return setJsonResult;
         }
-        // Can't open file
         else
         {
             errorString = "Can't open JSON file "
-                        + fileName + ": "
-                        + jsonFile.errorString();
+                          + fileName + ": "
+                          + jsonFile.errorString();
             return false;
         }
     }
-    // File not exists
     else
     {
         errorString = "Can't open JSON file "
-                    + fileName + ": "
-                    + "file not exists.";
+                      + fileName + ": "
+                      + "file not exists.";
         return false;
     }
 }
@@ -79,11 +79,7 @@ bool JsonParser::hasServerResponseError() const
 
 QString JsonParser::getServerResponseError() const
 {
-    // errorMessage more verbose, but may be not exists
-    if (!jsonObject["errorMessage"].isString())
-        return jsonObject["errorMessage"].toString();
-    else
-        return jsonObject["error"].toString();
+    return jsonObject["error"].toString();
 }
 
 bool JsonParser::hasClientToken() const
@@ -120,7 +116,9 @@ QStringList JsonParser::getReleaseVersonList() const
     {
         QJsonObject version = value.toObject();
         if (version["type"].toString() == "release")
+        {
             result << version["id"].toString();
+        }
     }
 
     return result;
@@ -143,14 +141,16 @@ bool JsonParser::hasPrefixesList() const
 
 QHash<QString, QString> JsonParser::getPrefixesList() const
 {
-    QHash<QString,QString> result;
+    QHash<QString, QString> result;
     QJsonObject prefixes = jsonObject["prefixes"].toObject();
 
-    foreach (QString key, prefixes.keys())
+    foreach ( QString key, prefixes.keys() )
     {
         QJsonObject prefix = prefixes[key].toObject();
         if (prefix["type"] == "public")
+        {
             result[key] = prefix["about"].toString();
+        }
     }
 
     return result;
@@ -221,20 +221,20 @@ QList<LibraryInfo> JsonParser::getLibraryList() const
         // I. RENAME LIBRARY
 
         // Change <package>:<name>:<version> to
-        //        <package>/<name>/<version>/<name>-<version>
+        // <package>/<name>/<version>/<name>-<version>
         // Chahge <backage> format from a.b.c to a/b/c
 
         QJsonObject library = libValue.toObject();
         QStringList entryName = library["name"].toString().split(':');
 
         // Get package and change format
-        QString libName = entryName.at(0); libName.replace('.', '/');
+        QString libName = entryName.at(0);
+        libName.replace('.', '/');
 
         // Append "/name" + "/version" + "/name-version"
         libName += "/" + entryName.at(1)
-                +  "/" + entryName.at(2)
-                +  "/" + entryName.at(1) + "-" + entryName.at(2);
-
+                   + "/" + entryName.at(2)
+                   + "/" + entryName.at(1) + "-" + entryName.at(2);
 
         // II. CHECK LIBRARY RULES
         QJsonArray liraryRules = library["rules"].toArray();
@@ -245,7 +245,7 @@ QList<LibraryInfo> JsonParser::getLibraryList() const
 
         // Allow library if rules not defined
         bool libraryAllowed = true;
-        if (!liraryRules.isEmpty())
+        if ( !liraryRules.isEmpty() )
         {
             // Disallow libray until allow-rule founded
             libraryAllowed = false;
@@ -257,13 +257,21 @@ QList<LibraryInfo> JsonParser::getLibraryList() const
 
                 // Make allow-list: all or specified
                 if (ruleAction == "allow")
+                {
                     if (ruleOsName.isEmpty() || ruleOsName == osName)
+                    {
                         libraryAllowed = true;
+                    }
+                }
 
                 // Make exclusions from allow-list
                 if (ruleAction == "disallow")
+                {
                     if (ruleOsName == osName)
+                    {
                         libraryAllowed = false;
+                    }
+                }
             }
         }
 
@@ -271,22 +279,28 @@ QList<LibraryInfo> JsonParser::getLibraryList() const
         if (libraryAllowed)
         {
             // Native laibrary
-            if (library.contains("natives"))
+            if ( library.contains("natives") )
             {
                 QJsonObject natives = library["natives"].toObject();
                 QString nativesSuffix = natives[osName].toString();
 
                 nativesSuffix.replace("${arch}", osArch);
 
-                if (nativesSuffix.isEmpty()) libName += ".jar";
-                else libName += "-" + nativesSuffix + ".jar";
+                if ( nativesSuffix.isEmpty() )
+                {
+                    libName += ".jar";
+                }
+                else
+                {
+                    libName += "-" + nativesSuffix + ".jar";
+                }
 
                 result << LibraryInfo(libName, true);
             }
             // Not native laibrary
             else
             {
-                libName  += ".jar";
+                libName += ".jar";
                 result << LibraryInfo(libName, false);
             }
         }
@@ -319,7 +333,7 @@ QList<FileInfo> JsonParser::getLibsFileInfo() const
     QList<FileInfo> result;
 
     QJsonObject libs = jsonObject["libs"].toObject();
-    foreach(QString key, libs.keys())
+    foreach ( QString key, libs.keys() )
     {
         FileInfo info;
         info.name = key;
@@ -351,8 +365,8 @@ FileInfo JsonParser::getLibFileInfo(const QString &lib) const
 
 bool JsonParser::hasAddonsFilesInfo() const
 {
-    return (jsonObject["files"].toObject()["index"].isObject() &&
-            jsonObject["files"].toObject()["mutables"].isArray());
+    return jsonObject["files"].toObject()["index"].isObject()
+           && jsonObject["files"].toObject()["mutables"].isArray();
 }
 
 QList<FileInfo> JsonParser::getAddonsFilesInfo() const
@@ -361,18 +375,23 @@ QList<FileInfo> JsonParser::getAddonsFilesInfo() const
 
     QJsonArray mutables = jsonObject["files"].toObject()["mutables"].toArray();
     QStringList mutablesList;
-    foreach(QJsonValue value, mutables)
+    foreach (QJsonValue value, mutables)
+    {
         mutablesList << value.toString();
+    }
 
     QJsonObject files = jsonObject["files"].toObject()["index"].toObject();
-    foreach(QString key, files.keys())
+    foreach ( QString key, files.keys() )
     {
         FileInfo info;
         info.name = key;
         info.hash = files[key].toObject()["hash"].toString();
         info.size = files[key].toObject()["size"].toInt();
 
-        if (mutablesList.contains(key)) info.isMutable = true;
+        if ( mutablesList.contains(key) )
+        {
+            info.isMutable = true;
+        }
 
         result << info;
     }
@@ -386,18 +405,23 @@ QHash<QString, FileInfo> JsonParser::getAddonsFilesInfoHashMap() const
 
     QJsonArray mutables = jsonObject["files"].toObject()["mutables"].toArray();
     QStringList mutablesList;
-    foreach(QJsonValue value, mutables)
+    foreach (QJsonValue value, mutables)
+    {
         mutablesList << value.toString();
+    }
 
     QJsonObject files = jsonObject["files"].toObject()["index"].toObject();
-    foreach(QString key, files.keys())
+    foreach ( QString key, files.keys() )
     {
         FileInfo info;
         info.name = key;
         info.hash = files[key].toObject()["hash"].toString();
         info.size = files[key].toObject()["size"].toInt();
 
-        if (mutablesList.contains(key)) info.isMutable = true;
+        if ( mutablesList.contains(key) )
+        {
+            info.isMutable = true;
+        }
 
         result.insert(key, info);
     }
@@ -415,7 +439,7 @@ QList<FileInfo> JsonParser::getAssetsList() const
     QList<FileInfo> result;
 
     QJsonObject files = jsonObject["objects"].toObject();
-    foreach(QString key, files.keys())
+    foreach ( QString key, files.keys() )
     {
         QString hash = files[key].toObject()["hash"].toString();
         QString name = hash.mid(0, 2) + "/" + hash;
@@ -431,8 +455,3 @@ QList<FileInfo> JsonParser::getAssetsList() const
 
     return result;
 }
-
-
-
-
-

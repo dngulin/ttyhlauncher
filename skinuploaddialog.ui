@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>322</width>
-    <height>154</height>
+    <width>349</width>
+    <height>180</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Загрузка скина</string>
+   <string>Upload skin</string>
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
@@ -44,21 +44,21 @@
      <item row="0" column="0">
       <widget class="QLabel" name="nickLabel">
        <property name="text">
-        <string>Игровое имя</string>
+        <string>Nickanme</string>
        </property>
       </widget>
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="passLabel">
        <property name="text">
-        <string>Пароль</string>
+        <string>Password</string>
        </property>
       </widget>
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="newpassLabel">
        <property name="text">
-        <string>Скин</string>
+        <string>Skin file</string>
        </property>
       </widget>
      </item>
@@ -87,13 +87,13 @@
       <enum>QFrame::Box</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
+      <enum>QFrame::Plain</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
        <widget class="QLabel" name="messageLabel">
         <property name="text">
-         <string>Заполните форму и нажмите кнопку &quot;Загрузить&quot;</string>
+         <string>Fill the form, then press &quot;Upload&quot; button.</string>
         </property>
        </widget>
       </item>
@@ -134,7 +134,7 @@
      <item>
       <widget class="QPushButton" name="sendButton">
        <property name="text">
-        <string>Загрузить</string>
+        <string>Upload</string>
        </property>
       </widget>
      </item>
