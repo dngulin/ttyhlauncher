@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Обновление клиента</string>
+   <string>Update manager</string>
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
