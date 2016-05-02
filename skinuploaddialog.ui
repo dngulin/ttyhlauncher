@@ -44,7 +44,7 @@
      <item row="0" column="0">
       <widget class="QLabel" name="nickLabel">
        <property name="text">
-        <string>Nickanme</string>
+        <string>Nickname</string>
        </property>
       </widget>
      </item>
