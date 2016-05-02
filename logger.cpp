@@ -5,10 +5,10 @@
 #include <QDate>
 #include <QTextStream>
 
-Logger *Logger::myInstance = 0;
+Logger *Logger::myInstance = NULL;
 Logger *Logger::logger()
 {
-    if (myInstance == 0)
+    if (myInstance == NULL)
     {
         myInstance = new Logger();
     }
@@ -21,47 +21,49 @@ Logger::Logger(QObject *parent) :
     // Rotate logs
     int rotations = 3;
 
-    // remove latest index
-    QFile::remove(
-        Settings::instance()->getBaseDir() + "/launcher."
-        + QString::number(rotations - 1) + ".log");
+    QString baseDir = Settings::instance()->getBaseDir();
+    QString last = QString::number(rotations - 1);
 
-    // rotate logs
+    QFile::remove(baseDir + "/launcher." + last + ".log");
+
     for (int i = rotations - 2; i >= 0; i--)
     {
-        QFile::rename(
-            Settings::instance()->getBaseDir() + "/launcher."
-            + QString::number(i) + ".log",
-            Settings::instance()->getBaseDir() + "/launcher."
-            + QString::number(i + 1) + ".log");
+        QString cur = QString::number(i);
+        QString nxt = QString::number(i + 1);
+
+        QFile::rename(baseDir + "/launcher." + cur + ".log",
+                      baseDir + "/launcher." + nxt + ".log");
     }
 
-    QDir().mkpath( Settings::instance()->getBaseDir() );
+    // Setup logfile
+    QDir().mkpath(baseDir);
+    QString logFileName = baseDir + "/launcher.0.log";
 
-    QString fname = Settings::instance()->getBaseDir() + "/launcher.0.log";
-    logFile.setFileName(fname);
+    logFile.setFileName(logFileName);
 
     if ( !logFile.open(mode) )
     {
         qCritical() << "Can't setup logger!";
     }
 
-    appendLine("Logger", QDate::currentDate().toString("dd.MM.yy")
-           + " ttyhlauncher-" + Settings::instance()->launcherVersion
-           + " started.");
+    QString date = QDate::currentDate().toString("dd.MM.yy");
+    QString version = Settings::instance()->launcherVersion;
+    QString launcher = date + ", ttyhlauncher-" + version + " ";
+
+    appendLine( tr("Logger"), launcher + tr("started.") );
 }
 
 void Logger::appendLine(const QString &sender, const QString &text)
 {
-    QString prefix = "(" + QTime::currentTime().toString("hh:mm:ss") + ") "
-                     + sender + " >> ";
+    QString time = QTime::currentTime().toString("hh:mm:ss");
+    QString prefix = "(" + time + ") " + sender + " >> ";
 
     QTextStream(stdout) << prefix << text << "\n";
 
-    if (logFile.isOpen())
+    if ( logFile.isOpen() )
     {
         QTextStream(&logFile) << prefix << text << "\n";
     }
 
-    emit lineAppended( prefix + text );
+    emit lineAppended(prefix + text);
 }
