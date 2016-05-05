@@ -5,25 +5,33 @@
 #include <QNetworkAccessManager>
 #include "reply.h"
 
-namespace Util {
+class Util
+{
+public:
 
-Reply makeGet(QNetworkAccessManager* nam, const QString& url);
-Reply makePost(QNetworkAccessManager* nam,
-               const QString& url, const QByteArray &postData);
-quint64 getFileSize(QNetworkAccessManager *nam, const QString &url);
+    // Deperecated
+    static Reply makeGet(QNetworkAccessManager *nam, const QString &url);
+    static Reply makePost(QNetworkAccessManager *nam, const QString &url,
+                          const QByteArray &postData);
+    static bool downloadFile(QNetworkAccessManager *nam, const QString &url,
+                             const QString &fileName);
 
-QByteArray makeGzip(const QByteArray& data);
 
-QString getCommandOutput(QString command, QStringList args);
-QString getFileContetnts(QString path);
+    // Usable
+    static QByteArray makeGzip(const QByteArray &data);
 
-bool downloadFile(QNetworkAccessManager* nam,
-                  const QString& url, const QString &fileName);
+    static QString getCommandOutput(const QString &command,
+                                    const QStringList &args);
 
-void removeAll(QString filePath);
-void recursiveFlist(QStringList *list, QString prefix, QString dpath);
-void unzipArchive(QString zipFilePath, QString extractionPath);
+    static QString getFileContetnts(const QString &path);
 
-}
+    static void removeAll(const QString &filePath);
+
+    static void unzipArchive(const QString &zipFilePath,
+                             const QString &extractionPath);
+
+private:
+    static void log(const QString &text);
+};
 
 #endif // UTIL_H

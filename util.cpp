@@ -8,25 +8,6 @@
 #include "logger.h"
 #include "settings.h"
 
-quint64 Util::getFileSize(QNetworkAccessManager *nam, const QString &url)
-{
-    QNetworkRequest request;
-    request.setUrl(QUrl(url));
-
-    QNetworkReply *reply = nam->head(request);
-    QEventLoop loop;
-    QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
-    loop.exec();
-
-    quint64 result =
-            reply->header(QNetworkRequest::ContentLengthHeader).toULongLong();
-
-    reply->close();
-    delete reply;
-
-    return result;
-}
-
 Reply Util::makeGet(QNetworkAccessManager *nam, const QString &url)
 {
     Logger::logger()->appendLine("Util", "Make GET: " + url + "\n");
@@ -36,23 +17,29 @@ Reply Util::makeGet(QNetworkAccessManager *nam, const QString &url)
     QByteArray data;
 
     QNetworkRequest request;
-    request.setUrl(QUrl(url));
-    QNetworkReply* reply = nam->get(request);
+    request.setUrl( QUrl(url) );
+    QNetworkReply *reply = nam->get(request);
 
     QEventLoop loop;
-    QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+    QObject::connect( reply, SIGNAL( finished() ), &loop, SLOT( quit() ) );
     loop.exec();
 
     if (reply->error() == QNetworkReply::NoError)
-        data.append(reply->readAll());
+    {
+        data.append( reply->readAll() );
+    }
     else
     {
         success = false;
 
         if (reply->error() == QNetworkReply::AuthenticationRequiredError)
+        {
             errStr = "Bad login";
+        }
         else
+        {
             errStr = reply->errorString();
+        }
     }
 
     reply->close();
@@ -61,10 +48,9 @@ Reply Util::makeGet(QNetworkAccessManager *nam, const QString &url)
     return Reply(success, errStr, data);
 }
 
-
-Reply Util::makePost(QNetworkAccessManager *nam,
-                     const QString &url, const QByteArray &postData) {
-
+Reply Util::makePost(QNetworkAccessManager *nam, const QString &url,
+                     const QByteArray &postData)
+{
     Logger::logger()->appendLine("Util", "Make POST: " + url + "\n");
 
     bool success = true;
@@ -72,26 +58,32 @@ Reply Util::makePost(QNetworkAccessManager *nam,
     QByteArray data;
 
     QNetworkRequest request;
-    request.setUrl(QUrl(url));
+    request.setUrl( QUrl(url) );
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-    request.setHeader(QNetworkRequest::ContentLengthHeader, postData.size());
+    request.setHeader( QNetworkRequest::ContentLengthHeader, postData.size() );
 
-    QNetworkReply* reply = nam->post(request, postData);
+    QNetworkReply *reply = nam->post(request, postData);
 
     QEventLoop loop;
-    QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+    QObject::connect( reply, SIGNAL( finished() ), &loop, SLOT( quit() ) );
     loop.exec();
 
     if (reply->error() == QNetworkReply::NoError)
-        data.append(reply->readAll());
+    {
+        data.append( reply->readAll() );
+    }
     else
     {
         success = false;
 
         if (reply->error() == QNetworkReply::AuthenticationRequiredError)
+        {
             errStr = "Bad login";
+        }
         else
+        {
             errStr = reply->errorString();
+        }
     }
 
     reply->close();
@@ -101,10 +93,10 @@ Reply Util::makePost(QNetworkAccessManager *nam,
 }
 
 // Realisation from: http://stackoverflow.com/questions/20734831/compress-string-with-gzip-using-qcompress
-QByteArray Util::makeGzip(const QByteArray& data) {
-
+QByteArray Util::makeGzip(const QByteArray &data)
+{
     QByteArray compressedData = qCompress(data);
-    //  Strip the first six bytes (a 4-byte length put on by qCompress and a 2-byte zlib header)
+    // Strip the first six bytes (a 4-byte length put on by qCompress and a 2-byte zlib header)
     // and the last four bytes (a zlib integrity check).
     compressedData.remove(0, 6);
     compressedData.chop(4);
@@ -125,76 +117,75 @@ QByteArray Util::makeGzip(const QByteArray& data) {
     ds2.setByteOrder(QDataStream::LittleEndian);
     QuaCrc32 crc32;
     ds2 << crc32.calculate(data)
-        << quint32(data.size());
+        << quint32( data.size() );
 
     return header + compressedData + footer;
 }
 
-void Util::removeAll(QString filePath) {
-
+void Util::removeAll(const QString &filePath)
+{
     Logger::logger()->appendLine("Util", "Removing " + filePath + "\n");
 
     QFileInfo fileInfo = QFileInfo(filePath);
 
-    if (fileInfo.isDir()) {
-        QStringList lstFiles = QDir(filePath).entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
-        if (!lstFiles.isEmpty()) {
+    if ( fileInfo.isDir() )
+    {
+        QStringList lstFiles = QDir(filePath).entryList(
+            QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
+        if ( !lstFiles.isEmpty() )
+        {
             foreach (QString entry, lstFiles)
+            {
                 removeAll(filePath + "/" + entry);
+            }
         }
-        QDir(filePath).rmdir(fileInfo.absoluteFilePath());
-
-    } else if (fileInfo.exists()) {
+        QDir(filePath).rmdir( fileInfo.absoluteFilePath() );
+    }
+    else if ( fileInfo.exists() )
+    {
         QFile::remove(filePath);
     }
 }
 
-void Util::recursiveFlist(QStringList *list, QString prefix, QString dpath) {
-
-    QDir dir(dpath);
-    QStringList fileList = dir.entryList(QDir::Files);
-    foreach (QString fname, fileList) {
-        list->append(prefix + fname);
-    }
-
-    QStringList dirList = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
-    foreach (QString dname, dirList) {
-        QDir subdir(dpath + "/" + dname);
-        recursiveFlist(list, prefix + dname + "/", dpath + "/" + dname);
-    }
-
-}
-
-
-void Util::unzipArchive(QString zipFilePath, QString extractionPath) {
-
-    Logger* logger = Logger::logger();
+void Util::unzipArchive(const QString &zipFilePath,
+                        const QString &extractionPath)
+{
+    Logger *logger = Logger::logger();
     logger->appendLine("Util", "Unzip archive " + zipFilePath + "\n");
 
     QuaZip zip(zipFilePath);
-    if (zip.open(QuaZip::mdUnzip)) {
-
+    if ( zip.open(QuaZip::mdUnzip) )
+    {
         QuaZipFile zipFile(&zip);
 
-        for (bool f=zip.goToFirstFile(); f; f=zip.goToNextFile()) {
+        for ( bool f = zip.goToFirstFile(); f; f = zip.goToNextFile() )
+        {
             zipFile.open(QIODevice::ReadOnly);
 
-            QFile* realFile = new QFile(extractionPath + "/" + zip.getCurrentFileName());
+            QFile *realFile = new QFile(
+                extractionPath + "/" + zip.getCurrentFileName() );
 
             QFileInfo rfInfo = QFileInfo(*realFile);
 
             QDir rfDir = rfInfo.absoluteDir();
-            rfDir.mkpath(rfDir.absolutePath());
+            rfDir.mkpath( rfDir.absolutePath() );
 
-            if (!rfInfo.isDir()) {
+            if ( !rfInfo.isDir() )
+            {
+                logger->appendLine("Util",
+                                   "Extracting file " + realFile->fileName()
+                                   + "\n");
 
-                logger->appendLine("Util", "Extracting file " + realFile->fileName() + "\n");
-
-                if (realFile->open(QIODevice::WriteOnly)) {
-                    realFile->write(zipFile.readAll());
+                if ( realFile->open(QIODevice::WriteOnly) )
+                {
+                    realFile->write( zipFile.readAll() );
                     realFile->close();
-                } else {
-                    logger->appendLine("Util", "Unzip error: " + realFile->errorString() + "\n");
+                }
+                else
+                {
+                    logger->appendLine("Util",
+                                       "Unzip error: " + realFile->errorString()
+                                       + "\n");
                 }
             }
 
@@ -203,76 +194,86 @@ void Util::unzipArchive(QString zipFilePath, QString extractionPath) {
         }
         zip.close();
     }
-
 }
 
+QString Util::getCommandOutput(const QString &command, const QStringList &args)
+{
+    QString runString, output;
 
-QString Util::getCommandOutput(QString command, QStringList args) {
+    runString += command;
+    runString += " " + args.join(" ");
 
-    Logger* logger = Logger::logger();
+    log(QObject::tr("Running: ") + runString);
+    output = "Output of \'" + runString + "\':\n";
 
-    QString toRun, result;
+    QProcess process;
+    process.setProcessChannelMode(QProcess::MergedChannels);
+    process.start(command, args);
 
-    toRun += command;
-    toRun += " " + args.join(" ");
+    if ( !process.waitForStarted() )
+    {
+        output += "FAILED_TO_START\n";
+    }
+    log( QObject::tr("Process started") );
 
-    logger->appendLine("Util", "Running: " + toRun + "\n");
-    result = "Output of \"" + toRun + "\":\n";
+    process.waitForFinished();
+    log( QObject::tr("Process finished") );
 
-    QProcess* process = new QProcess(0);
-    process->setProcessChannelMode(QProcess::MergedChannels);
-    process->start(command, args);
+    output += process.readAll();
 
-    if (!process->waitForStarted()) result += "FAILED_TO_START\n";
-    logger->appendLine("Util", "Process started\n");
-
-    process->waitForFinished();
-    logger->appendLine("Util", "Process terminated!\n");
-
-    result += process->readAll();
-
-    delete process;
-    return result;
+    return output;
 }
 
+QString Util::getFileContetnts(const QString &path)
+{
+    QFile file(path);
 
-QString Util::getFileContetnts(QString path) {
-    QString result;
-    QFile* file = new QFile(path);
-    if (file->open(QIODevice::ReadOnly)) {
-        result = file->readAll();
-        file->close();
-    } else {
-        result = "CANT_OPEN_FILE";
+    if ( file.open(QIODevice::ReadOnly) )
+    {
+        QString content = file.readAll();
+        file.close();
+
+        return content;
     }
 
-    delete file;
-    return result;
+    return QString("CANT_OPEN_FILE");
 }
 
-
-bool Util::downloadFile(QNetworkAccessManager *nam, const QString &url, const QString &fileName) {
-
+bool Util::downloadFile(QNetworkAccessManager *nam, const QString &url,
+                        const QString &fileName)
+{
     Reply reply = makeGet(nam, url);
-    if (!reply.isSuccess()) {
-        Logger::logger()->appendLine("Util", "Error: " + reply.getErrorString() + "\n");
+    if ( !reply.isSuccess() )
+    {
+        Logger::logger()->appendLine("Util",
+                                     "Error: " + reply.getErrorString() + "\n");
         return false;
-    } else {
-        QFile* file = new QFile(fileName);
+    }
+    else
+    {
+        QFile *file = new QFile(fileName);
 
         QDir fdir = QFileInfo(fileName).absoluteDir();
-        fdir.mkpath(fdir.absolutePath());
+        fdir.mkpath( fdir.absolutePath() );
 
-        if (file->open(QIODevice::WriteOnly)) {
-            file->write(reply.getData());
+        if ( file->open(QIODevice::WriteOnly) )
+        {
+            file->write( reply.getData() );
             file->close();
             delete file;
             return true;
-        } else {
+        }
+        else
+        {
             delete file;
             return false;
         }
     }
 
     return true;
+}
+
+void Util::log(const QString &text)
+{
+    Logger::logger()->appendLine(QObject::tr("Util"), text);
 }
