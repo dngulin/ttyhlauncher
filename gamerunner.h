@@ -5,6 +5,10 @@
 
 #include "settings.h"
 #include "logger.h"
+#include "datafetcher.h"
+#include "filefetcher.h"
+#include "jsonparser.h"
+#include "hashchecker.h"
 #include "fileinfo.h"
 #include "libraryinfo.h"
 
@@ -13,62 +17,79 @@ class GameRunner : public QObject
 {
     Q_OBJECT
 public:
-    GameRunner(const QString &playerLogin,
-               const QString &playerPassword,
-               const QString &gamePrefix,
-               bool onlineMode,
-               const QRect &windowGeometry,
-               QObject *parent = 0);
+    GameRunner(const QString &login, const QString &pass, bool onlineMode,
+               const QRect &windowGeometry, QObject *parent = 0);
+    ~GameRunner();
 
-    void startRunner();
+    void Run();
 
 signals:
-    void runError(const QString &message);
+    void error(const QString &message);
     void needUpdate(const QString &message);
-    void gameStarted();
-    void gameFinished(int exitCode);
+    void started();
+    void finished(int exitCode);
+
+    void beginCheck( const QList<FileInfo>  list );
 
 private:
     // Initial data
     QString name;
     QString password;
-    QString prefix;
+
     QRect geometry;
     bool isOnline;
 
-    QString gameVersion;
+    QString version;
 
     // Login data
     QString clientToken;
     QString accessToken;
 
-    // Run data form <version>.json
-    QString jarName;
-    QString assetesName;
-    QString mainClass;
-    QString minecraftArgs;
-    QList<LibraryInfo> libraryList;
-
     // Checking data
-    QList<FileInfo> checkingList;
+    QThread checkThread;
+    HashChecker* checker;
+
+    QList<FileInfo> checkList;
+
+    // Run data
+    JsonParser versionParser;
+    QProcess minecraft;
 
     // Additional data
     Settings* settings;
     Logger* logger;
-    QNetworkAccessManager nam;
-    QProcess minecraft;
+
+    DataFetcher fetcher;
+    FileFetcher downloader;
+
+    // Logging
+    void log(const QString &text);
 
     // Run steps
-    void getAccessToken();
-    void findLatestVersion();
-    void updateIndexes();
-    void readVersionIndex();
-    void makeFileChecks();
+    void requestAcessToken();
+    void determinateVersion();
+    void updateVersionIndex();
+    void updateAssetsIndex();
+    void checkFiles();
+
     void runGame();
 
     void readVersionIndexInfo(const QString& indexName);
     void emitError(const QString &message);
     void emitNeedUpdate(const QString &message);
+
+private slots:
+    void acessTokenReceived(bool result);
+    void versionsListReceived(bool result);
+    void versionIndexesUpdated();
+    void assetsIndexUpdated();
+
+    void onBadChecksumm(const FileInfo fileInfo);
+
+    void gameLog();
+    void onGameError(QProcess::ProcessError error);
+    void onGameStarted();
+    void onGameFinished(int exitCode);
 };
 
 #endif // GAMERUNNER_H

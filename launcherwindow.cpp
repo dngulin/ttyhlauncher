@@ -315,7 +315,6 @@ void LauncherWindow::playButtonClicked()
 
     gameRunner = new GameRunner(ui->nickEdit->text(),
                                 ui->passEdit->text(),
-                                QString("NOT NOW"),
                                 !ui->playOffline->isChecked(),
                                 geometry);
 
@@ -331,7 +330,7 @@ void LauncherWindow::playButtonClicked()
     // gameRunner, &GameRunner::stopRunner);
 
     freezeInterface();
-    gameRunner->startRunner();
+    gameRunner->Run();
 }
 
 void LauncherWindow::gameRunnerStarted()
