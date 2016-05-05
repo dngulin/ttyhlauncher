@@ -4,6 +4,7 @@
 #include <QDialog>
 
 #include "logger.h"
+#include "datafetcher.h"
 
 namespace Ui {
 class FeedbackDialog;
@@ -21,8 +22,14 @@ private:
     Ui::FeedbackDialog *ui;
     Logger* logger;
 
+    DataFetcher uploader;
+
+    void log(const QString &text);
+    void msg(const QString &text);
+
 private slots:
     void sendFeedback();
+    void requestFinished(bool result);
 };
 
 #endif // FEEDBACKDIALOG_H

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Обратная связь</string>
+   <string>Feedback</string>
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
@@ -41,14 +41,14 @@
      <item row="1" column="0">
       <widget class="QLabel" name="passLabel">
        <property name="text">
-        <string>Пароль</string>
+        <string>Password</string>
        </property>
       </widget>
      </item>
      <item row="0" column="0">
       <widget class="QLabel" name="nickLabel">
        <property name="text">
-        <string>Игровое имя</string>
+        <string>Nickname</string>
        </property>
       </widget>
      </item>
@@ -80,7 +80,7 @@
       <enum>QFrame::Sunken</enum>
      </property>
      <property name="placeholderText">
-      <string>Краткое описание проблемы</string>
+      <string>Short trouble description</string>
      </property>
     </widget>
    </item>
@@ -90,13 +90,13 @@
       <enum>QFrame::Box</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
+      <enum>QFrame::Plain</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
        <widget class="QLabel" name="messageLabel">
         <property name="text">
-         <string>Заполните форму и нажмите кнопку &quot;Отправить&quot;</string>
+         <string>Fill the form, then press &quot;Send&quot; button</string>
         </property>
        </widget>
       </item>
@@ -121,7 +121,7 @@
      <item>
       <widget class="QPushButton" name="sendButton">
        <property name="text">
-        <string>Отправить</string>
+        <string>Send</string>
        </property>
       </widget>
      </item>

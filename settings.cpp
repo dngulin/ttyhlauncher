@@ -120,6 +120,11 @@ QStringList Settings::getClientCaptions() const
     return clients.values();
 }
 
+QStringList Settings::getClientNames() const
+{
+    return clients.keys();
+}
+
 int Settings::getClientID(const QString &strid) const
 {
     return clients.keys().indexOf(strid);
