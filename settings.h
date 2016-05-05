@@ -50,6 +50,8 @@ public:
     QString getClientName(int index) const;
     QString getClientCaption(int index) const;
 
+    QStringList getClientNames() const;
+
     // Directories
     QString getBaseDir() const;
     QString getClientDir() const;

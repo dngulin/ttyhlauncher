@@ -2,8 +2,10 @@
 #include "ui_feedbackdialog.h"
 
 #include "settings.h"
-#include "reply.h"
 #include "util.h"
+#include "jsonparser.h"
+
+#include <QDebug>
 
 FeedbackDialog::FeedbackDialog(QWidget *parent) :
     QDialog(parent),
@@ -12,43 +14,69 @@ FeedbackDialog::FeedbackDialog(QWidget *parent) :
     ui->setupUi(this);
 
     logger = Logger::logger();
+    Settings *settings = Settings::instance();
 
-    Settings* settings = Settings::instance();
-    ui->nickEdit->setText(settings->loadLogin());
+    ui->nickEdit->setText( settings->loadLogin() );
 
-    connect(ui->sendButton, SIGNAL(clicked()), this, SLOT(sendFeedback()));
-    logger->appendLine("FeedBackDialog", "Feedback dialog dialog opened\n");
+    if ( settings->loadPassStoreState() )
+    {
+        ui->passEdit->setText( settings->loadPassword() );
+    }
+
+    connect(ui->sendButton, &QPushButton::clicked, this,
+            &FeedbackDialog::sendFeedback);
+
+    connect(&uploader, &DataFetcher::finished, this,
+            &FeedbackDialog::requestFinished);
 }
 
 FeedbackDialog::~FeedbackDialog()
 {
-    logger->appendLine("FeedBackDialog", "Feedback dialog dialog closed\n");
     delete ui;
 }
 
-void FeedbackDialog::sendFeedback() {
+void FeedbackDialog::log(const QString &text)
+{
+    logger->appendLine(tr("FeedBackDialog"), text);
+}
 
-    ui->sendButton->setEnabled(false);
-    logger->appendLine("FeedBackDialog", "Sending feedback, description:\n");
-    logger->appendLine("FeedBackDialog", "\"" + ui->descEdit->toPlainText() + "\"\n");
+void FeedbackDialog::msg(const QString &text)
+{
+    ui->messageLabel->setText(text);
+    log(text);
+}
+
+void FeedbackDialog::sendFeedback()
+{
+    msg( tr("Preparing diagnostic log...") );
+
+    QString brief = ui->descEdit->toPlainText();
+    log(tr("Brief: ") + brief);
 
     QJsonObject payload;
     payload["username"] = ui->nickEdit->text();
     payload["password"] = ui->passEdit->text();
 
-    // Users input and logs trnslated to Base64
-
-    //QByteArray desc; desc.append(ui->descEdit->toPlainText());
-    //payload["desc"] = QString(desc.toBase64());
     payload["desc"] = "GZIP DATA";
 
-    logger->appendLine("FeedBackDialog", "Prepare diagnostic log...\n");
-    Settings* settings = Settings::instance();
+    if ( ui->nickEdit->text().isEmpty() )
+    {
+        msg( tr("Error: nickname does not set!") );
+        return;
+    }
 
-    QByteArray log;    
-    log.append("## ============================= ##\n");
-    log.append("    TTYHLAUNCHER DIAGNOSTIC LOG\n");
-    log.append("## ============================= ##\n");
+    if ( ui->passEdit->text().isEmpty() )
+    {
+        msg( tr("Error: password does not set!") );
+        return;
+    }
+
+    ui->sendButton->setEnabled(false);
+
+    Settings *settings = Settings::instance();
+
+    QByteArray log;
+    log.append("[General]\n");
     log.append("\n");
 
     log.append(settings->getOsName() + ", ");
@@ -56,95 +84,63 @@ void FeedbackDialog::sendFeedback() {
     log.append("arch: " + settings->getWordSize() + ".\n");
     log.append("\n");
 
-    log.append("## ============================= ##\n");
-    log.append("        TROUBLE DESCRIPTION\n");
-    log.append("## ============================= ##\n");
+    log.append("[Description]\n");
     log.append("\n");
 
-    log.append(ui->descEdit->toPlainText() + "\n");
+    log.append(brief + "\n");
     log.append("\n");
 
-    log.append("## ============================= ##\n");
-    log.append("             JAVA INFO\n");
-    log.append("## ============================= ##\n");
+    log.append("[Java]\n");
     log.append("\n");
 
-    log.append(Util::getCommandOutput("java", QStringList() << "-version"));
+    log.append( Util::getCommandOutput("java", QStringList() << "-version") );
     log.append("\n");
 
-    // Show custom java -version if exists
-    int activeClientId = settings->loadActiveClientID();
-    QStringList clientList = settings->getClientCaptions();
-    foreach (QString client, clientList) {
-        settings->saveActiveClientID(clientList.indexOf(client));
-
-        if (settings->loadClientJavaState()) {
-            log.append(" >> Client \"" + settings->getClientName(clientList.indexOf(client)) + "\" has custom java:\n");
-            log.append(Util::getCommandOutput(settings->loadClientJava(), QStringList() << "-version"));
-            log.append("\n");
-        }
-
-    }
-    settings->saveActiveClientID(activeClientId);
-
-    // Show logs
-    log.append("## ============================= ##\n");
-    log.append("             LOGS INFO\n");
-    log.append("## ============================= ##\n");
+    log.append("[Logs]\n");
     log.append("\n");
 
     QString logsPrefix = settings->getBaseDir() + "/";
-    for (int i = 0; i < 3; i++) {
-        log.append(" >> Log file \"launcher." + QString::number(i) + ".log\":\n");
-        log.append(Util::getFileContetnts(logsPrefix + "launcher." + QString::number(i) + ".log"));
+    for (int i = 0; i < 3; i++)
+    {
+        QString file = "launcher." + QString::number(i) + ".log";
+        log.append("Log file \"" + file + "\":\n");
+        log.append( Util::getFileContetnts(logsPrefix + file) );
         log.append("\n");
     }
 
     // Gzip and base-64 encode log
     QByteArray zlog = Util::makeGzip(log);
-    payload["log"] = QString(zlog.toBase64());
+    payload["log"] = QString( zlog.toBase64() );
 
     QJsonDocument jsonRequest(payload);
 
-    logger->appendLine("FeedBackDialog", "Making request...\n");
-    Reply serverReply =
-            Util::makePost(Settings::instance()->getNetworkAccessManager(),
-                           Settings::feedbackUrl, jsonRequest.toJson());
+    msg( tr("Uploading diagnostic log...") );
+    uploader.makePost( Settings::feedbackUrl, jsonRequest.toJson() );
+}
 
-    if (!serverReply.isSuccess()) {
+void FeedbackDialog::requestFinished(bool result)
+{
+    ui->sendButton->setEnabled(true);
 
-        ui->messageLabel->setText("Ошибка: " + serverReply.getErrorString());
-        logger->appendLine("FeedBackDialog", "Error: " + serverReply.getErrorString() + "\n");
-
-    } else {
-
-        logger->appendLine("FeedBackDialog", "OK\n");
-
-        QJsonParseError error;
-        QJsonDocument json = QJsonDocument::fromJson(serverReply.getData(), &error);
-
-        if (error.error == QJsonParseError::NoError) {
-
-            QJsonObject responce = json.object();
-
-            if (responce["error"].isNull()) {
-
-                ui->messageLabel->setText("Сообщение об ошибке доставлено!");
-                logger->appendLine("FeedBackDialog", "Feedback sended\n");
-
-            } else {
-                // Error answer handler
-                ui->messageLabel->setText("Ошибка: " + responce["error"].toString());
-                logger->appendLine("FeedBackDialog", "Error:"
-                                         + responce["error"].toString() + "\n");
-            }
-
-        } else {
-            // JSON parse error
-            ui->messageLabel->setText("Ошибка: сервер ответил ерунду...");
-            logger->appendLine("FeedBackDialog", "JSON parse error!\n");
-        }
+    if (!result)
+    {
+        msg( tr("Error: ") + uploader.errorString() );
+        return;
     }
 
-    ui->sendButton->setEnabled(true);
+    JsonParser parser;
+
+    if ( !parser.setJson( uploader.getData() ) )
+    {
+        msg( tr("Bad server answer: ") + parser.getParserError() );
+        return;
+    }
+
+    if ( parser.hasServerResponseError() )
+    {
+        msg( tr("Error: ") + parser.getServerResponseError() );
+        return;
+    }
+
+    msg( tr("Feedback log successfully uploaded!") );
 }
