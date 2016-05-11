@@ -550,6 +550,10 @@ void GameRunner::runGame()
         mcArg.replace("${user_properties}", "{}");
         mcArg.replace("${user_type}", "mojang");
 
+        int active = settings->loadActiveClientID();
+        QString clientType = settings->getClientName( active );
+        mcArg.replace("${version_type}", clientType);
+
         mcArgList << mcArg;
     }
 
