@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>574</width>
-    <height>461</height>
+    <width>530</width>
+    <height>350</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,18 +37,14 @@
     <number>4</number>
    </property>
    <item>
-    <layout class="QHBoxLayout" name="textLayout">
-     <item>
-      <widget class="QPlainTextEdit" name="licenseText">
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-       <property name="plainText">
-        <string/>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QPlainTextEdit" name="licenseText">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+     <property name="plainText">
+      <string/>
+     </property>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="buttonsLayout">
@@ -78,7 +74,6 @@
  </widget>
  <tabstops>
   <tabstop>closeButton</tabstop>
-  <tabstop>licenseText</tabstop>
  </tabstops>
  <resources>
   <include location="resources.qrc"/>

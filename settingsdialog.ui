@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>445</width>
-    <height>554</height>
+    <width>400</width>
+    <height>530</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -223,63 +223,82 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="serviceBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
      </property>
-     <property name="title">
-      <string>Сервис</string>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>0</height>
+      </size>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_4">
-      <item>
-       <widget class="QPushButton" name="opendirButton">
-        <property name="text">
-         <string>Open client directory...</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="hspc">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QPushButton" name="saveButton">
-        <property name="text">
-         <string>Save</string>
-        </property>
-        <property name="default">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
+    </spacer>
+   </item>
+   <item>
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
     </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="buttonsLayout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QPushButton" name="opendirButton">
+       <property name="text">
+        <string>Open client directory...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="hspc">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="saveButton">
+       <property name="text">
+        <string>Save</string>
+       </property>
+       <property name="default">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
  <tabstops>
+  <tabstop>saveButton</tabstop>
   <tabstop>clientCombo</tabstop>
   <tabstop>versionCombo</tabstop>
   <tabstop>stateEdit</tabstop>
+  <tabstop>sizeBox</tabstop>
+  <tabstop>customSizeRadio</tabstop>
+  <tabstop>widthSpinBox</tabstop>
+  <tabstop>heightSpinBox</tabstop>
+  <tabstop>fullscreenRadio</tabstop>
+  <tabstop>useLauncherRadio</tabstop>
   <tabstop>javapathBox</tabstop>
   <tabstop>javapathEdit</tabstop>
   <tabstop>javapathButton</tabstop>
   <tabstop>argsBox</tabstop>
   <tabstop>argsEdit</tabstop>
+  <tabstop>checkAssetsCombo</tabstop>
   <tabstop>opendirButton</tabstop>
-  <tabstop>saveButton</tabstop>
  </tabstops>
  <resources>
   <include location="resources.qrc"/>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>360</width>
-    <height>305</height>
+    <width>300</width>
+    <height>320</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -38,6 +38,9 @@
    </property>
    <item>
     <layout class="QGridLayout" name="formLayout">
+     <property name="spacing">
+      <number>4</number>
+     </property>
      <item row="1" column="0">
       <widget class="QLabel" name="passLabel">
        <property name="text">
@@ -65,42 +68,34 @@
     </layout>
    </item>
    <item>
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QPlainTextEdit" name="descEdit">
-     <property name="frameShape">
-      <enum>QFrame::Box</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
-     </property>
      <property name="placeholderText">
       <string>Short trouble description</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="messageFrame">
-     <property name="frameShape">
-      <enum>QFrame::Box</enum>
+    <widget class="Line" name="lineTop">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
-     <property name="frameShadow">
-      <enum>QFrame::Plain</enum>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="messageLabel">
+     <property name="text">
+      <string>Fill the form, then press &quot;Send&quot; button</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QLabel" name="messageLabel">
-        <property name="text">
-         <string>Fill the form, then press &quot;Send&quot; button</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="lineBottom">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
     </widget>
    </item>
    <item>
@@ -130,10 +125,10 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>passEdit</tabstop>
-  <tabstop>descEdit</tabstop>
   <tabstop>sendButton</tabstop>
+  <tabstop>descEdit</tabstop>
   <tabstop>nickEdit</tabstop>
+  <tabstop>passEdit</tabstop>
  </tabstops>
  <resources>
   <include location="resources.qrc"/>

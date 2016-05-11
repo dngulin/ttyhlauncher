@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>785</width>
-    <height>467</height>
+    <width>780</width>
+    <height>470</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -195,7 +195,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>785</width>
+     <width>780</width>
      <height>26</height>
     </rect>
    </property>
@@ -327,10 +327,12 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
+  <tabstop>playButton</tabstop>
   <tabstop>nickEdit</tabstop>
   <tabstop>passEdit</tabstop>
   <tabstop>clientCombo</tabstop>
-  <tabstop>playButton</tabstop>
+  <tabstop>savePassword</tabstop>
+  <tabstop>logDisplay</tabstop>
  </tabstops>
  <resources>
   <include location="resources.qrc"/>

@@ -582,10 +582,11 @@ void GameRunner::runGame()
 
     // Workaround for Oracle Java + StartSSL
     QString keystore = settings->getConfigDir() + "/keystore.ks";
+    QString newline = "\r\n";
 
     argList << "-Djavax.net.ssl.trustStore=" + keystore
             << "-Djavax.net.ssl.trustStorePassword=123456"; // LOL
-    argList << "-Dline.separator=\r\n";
+    argList << "-Dline.separator=" + newline;
     argList << "-Dfile.encoding=UTF8";
 
     // Setup user args
