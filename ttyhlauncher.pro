@@ -21,7 +21,6 @@ SOURCES += main.cpp \
     settings.cpp \
     logger.cpp \
     util.cpp \
-    reply.cpp \
     licensedialog.cpp \
     jsonparser.cpp \
     libraryinfo.cpp \
@@ -40,7 +39,6 @@ HEADERS += launcherwindow.h \
     settings.h \
     logger.h \
     util.h \
-    reply.h \
     licensedialog.h \
     jsonparser.h \
     libraryinfo.h \
