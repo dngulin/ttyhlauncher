@@ -56,7 +56,7 @@ Logger::Logger(QObject *parent) :
 void Logger::appendLine(const QString &sender, const QString &text)
 {
     QString time = QTime::currentTime().toString("hh:mm:ss");
-    QString prefix = "(" + time + ") " + sender + " >> ";
+    QString prefix = "[" + time + "] " + sender + " >> ";
 
     QTextStream(stdout) << prefix << text << "\n";
 
