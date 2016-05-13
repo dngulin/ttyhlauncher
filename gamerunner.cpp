@@ -464,7 +464,7 @@ void GameRunner::onBadChecksumm(const FileInfo fileInfo)
 
     checker->cancel();
 
-    emitNeedUpdate( tr("Bad checksumms.") );
+    emitNeedUpdate( tr("Client files are obsolete.") );
 }
 
 void GameRunner::runGame()
@@ -615,6 +615,9 @@ void GameRunner::runGame()
     QDir(clientPrefix).mkpath(clientPrefix);
     minecraft.setWorkingDirectory(clientPrefix);
 
+    connect(&minecraft, &QProcess::started,
+            this, &GameRunner::onGameStarted);
+
     connect(&minecraft, &QProcess::readyReadStandardOutput,
             this, &GameRunner::gameLog);
 
@@ -646,7 +649,7 @@ void GameRunner::onGameError(QProcess::ProcessError error)
     switch (error)
     {
     case QProcess::FailedToStart:
-        emitError( tr("Failed to start: ") + minecraft.errorString() );
+        emitError( tr("Failed to start: java not found!")  );
         break;
 
     case QProcess::Crashed:

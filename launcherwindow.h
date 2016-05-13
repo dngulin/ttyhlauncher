@@ -51,8 +51,7 @@ private slots:
     void gameRunnerStarted();
     void gameRunnerFinished(int exitCode);
 
-    void showError(const QString & title, const QString & message);
-
+    void showError(const QString & message);
 
 private:
     Ui::LauncherWindow *ui;
@@ -62,8 +61,9 @@ private:
     Logger* logger;
 
     DataFetcher newsFetcher;
-
     GameRunner* gameRunner;
+
+    void log(const QString& line);
 
     void appendLineToLog(const QString& line);
 

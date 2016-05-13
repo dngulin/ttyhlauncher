@@ -22,13 +22,12 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::LauncherWindow)
 {
-    // Setup form from ui-file
     ui->setupUi(this);
 
-    // Setup settings and logger
     settings = Settings::instance();
     logger = Logger::logger();
 
+    // Show welcome message
     QFont font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
     ui->logDisplay->setFont(font);
 
@@ -42,40 +41,43 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     }
     else
     {
-        logger->appendLine( this->objectName(), tr("Can't open logo resource.") );
+        log( tr("Can't open logo resource.") );
     }
 
-    // Options Menu connections
-    connect( ui->runSettings, SIGNAL( triggered() ), SLOT(
-                  showSettingsDialog() ) );
+    // Setup menu
+    connect(ui->runSettings, &QAction::triggered, this,
+            &LauncherWindow::showSettingsDialog);
 
-    // Additional Menu connections
-    connect( ui->changeSkin, SIGNAL( triggered() ),
-             SLOT( showSkinLoadDialog() ) );
-    connect( ui->updateManager, SIGNAL( triggered() ),
-             SLOT( showUpdateManagerDialog() ) );
+    connect(ui->changeSkin, &QAction::triggered, this,
+            &LauncherWindow::showSkinLoadDialog);
 
-    // Help Menu connections
-    connect( ui->bugReport, SIGNAL( triggered() ),
-             SLOT( showFeedBackDialog() ) );
-    connect( ui->aboutLauncher, SIGNAL( triggered() ),
-             SLOT( showAboutDialog() ) );
+    connect(ui->updateManager, &QAction::triggered, this,
+            &LauncherWindow::showUpdateManagerDialog);
 
-    // Setup offlineMode entry
-    ui->playOffline->setChecked( settings->loadOfflineModeState() );
-    this->offlineModeChanged();
-    connect( ui->playOffline, SIGNAL( triggered() ), SLOT(
-                  offlineModeChanged() ) );
+    connect(ui->bugReport, &QAction::triggered, this,
+            &LauncherWindow::showFeedBackDialog);
 
-    // Setup hidewindow entry
-    ui->hideLauncher->setChecked( settings->loadHideWindowModeState() );
-    connect( ui->hideLauncher, SIGNAL( triggered() ),
-             SLOT( hideWindowModeChanged() ) );
+    connect(ui->aboutLauncher, &QAction::triggered, this,
+            &LauncherWindow::showAboutDialog);
 
-    // Setup news feed
-    ui->loadNews->setChecked( settings->loadNewsState() );
-    connect( ui->loadNews, SIGNAL( triggered() ),
-             SLOT( fetchNewsModeChanged() ) );
+    bool isOffline = settings->loadOfflineModeState();
+    ui->playOffline->setChecked(isOffline);
+    offlineModeChanged();
+
+    connect(ui->playOffline, &QAction::triggered, this,
+            &LauncherWindow::offlineModeChanged);
+
+    bool isHideWindow = settings->loadHideWindowModeState();
+    ui->hideLauncher->setChecked( isHideWindow );
+
+    connect(ui->hideLauncher, &QAction::triggered, this,
+            &LauncherWindow::hideWindowModeChanged);
+
+    bool isLoadNews = settings->loadNewsState();
+    ui->loadNews->setChecked( isLoadNews );
+
+    connect(ui->loadNews, &QAction::triggered, this,
+            &LauncherWindow::fetchNewsModeChanged);
 
     connect(&newsFetcher, &DataFetcher::finished, this,
             &LauncherWindow::newsFetched);
@@ -85,60 +87,65 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
         newsFetcher.makeGet( QUrl(Settings::newsFeed) );
     }
 
-    connect( logger, SIGNAL( lineAppended(QString) ), this,
-             SLOT( appendToLog(QString) ) );
+    // Setup form
+    QString login = settings->loadLogin();
+    ui->nickEdit->setText(login);
 
-    // Setup login field
-    ui->nickEdit->setText( settings->loadLogin() );
-    // Save login when changed
-    connect( ui->nickEdit, SIGNAL( textChanged(QString) ), settings,
-             SLOT( saveLogin(QString) ) );
+    connect(ui->nickEdit, &QLineEdit::textChanged, settings,
+            &Settings::saveLogin);
 
-    // Setup password field
-    ui->savePassword->setChecked( settings->loadPassStoreState() );
-    if ( ui->savePassword->isChecked() )
+    bool isPassStored = settings->loadPassStoreState();
+    ui->savePassword->setChecked(isPassStored);
+
+    if (isPassStored)
     {
-        ui->passEdit->setText( settings->loadPassword() );
+        QString password = settings->loadPassword();
+        ui->passEdit->setText(password);
     }
-    // Password are saved on login or exit if savePassword is checked
-    connect( ui->savePassword, SIGNAL( clicked(bool) ), settings,
-             SLOT( savePassStoreState(bool) ) );
 
-    // Setup client combobox
-    ui->clientCombo->addItems( settings->getClientCaptions() );
-    ui->clientCombo->setCurrentIndex( settings->loadActiveClientID() );
+    connect(ui->savePassword, &QCheckBox::clicked, settings,
+            &Settings::savePassStoreState);
+
+    QStringList clients = settings->getClientCaptions();
+    ui->clientCombo->addItems(clients);
+
+    int currentClient = settings->loadActiveClientID();
+    ui->clientCombo->setCurrentIndex(currentClient);
+
     connect( ui->clientCombo, SIGNAL( activated(int) ), settings,
              SLOT( saveActiveClientID(int) ) );
 
     // Setup window parameters
     QRect geometry = settings->loadWindowGeometry();
-    // Centering window, if loaded default values
+
     if (geometry.x() < 0)
     {
-        this->move(
-             QApplication::desktop()->screen()->rect().center()
-            - this->rect().center() );
+        QPoint scrCenter = QApplication::desktop()->screen()->rect().center();
+        QPoint winCenter = this->rect().center();
+
+        this->move(scrCenter - winCenter);
     }
     else
     {
         this->setGeometry(geometry);
     }
 
-    // Restore maximized state
     if ( settings->loadMaximizedState() )
     {
         this->showMaximized();
     }
 
-    connect( ui->playButton, SIGNAL( clicked() ), this,
-             SLOT( playButtonClicked() ) );
+    // Other
+    connect(ui->playButton, &QPushButton::clicked, this,
+            &LauncherWindow::playButtonClicked);
+
+    connect(logger, &Logger::lineAppended, this, &LauncherWindow::appendToLog);
 
     if (ui->clientCombo->count() == 0)
     {
-        this->show(); // Show window before error message
+        this->show();
         ui->playButton->setEnabled(false);
-        QMessageBox::critical(this, "Беда-беда!",
-                              "Не удалось получить список клиентов\nМы все умрём.\n");
+        showError(tr("No available clients!"));
     }
 }
 
@@ -231,12 +238,17 @@ QString LauncherWindow::escapeString(const QString &string)
     return string.toHtmlEscaped().replace(" ", "&nbsp;");
 }
 
-void LauncherWindow::showError(const QString &title, const QString &message)
+void LauncherWindow::showError(const QString &message)
 {
-    QMessageBox::critical(this, title, message);
+    log(tr("Error: ") + message);
+    QMessageBox::critical(this, tr("Oops! Error!"), message);
 }
 
-// Run this method on close window and run game
+void LauncherWindow::log(const QString &line)
+{
+    logger->appendLine( tr("LauncherWindow"), line );
+}
+
 void LauncherWindow::storeParameters()
 {
     settings->saveWindowGeometry( this->geometry() );
@@ -246,14 +258,12 @@ void LauncherWindow::storeParameters()
     {
         settings->savePassword( ui->passEdit->text() );
     }
-    // Security issue
     else
     {
         settings->savePassword("");
     }
 }
 
-// Show dialog slots
 void LauncherWindow::showSettingsDialog()
 {
     SettingsDialog *d = new SettingsDialog(this);
@@ -272,8 +282,7 @@ void LauncherWindow::showSkinLoadDialog()
 
 void LauncherWindow::showUpdateManagerDialog()
 {
-    showUpdateDialog(
-        "Для проверки наличия обновлений выберите нужный клиент и нажмите кнопку \"Проверить\"");
+    showUpdateDialog( tr("Select a client, then press 'Update' button.") );
 }
 
 void LauncherWindow::showFeedBackDialog()
@@ -292,10 +301,17 @@ void LauncherWindow::showAboutDialog()
 
 void LauncherWindow::offlineModeChanged()
 {
-    settings->saveOfflineModeState( ui->playOffline->isChecked() );
-    settings->loadOfflineModeState() ? ui->playButton->setText(
-        "Играть (оффлайн)")
-    : ui->playButton->setText("Играть");
+    bool isOffline = ui->playOffline->isChecked();
+    settings->saveOfflineModeState(isOffline);
+
+    if (isOffline)
+    {
+        ui->playButton->setText( tr("Play (offline)") );
+    }
+    else
+    {
+        ui->playButton->setText( tr("Play") );
+    }
 }
 
 void LauncherWindow::hideWindowModeChanged()
@@ -339,27 +355,29 @@ void LauncherWindow::showUpdateDialog(QString message)
 
 void LauncherWindow::playButtonClicked()
 {
-    logger->appendLine(this->objectName(), "Try to start game...");
-    logger->appendLine(this->objectName(), "Client id: "
-                   + settings->getClientName( settings->loadActiveClientID() ) );
+    log( tr("Try to start game...") );
 
+    QString client = settings->getClientName( settings->loadActiveClientID() );
+    log(tr("Client: ") + client);
+
+    QString login = ui->nickEdit->text();
+    QString pass = ui->passEdit->text();
+    bool isOnline = !ui->playOffline->isChecked();
     QRect geometry = settings->loadClientWindowGeometry();
 
-    gameRunner = new GameRunner(ui->nickEdit->text(),
-                                ui->passEdit->text(),
-                                !ui->playOffline->isChecked(),
-                                geometry);
+    gameRunner = new GameRunner(login, pass, isOnline, geometry);
 
-    connect( gameRunner, SIGNAL( error(QString) ),
-             this, SLOT( gameRunnerError(QString) ) );
-    connect( gameRunner, SIGNAL( needUpdate(QString) ),
-             this, SLOT( gameRunnerNeedUpdate(QString) ) );
-    connect( gameRunner, SIGNAL( started() ),
-             this, SLOT( gameRunnerStarted() ) );
-    connect( gameRunner, SIGNAL( finished(int) ),
-             this, SLOT( gameRunnerFinished(int) ) );
-    // connect(this, &LauncherWindow::windowClosed,
-    // gameRunner, &GameRunner::stopRunner);
+    connect(gameRunner, &GameRunner::error, this,
+            &LauncherWindow::gameRunnerError);
+
+    connect(gameRunner, &GameRunner::needUpdate, this,
+            &LauncherWindow::gameRunnerNeedUpdate);
+
+    connect(gameRunner, &GameRunner::started, this,
+            &LauncherWindow::gameRunnerStarted);
+
+    connect(gameRunner, &GameRunner::finished, this,
+            &LauncherWindow::gameRunnerFinished);
 
     freezeInterface();
     gameRunner->Run();
@@ -370,20 +388,20 @@ void LauncherWindow::gameRunnerStarted()
     if ( ui->hideLauncher->isChecked() )
     {
         this->hide();
-        logger->appendLine(this->objectName(), "Main window hidden.");
+        log( tr("Main window hidden.") );
     }
 }
 
 void LauncherWindow::gameRunnerError(const QString &message)
 {
-    delete gameRunner;
+    gameRunner->deleteLater();
     unfreezeInterface();
-    showError("Game run error!", message);
+    showError(message);
 }
 
 void LauncherWindow::gameRunnerNeedUpdate(const QString &message)
 {
-    delete gameRunner;
+    gameRunner->deleteLater();
     unfreezeInterface();
     showUpdateDialog(message);
 }
@@ -395,14 +413,14 @@ void LauncherWindow::gameRunnerFinished(int exitCode)
     if ( this->isHidden() )
     {
         this->show();
-        logger->appendLine(this->objectName(), "Main window showed");
+       log( tr("Main window visible.") );
     }
 
     unfreezeInterface();
 
     if (exitCode != 0)
     {
-        showError("Game run error!", "Process finished incorrectly!");
+        showError("Process finished incorrectly!");
     }
 }
 
