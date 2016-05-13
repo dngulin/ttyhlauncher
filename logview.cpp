@@ -21,6 +21,8 @@ void LogView::mouseMoveEvent(QMouseEvent *e)
         click = false;
         viewport()->setCursor(Qt::IBeamCursor);
     }
+
+    e->accept();
 }
 
 void LogView::mousePressEvent(QMouseEvent *e)
@@ -31,6 +33,8 @@ void LogView::mousePressEvent(QMouseEvent *e)
     {
         click = true;
     }
+
+    e->accept();
 }
 
 void LogView::mouseReleaseEvent(QMouseEvent *e)
@@ -47,4 +51,6 @@ void LogView::mouseReleaseEvent(QMouseEvent *e)
             QDesktopServices::openUrl( QUrl(anchor) );
         }
     }
+
+    e->accept();
 }
