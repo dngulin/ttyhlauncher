@@ -41,7 +41,7 @@
      <number>5</number>
     </property>
     <item>
-     <widget class="QPlainTextEdit" name="logDisplay">
+     <widget class="LogView" name="logDisplay">
       <property name="frameShape">
        <enum>QFrame::Box</enum>
       </property>
@@ -55,10 +55,7 @@
        <string notr="true"/>
       </property>
       <property name="textInteractionFlags">
-       <set>Qt::TextBrowserInteraction</set>
-      </property>
-      <property name="maximumBlockCount">
-       <number>1000</number>
+       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
       </property>
      </widget>
     </item>
@@ -326,6 +323,13 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>LogView</class>
+   <extends>QPlainTextEdit</extends>
+   <header location="global">logview.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>playButton</tabstop>
   <tabstop>nickEdit</tabstop>

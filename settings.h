@@ -17,6 +17,8 @@ public:
 
     static const QString launcherVersion;
 
+    static const QString newsFeed;
+
 private:
     static const QString master;
     static Settings *myInstance;

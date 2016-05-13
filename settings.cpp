@@ -12,6 +12,8 @@ typedef QStandardPaths Path;
 
 const QString Settings::launcherVersion = "0.999";
 
+const QString Settings::newsFeed = "https://ttyh.ru/misc.php?page=feed";
+
 // Master-server links
 const QString Settings::master = "https://master.ttyh.ru/index.php";
 const QString Settings::authUrl = master + "?act=login";

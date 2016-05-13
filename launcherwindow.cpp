@@ -45,9 +45,6 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
         logger->appendLine( this->objectName(), tr("Can't open logo resource.") );
     }
 
-    connect( logger, SIGNAL( lineAppended(QString) ), this,
-             SLOT( appendToLog(QString) ) );
-
     // Options Menu connections
     connect( ui->runSettings, SIGNAL( triggered() ), SLOT(
                   showSettingsDialog() ) );
@@ -72,9 +69,24 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
 
     // Setup hidewindow entry
     ui->hideLauncher->setChecked( settings->loadHideWindowModeState() );
-    this->hideWindowModeChanged();
     connect( ui->hideLauncher, SIGNAL( triggered() ),
              SLOT( hideWindowModeChanged() ) );
+
+    // Setup news feed
+    ui->loadNews->setChecked( settings->loadNewsState() );
+    connect( ui->loadNews, SIGNAL( triggered() ),
+             SLOT( fetchNewsModeChanged() ) );
+
+    connect(&newsFetcher, &DataFetcher::finished, this,
+            &LauncherWindow::newsFetched);
+
+    if ( settings->loadNewsState() )
+    {
+        newsFetcher.makeGet( QUrl(Settings::newsFeed) );
+    }
+
+    connect( logger, SIGNAL( lineAppended(QString) ), this,
+             SLOT( appendToLog(QString) ) );
 
     // Setup login field
     ui->nickEdit->setText( settings->loadLogin() );
@@ -123,7 +135,7 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
 
     if (ui->clientCombo->count() == 0)
     {
-        this->show(); // hack to show window before error message
+        this->show(); // Show window before error message
         ui->playButton->setEnabled(false);
         QMessageBox::critical(this, "Беда-беда!",
                               "Не удалось получить список клиентов\nМы все умрём.\n");
@@ -158,15 +170,15 @@ void LauncherWindow::appendToLog(const QString &text)
 
 void LauncherWindow::appendLineToLog(const QString &line)
 {
-    QRegularExpression urlRegEx("((?:https?)://\\S+)");
+    QRegularExpression urlRegEx("(https?://[A-Za-z0-9\\.\\-\\?_=~#/]+)");
     QRegularExpressionMatch urlMatch = urlRegEx.match(line);
 
     if ( urlMatch.hasMatch() )
     {
-        QString htmlLine;
+        QString htmlLine = "";
 
         int current = 0;
-        int last  = line.length() - 1;
+        int last  = line.length();
         int matches = urlMatch.lastCapturedIndex();
 
         for (int i = 1; i <= matches; i++)
@@ -185,7 +197,11 @@ void LauncherWindow::appendLineToLog(const QString &line)
             // URL
             int urlLen = urlEnd - urlBegin;
             QString url = line.mid(urlBegin, urlLen);
-            htmlLine += QString("<a href='*'>*</a>\n\n").replace("*", url);
+
+            QString pat = "<a href='${url}' >${esc}</a>";
+            QString esc = escapeString(url);
+
+            htmlLine += pat.replace("${url}", url).replace("${esc}", esc);
 
             current = urlEnd;
 
@@ -198,11 +214,14 @@ void LauncherWindow::appendLineToLog(const QString &line)
             }
         }
 
-        ui->logDisplay->appendHtml(htmlLine);
+        ui->logDisplay->appendHtml(htmlLine + "\n");
     }
     else
     {
-        ui->logDisplay->appendPlainText(line);
+        ui->logDisplay->appendHtml( escapeString(line) );
+
+        // NOTE: plain text sometimes has URL apperance
+        //ui->logDisplay->appendPlainText(line);
     }
 
 }
@@ -282,6 +301,19 @@ void LauncherWindow::offlineModeChanged()
 void LauncherWindow::hideWindowModeChanged()
 {
     settings->saveHideWindowModeState( ui->hideLauncher->isChecked() );
+}
+
+void LauncherWindow::fetchNewsModeChanged()
+{
+    settings->saveNewsState( ui->loadNews->isChecked() );
+}
+
+void LauncherWindow::newsFetched(bool result)
+{
+    if (result)
+    {
+        appendToLog( newsFetcher.getData() );
+    }
 }
 
 void LauncherWindow::freezeInterface()

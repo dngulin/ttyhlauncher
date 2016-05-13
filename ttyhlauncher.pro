@@ -28,7 +28,8 @@ SOURCES += main.cpp \
     gamerunner.cpp \
     filefetcher.cpp \
     datafetcher.cpp \
-    hashchecker.cpp
+    hashchecker.cpp \
+    logview.cpp
 
 HEADERS += launcherwindow.h \
     skinuploaddialog.h \
@@ -46,7 +47,8 @@ HEADERS += launcherwindow.h \
     gamerunner.h \
     filefetcher.h \
     datafetcher.h \
-    hashchecker.h
+    hashchecker.h \
+    logview.h
 
 FORMS += launcherwindow.ui \
     skinuploaddialog.ui \

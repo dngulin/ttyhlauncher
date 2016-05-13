@@ -6,6 +6,7 @@
 
 #include "settings.h"
 #include "logger.h"
+#include "datafetcher.h"
 #include "gamerunner.h"
 
 namespace Ui {
@@ -37,6 +38,9 @@ private slots:
 
     void offlineModeChanged();
     void hideWindowModeChanged();
+    void fetchNewsModeChanged();
+
+    void newsFetched(bool result);
 
     void freezeInterface();
     void unfreezeInterface();
@@ -56,6 +60,8 @@ private:
 
     Settings* settings;
     Logger* logger;
+
+    DataFetcher newsFetcher;
 
     GameRunner* gameRunner;
 
