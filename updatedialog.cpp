@@ -28,9 +28,6 @@ UpdateDialog::UpdateDialog(QString displayMessage, QWidget *parent) :
     connect(checker, &HashChecker::finished,
             this, &UpdateDialog::checkFinished);
 
-    connect(ui->cancelButton, &QPushButton::clicked,
-            checker, &HashChecker::cancel);
-
     checkThread.start();
 
     settings = Settings::instance();
@@ -107,6 +104,8 @@ void UpdateDialog::resetUpdateData()
     indexFetcher.cancel();
     assetsFetcher.cancel();
     fileFetcher.cancel();
+
+    checker->cancel();
 
     removeList.clear();
     checkList.clear();

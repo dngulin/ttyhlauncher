@@ -5,18 +5,29 @@ HashChecker::HashChecker()
     qRegisterMetaType<QList<FileInfo>>("QList<FileInfo>");
 }
 
+void HashChecker::setCancelled(bool state)
+{
+    QMutexLocker locker(&mutex);
+    cancelled = state;
+}
+
+bool HashChecker::isCancelled() const
+{
+    return cancelled;
+}
+
 void HashChecker::checkFiles(const QList<FileInfo> &list)
 {
-    cancelled = false;
+    setCancelled(false);
 
     int total = list.count();
     int current = 0;
 
     foreach (const FileInfo entry, list)
     {
-        if (cancelled)
+        if ( isCancelled() )
         {
-            break;
+            return;
         }
 
         current++;
@@ -28,15 +39,12 @@ void HashChecker::checkFiles(const QList<FileInfo> &list)
         }
     }
 
-    if (!cancelled)
-    {
-        emit finished();
-    }
+    emit finished();
 }
 
 void HashChecker::cancel()
 {
-    cancelled = true;
+    setCancelled(true);
 }
 
 bool HashChecker::hashIsValid(const FileInfo fileInfo) const

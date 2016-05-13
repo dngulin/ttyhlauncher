@@ -11,15 +11,19 @@ class HashChecker : public QObject
 
 public:
     HashChecker();
+    void cancel();
 
 public slots:
     void checkFiles(const QList< FileInfo > &list);
-    void cancel();
 
 private:
     bool hashIsValid(const FileInfo fileInfo) const;
 
     bool cancelled;
+    mutable QMutex mutex;
+
+    void setCancelled(bool state);
+    bool isCancelled() const;
 
 signals:
     void progress( int percents );
