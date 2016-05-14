@@ -235,7 +235,10 @@ void LauncherWindow::appendLineToLog(const QString &line)
 
 QString LauncherWindow::escapeString(const QString &string)
 {
-    return string.toHtmlEscaped().replace(" ", "&nbsp;");
+    return string
+            .toHtmlEscaped()
+            .replace(" ", "&nbsp;")
+            .replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
 }
 
 void LauncherWindow::showError(const QString &message)
