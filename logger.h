@@ -12,8 +12,7 @@ private:
     static Logger *myInstance;
 
     QFile logFile;
-    QIODevice::OpenMode mode = QIODevice::Text | QIODevice::Append
-                               | QIODevice::WriteOnly;
+    QIODevice::OpenMode mode;
 
     Logger &operator=(Logger const &);
     Logger(Logger const &);

@@ -41,6 +41,8 @@ Logger::Logger(QObject *parent) :
 
     logFile.setFileName(logFileName);
 
+    mode = QIODevice::Text | QIODevice::Append | QIODevice::WriteOnly;
+
     if ( !logFile.open(mode) )
     {
         qCritical() << "Can't setup logger!";

@@ -2,7 +2,7 @@
 
 HashChecker::HashChecker()
 {
-    qRegisterMetaType<QList<FileInfo>>("QList<FileInfo>");
+    qRegisterMetaType<QList<FileInfo> >("QList<FileInfo>");
 }
 
 void HashChecker::setCancelled(bool state)
