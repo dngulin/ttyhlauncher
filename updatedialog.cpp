@@ -379,8 +379,10 @@ void UpdateDialog::processClientFiles()
     JsonParser installedParser;
     if ( installedParser.setJsonFromFile(installedIndex) )
     {
-        auto newFiles = dataParser.getAddonsFilesInfoHashMap();
-        auto oldFiles = installedParser.getAddonsFilesInfoHashMap();
+        typedef QHash<QString,FileInfo> mapInfo;
+
+        mapInfo newFiles = dataParser.getAddonsFilesInfoHashMap();
+        mapInfo oldFiles = installedParser.getAddonsFilesInfoHashMap();
 
         foreach ( QString oldFile, oldFiles.keys() )
         {
