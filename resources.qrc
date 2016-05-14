@@ -10,5 +10,6 @@
         <file>resources/skin.png</file>
         <file>resources/license.txt</file>
         <file>resources/logo.txt</file>
+        <file>translations/ru.qm</file>
     </qresource>
 </RCC>

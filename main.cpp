@@ -11,6 +11,10 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
+    QTranslator t;
+    t.load(":/translations/ru.qm");
+    QApplication::installTranslator(&t);
+
     Settings::instance();
     Logger::logger();
 

@@ -158,7 +158,7 @@ void SettingsDialog::appendVersionList(const QString &reason)
 void SettingsDialog::logCurrentSettings()
 {
     QString yes = tr("true");
-    QString no = tr("true");
+    QString no = tr("false");
 
     QString client = settings->getClientName( settings->loadActiveClientID() );
 

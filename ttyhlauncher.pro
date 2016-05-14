@@ -61,6 +61,8 @@ FORMS += launcherwindow.ui \
 RESOURCES += \
     resources.qrc
 
+TRANSLATIONS += translations/ru.ts
+
 RC_ICONS = resources/favicon.ico
 
 ICON = resources/favicon.icns

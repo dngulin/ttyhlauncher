@@ -249,15 +249,6 @@
     <string>&amp;Report a bug</string>
    </property>
   </action>
-  <action name="changePassword">
-   <property name="icon">
-    <iconset>
-     <normaloff>:/resources/password.png</normaloff>:/resources/password.png</iconset>
-   </property>
-   <property name="text">
-    <string>Изменить пароль</string>
-   </property>
-  </action>
   <action name="changeSkin">
    <property name="icon">
     <iconset resource="resources.qrc">
@@ -283,26 +274,6 @@
    </property>
    <property name="text">
     <string>&amp;About</string>
-   </property>
-  </action>
-  <action name="doClone">
-   <property name="text">
-    <string>&amp;Clone</string>
-   </property>
-  </action>
-  <action name="doFetch">
-   <property name="text">
-    <string>&amp;Fetch</string>
-   </property>
-  </action>
-  <action name="doCheckout">
-   <property name="text">
-    <string>C&amp;hecksumms</string>
-   </property>
-  </action>
-  <action name="doExport">
-   <property name="text">
-    <string>&amp;Export</string>
    </property>
   </action>
   <action name="hideLauncher">
