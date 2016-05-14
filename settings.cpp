@@ -528,6 +528,10 @@ QString Settings::getOsVersion() const
         return "10.8";
     case QSysInfo::MV_10_9:
         return "10.9";
+    case QSysInfo::MV_10_10:
+        return "10.10";
+    case QSysInfo::MV_10_11:
+        return "10.11";
     default:
         return "unknown";
     }
