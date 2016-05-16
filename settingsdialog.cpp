@@ -207,12 +207,12 @@ void SettingsDialog::saveSettings()
     settings->saveClientWindowSizeState( ui->sizeBox->isChecked() );
     settings->saveClientFullscreenState( ui->fullscreenRadio->isChecked() );
 
-    bool launcherSizeState = ui->useLauncherRadio->isChecked() ;
+    bool launcherSizeState = ui->useLauncherRadio->isChecked();
     settings->saveClientUseLauncherSizeState(launcherSizeState);
 
     settings->saveClientCheckAssetsState( ui->checkAssetsCombo->isChecked() );
 
-    log( tr("Settings saved") );
+    log( tr("Settings saved:") );
     logCurrentSettings();
     this->close();
 }
@@ -243,13 +243,13 @@ void SettingsDialog::loadSettings()
     bool checkAssets = settings->loadClientCheckAssetsState();
     ui->checkAssetsCombo->setChecked(checkAssets);
 
-    log( tr("Settings loaded") );
+    log( tr("Settings loaded:") );
     logCurrentSettings();
 }
 
 void SettingsDialog::openFileDialog()
 {
-    QString title = tr("Select ajava executable");
+    QString title = tr("Select a java executable");
     QString javapath = QFileDialog::getOpenFileName(this, title, "", "");
     ui->javapathEdit->setText(javapath);
 }
@@ -265,9 +265,9 @@ void SettingsDialog::openClientDirectory()
     else
     {
         QString head = tr("Oops! We have a problem!");
-        QString msg = tr("Error: can't open client directory: ");
+        QString msg = tr("Can't open client directory! %1");
 
-        log( msg + clientDir.fileName() );
-        QMessageBox::critical( this, head, msg + clientDir.fileName() );
+        log( msg.arg( clientDir.fileName() ) );
+        QMessageBox::critical( this, head, msg.arg( clientDir.fileName() ) );
     }
 }

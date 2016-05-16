@@ -44,7 +44,7 @@ QByteArray Util::makeGzip(const QByteArray &data)
 
 void Util::removeAll(const QString &filePath)
 {
-    log( QObject::tr("Delete: ") + filePath);
+    log( QObject::tr("Delete: %1").arg(filePath) );
 
     QFileInfo fileInfo = QFileInfo(filePath);
 
@@ -70,7 +70,7 @@ void Util::removeAll(const QString &filePath)
 void Util::unzipArchive(const QString &zipFilePath,
                         const QString &extractionPath)
 {
-    log(QObject::tr("Unzip archive: " )+ zipFilePath);
+    log( QObject::tr("Unzip archive: %1").arg(zipFilePath) );
 
     QuaZip zip(zipFilePath);
     if ( zip.open(QuaZip::mdUnzip) )
@@ -91,7 +91,7 @@ void Util::unzipArchive(const QString &zipFilePath,
 
             if ( !rfInfo.isDir() )
             {
-                log( QObject::tr("Extract: ") + realFile->fileName() );
+                log( QObject::tr("Extract: %1").arg( realFile->fileName() ) );
 
                 if ( realFile->open(QIODevice::WriteOnly) )
                 {
@@ -100,7 +100,8 @@ void Util::unzipArchive(const QString &zipFilePath,
                 }
                 else
                 {
-                    log( QObject::tr("Extract error: ") + realFile->errorString() );
+                    QString err = realFile->errorString();
+                    log( QObject::tr("Extract error! %1").arg(err) );
                 }
             }
 
@@ -118,7 +119,7 @@ QString Util::getCommandOutput(const QString &command, const QStringList &args)
     runString += command;
     runString += " " + args.join(" ");
 
-    log(QObject::tr("Running: ") + runString);
+    log( QObject::tr("Running: %1").arg(runString) );
     output = "Output of \'" + runString + "\':\n";
 
     QProcess process;
@@ -129,10 +130,10 @@ QString Util::getCommandOutput(const QString &command, const QStringList &args)
     {
         output += "FAILED_TO_START\n";
     }
-    log( QObject::tr("Process started") );
+    log( QObject::tr("Process started.") );
 
     process.waitForFinished();
-    log( QObject::tr("Process finished") );
+    log( QObject::tr("Process finished.") );
 
     output += process.readAll();
 

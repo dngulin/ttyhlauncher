@@ -89,7 +89,7 @@ void UpdateDialog::log(const QString &line, bool hidden)
 
 void UpdateDialog::error(const QString &line)
 {
-    log(line);
+    log( tr("Error! %1").arg(line) );
     setState(CanCheck);
 }
 
@@ -97,6 +97,7 @@ void UpdateDialog::setInteractable(bool state)
 {
     ui->clientCombo->setEnabled(state);
     ui->updateButton->setEnabled(state);
+    ui->cancelButton->setEnabled(!state);
 }
 
 void UpdateDialog::resetUpdateData()
@@ -184,12 +185,6 @@ void UpdateDialog::cancelClicked()
 {
     switch (state)
     {
-    case CanCheck:
-    case CanUpdate:
-    case CanClose:
-        this->close();
-        break;
-
     case Checking:
     case Updating:
         log( tr("The operation is canceled!") );
@@ -214,7 +209,7 @@ void UpdateDialog::doCheck()
 
     ui->log->clear();
     log( tr("Checking for updates... ") );
-    log(tr("Client: ") + clientString + tr(", version: ") + clientVersion);
+    log( tr("Client: %1, version %2.").arg(clientString).arg(clientVersion) );
 
     if (clientVersion == "latest")
     {
@@ -231,7 +226,7 @@ void UpdateDialog::versionListRequested(bool result)
 {
     if (!result)
     {
-        error( tr("Error! Latest version does not received.") );
+        error( tr("Latest version does not received.") );
         return;
     }
 
@@ -239,18 +234,18 @@ void UpdateDialog::versionListRequested(bool result)
     if ( !versionsParser.setJson( versionsFetcher.getData() ) )
     {
         log(versionsParser.getParserError(), true);
-        error( tr("Error! Inavlid reply.") );
+        error( tr("Inavlid reply.") );
         return;
     }
 
     if ( !versionsParser.hasLatestReleaseVersion() )
     {
-        error( tr("Error! Reply does not contains 'latest' version.") );
+        error( tr("Reply does not contains 'latest' version.") );
         return;
     }
 
     clientVersion = versionsParser.getLatestReleaseVersion();
-    log(tr("Client version received: ") + clientVersion);
+    log(tr("Client version received: %1.").arg(clientVersion) );
 
     updateVersionIndex();
 }
@@ -278,7 +273,7 @@ void UpdateDialog::versionIndexUpdated(bool result)
 {
     if (!result)
     {
-        error( tr("Error! Can't update version indexes.") );
+        error( tr("Can't update version indexes.") );
         return;
     }
 
@@ -294,13 +289,13 @@ void UpdateDialog::processClientFiles()
     if ( !versionParser.setJsonFromFile(indexName) )
     {
         log(versionParser.getParserError(), true);
-        error( tr("Error! Can't read version index.") );
+        error( tr("Can't read version index.") );
         return;
     }
 
     if ( !dataParser.setJsonFromFile(dataName) )
     {
-        error( tr("Error! Can't read data index.") );
+        error( tr("Can't read data index.") );
         log(dataParser.getParserError(), true);
         return;
     }
@@ -309,7 +304,7 @@ void UpdateDialog::processClientFiles()
     log( tr("Append main JAR to check list...") );
     if ( !dataParser.hasJarFileInfo() )
     {
-        error( tr("Error! Main JAR does not described in data index.") );
+        error( tr("Main JAR does not described in data index.") );
         return;
     }
 
@@ -326,7 +321,7 @@ void UpdateDialog::processClientFiles()
     log( tr("Append libraries to checklist...") );
     if ( !versionParser.hasLibraryList() )
     {
-        error( tr("Error! Libraries are not described in data index.") );
+        error( tr("Libraries are not described in data index.") );
         return;
     }
 
@@ -340,7 +335,7 @@ void UpdateDialog::processClientFiles()
 
         if ( !dataParser.hasLibFileInfo(lib) )
         {
-            error(tr("Error! Data index does not contain library: ") + lib);
+            error(tr("Data index does not contain library: %1.").arg(lib) );
             return;
         }
 
@@ -355,7 +350,7 @@ void UpdateDialog::processClientFiles()
     // III. ADDONS
     if ( !dataParser.hasAddonsFilesInfo() )
     {
-        error( tr("Error! Addons are not described in data index.") );
+        error( tr("Addons are not described in data index.") );
         return;
     }
 
@@ -394,7 +389,8 @@ void UpdateDialog::processClientFiles()
     }
     else
     {
-        log( tr("Can't read installed data index: ") +  installedIndex, true );
+        QString msg = tr("Can't read installed data index: %1.");
+        log( msg.arg(installedIndex), true );
         log(installedParser.getParserError(), true);
     }
 
@@ -402,7 +398,7 @@ void UpdateDialog::processClientFiles()
     log( tr("Requesting actual assets index...") );
     if ( !versionParser.hasAssetsVersion() )
     {
-        error( tr("Error! Assets are not described in version index.") );
+        error( tr("Assets are not described in version index.") );
         return;
     }
 
@@ -418,7 +414,7 @@ void UpdateDialog::assetsIndexUpdated(bool result)
 {
     if (!result)
     {
-        error( tr("Error! Can't update assets index.") );
+        error( tr("Can't update assets index.") );
         return;
     }
 
@@ -434,14 +430,14 @@ void UpdateDialog::processAssets()
     if ( !assetsParser.setJsonFromFile(assetsIndexDir + assetsName) )
     {
         log(assetsParser.getParserError(), true);
-        error( tr("Error! Can't read assets index.") );
+        error( tr("Can't read assets index.") );
         return;
     }
 
     log( tr("Append assets files to check list...") );
     if ( !assetsParser.hasAssetsList() )
     {
-        error( tr("Error! Assets list are not described in index.") );
+        error( tr("Assets list are not described in index.") );
         return;
     }
 
@@ -477,7 +473,7 @@ void UpdateDialog::checkFinished()
         {
             foreach ( QString file, removeList )
             {
-                log( tr("File: ") + file  + tr(" will be removed") );
+                log( tr("File: %1 will be removed.").arg(file) );
             }
         }
 
@@ -486,24 +482,24 @@ void UpdateDialog::checkFinished()
             int count = fileFetcher.getCount();
 
             double size = fileFetcher.getFetchSize() / 1024;
-            QString suffix = tr(" KiB");
+            QString suffix = tr("KiB");
 
             if ( size > 1024 * 1024 )
             {
                 size = size / ( 1024 * 1024 );
-                suffix = tr(" GiB");
+                suffix = tr("GiB");
             }
             else if ( size > 1024 )
             {
                 size = size / 1024;
-                suffix = tr(" MiB");
+                suffix = tr("MiB");
             }
 
             QString downloadCount = QString::number(count);
             QString downloadSize = QString::number(size, 'f', 2);
 
-            log( tr("Need to download ") + downloadCount + " files.");
-            log( tr("Download size ") + downloadSize + suffix);
+            log( tr("Need to download %1 files.").arg(downloadCount) );
+            log( tr("Download size %1 %2.").arg(downloadSize).arg(suffix) );
         }
 
         log( tr("Press update button to continue.") );

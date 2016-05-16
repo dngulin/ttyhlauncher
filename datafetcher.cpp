@@ -12,7 +12,7 @@ DataFetcher::DataFetcher(QObject *parent) : QObject(parent)
 
 void DataFetcher::log(const QString &text)
 {
-    logger->appendLine( tr("DataFetcher"), text );
+    logger->appendLine(tr("DataFetcher"), text);
 }
 
 void DataFetcher::reset()
@@ -21,7 +21,7 @@ void DataFetcher::reset()
     data.clear();
     error.clear();
 
-    if ( waiting )
+    if (waiting)
     {
         unhandleReply();
     }
@@ -67,7 +67,7 @@ const QString &DataFetcher::errorString() const
 
 void DataFetcher::makeHead(const QUrl &url)
 {
-    log( tr("Make HEAD request: ") + url.toString() );
+    log( tr("Make HEAD request: %1").arg( url.toString() ) );
 
     reset();
     reply = nam->head( QNetworkRequest(url) );
@@ -76,20 +76,20 @@ void DataFetcher::makeHead(const QUrl &url)
 
 void DataFetcher::makeGet(const QUrl &url)
 {
-    log( tr("Make GET request: ") + url.toString() );
+    log( tr("Make GET request: %1").arg( url.toString() ) );
 
     reset();
-    reply = nam->get(QNetworkRequest(url));
+    reply = nam->get( QNetworkRequest(url) );
     handleReply();
 }
 
 void DataFetcher::makePost(const QUrl &url, const QByteArray &postData)
 {
-    log( tr("Make POST request: ") + url.toString() );
+    log( tr("Make POST request: %1").arg( url.toString() ) );
 
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-    request.setHeader(QNetworkRequest::ContentLengthHeader, postData.size());
+    request.setHeader( QNetworkRequest::ContentLengthHeader, postData.size() );
 
     reset();
     reply = nam->post(request, postData);
@@ -111,15 +111,15 @@ void DataFetcher::requestFinished()
     {
         if (reply->error() == QNetworkReply::AuthenticationRequiredError)
         {
-            error = tr( "Bad login" );
+            error = tr("Bad login.");
         }
         else
         {
-           error = reply->errorString();
+            error = reply->errorString();
         }
 
         result = false;
-        log( tr("Error: ") + error );
+        log( tr("Error! %1").arg(error) );
     }
 
     unhandleReply();

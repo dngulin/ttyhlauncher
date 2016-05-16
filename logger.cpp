@@ -50,9 +50,10 @@ Logger::Logger(QObject *parent) :
 
     QString date = QDate::currentDate().toString("dd.MM.yy");
     QString version = Settings::instance()->launcherVersion;
-    QString launcher = date + ", ttyhlauncher-" + version + " ";
 
-    appendLine( tr("Logger"), launcher + tr("started.") );
+    QString msg = tr("%1, ttyhlauncher-%2 started.").arg(date).arg(version);
+
+    appendLine(tr("Logger"), msg);
 }
 
 void Logger::appendLine(const QString &sender, const QString &text)

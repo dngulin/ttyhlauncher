@@ -26,9 +26,11 @@ bool JsonParser::setJson(const QByteArray &json)
     }
     else
     {
-        errorString = "JSON parisng error: "
-                      + error.errorString() + " at "
-                      + QString::number(error.offset);
+        QString msg = error.errorString();
+        int pos = error.offset;
+
+        errorString = QString("%1 at position %2.").arg(msg).arg(pos);
+
         return false;
     }
 }
@@ -47,17 +49,13 @@ bool JsonParser::setJsonFromFile(const QString &fileName)
         }
         else
         {
-            errorString = "Can't open JSON file "
-                          + fileName + ": "
-                          + jsonFile.errorString();
+            errorString = jsonFile.errorString();
             return false;
         }
     }
     else
     {
-        errorString = "Can't open JSON file "
-                      + fileName + ": "
-                      + "file not exists.";
+        errorString = QString("File '%1' does not exists!").arg(fileName);
         return false;
     }
 }

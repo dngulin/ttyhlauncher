@@ -91,7 +91,7 @@ void Settings::updateLocalData()
     }
     else
     {
-        log( tr("Error: ") + parser.getParserError() );
+        log( tr("Error! %1").arg( parser.getParserError() ) );
     }
 }
 

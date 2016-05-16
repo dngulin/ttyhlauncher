@@ -108,8 +108,8 @@ void GameRunner::acessTokenReceived(bool result)
 
     if (!result)
     {
-        QString message = tr("Can't make login: ");
-        emitError( message + fetcher.errorString() );
+        QString message = tr("Can't make login! %1");
+        emitError( message.arg( fetcher.errorString() ) );
         return;
     }
 
@@ -118,16 +118,16 @@ void GameRunner::acessTokenReceived(bool result)
     // Check for valid JSON reply
     if ( !parser.setJson( fetcher.getData() ) )
     {
-        QString message = tr("Can't parse login reply: ");
-        emitError( message + parser.getParserError() );
+        QString message = tr("Can't parse login reply! %1");
+        emitError( message.arg( parser.getParserError() ) );
         return;
     }
 
     // Check for error response
     if ( parser.hasServerResponseError() )
     {
-        QString message = tr("Error server answer: ");
-        emitError( message + parser.getServerResponseError() );
+        QString message = tr("Bad server answer! %1");
+        emitError( message.arg( parser.getServerResponseError() ) );
         return;
     }
 
@@ -187,13 +187,13 @@ void GameRunner::determinateVersion()
 
             if (version == "latest")
             {
-                QString message = tr("Local versions not found");
+                QString message = tr("Local versions not found.");
                 emitNeedUpdate(message);
                 return;
             }
             else
             {
-                log(tr("Latest local version: ") + version);
+                log( tr("Latest local version: %1").arg(version) );
                 updateVersionIndex();
             }
         }
@@ -211,8 +211,8 @@ void GameRunner::versionsListReceived(bool result)
 
     if (!result)
     {
-        QString message = tr("Can't fetch latest version: ");
-        emitError( message + fetcher.errorString() );
+        QString message = tr("Can't fetch latest version! %1");
+        emitError( message.arg( fetcher.errorString() ) );
         return;
     }
 
@@ -220,19 +220,19 @@ void GameRunner::versionsListReceived(bool result)
 
     if ( !parser.setJson( fetcher.getData() ) )
     {
-        QString message = tr("Can't parse latest version: ");
-        emitError( message + parser.getParserError() );
+        QString message = tr("Can't parse latest version! %1");
+        emitError( message.arg( parser.getParserError() ) );
         return;
     }
 
     if ( !parser.hasLatestReleaseVersion() )
     {
-        emitError( tr("Latest version not defined at update server") );
+        emitError( tr("Latest version not defined at update server!") );
         return;
     }
 
     version = parser.getLatestReleaseVersion();
-    log(tr("Latest version: ") + version);
+    log( tr("Latest version: %1").arg(version) );
 
     updateVersionIndex();
 }
@@ -312,8 +312,8 @@ void GameRunner::updateAssetsIndex()
     }
     else
     {
-        QString message = tr("Can't parse version index: ");
-        emitError( message + parser.getParserError() );
+        QString message = tr("Can't parse version index! %1");
+        emitError( message.arg( parser.getParserError() ) );
         return;
     }
 }
@@ -338,15 +338,15 @@ void GameRunner::checkFiles()
 
     if ( !versionParser.setJsonFromFile(versionIndexPath) )
     {
-        QString message = tr("Can't parse version index: ");
-        emitError( message + versionParser.getParserError() );
+        QString message = tr("Can't parse version index! %1");
+        emitError( message.arg( versionParser.getParserError() ) );
         return;
     }
 
     if ( !dataParser.setJsonFromFile(dataIndexPath) )
     {
-        QString message = tr("Can't parse data index: ");
-        emitError( message + dataParser.getParserError() );
+        QString message = tr("Can't parse data index! %1");
+        emitError( message.arg( dataParser.getParserError() ) );
         return;
     }
 
@@ -383,7 +383,7 @@ void GameRunner::checkFiles()
 
         if ( !dataParser.hasLibFileInfo(lib) )
         {
-            emitError(tr("Data index does not contain library: ") + lib);
+            emitError( tr("Data index not contains library: %1").arg(lib) );
             return;
         }
 
@@ -489,7 +489,7 @@ void GameRunner::runGame()
 
     if ( !libsDir.exists() )
     {
-        emitError( tr("Can't create natives directory") );
+        emitError( tr("Can't create natives directory!") );
         return;
     }
 
@@ -513,7 +513,7 @@ void GameRunner::runGame()
 
     if ( !versionParser.hasMainClass() )
     {
-        QString message = tr("No main class in ") + version + ".json: ";
+        QString message = tr("No main class in %1.json!").arg(version);
         emitError(message);
         return;
     }
@@ -521,7 +521,7 @@ void GameRunner::runGame()
 
     if ( !versionParser.hasAssetsVersion() )
     {
-        QString message = tr("No assets in ") + version + ".json: ";
+        QString message = tr("No assets in %1.json!").arg(version);
         emitError(message);
         return;
     }
@@ -529,7 +529,7 @@ void GameRunner::runGame()
 
     if ( !versionParser.hasMinecraftArgs() )
     {
-        QString message = tr("No minecraft args in ") + version + ".json: ";
+        QString message = tr("No minecraft args in %1.json!").arg(version);
         emitError(message);
         return;
     }
@@ -551,7 +551,7 @@ void GameRunner::runGame()
         mcArg.replace("${user_type}", "mojang");
 
         int active = settings->loadActiveClientID();
-        QString clientType = settings->getClientName( active );
+        QString clientType = settings->getClientName(active);
         mcArg.replace("${version_type}", clientType);
 
         mcArgList << mcArg;
@@ -589,7 +589,7 @@ void GameRunner::runGame()
     QString newline = "\r\n";
 
     argList << "-Djavax.net.ssl.trustStore=" + keystore
-            << "-Djavax.net.ssl.trustStorePassword=123456"; // LOL
+            << "-Djavax.net.ssl.trustStorePassword=123456"; // SO SAFE
     argList << "-Dline.separator=" + newline;
     argList << "-Dfile.encoding=UTF8";
 
@@ -646,55 +646,57 @@ void GameRunner::gameLog()
 
 void GameRunner::onGameError(QProcess::ProcessError error)
 {
+    QString errstr = minecraft.errorString();
+
     switch (error)
     {
     case QProcess::FailedToStart:
-        emitError( tr("Failed to start: java not found!")  );
+        emitError( tr("Failed to start! Java not found!") );
         break;
 
     case QProcess::Crashed:
-        emitError( tr("Game crashed: ") + minecraft.errorString() );
+        emitError( tr("Game crashed! %1").arg(errstr) );
         break;
 
     case QProcess::Timedout:
-        emitError( tr("Game start timeout: ") + minecraft.errorString() );
+        emitError( tr("Game start timeout! %1").arg(errstr) );
         break;
 
     case QProcess::WriteError:
-        emitError( tr("Game can't write: ") + minecraft.errorString() );
+        emitError( tr("Game can't write! %1").arg(errstr) );
         break;
 
     case QProcess::ReadError:
-        emitError( tr("Game can't read: ") + minecraft.errorString() );
+        emitError( tr("Game can't read! %1").arg(errstr) );
         break;
 
     case QProcess::UnknownError:
     default:
-        emitError( tr("Mysterious error: ") + minecraft.errorString() );
+        emitError( tr("Mysterious error! %1").arg(errstr) );
         break;
     }
 }
 
 void GameRunner::onGameStarted()
 {
-    log( tr("Game started") );
+    log( tr("Game started.") );
     emit started();
 }
 
 void GameRunner::onGameFinished(int exitCode)
 {
-    log( tr("Game finished with code ") + QString::number(exitCode) );
+    log( tr("Game finished with code %1.").arg(exitCode) );
     emit finished(exitCode);
 }
 
 void GameRunner::emitError(const QString &message)
 {
-    log(tr("Error: ") + message);
+    log( tr("Error! %1").arg(message) );
     emit error(message);
 }
 
 void GameRunner::emitNeedUpdate(const QString &message)
 {
-    log(tr("Need update: ") + message);
+    log( tr("Need update! %1").arg(message) );
     emit needUpdate(message);
 }

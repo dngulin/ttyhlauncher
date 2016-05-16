@@ -55,13 +55,13 @@ void SkinUploadDialog::uploadSkin()
     QFile skinfile( ui->pathEdit->text() );
     if ( !skinfile.exists() )
     {
-        msg( tr("Error: skin file does not exists!") );
+        msg( tr("Error! Skin file does not exists!") );
         return;
     }
 
     if ( !skinfile.open(QIODevice::ReadOnly) )
     {
-        msg( tr("Error: can't open skin file!") );
+        msg( tr("Error! Can't open skin file!") );
         return;
     }
 
@@ -71,19 +71,19 @@ void SkinUploadDialog::uploadSkin()
 
     if ( (height != 32 && height != 64) || width != 64 )
     {
-        msg( tr("Error: skin image has wrong resolution!") );
+        msg( tr("Error! Skin image has wrong resolution!") );
         return;
     }
 
     if ( ui->nickEdit->text().isEmpty() )
     {
-        msg( tr("Error: nickname does not set!") );
+        msg( tr("Error! Nickname does not set!") );
         return;
     }
 
     if ( ui->passEdit->text().isEmpty() )
     {
-        msg( tr("Error: password does not set!") );
+        msg( tr("Error! Password does not set!") );
         return;
     }
 
@@ -109,7 +109,7 @@ void SkinUploadDialog::requestFinished(bool result)
 
     if (!result)
     {
-        msg( tr("Error: ") + uploader.errorString() );
+        msg( tr("Error! %1").arg( uploader.errorString() ) );
         return;
     }
 
@@ -117,13 +117,13 @@ void SkinUploadDialog::requestFinished(bool result)
 
     if ( !parser.setJson( uploader.getData() ) )
     {
-        msg( tr("Bad server answer: ") + parser.getParserError() );
+        msg( tr("Bad server answer! %1").arg( parser.getParserError() ) );
         return;
     }
 
     if ( parser.hasServerResponseError() )
     {
-        msg( tr("Error: ") + parser.getServerResponseError() );
+        msg( tr("Error! %1").arg( parser.getServerResponseError() ) );
         return;
     }
 
@@ -136,7 +136,10 @@ void SkinUploadDialog::openFileDialog()
     QString home = QDir::homePath();
 
     QString path = QFileDialog::getOpenFileName(this, title, home, "*.png");
-
     ui->pathEdit->setText(path);
-    log(tr("File selected: ") + path);
+
+    if ( !path.isEmpty() )
+    {
+        log( tr("File selected: %1").arg(path) );
+    }
 }

@@ -68,13 +68,13 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
             &LauncherWindow::offlineModeChanged);
 
     bool isHideWindow = settings->loadHideWindowModeState();
-    ui->hideLauncher->setChecked( isHideWindow );
+    ui->hideLauncher->setChecked(isHideWindow);
 
     connect(ui->hideLauncher, &QAction::triggered, this,
             &LauncherWindow::hideWindowModeChanged);
 
     bool isLoadNews = settings->loadNewsState();
-    ui->loadNews->setChecked( isLoadNews );
+    ui->loadNews->setChecked(isLoadNews);
 
     connect(ui->loadNews, &QAction::triggered, this,
             &LauncherWindow::fetchNewsModeChanged);
@@ -145,7 +145,7 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     {
         this->show();
         ui->playButton->setEnabled(false);
-        showError(tr("No available clients!"));
+        showError( tr("No available clients!") );
     }
 }
 
@@ -185,13 +185,13 @@ void LauncherWindow::appendLineToLog(const QString &line)
         QString htmlLine = "";
 
         int current = 0;
-        int last  = line.length();
+        int last = line.length();
         int matches = urlMatch.lastCapturedIndex();
 
         for (int i = 1; i <= matches; i++)
         {
             int urlBegin = urlMatch.capturedStart(i);
-            int urlEnd   = urlMatch.capturedEnd(i);
+            int urlEnd = urlMatch.capturedEnd(i);
 
             // Text before URL
             if (current < urlBegin)
@@ -205,7 +205,7 @@ void LauncherWindow::appendLineToLog(const QString &line)
             int urlLen = urlEnd - urlBegin;
             QString url = line.mid(urlBegin, urlLen);
 
-            QString pat = "<a href='${url}' >${esc}</a>";
+            QString pat = "<a href=\"${url}\">${esc}</a>";
             QString esc = escapeString(url);
 
             htmlLine += pat.replace("${url}", url).replace("${esc}", esc);
@@ -213,7 +213,7 @@ void LauncherWindow::appendLineToLog(const QString &line)
             current = urlEnd;
 
             // Text after URL in last match
-            if ( i == matches && current < last )
+            if (i == matches && current < last)
             {
                 int postLen = last - current;
                 QString post = line.mid(urlEnd, postLen);
@@ -228,28 +228,27 @@ void LauncherWindow::appendLineToLog(const QString &line)
         ui->logDisplay->appendHtml( escapeString(line) );
 
         // NOTE: plain text sometimes has URL apperance
-        //ui->logDisplay->appendPlainText(line);
+        // ui->logDisplay->appendPlainText(line);
     }
-
 }
 
 QString LauncherWindow::escapeString(const QString &string)
 {
     return string
-            .toHtmlEscaped()
-            .replace(" ", "&nbsp;")
-            .replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
+           .toHtmlEscaped()
+           .replace(" ", "&nbsp;")
+           .replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
 }
 
 void LauncherWindow::showError(const QString &message)
 {
-    log(tr("Error: ") + message);
+    log( tr("Error! %1").arg(message) );
     QMessageBox::critical(this, tr("Oops! Error!"), message);
 }
 
 void LauncherWindow::log(const QString &line)
 {
-    logger->appendLine( tr("LauncherWindow"), line );
+    logger->appendLine(tr("LauncherWindow"), line);
 }
 
 void LauncherWindow::storeParameters()
@@ -285,7 +284,7 @@ void LauncherWindow::showSkinLoadDialog()
 
 void LauncherWindow::showUpdateManagerDialog()
 {
-    showUpdateDialog( tr("Select a client, then press 'Update' button.") );
+    showUpdateDialog( tr("Select a client, then press 'Check' button.") );
 }
 
 void LauncherWindow::showFeedBackDialog()
@@ -361,7 +360,7 @@ void LauncherWindow::playButtonClicked()
     log( tr("Try to start game...") );
 
     QString client = settings->getClientName( settings->loadActiveClientID() );
-    log(tr("Client: ") + client);
+    log( tr("Client: %1.").arg(client) );
 
     QString login = ui->nickEdit->text();
     QString pass = ui->passEdit->text();
@@ -416,7 +415,7 @@ void LauncherWindow::gameRunnerFinished(int exitCode)
     if ( this->isHidden() )
     {
         this->show();
-       log( tr("Main window visible.") );
+        log( tr("Main window visible.") );
     }
 
     unfreezeInterface();

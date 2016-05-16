@@ -51,7 +51,7 @@ void FeedbackDialog::sendFeedback()
     msg( tr("Preparing diagnostic log...") );
 
     QString brief = ui->descEdit->toPlainText();
-    log(tr("Brief: ") + brief);
+    log( tr("Brief:\n%1").arg(brief) );
 
     QJsonObject payload;
     payload["username"] = ui->nickEdit->text();
@@ -61,13 +61,13 @@ void FeedbackDialog::sendFeedback()
 
     if ( ui->nickEdit->text().isEmpty() )
     {
-        msg( tr("Error: nickname does not set!") );
+        msg( tr("Error! Nickname does not set!") );
         return;
     }
 
     if ( ui->passEdit->text().isEmpty() )
     {
-        msg( tr("Error: password does not set!") );
+        msg( tr("Error! Password does not set!") );
         return;
     }
 
@@ -75,41 +75,41 @@ void FeedbackDialog::sendFeedback()
 
     Settings *settings = Settings::instance();
 
-    QByteArray log;
-    log.append("[General]\n");
-    log.append("\n");
+    QByteArray diag;
+    diag.append("[General]\n");
+    diag.append("\n");
 
-    log.append(settings->getOsName() + ", ");
-    log.append(settings->getOsVersion() + ", ");
-    log.append("arch: " + settings->getWordSize() + ".\n");
-    log.append("\n");
+    diag.append(settings->getOsName() + ", ");
+    diag.append(settings->getOsVersion() + ", ");
+    diag.append("arch: " + settings->getWordSize() + ".\n");
+    diag.append("\n");
 
-    log.append("[Description]\n");
-    log.append("\n");
+    diag.append("[Description]\n");
+    diag.append("\n");
 
-    log.append(brief + "\n");
-    log.append("\n");
+    diag.append(brief + "\n");
+    diag.append("\n");
 
-    log.append("[Java]\n");
-    log.append("\n");
+    diag.append("[Java]\n");
+    diag.append("\n");
 
-    log.append( Util::getCommandOutput("java", QStringList() << "-version") );
-    log.append("\n");
+    diag.append( Util::getCommandOutput("java", QStringList() << "-version") );
+    diag.append("\n");
 
-    log.append("[Logs]\n");
-    log.append("\n");
+    diag.append("[Logs]\n");
+    diag.append("\n");
 
     QString logsPrefix = settings->getBaseDir() + "/";
     for (int i = 0; i < 3; i++)
     {
-        QString file = "launcher." + QString::number(i) + ".log";
-        log.append("Log file \"" + file + "\":\n");
-        log.append( Util::getFileContetnts(logsPrefix + file) );
-        log.append("\n");
+        QString file = QString("launcher.%1.log").arg(i);
+        diag.append( QString("Log file '%1':\n").arg(file) );
+        diag.append( Util::getFileContetnts(logsPrefix + file) );
+        diag.append("\n");
     }
 
     // Gzip and base-64 encode log
-    QByteArray zlog = Util::makeGzip(log);
+    QByteArray zlog = Util::makeGzip(diag);
     payload["log"] = QString( zlog.toBase64() );
 
     QJsonDocument jsonRequest(payload);
@@ -122,9 +122,11 @@ void FeedbackDialog::requestFinished(bool result)
 {
     ui->sendButton->setEnabled(true);
 
+    QString error = tr("Error! %1");
+
     if (!result)
     {
-        msg( tr("Error: ") + uploader.errorString() );
+        msg( error.arg( uploader.errorString() ) );
         return;
     }
 
@@ -132,13 +134,13 @@ void FeedbackDialog::requestFinished(bool result)
 
     if ( !parser.setJson( uploader.getData() ) )
     {
-        msg( tr("Bad server answer: ") + parser.getParserError() );
+        msg( error.arg( parser.getParserError() ) );
         return;
     }
 
     if ( parser.hasServerResponseError() )
     {
-        msg( tr("Error: ") + parser.getServerResponseError() );
+        msg( error.arg( parser.getServerResponseError() ) );
         return;
     }
 

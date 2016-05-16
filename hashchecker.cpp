@@ -31,7 +31,7 @@ void HashChecker::checkFiles(const QList<FileInfo> &list)
         }
 
         current++;
-        emit progress( current / total * 100 );
+        emit progress( int(float(current) / total * 100) );
 
         if ( !hashIsValid(entry) )
         {

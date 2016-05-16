@@ -33,28 +33,28 @@
     </message>
     <message>
         <location filename="../datafetcher.cpp" line="70"/>
-        <source>Make HEAD request: </source>
-        <translation>HEAD запрос: </translation>
+        <source>Make HEAD request: %1</source>
+        <translation>HEAD запрос: %1</translation>
     </message>
     <message>
         <location filename="../datafetcher.cpp" line="79"/>
-        <source>Make GET request: </source>
-        <translation>GET запрос: </translation>
+        <source>Make GET request: %1</source>
+        <translation>GET запрос: %1</translation>
     </message>
     <message>
         <location filename="../datafetcher.cpp" line="88"/>
-        <source>Make POST request: </source>
-        <translation>POST запрос: </translation>
+        <source>Make POST request: %1</source>
+        <translation>POST запрос: %1</translation>
     </message>
     <message>
         <location filename="../datafetcher.cpp" line="114"/>
-        <source>Bad login</source>
-        <translation>Неправильный логин или пароль</translation>
+        <source>Bad login.</source>
+        <translation>Неправильный логин или пароль.</translation>
     </message>
     <message>
         <location filename="../datafetcher.cpp" line="122"/>
-        <source>Error: </source>
-        <translation>Ошибка: </translation>
+        <source>Error! %1</source>
+        <translation>Ошибка! %1</translation>
     </message>
 </context>
 <context>
@@ -101,18 +101,25 @@
     </message>
     <message>
         <location filename="../feedbackdialog.cpp" line="54"/>
-        <source>Brief: </source>
-        <translation>Описание: </translation>
+        <source>Brief:
+%1</source>
+        <translation>Описание: 
+%1</translation>
     </message>
     <message>
         <location filename="../feedbackdialog.cpp" line="64"/>
-        <source>Error: nickname does not set!</source>
-        <translation>Ошибка: не указано имя пользователя!</translation>
+        <source>Error! Nickname does not set!</source>
+        <translation>Ошибка! Не указано имя пользователя!</translation>
     </message>
     <message>
         <location filename="../feedbackdialog.cpp" line="70"/>
-        <source>Error: password does not set!</source>
-        <translation>Ошибка: не указан пароль!</translation>
+        <source>Error! Password does not set!</source>
+        <translation>Ошибка! Не указан пароль!</translation>
+    </message>
+    <message>
+        <location filename="../feedbackdialog.cpp" line="125"/>
+        <source>Error! %1</source>
+        <translation>Ошибка! %1</translation>
     </message>
     <message>
         <location filename="../feedbackdialog.cpp" line="117"/>
@@ -120,18 +127,7 @@
         <translation>Загрузка диагностической информации...</translation>
     </message>
     <message>
-        <location filename="../feedbackdialog.cpp" line="127"/>
-        <location filename="../feedbackdialog.cpp" line="141"/>
-        <source>Error: </source>
-        <translation>Ошибка: </translation>
-    </message>
-    <message>
-        <location filename="../feedbackdialog.cpp" line="135"/>
-        <source>Bad server answer: </source>
-        <translation>Ответ сервера поврежден: </translation>
-    </message>
-    <message>
-        <location filename="../feedbackdialog.cpp" line="145"/>
+        <location filename="../feedbackdialog.cpp" line="147"/>
         <source>Feedback log successfully uploaded!</source>
         <translation>Сообщение доставлено!</translation>
     </message>
@@ -145,17 +141,32 @@
     </message>
     <message>
         <location filename="../filefetcher.cpp" line="60"/>
-        <source>Request downloads sizes...</source>
+        <source>Request download size...</source>
         <translation>Запрос размера загружаемых файлов...</translation>
     </message>
     <message>
         <location filename="../filefetcher.cpp" line="70"/>
-        <source>Try to get file sizes for empty list</source>
-        <translation>Список файлов пуст</translation>
+        <location filename="../filefetcher.cpp" line="143"/>
+        <source>File list is empty.</source>
+        <translation>Список файлов пуст.</translation>
     </message>
     <message>
         <location filename="../filefetcher.cpp" line="106"/>
-        <location filename="../filefetcher.cpp" line="213"/>
+        <source>Downloads size requested.</source>
+        <translation>Размер файлов получен.</translation>
+    </message>
+    <message>
+        <location filename="../filefetcher.cpp" line="182"/>
+        <source>Error! %1</source>
+        <translation>Ошибка! %1</translation>
+    </message>
+    <message>
+        <location filename="../filefetcher.cpp" line="193"/>
+        <source>File saved: %1</source>
+        <translation>Файл сохранен: %1</translation>
+    </message>
+    <message>
+        <location filename="../filefetcher.cpp" line="212"/>
         <source>Downloading finished.</source>
         <translation>Загрузка завершена.</translation>
     </message>
@@ -163,21 +174,6 @@
         <location filename="../filefetcher.cpp" line="131"/>
         <source>Begin downloading files...</source>
         <translation>Загрузка файлов...</translation>
-    </message>
-    <message>
-        <location filename="../filefetcher.cpp" line="143"/>
-        <source>Try to download empty file list!</source>
-        <translation>Список файлов пуст!</translation>
-    </message>
-    <message>
-        <location filename="../filefetcher.cpp" line="183"/>
-        <source>Error: </source>
-        <translation>Ошибка: </translation>
-    </message>
-    <message>
-        <location filename="../filefetcher.cpp" line="194"/>
-        <source>Saved file: </source>
-        <translation>Файл сохранен: </translation>
     </message>
 </context>
 <context>
@@ -198,21 +194,6 @@
         <translation>Генерация ключа доступа...</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="111"/>
-        <source>Can&apos;t make login: </source>
-        <translation>Не удалось выполнить логин: </translation>
-    </message>
-    <message>
-        <location filename="../gamerunner.cpp" line="121"/>
-        <source>Can&apos;t parse login reply: </source>
-        <translation>Не удалось разобрать ответ сервера: </translation>
-    </message>
-    <message>
-        <location filename="../gamerunner.cpp" line="129"/>
-        <source>Error server answer: </source>
-        <translation>Сервер сообщил об ошибке: </translation>
-    </message>
-    <message>
         <location filename="../gamerunner.cpp" line="145"/>
         <source>Try to determinate latest vesion...</source>
         <translation>Определение последней версии...</translation>
@@ -221,36 +202,6 @@
         <location filename="../gamerunner.cpp" line="149"/>
         <source>Requesting version list...</source>
         <translation>Запрос списка версий...</translation>
-    </message>
-    <message>
-        <location filename="../gamerunner.cpp" line="190"/>
-        <source>Local versions not found</source>
-        <translation>Локальные версии не найдены</translation>
-    </message>
-    <message>
-        <location filename="../gamerunner.cpp" line="196"/>
-        <source>Latest local version: </source>
-        <translation>Последняя локальная версия: </translation>
-    </message>
-    <message>
-        <location filename="../gamerunner.cpp" line="214"/>
-        <source>Can&apos;t fetch latest version: </source>
-        <translation>Не удалось получить список версий: </translation>
-    </message>
-    <message>
-        <location filename="../gamerunner.cpp" line="223"/>
-        <source>Can&apos;t parse latest version: </source>
-        <translation>Не удалось разобрать список версий: </translation>
-    </message>
-    <message>
-        <location filename="../gamerunner.cpp" line="230"/>
-        <source>Latest version not defined at update server</source>
-        <translation>Последняя версия неизвестна</translation>
-    </message>
-    <message>
-        <location filename="../gamerunner.cpp" line="235"/>
-        <source>Latest version: </source>
-        <translation>Последняя версия: </translation>
     </message>
     <message>
         <location filename="../gamerunner.cpp" line="244"/>
@@ -268,20 +219,9 @@
         <translation>Индекс версии не содержит версию ресурсов.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="315"/>
-        <location filename="../gamerunner.cpp" line="341"/>
-        <source>Can&apos;t parse version index: </source>
-        <translation>Не удалось разобрать индекс версии: </translation>
-    </message>
-    <message>
         <location filename="../gamerunner.cpp" line="331"/>
         <source>Prepare file list for checking...</source>
         <translation>Подготовка списка файлов для проверки...</translation>
-    </message>
-    <message>
-        <location filename="../gamerunner.cpp" line="348"/>
-        <source>Can&apos;t parse data index: </source>
-        <translation>Не удалось разобрать индекс данных: </translation>
     </message>
     <message>
         <location filename="../gamerunner.cpp" line="356"/>
@@ -294,9 +234,65 @@
         <translation>Библиотеки не описаны в индексе данных.</translation>
     </message>
     <message>
+        <location filename="../gamerunner.cpp" line="111"/>
+        <source>Can&apos;t make login! %1</source>
+        <translation>Не удалось выполнить логин! %1</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="121"/>
+        <source>Can&apos;t parse login reply! %1</source>
+        <translation>Не удалось разобрать ответ сервера! %1</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="129"/>
+        <source>Bad server answer! %1</source>
+        <translation>Сервер сообщил об ошибке! %1</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="190"/>
+        <source>Local versions not found.</source>
+        <translation>Локальные версии не найдены.</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="196"/>
+        <source>Latest local version: %1</source>
+        <translation>Последняя локальная версия: %1</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="214"/>
+        <source>Can&apos;t fetch latest version! %1</source>
+        <translation>Не удалось получить список версий! %1</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="223"/>
+        <source>Can&apos;t parse latest version! %1</source>
+        <translation>Не удалось разобрать список версий! %1</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="230"/>
+        <source>Latest version not defined at update server!</source>
+        <translation>Последняя версия не определена сервером!</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="235"/>
+        <source>Latest version: %1</source>
+        <translation>Последняя версия: %1</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="315"/>
+        <location filename="../gamerunner.cpp" line="341"/>
+        <source>Can&apos;t parse version index! %1</source>
+        <translation>Не удалось разобрать индекс версии! %1</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="348"/>
+        <source>Can&apos;t parse data index! %1</source>
+        <translation>Не удалось разобрать индекс данных! %1</translation>
+    </message>
+    <message>
         <location filename="../gamerunner.cpp" line="386"/>
-        <source>Data index does not contain library: </source>
-        <translation>Индекс данных не содержит библиотеку: </translation>
+        <source>Data index not contains library: %1</source>
+        <translation>Индекс данных не содержит библиотеку: %1</translation>
     </message>
     <message>
         <location filename="../gamerunner.cpp" line="401"/>
@@ -335,23 +331,73 @@
     </message>
     <message>
         <location filename="../gamerunner.cpp" line="492"/>
-        <source>Can&apos;t create natives directory</source>
-        <translation>Не удалось создать директорию для библиотек</translation>
+        <source>Can&apos;t create natives directory!</source>
+        <translation>Не удалось создать директорию для библиотек!</translation>
     </message>
     <message>
         <location filename="../gamerunner.cpp" line="516"/>
-        <source>No main class in </source>
-        <translation>Основной класс не описан в </translation>
+        <source>No main class in %1.json!</source>
+        <translation>В %1.json не указан главный класс!</translation>
     </message>
     <message>
         <location filename="../gamerunner.cpp" line="524"/>
-        <source>No assets in </source>
-        <translation>Ресурсы не описаны в </translation>
+        <source>No assets in %1.json!</source>
+        <translation>В %1.json не указаны ресурсы!</translation>
     </message>
     <message>
         <location filename="../gamerunner.cpp" line="532"/>
-        <source>No minecraft args in </source>
-        <translation>Аргументы запуска не описаны в </translation>
+        <source>No minecraft args in %1.json!</source>
+        <translation>В %1.json не указаны аргументы запуска!</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="654"/>
+        <source>Failed to start! Java not found!</source>
+        <translation>Не удалось запустить игру! Java не найдена!</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="658"/>
+        <source>Game crashed! %1</source>
+        <translation>Игра упала! %1</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="662"/>
+        <source>Game start timeout! %1</source>
+        <translation>Игра не запустилась! %1</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="666"/>
+        <source>Game can&apos;t write! %1</source>
+        <translation>Игра не может писать! %1</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="670"/>
+        <source>Game can&apos;t read! %1</source>
+        <translation>Игра не может читать! %1</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="675"/>
+        <source>Mysterious error! %1</source>
+        <translation>Загадочная ошибка! %1</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="682"/>
+        <source>Game started.</source>
+        <translation>Игра запущена.</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="688"/>
+        <source>Game finished with code %1.</source>
+        <translation>Игра завершилась с кодом %1.</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="694"/>
+        <source>Error! %1</source>
+        <translation>Ошибка! %1</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="700"/>
+        <source>Need update! %1</source>
+        <translation>Требуется обновление! %1</translation>
     </message>
     <message>
         <location filename="../gamerunner.cpp" line="633"/>
@@ -367,56 +413,6 @@
         <location filename="../gamerunner.cpp" line="644"/>
         <source>Game</source>
         <translation>Игра</translation>
-    </message>
-    <message>
-        <location filename="../gamerunner.cpp" line="652"/>
-        <source>Failed to start: java not found!</source>
-        <translation>Не удалось запустить игру: java не найдена!</translation>
-    </message>
-    <message>
-        <location filename="../gamerunner.cpp" line="656"/>
-        <source>Game crashed: </source>
-        <translation>Игра упала: </translation>
-    </message>
-    <message>
-        <location filename="../gamerunner.cpp" line="660"/>
-        <source>Game start timeout: </source>
-        <translation>Игра не запустилась: </translation>
-    </message>
-    <message>
-        <location filename="../gamerunner.cpp" line="664"/>
-        <source>Game can&apos;t write: </source>
-        <translation>Игра не может писать: </translation>
-    </message>
-    <message>
-        <location filename="../gamerunner.cpp" line="668"/>
-        <source>Game can&apos;t read: </source>
-        <translation>Игра не может читать: </translation>
-    </message>
-    <message>
-        <location filename="../gamerunner.cpp" line="673"/>
-        <source>Mysterious error: </source>
-        <translation>Загадочная ошибка: </translation>
-    </message>
-    <message>
-        <location filename="../gamerunner.cpp" line="680"/>
-        <source>Game started</source>
-        <translation>Игра запущена</translation>
-    </message>
-    <message>
-        <location filename="../gamerunner.cpp" line="686"/>
-        <source>Game finished with code </source>
-        <translation>Игра завершилась с кодом </translation>
-    </message>
-    <message>
-        <location filename="../gamerunner.cpp" line="692"/>
-        <source>Error: </source>
-        <translation>Ошибка: </translation>
-    </message>
-    <message>
-        <location filename="../gamerunner.cpp" line="698"/>
-        <source>Need update: </source>
-        <translation>Требуется обновление: </translation>
     </message>
 </context>
 <context>
@@ -522,52 +518,52 @@
         <translation>Нет доступных клиентов!</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="243"/>
-        <source>Error: </source>
-        <translation>Ошибка: </translation>
+        <location filename="../launcherwindow.cpp" line="245"/>
+        <source>Error! %1</source>
+        <translation>Ошибка! %1</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="244"/>
+        <location filename="../launcherwindow.cpp" line="287"/>
+        <source>Select a client, then press &apos;Check&apos; button.</source>
+        <translation>Выберите клиент и нажмите кнопку &quot;Проверить обновления&quot;.</translation>
+    </message>
+    <message>
+        <location filename="../launcherwindow.cpp" line="363"/>
+        <source>Client: %1.</source>
+        <translation>Клиент: %1.</translation>
+    </message>
+    <message>
+        <location filename="../launcherwindow.cpp" line="246"/>
         <source>Oops! Error!</source>
         <translation>Упс! Ошибка!</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="249"/>
+        <location filename="../launcherwindow.cpp" line="251"/>
         <source>LauncherWindow</source>
-        <translation type="unfinished">Главное окно</translation>
+        <translation>Главное окно</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="285"/>
-        <source>Select a client, then press &apos;Update&apos; button.</source>
-        <translation>Выберите клиент и нажмите кнопку &quot;Обновить&quot;.</translation>
-    </message>
-    <message>
-        <location filename="../launcherwindow.cpp" line="309"/>
+        <location filename="../launcherwindow.cpp" line="311"/>
         <source>Play (offline)</source>
         <translation>Играть (оффлайн)</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="313"/>
+        <location filename="../launcherwindow.cpp" line="315"/>
         <source>Play</source>
         <translation>Играть</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="358"/>
+        <location filename="../launcherwindow.cpp" line="360"/>
         <source>Try to start game...</source>
         <translation>Запуск игры...</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="361"/>
-        <source>Client: </source>
-        <translation>Клиент: </translation>
-    </message>
-    <message>
-        <location filename="../launcherwindow.cpp" line="391"/>
+        <location filename="../launcherwindow.cpp" line="393"/>
         <source>Main window hidden.</source>
         <translation>Окно скрыто.</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="416"/>
+        <location filename="../launcherwindow.cpp" line="418"/>
         <source>Main window visible.</source>
         <translation>Окно показано.</translation>
     </message>
@@ -598,55 +594,55 @@
 <context>
     <name>Logger</name>
     <message>
-        <location filename="../logger.cpp" line="53"/>
-        <source>Logger</source>
-        <translation>Журнал</translation>
+        <location filename="../logger.cpp" line="54"/>
+        <source>%1, ttyhlauncher-%2 started.</source>
+        <translation>%1, ttyhlauncher-%2 запущен.</translation>
     </message>
     <message>
-        <location filename="../logger.cpp" line="53"/>
-        <source>started.</source>
-        <translation>запущен.</translation>
+        <location filename="../logger.cpp" line="56"/>
+        <source>Logger</source>
+        <translation>Журнал</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
         <location filename="../util.cpp" line="47"/>
-        <source>Delete: </source>
-        <translation>Удаление: </translation>
+        <source>Delete: %1</source>
+        <translation>Удаление: %1</translation>
     </message>
     <message>
         <location filename="../util.cpp" line="73"/>
-        <source>Unzip archive: </source>
-        <translation>Распаковка: </translation>
+        <source>Unzip archive: %1</source>
+        <translation>Распаковка: %1</translation>
     </message>
     <message>
         <location filename="../util.cpp" line="94"/>
-        <source>Extract: </source>
-        <translation>Извлечение: </translation>
+        <source>Extract: %1</source>
+        <translation>Извлечение: %1</translation>
     </message>
     <message>
-        <location filename="../util.cpp" line="103"/>
-        <source>Extract error: </source>
-        <translation>Ошибка  извлечения: </translation>
+        <location filename="../util.cpp" line="104"/>
+        <source>Extract error! %1</source>
+        <translation>Ошибка  извлечения! %1</translation>
     </message>
     <message>
-        <location filename="../util.cpp" line="121"/>
-        <source>Running: </source>
-        <translation>Запуск: </translation>
+        <location filename="../util.cpp" line="122"/>
+        <source>Running: %1</source>
+        <translation>Запуск: %1</translation>
     </message>
     <message>
-        <location filename="../util.cpp" line="132"/>
-        <source>Process started</source>
-        <translation>Процесс запустился</translation>
+        <location filename="../util.cpp" line="133"/>
+        <source>Process started.</source>
+        <translation>Процесс запущен.</translation>
     </message>
     <message>
-        <location filename="../util.cpp" line="135"/>
-        <source>Process finished</source>
-        <translation>Процесс завершился</translation>
+        <location filename="../util.cpp" line="136"/>
+        <source>Process finished.</source>
+        <translation>Процесс завершился.</translation>
     </message>
     <message>
-        <location filename="../util.cpp" line="159"/>
+        <location filename="../util.cpp" line="160"/>
         <source>Util</source>
         <translation>Инструменты</translation>
     </message>
@@ -670,8 +666,8 @@
     </message>
     <message>
         <location filename="../settings.cpp" line="94"/>
-        <source>Error: </source>
-        <translation>Ошибка: </translation>
+        <source>Error! %1</source>
+        <translation>Ошибка! %1</translation>
     </message>
 </context>
 <context>
@@ -905,28 +901,28 @@
     </message>
     <message>
         <location filename="../settingsdialog.cpp" line="215"/>
-        <source>Settings saved</source>
-        <translation>Настройки сохранены</translation>
+        <source>Settings saved:</source>
+        <translation>Настройки сохранены:</translation>
     </message>
     <message>
         <location filename="../settingsdialog.cpp" line="246"/>
-        <source>Settings loaded</source>
-        <translation>Настройки загружены</translation>
+        <source>Settings loaded:</source>
+        <translation>Settings loaded:</translation>
     </message>
     <message>
         <location filename="../settingsdialog.cpp" line="252"/>
-        <source>Select ajava executable</source>
+        <source>Select a java executable</source>
         <translation>Укажите путь к Java</translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog.cpp" line="268"/>
+        <source>Can&apos;t open client directory! %1</source>
+        <translation>Не удалось открыть директорию клиента: %1</translation>
     </message>
     <message>
         <location filename="../settingsdialog.cpp" line="267"/>
         <source>Oops! We have a problem!</source>
         <translation>Ой! Вот ведь незадача!</translation>
-    </message>
-    <message>
-        <location filename="../settingsdialog.cpp" line="268"/>
-        <source>Error: can&apos;t open client directory: </source>
-        <translation>Ошибка: не удалось открыть директорию клиента: </translation>
     </message>
 </context>
 <context>
@@ -978,39 +974,44 @@
     </message>
     <message>
         <location filename="../skinuploaddialog.cpp" line="58"/>
-        <source>Error: skin file does not exists!</source>
-        <translation>Ошибка: файл скина не существует!</translation>
+        <source>Error! Skin file does not exists!</source>
+        <translation>Ошибка! Файл скина не существует!</translation>
     </message>
     <message>
         <location filename="../skinuploaddialog.cpp" line="64"/>
-        <source>Error: can&apos;t open skin file!</source>
-        <translation>Ошибка: не удалось открыть файл скина!</translation>
+        <source>Error! Can&apos;t open skin file!</source>
+        <translation>Ошибка! Не удалось открыть файл скина!</translation>
     </message>
     <message>
         <location filename="../skinuploaddialog.cpp" line="74"/>
-        <source>Error: skin image has wrong resolution!</source>
-        <translation>Ошибка: некорректный размер скина!</translation>
+        <source>Error! Skin image has wrong resolution!</source>
+        <translation>Ошибка! Некорректный размер скина!</translation>
     </message>
     <message>
         <location filename="../skinuploaddialog.cpp" line="80"/>
-        <source>Error: nickname does not set!</source>
-        <translation>Ошибка: не указано имя пользователя!</translation>
+        <source>Error! Nickname does not set!</source>
+        <translation>Ошибка! Не указано имя пользователя!</translation>
     </message>
     <message>
         <location filename="../skinuploaddialog.cpp" line="86"/>
-        <source>Error: password does not set!</source>
-        <translation>Ошибка: не указан пароль!</translation>
+        <source>Error! Password does not set!</source>
+        <translation>Ошибка! Не указан пароль!</translation>
     </message>
     <message>
         <location filename="../skinuploaddialog.cpp" line="112"/>
         <location filename="../skinuploaddialog.cpp" line="126"/>
-        <source>Error: </source>
-        <translation>Ошибка: </translation>
+        <source>Error! %1</source>
+        <translation>Ошибка! %1</translation>
     </message>
     <message>
         <location filename="../skinuploaddialog.cpp" line="120"/>
-        <source>Bad server answer: </source>
-        <translation>Ответ сервера поврежден: </translation>
+        <source>Bad server answer! %1</source>
+        <translation>Некорректный ответ сервера! %1</translation>
+    </message>
+    <message>
+        <location filename="../skinuploaddialog.cpp" line="143"/>
+        <source>File selected: %1</source>
+        <translation>Выбран файл: %1</translation>
     </message>
     <message>
         <location filename="../skinuploaddialog.cpp" line="130"/>
@@ -1021,11 +1022,6 @@
         <location filename="../skinuploaddialog.cpp" line="135"/>
         <source>Select a skin file</source>
         <translation>Выберите файл скина</translation>
-    </message>
-    <message>
-        <location filename="../skinuploaddialog.cpp" line="141"/>
-        <source>File selected: </source>
-        <translation>Выбран файл: </translation>
     </message>
 </context>
 <context>
@@ -1061,257 +1057,252 @@
         <translation>Окно обновления</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="123"/>
+        <location filename="../updatedialog.cpp" line="92"/>
+        <source>Error! %1</source>
+        <translation>Ошибка! %1</translation>
+    </message>
+    <message>
+        <location filename="../updatedialog.cpp" line="124"/>
         <source>Check for updates</source>
         <translation>Проверить обновления</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="134"/>
+        <location filename="../updatedialog.cpp" line="135"/>
         <source>Update client</source>
         <translation>Обновить клиент</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="144"/>
+        <location filename="../updatedialog.cpp" line="145"/>
         <source>Close updater</source>
         <translation>Завершить</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="149"/>
+        <location filename="../updatedialog.cpp" line="150"/>
         <source>Error! Updater tool swithed to unknown state!</source>
         <translation>Ошибка! Переход в неизвестное состояние!</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="157"/>
+        <location filename="../updatedialog.cpp" line="158"/>
         <source>Select client, then press &apos;Check&apos; button</source>
         <translation>Выберите клиент, затем нажмите кнопку &quot;Проверить обновления&quot;</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="177"/>
+        <location filename="../updatedialog.cpp" line="178"/>
         <source>Error! Update button clicked in not allowed state!</source>
         <translation>Ошибка! Обновление запущено в запрещенном состоянии!</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="195"/>
+        <location filename="../updatedialog.cpp" line="190"/>
         <source>The operation is canceled!</source>
         <translation>Отмена!</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="200"/>
+        <location filename="../updatedialog.cpp" line="195"/>
         <source>Error! Cancel button clicked in not allowed state!</source>
         <translation>Ошибка! Отмена действия в запрещенном состоянии!</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="216"/>
+        <location filename="../updatedialog.cpp" line="211"/>
         <source>Checking for updates... </source>
         <translation>Проверка наличия обновлений...</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="217"/>
-        <source>Client: </source>
-        <translation>Клиент: </translation>
+        <location filename="../updatedialog.cpp" line="212"/>
+        <source>Client: %1, version %2.</source>
+        <translation>Клиент: %1, версия %2.</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="217"/>
-        <source>, version: </source>
-        <translation>, версия: </translation>
+        <location filename="../updatedialog.cpp" line="229"/>
+        <source>Latest version does not received.</source>
+        <translation>Последняя версия не получена.</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="221"/>
+        <location filename="../updatedialog.cpp" line="237"/>
+        <source>Inavlid reply.</source>
+        <translation>Некорректный ответ сервера.</translation>
+    </message>
+    <message>
+        <location filename="../updatedialog.cpp" line="243"/>
+        <source>Reply does not contains &apos;latest&apos; version.</source>
+        <translation>Ответ сервера не определяет последнюю версию.</translation>
+    </message>
+    <message>
+        <location filename="../updatedialog.cpp" line="248"/>
+        <source>Client version received: %1.</source>
+        <translation>Версия получена: %1.</translation>
+    </message>
+    <message>
+        <location filename="../updatedialog.cpp" line="276"/>
+        <source>Can&apos;t update version indexes.</source>
+        <translation>Не удалось обновить индекс версии.</translation>
+    </message>
+    <message>
+        <location filename="../updatedialog.cpp" line="292"/>
+        <source>Can&apos;t read version index.</source>
+        <translation>Не удалось прочесть индекс версии.</translation>
+    </message>
+    <message>
+        <location filename="../updatedialog.cpp" line="298"/>
+        <source>Can&apos;t read data index.</source>
+        <translation>Не удалось прочесть индекс данных.</translation>
+    </message>
+    <message>
+        <location filename="../updatedialog.cpp" line="307"/>
+        <source>Main JAR does not described in data index.</source>
+        <translation>Основной JAR не описан в индексе данных.</translation>
+    </message>
+    <message>
+        <location filename="../updatedialog.cpp" line="324"/>
+        <source>Libraries are not described in data index.</source>
+        <translation>Библиотеки не описаны в индексе данных.</translation>
+    </message>
+    <message>
+        <location filename="../updatedialog.cpp" line="338"/>
+        <source>Data index does not contain library: %1.</source>
+        <translation>Индекс данных не содержит библиотеку: %1.</translation>
+    </message>
+    <message>
+        <location filename="../updatedialog.cpp" line="353"/>
+        <source>Addons are not described in data index.</source>
+        <translation>Модификации не описаны в индексе данных.</translation>
+    </message>
+    <message>
+        <location filename="../updatedialog.cpp" line="392"/>
+        <source>Can&apos;t read installed data index: %1.</source>
+        <translation>Не удалось прочесть индекс данных! %1.</translation>
+    </message>
+    <message>
+        <location filename="../updatedialog.cpp" line="401"/>
+        <source>Assets are not described in version index.</source>
+        <translation>Ресурсы не описаны в индексе версии.</translation>
+    </message>
+    <message>
+        <location filename="../updatedialog.cpp" line="417"/>
+        <source>Can&apos;t update assets index.</source>
+        <translation>Не удалось обновить индекс ресурсов.</translation>
+    </message>
+    <message>
+        <location filename="../updatedialog.cpp" line="433"/>
+        <source>Can&apos;t read assets index.</source>
+        <translation>Не удалось прочесть индекс ресурсов.</translation>
+    </message>
+    <message>
+        <location filename="../updatedialog.cpp" line="440"/>
+        <source>Assets list are not described in index.</source>
+        <translation>Индекс ресурсов пуст.</translation>
+    </message>
+    <message>
+        <location filename="../updatedialog.cpp" line="476"/>
+        <source>File: %1 will be removed.</source>
+        <translation>Файл: %1 будет удален.</translation>
+    </message>
+    <message>
+        <location filename="../updatedialog.cpp" line="485"/>
+        <source>KiB</source>
+        <translation>КиБ</translation>
+    </message>
+    <message>
+        <location filename="../updatedialog.cpp" line="490"/>
+        <source>GiB</source>
+        <translation>ГиБ</translation>
+    </message>
+    <message>
+        <location filename="../updatedialog.cpp" line="495"/>
+        <source>MiB</source>
+        <translation>МиБ</translation>
+    </message>
+    <message>
+        <location filename="../updatedialog.cpp" line="501"/>
+        <source>Need to download %1 files.</source>
+        <translation>Необходимо загрузить %1 файлов.</translation>
+    </message>
+    <message>
+        <location filename="../updatedialog.cpp" line="502"/>
+        <source>Download size %1 %2.</source>
+        <translation>Размер загрузки %1 %2.</translation>
+    </message>
+    <message>
+        <location filename="../updatedialog.cpp" line="216"/>
         <source>Requesting latest client version...</source>
         <translation>Запрос последней доступной версии...</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="234"/>
-        <source>Error! Latest version does not received.</source>
-        <translation>Ошибка! Последняя версия не получена.</translation>
-    </message>
-    <message>
-        <location filename="../updatedialog.cpp" line="242"/>
-        <source>Error! Inavlid reply.</source>
-        <translation>Ошибка! некорректный ответ сервера.</translation>
-    </message>
-    <message>
-        <location filename="../updatedialog.cpp" line="248"/>
-        <source>Error! Reply does not contains &apos;latest&apos; version.</source>
-        <translation>Ошибка! Ответ сервера не указывает последнюю версию.</translation>
-    </message>
-    <message>
-        <location filename="../updatedialog.cpp" line="253"/>
-        <source>Client version received: </source>
-        <translation>Версия получена: </translation>
-    </message>
-    <message>
-        <location filename="../updatedialog.cpp" line="270"/>
+        <location filename="../updatedialog.cpp" line="265"/>
         <source>Requesting actual version indexes...</source>
         <translation>Запрос актуальных индексов версии...</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="281"/>
-        <source>Error! Can&apos;t update version indexes.</source>
-        <translation>Ошибка! Не удалось обновить индекс версии.</translation>
-    </message>
-    <message>
-        <location filename="../updatedialog.cpp" line="297"/>
-        <source>Error! Can&apos;t read version index.</source>
-        <translation>Ошибка! Не удалось открыть индекс версии.</translation>
-    </message>
-    <message>
-        <location filename="../updatedialog.cpp" line="303"/>
-        <source>Error! Can&apos;t read data index.</source>
-        <translation>Ошибка! Не удалось открыть индекс данных.</translation>
-    </message>
-    <message>
-        <location filename="../updatedialog.cpp" line="309"/>
+        <location filename="../updatedialog.cpp" line="304"/>
         <source>Append main JAR to check list...</source>
         <translation>Доавление основного JAR в список проверки...</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="312"/>
-        <source>Error! Main JAR does not described in data index.</source>
-        <translation>Ошибка! Основной JAR не описан в индексе данных.</translation>
-    </message>
-    <message>
-        <location filename="../updatedialog.cpp" line="326"/>
+        <location filename="../updatedialog.cpp" line="321"/>
         <source>Append libraries to checklist...</source>
         <translation>Добавление библиотек в список проверки...</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="329"/>
-        <source>Error! Libraries are not described in data index.</source>
-        <translation>Ошибка! Библиотеки не описаны в индексе данных.</translation>
-    </message>
-    <message>
-        <location filename="../updatedialog.cpp" line="343"/>
-        <source>Error! Data index does not contain library: </source>
-        <translation>Ошибка! Библиотека не описана в индексе данных: </translation>
-    </message>
-    <message>
-        <location filename="../updatedialog.cpp" line="358"/>
-        <source>Error! Addons are not described in data index.</source>
-        <translation>Ошибка! Ресурсы не описаны в индексе данных.</translation>
-    </message>
-    <message>
-        <location filename="../updatedialog.cpp" line="362"/>
+        <location filename="../updatedialog.cpp" line="357"/>
         <source>Append addons to check-list...</source>
         <translation>Добавление модификаций в список проверки...</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="376"/>
+        <location filename="../updatedialog.cpp" line="371"/>
         <source>Checking for obsolete addons...</source>
         <translation>Проверка устаревших модификаций...</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="395"/>
-        <source>Can&apos;t read installed data index: </source>
-        <translation>Не удалось разобрать индекс данных: </translation>
-    </message>
-    <message>
-        <location filename="../updatedialog.cpp" line="400"/>
+        <location filename="../updatedialog.cpp" line="398"/>
         <source>Requesting actual assets index...</source>
         <translation>Запрос актуального индекса ресурсов...</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="403"/>
-        <source>Error! Assets are not described in version index.</source>
-        <translation>Ошибка! Ресурсы не описаны в индексе версии.</translation>
-    </message>
-    <message>
-        <location filename="../updatedialog.cpp" line="419"/>
-        <source>Error! Can&apos;t update assets index.</source>
-        <translation>Ошибка! Не удалось обновить индекс ресурсов.</translation>
-    </message>
-    <message>
-        <location filename="../updatedialog.cpp" line="435"/>
-        <source>Error! Can&apos;t read assets index.</source>
-        <translation>Ошибка! Не удалось открыть индекс ресурсов.</translation>
-    </message>
-    <message>
-        <location filename="../updatedialog.cpp" line="439"/>
+        <location filename="../updatedialog.cpp" line="437"/>
         <source>Append assets files to check list...</source>
         <translation>Добавление ресурсов в список проверки...</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="442"/>
-        <source>Error! Assets list are not described in index.</source>
-        <translation>Ошибка! Индекс ресурсов пуст.</translation>
-    </message>
-    <message>
-        <location filename="../updatedialog.cpp" line="459"/>
+        <location filename="../updatedialog.cpp" line="457"/>
         <source>Checking files...</source>
         <translation>Проверка файлов...</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="465"/>
+        <location filename="../updatedialog.cpp" line="463"/>
         <source>Done!</source>
         <translation>Готово!</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="478"/>
-        <source>File: </source>
-        <translation>Файл: </translation>
-    </message>
-    <message>
-        <location filename="../updatedialog.cpp" line="478"/>
-        <source> will be removed</source>
-        <translation> будет удален</translation>
-    </message>
-    <message>
-        <location filename="../updatedialog.cpp" line="487"/>
-        <source> KiB</source>
-        <translation> КиБ</translation>
-    </message>
-    <message>
-        <location filename="../updatedialog.cpp" line="492"/>
-        <source> GiB</source>
-        <translation> ГиБ</translation>
-    </message>
-    <message>
-        <location filename="../updatedialog.cpp" line="497"/>
-        <source> MiB</source>
-        <translation> МиБ</translation>
-    </message>
-    <message>
-        <location filename="../updatedialog.cpp" line="503"/>
-        <source>Need to download </source>
-        <translation>Необходимо загрузить </translation>
-    </message>
-    <message>
-        <location filename="../updatedialog.cpp" line="504"/>
-        <source>Download size </source>
-        <translation>Размер загрузки </translation>
-    </message>
-    <message>
-        <location filename="../updatedialog.cpp" line="507"/>
+        <location filename="../updatedialog.cpp" line="505"/>
         <source>Press update button to continue.</source>
         <translation>Нажмите кнопку обновления для продолжения.</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="512"/>
+        <location filename="../updatedialog.cpp" line="510"/>
         <source>Client checking completed, no need update.</source>
         <translation>Проверка завершена, обновление не требуется.</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="529"/>
+        <location filename="../updatedialog.cpp" line="527"/>
         <source>Removing obsolete files...</source>
         <translation>Удаление устаревших файлов...</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="536"/>
+        <location filename="../updatedialog.cpp" line="534"/>
         <source>Removing: </source>
         <translation>Удаление: </translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="553"/>
+        <location filename="../updatedialog.cpp" line="551"/>
         <source>Downloading files...</source>
         <translation>Загрузка файлов...</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="568"/>
+        <location filename="../updatedialog.cpp" line="566"/>
         <source>Update complete!</source>
         <translation>Обновление завершено!</translation>
     </message>
     <message>
-        <location filename="../updatedialog.cpp" line="572"/>
+        <location filename="../updatedialog.cpp" line="570"/>
         <source>Update not completed. Some files was not downloaded.</source>
         <translation>Обновление не завершено. Не удалось загрузить все файлы.</translation>
     </message>

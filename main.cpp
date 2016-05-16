@@ -19,8 +19,10 @@ int main(int argc, char *argv[])
     Logger::logger();
 
     QPixmap logo(":/resources/logo.png");
-    QSplashScreen* splash = new QSplashScreen(logo, Qt::FramelessWindowHint | Qt::SplashScreen);
-    splash->setMask(logo.mask());
+    QSplashScreen *splash =
+            new QSplashScreen(logo, Qt::FramelessWindowHint | Qt::SplashScreen);
+
+    splash->setMask( logo.mask() );
 
     splash->show();
     Settings::instance()->updateLocalData();
@@ -28,7 +30,7 @@ int main(int argc, char *argv[])
 
     delete splash;
 
-    LauncherWindow w;    
+    LauncherWindow w;
     w.show();
 
     return a.exec();

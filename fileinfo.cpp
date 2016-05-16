@@ -11,12 +11,11 @@ FileInfo::FileInfo()
     isMutable = false;
 }
 
-FileInfo::FileInfo(const QString &fileName,
-                   const QString &fileHash, int fileSize, bool mutability)
+FileInfo::FileInfo(const QString &fileName, const QString &fileHash,
+                   int fileSize, bool mutability)
 {
     name = fileName;
     hash = fileHash;
     size = fileSize;
     isMutable = mutability;
 }
-

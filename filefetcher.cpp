@@ -22,7 +22,7 @@ FileFetcher::~FileFetcher()
 
 void FileFetcher::log(const QString &text)
 {
-    logger->appendLine( tr("FileFetcher"), text );
+    logger->appendLine(tr("FileFetcher"), text);
 }
 
 void FileFetcher::add(QUrl url, QString filename)
@@ -57,7 +57,7 @@ void FileFetcher::fetchSizes()
 {
     if (fetchData.count() > 0)
     {
-        log( tr("Request downloads sizes...") );
+        log( tr("Request download size...") );
 
         connect(&df, &DataFetcher::finished, this, &FileFetcher::sizeFetched);
 
@@ -67,7 +67,7 @@ void FileFetcher::fetchSizes()
     }
     else
     {
-        log( tr("Try to get file sizes for empty list") );
+        log( tr("File list is empty.") );
         emit sizesFetchFinished();
     }
 }
@@ -103,7 +103,7 @@ void FileFetcher::sizeFetched(bool result)
                    this, &FileFetcher::sizeFetched);
 
         current = 0;
-        log( tr("Downloading finished.") );
+        log( tr("Downloads size requested.") );
         emit sizesFetchFinished();
     }
 }
@@ -140,7 +140,7 @@ void FileFetcher::fetchFiles()
     }
     else
     {
-        log( tr("Try to download empty file list!") );
+        log( tr("File list is empty.") );
         emit filesFetchFinished();
     }
 }
@@ -167,7 +167,6 @@ void FileFetcher::fileFetchProgress(qint64 bytesReceived, qint64 bytesTotal)
 
 void FileFetcher::fileFetched(bool result)
 {
-
     QString fname = fetchData[current].second;
 
     if (result)
@@ -180,7 +179,7 @@ void FileFetcher::fileFetched(bool result)
         {
             hasFetchErrors = true;
 
-            log( tr("Error: ") + file.errorString() );
+            log( tr("Error! %1").arg( file.errorString() ) );
             emit filesFetchError( file.errorString() );
         }
         else
@@ -190,8 +189,8 @@ void FileFetcher::fileFetched(bool result)
 
             fetched += file.size();
 
-            QString shortName = fname.mid( hiddenLenght );
-            log( tr("Saved file: ") + shortName );
+            QString shortName = fname.mid(hiddenLenght);
+            log( tr("File saved: %1").arg(shortName) );
 
             emit filesFetchProgress( int(float(fetched) / fetchSize * 100) );
         }
