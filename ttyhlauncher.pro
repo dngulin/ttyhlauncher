@@ -58,10 +58,10 @@ FORMS += launcherwindow.ui \
     aboutdialog.ui \
     licensedialog.ui
 
-RESOURCES += \
-    resources.qrc
+RESOURCES += resources.qrc
 
-TRANSLATIONS += translations/ru.ts
+TRANSLATIONS += translations/ru.ts \
+    translations/koi7.ts
 
 RC_ICONS = resources/favicon.ico
 

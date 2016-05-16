@@ -11,5 +11,6 @@
         <file>resources/license.txt</file>
         <file>resources/logo.txt</file>
         <file>translations/ru.qm</file>
+        <file>translations/koi7.qm</file>
     </qresource>
 </RCC>
