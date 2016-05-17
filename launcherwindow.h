@@ -6,6 +6,8 @@
 
 #include "settings.h"
 #include "logger.h"
+#include "datafetcher.h"
+#include "gamerunner.h"
 
 namespace Ui {
 class LauncherWindow;
@@ -21,9 +23,12 @@ public:
     void closeEvent (QCloseEvent* event);
     void keyPressEvent(QKeyEvent* pe);
 
+signals:
+    void windowClosed();
 
 private slots:
-    void linkClicked(const QUrl& url);
+    void appendToLog(const QString& text);
+    QString escapeString(const QString& string);
 
     void showSettingsDialog();
     void showSkinLoadDialog();
@@ -33,23 +38,20 @@ private slots:
 
     void offlineModeChanged();
     void hideWindowModeChanged();
+    void fetchNewsModeChanged();
+
+    void newsFetched(bool result);
 
     void freezeInterface();
     void unfreezeInterface();
 
     void playButtonClicked();
-    void gameRunError(QProcess::ProcessError error);
-    void gameRunSuccess();
-    void gameRunReadyOutput();
-    void gameRunFinished(int exitCode);
+    void gameRunnerError(const QString& message);
+    void gameRunnerNeedUpdate(const QString& message);
+    void gameRunnerStarted();
+    void gameRunnerFinished(int exitCode);
 
-    void switchBuilderMenuVisibility();
-
-    void showCloneDialog();
-    void showFetchDialog();
-    void showCheckoutDialog();
-    void showExportDialog();
-
+    void showError(const QString & message);
 
 private:
     Ui::LauncherWindow *ui;
@@ -58,15 +60,14 @@ private:
     Settings* settings;
     Logger* logger;
 
-    QProcess* minecraft;
+    DataFetcher newsFetcher;
+    GameRunner* gameRunner;
+
+    void log(const QString& line);
+
+    void appendLineToLog(const QString& line);
 
     void storeParameters();
-
-    bool isValidGameFile(QString fileName, QString hash);
-    void runGame(QString uuid, QString accessToken, QString gameVersion);
-
-    void unzipAllFiles(QString zipFilePath, QString extractionPath);
-    void recursiveDelete(QString filePath);
 
     void showUpdateDialog(const QString message);
 };

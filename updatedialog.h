@@ -5,7 +5,10 @@
 
 #include "settings.h"
 #include "logger.h"
-#include "downloadmanager.h"
+#include "filefetcher.h"
+#include "datafetcher.h"
+#include "jsonparser.h"
+#include "hashchecker.h"
 
 namespace Ui {
 class UpdateDialog;
@@ -21,34 +24,57 @@ public:
 
 private:
     Ui::UpdateDialog *ui;
-    Settings* settings;
-    Logger* logger;
-    DownloadManager* dm;
+    Settings *settings;
+    Logger *logger;
+
+    QThread checkThread;
+    HashChecker* checker;
+
+    DataFetcher versionsFetcher;
+    FileFetcher indexFetcher, assetsFetcher, fileFetcher;
+
+    JsonParser versionParser, dataParser;
 
     QString clientVersion;
+
     QStringList removeList;
+    QList<FileInfo> checkList;
 
-    bool downloadNow(QString url, QString fileName);
-    bool addToQueryIfNeed(QString url,
-                          QString fileName,
-                          QString displayName,
-                          QString checkSumm,
-                          quint64 size);
+    enum UpdaterState {CanCheck, Checking, CanUpdate, Updating, CanClose};
 
-    enum UpdaterState {canCheck, canUpdate, canClose};
     UpdaterState state;
+    void setState(UpdaterState newState);
 
+    void resetUpdateData();
+
+    void log(const QString &line, bool hidden = false);
+    void error(const QString &line);
+    void setInteractable(bool state);
+
+    void doCheck();
+    void updateVersionIndex();
+    void processClientFiles();
+    void processAssets();
+
+    void doUpdate();
+
+signals:
+    void checkFiles( const QList<FileInfo>  list );
 
 private slots:
     void clientChanged();
+    void updateClicked();
+    void cancelClicked();
 
-    void doCheck();
-    void doUpdate();
+    // Checking slots
+    void versionListRequested(bool result);
+    void versionIndexUpdated(bool result);
+    void assetsIndexUpdated(bool result);
 
-    void downloadStarted(QString displayName);
-    void error(QString errorString);
-    void updateFinished();
+    void addToFetchList(const FileInfo fileInfo);
+    void checkFinished();
 
+    void updateComplete(bool result);
 };
 
 #endif // UPDATEDIALOG_H

@@ -7,955 +7,426 @@
 #include "feedbackdialog.h"
 #include "aboutdialog.h"
 
-#include "clonedialog.h"
-#include "fetchdialog.h"
-#include "checkoutdialog.h"
-#include "exportdialog.h"
-
 #include "settings.h"
 #include "util.h"
+#include "jsonparser.h"
 
 #include <QtGui>
 #include <QDesktopWidget>
 #include <QMessageBox>
 #include <QShortcut>
 
+#include <QDebug>
+
 LauncherWindow::LauncherWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::LauncherWindow)
 {
-    // Setup form from ui-file
     ui->setupUi(this);
 
-    // Setup settings and logger
     settings = Settings::instance();
     logger = Logger::logger();
 
-    ui->logDisplay->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
-    ui->logDisplay->appendPlainText("Поздравляем, вы запустили ttyhlauncher. Следите за новостями и обновлениями на ttyh.ru.");
+    // Show welcome message
+    QFont font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+    ui->logDisplay->setFont(font);
 
-    ui->logDisplay->appendPlainText("  _   _         _     _                        _               ");
-    ui->logDisplay->appendPlainText(" | |_| |_ _   _| |__ | | __ _ _   _ _ __   ___| |__   ___ _ __ ");
-    ui->logDisplay->appendPlainText(" | __| __| | | | '_ \\| |/ _` | | | | '_ \\ / __| '_ \\ / _ \\ '__|");
-    ui->logDisplay->appendPlainText(" | |_| |_| |_| | | | | | (_| | |_| | | | | (__| | | |  __/ |   ");
-    ui->logDisplay->appendPlainText("  \\__|\\__|\\__, |_| |_|_|\\__,_|\\__,_|_| |_|\\___|_| |_|\\___|_|   ");
-    ui->logDisplay->appendPlainText("          |___/                                                ");
-    ui->logDisplay->appendPlainText("        Sources: https://github.com/dngulin/ttyhlauncher");
-    ui->logDisplay->appendPlainText("");
+    appendToLog( tr("Welcome to the ttyhlauncher.") );
 
-    ui->logDisplay->appendPlainText("Начинаю чтение лог-файла...");
+    QFile logoFile(":/resources/logo.txt");
+    if ( logoFile.open(QFile::ReadOnly | QFile::Text) )
+    {
+        appendToLog( QTextStream(&logoFile).readAll() );
+        logoFile.close();
+    }
+    else
+    {
+        log( tr("Can't open logo resource.") );
+    }
 
+    // Setup menu
+    connect(ui->runSettings, &QAction::triggered, this,
+            &LauncherWindow::showSettingsDialog);
 
-    connect(logger, SIGNAL(textAppended(QString)), ui->logDisplay, SLOT(appendPlainText(QString)));
+    connect(ui->changeSkin, &QAction::triggered, this,
+            &LauncherWindow::showSkinLoadDialog);
 
-    // Options Menu connections
-    connect(ui->runSettings, SIGNAL(triggered()), SLOT(showSettingsDialog()));
+    connect(ui->updateManager, &QAction::triggered, this,
+            &LauncherWindow::showUpdateManagerDialog);
 
-    // Additional Menu connections
-    connect(ui->changeSkin, SIGNAL(triggered()), SLOT(showSkinLoadDialog()));
-    connect(ui->updateManager, SIGNAL(triggered()), SLOT(showUpdateManagerDialog()));
+    connect(ui->bugReport, &QAction::triggered, this,
+            &LauncherWindow::showFeedBackDialog);
 
-    // Help Menu connections
-    connect(ui->bugReport, SIGNAL(triggered()), SLOT(showFeedBackDialog()));
-    connect(ui->aboutLauncher, SIGNAL(triggered()), SLOT(showAboutDialog()));
+    connect(ui->aboutLauncher, &QAction::triggered, this,
+            &LauncherWindow::showAboutDialog);
 
-    // Client builder menu visibility and connect entries
-    ui->builderMenu->menuAction()->setVisible(false);
-    new QShortcut(QKeySequence(Qt::ALT + Qt::Key_B), this, SLOT(switchBuilderMenuVisibility()));
+    bool isOffline = settings->loadOfflineModeState();
+    ui->playOffline->setChecked(isOffline);
+    offlineModeChanged();
 
-    connect(ui->doClone, SIGNAL(triggered()), this, SLOT(showCloneDialog()));
-    connect(ui->doFetch, SIGNAL(triggered()), this, SLOT(showFetchDialog()));
-    connect(ui->doCheckout, SIGNAL(triggered()), this, SLOT(showCheckoutDialog()));
-    connect(ui->doExport, SIGNAL(triggered()), this, SLOT(showExportDialog()));
+    connect(ui->playOffline, &QAction::triggered, this,
+            &LauncherWindow::offlineModeChanged);
 
-    // Setup offlineMode entry
-    ui->playOffline->setChecked(settings->loadOfflineModeState());
-    this->offlineModeChanged();
-    connect(ui->playOffline, SIGNAL(triggered()), SLOT(offlineModeChanged()));
+    bool isHideWindow = settings->loadHideWindowModeState();
+    ui->hideLauncher->setChecked(isHideWindow);
 
-    // Setup hidewindow entry
-    ui->hideLauncher->setChecked(settings->loadHideWindowModeState());
-    this->hideWindowModeChanged();
-    connect(ui->hideLauncher, SIGNAL(triggered()), SLOT(hideWindowModeChanged()));
+    connect(ui->hideLauncher, &QAction::triggered, this,
+            &LauncherWindow::hideWindowModeChanged);
 
-    // Setup login field
-    ui->nickEdit->setText(settings->loadLogin());
-    // Save login when changed
-    connect(ui->nickEdit, SIGNAL(textChanged(QString)), settings, SLOT(saveLogin(QString)));
+    bool isLoadNews = settings->loadNewsState();
+    ui->loadNews->setChecked(isLoadNews);
 
-    // Setup password field
-    ui->savePassword->setChecked(settings->loadPassStoreState());
-    if (ui->savePassword->isChecked())
-        ui->passEdit->setText(settings->loadPassword());
-    // Password are saved on login or exit if savePassword is checked
-    connect(ui->savePassword, SIGNAL(clicked(bool)), settings, SLOT(savePassStoreState(bool)));
+    connect(ui->loadNews, &QAction::triggered, this,
+            &LauncherWindow::fetchNewsModeChanged);
 
-    // Setup client combobox
-    ui->clientCombo->addItems(settings->getClientsNames());
-    ui->clientCombo->setCurrentIndex(settings->loadActiveClientId());
-    connect(ui->clientCombo, SIGNAL(activated(int)), settings, SLOT(saveActiveClientId(int)));
+    connect(&newsFetcher, &DataFetcher::finished, this,
+            &LauncherWindow::newsFetched);
+
+    if ( settings->loadNewsState() )
+    {
+        newsFetcher.makeGet( QUrl(Settings::newsFeed) );
+    }
+
+    // Setup form
+    QString login = settings->loadLogin();
+    ui->nickEdit->setText(login);
+
+    connect(ui->nickEdit, &QLineEdit::textChanged, settings,
+            &Settings::saveLogin);
+
+    bool isPassStored = settings->loadPassStoreState();
+    ui->savePassword->setChecked(isPassStored);
+
+    if (isPassStored)
+    {
+        QString password = settings->loadPassword();
+        ui->passEdit->setText(password);
+    }
+
+    connect(ui->savePassword, &QCheckBox::clicked, settings,
+            &Settings::savePassStoreState);
+
+    QStringList clients = settings->getClientCaptions();
+    ui->clientCombo->addItems(clients);
+
+    int currentClient = settings->loadActiveClientID();
+    ui->clientCombo->setCurrentIndex(currentClient);
+
+    connect( ui->clientCombo, SIGNAL( activated(int) ), settings,
+             SLOT( saveActiveClientID(int) ) );
 
     // Setup window parameters
     QRect geometry = settings->loadWindowGeometry();
-    // Centering window, if loaded default values
+
     if (geometry.x() < 0)
-        this->move(QApplication::desktop()->screen()->rect().center() - this->rect().center());
+    {
+        QPoint scrCenter = QApplication::desktop()->screen()->rect().center();
+        QPoint winCenter = this->rect().center();
+
+        this->move(scrCenter - winCenter);
+    }
     else
+    {
         this->setGeometry(geometry);
-
-    // Restore maximized state
-    if (settings->loadMaximizedState()) this->showMaximized();
-
-    connect(ui->playButton, SIGNAL(clicked()), this, SLOT(playButtonClicked()));
-
-    logger->append(this->objectName(), "Launcher window opened\n");
-
-    if (ui->clientCombo->count() == 0) {
-        this->show(); // hack to show window before error message
-        ui->playButton->setEnabled(false);
-        QMessageBox::critical(this, "Беда-беда!",  "Не удалось получить список клиентов\nМы все умрём.\n");
     }
 
+    if ( settings->loadMaximizedState() )
+    {
+        this->showMaximized();
+    }
+
+    // Other
+    connect(ui->playButton, &QPushButton::clicked, this,
+            &LauncherWindow::playButtonClicked);
+
+    connect(logger, &Logger::lineAppended, this, &LauncherWindow::appendToLog);
+
+    if (ui->clientCombo->count() == 0)
+    {
+        this->show();
+        ui->playButton->setEnabled(false);
+        showError( tr("No available clients!") );
+    }
 }
 
-void LauncherWindow::closeEvent (QCloseEvent* event) {
-    logger->append(this->objectName(), "Launcher window closed\n");
+void LauncherWindow::closeEvent(QCloseEvent *event)
+{
+    emit windowClosed();
     storeParameters();
     event->accept();
 }
 
-void LauncherWindow::keyPressEvent(QKeyEvent* pe) {
-    if(pe->key() == Qt::Key_Return) playButtonClicked();
+void LauncherWindow::keyPressEvent(QKeyEvent *pe)
+{
+    if (pe->key() == Qt::Key_Return)
+    {
+        playButtonClicked();
+    }
     pe->accept();
 }
 
-void LauncherWindow::switchBuilderMenuVisibility() {
-    if (ui->builderMenu->menuAction()->isVisible()) {
-        ui->builderMenu->menuAction()->setVisible(false);
-    } else {
-        ui->builderMenu->menuAction()->setVisible(true);
+void LauncherWindow::appendToLog(const QString &text)
+{
+    QStringList lines = text.split("\n");
+
+    foreach (QString line, lines)
+    {
+        appendLineToLog(line);
     }
 }
 
-void LauncherWindow::showCloneDialog() {
-    CloneDialog* d = new CloneDialog(this);
-    d->exec();
-    delete d;
-}
+void LauncherWindow::appendLineToLog(const QString &line)
+{
+    QRegularExpression urlRegEx("(https?://[A-Za-z0-9\\.\\-\\?_=~#/]+)");
+    QRegularExpressionMatch urlMatch = urlRegEx.match(line);
 
-void LauncherWindow::showFetchDialog() {
-    FetchDialog* d = new FetchDialog(this);
-    d->exec();
-    delete d;
-}
+    if ( urlMatch.hasMatch() )
+    {
+        QString htmlLine = "";
 
-void LauncherWindow::showCheckoutDialog() {
-    CheckoutDialog* d = new CheckoutDialog(this);
-    d->exec();
-    delete d;
-}
+        int current = 0;
+        int last = line.length();
+        int matches = urlMatch.lastCapturedIndex();
 
-void LauncherWindow::showExportDialog() {
-    ExportDialog* d = new ExportDialog(this);
-    d->exec();
-    delete d;
-}
+        for (int i = 1; i <= matches; i++)
+        {
+            int urlBegin = urlMatch.capturedStart(i);
+            int urlEnd = urlMatch.capturedEnd(i);
 
-// Run this method on close window and run game
-void LauncherWindow::storeParameters() {
-    settings->saveWindowGeometry(this->geometry());
-    settings->saveMaximizedState(this->isMaximized());
+            // Text before URL
+            if (current < urlBegin)
+            {
+                int preLen = urlBegin - current;
+                QString pre = line.mid(current, preLen);
+                htmlLine += escapeString(pre);
+            }
 
-    if (ui->savePassword->isChecked())
-        settings->savePassword(ui->passEdit->text());
-    // Security issue
+            // URL
+            int urlLen = urlEnd - urlBegin;
+            QString url = line.mid(urlBegin, urlLen);
+
+            QString pat = "<a href=\"${url}\">${esc}</a>";
+            QString esc = escapeString(url);
+
+            htmlLine += pat.replace("${url}", url).replace("${esc}", esc);
+
+            current = urlEnd;
+
+            // Text after URL in last match
+            if (i == matches && current < last)
+            {
+                int postLen = last - current;
+                QString post = line.mid(urlEnd, postLen);
+                htmlLine += escapeString(post);
+            }
+        }
+
+        ui->logDisplay->appendHtml(htmlLine + "\n");
+    }
     else
+    {
+        ui->logDisplay->appendHtml( escapeString(line) );
+
+        // NOTE: plain text sometimes has URL apperance
+        // ui->logDisplay->appendPlainText(line);
+    }
+}
+
+QString LauncherWindow::escapeString(const QString &string)
+{
+    return string
+           .toHtmlEscaped()
+           .replace(" ", "&nbsp;")
+           .replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
+}
+
+void LauncherWindow::showError(const QString &message)
+{
+    log( tr("Error! %1").arg(message) );
+    QMessageBox::critical(this, tr("Oops! Error!"), message);
+}
+
+void LauncherWindow::log(const QString &line)
+{
+    logger->appendLine(tr("LauncherWindow"), line);
+}
+
+void LauncherWindow::storeParameters()
+{
+    settings->saveWindowGeometry( this->geometry() );
+    settings->saveMaximizedState( this->isMaximized() );
+
+    if ( ui->savePassword->isChecked() )
+    {
+        settings->savePassword( ui->passEdit->text() );
+    }
+    else
+    {
         settings->savePassword("");
+    }
 }
 
-// Show dialog slots
-void LauncherWindow::showSettingsDialog() {
-    SettingsDialog* d = new SettingsDialog(this);
+void LauncherWindow::showSettingsDialog()
+{
+    SettingsDialog *d = new SettingsDialog(this);
     d->exec();
     delete d;
 
-    ui->clientCombo->setCurrentIndex(settings->loadActiveClientId());
+    ui->clientCombo->setCurrentIndex( settings->loadActiveClientID() );
 }
 
-void LauncherWindow::showSkinLoadDialog() {
-    SkinUploadDialog* d = new SkinUploadDialog(this);
-    d->exec();
-    delete d;
-}
-
-void LauncherWindow::showUpdateManagerDialog() {
-    showUpdateDialog("Для проверки наличия обновлений выберите нужный клиент и нажмите кнопку \"Проверить\"");
-}
-
-void LauncherWindow::showFeedBackDialog() {
-    FeedbackDialog* d = new FeedbackDialog(this);
+void LauncherWindow::showSkinLoadDialog()
+{
+    SkinUploadDialog *d = new SkinUploadDialog(this);
     d->exec();
     delete d;
 }
 
-void LauncherWindow::showAboutDialog() {
-    AboutDialog* d = new AboutDialog(this);
+void LauncherWindow::showUpdateManagerDialog()
+{
+    showUpdateDialog( tr("Select a client, then press 'Check' button.") );
+}
+
+void LauncherWindow::showFeedBackDialog()
+{
+    FeedbackDialog *d = new FeedbackDialog(this);
     d->exec();
     delete d;
 }
 
-void LauncherWindow::offlineModeChanged() {
-    settings->saveOfflineModeState(ui->playOffline->isChecked());
-    settings->loadOfflineModeState() ? ui->playButton->setText("Играть (оффлайн)") :
-                                       ui->playButton->setText("Играть");
+void LauncherWindow::showAboutDialog()
+{
+    AboutDialog *d = new AboutDialog(this);
+    d->exec();
+    delete d;
 }
 
-void LauncherWindow::hideWindowModeChanged() {
-    settings->saveHideWindowModeState(ui->hideLauncher->isChecked());
+void LauncherWindow::offlineModeChanged()
+{
+    bool isOffline = ui->playOffline->isChecked();
+    settings->saveOfflineModeState(isOffline);
+
+    if (isOffline)
+    {
+        ui->playButton->setText( tr("Play (offline)") );
+    }
+    else
+    {
+        ui->playButton->setText( tr("Play") );
+    }
 }
 
-void LauncherWindow::freezeInterface() {
+void LauncherWindow::hideWindowModeChanged()
+{
+    settings->saveHideWindowModeState( ui->hideLauncher->isChecked() );
+}
 
+void LauncherWindow::fetchNewsModeChanged()
+{
+    settings->saveNewsState( ui->loadNews->isChecked() );
+}
+
+void LauncherWindow::newsFetched(bool result)
+{
+    if (result)
+    {
+        appendToLog( newsFetcher.getData() );
+    }
+}
+
+void LauncherWindow::freezeInterface()
+{
     ui->runPanel->setEnabled(false);
     ui->menuBar->setEnabled(false);
 }
 
-void LauncherWindow::unfreezeInterface() {
-
+void LauncherWindow::unfreezeInterface()
+{
     ui->runPanel->setEnabled(true);
     ui->menuBar->setEnabled(true);
 }
 
-void LauncherWindow::showUpdateDialog(QString message) {
-
-    UpdateDialog* d = new UpdateDialog(message, this);
+void LauncherWindow::showUpdateDialog(QString message)
+{
+    UpdateDialog *d = new UpdateDialog(message, this);
     d->exec();
     delete d;
 
-    ui->clientCombo->setCurrentIndex(settings->loadActiveClientId());
+    ui->clientCombo->setCurrentIndex( settings->loadActiveClientID() );
 }
 
-// Open external browser slot
-void LauncherWindow::linkClicked(const QUrl& url) {
-    logger->append(this->objectName(), "Try to open url in external browser. " + url.toString() + "\n");
-    if (!QDesktopServices::openUrl(url))
-        logger->append(this->objectName(), "Failed to open system browser!\n");
-}
+void LauncherWindow::playButtonClicked()
+{
+    log( tr("Try to start game...") );
 
-void LauncherWindow::playButtonClicked() {
+    QString client = settings->getClientName( settings->loadActiveClientID() );
+    log( tr("Client: %1.").arg(client) );
 
-    logger->append(this->objectName(), "Try to start game...\n");
-    logger->append(this->objectName(), "Client id: "
-                   + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
+    QString login = ui->nickEdit->text();
+    QString pass = ui->passEdit->text();
+    bool isOnline = !ui->playOffline->isChecked();
+    QRect geometry = settings->loadClientWindowGeometry();
+
+    gameRunner = new GameRunner(login, pass, isOnline, geometry);
+
+    connect(gameRunner, &GameRunner::error, this,
+            &LauncherWindow::gameRunnerError);
+
+    connect(gameRunner, &GameRunner::needUpdate, this,
+            &LauncherWindow::gameRunnerNeedUpdate);
+
+    connect(gameRunner, &GameRunner::started, this,
+            &LauncherWindow::gameRunnerStarted);
+
+    connect(gameRunner, &GameRunner::finished, this,
+            &LauncherWindow::gameRunnerFinished);
 
     freezeInterface();
-
-    // Prepare run data
-    bool canRun = true;
-    QString uuid;
-    QString accessToken;
-    QString gameVersion;
-
-    if (!ui->playOffline->isChecked()) {
-        logger->append(this->objectName(), "Online mode is selected\n");
-
-        // Make JSON login request, see: http://wiki.vg/Authentication
-        QJsonObject payload, agent, platform;
-
-        agent["name"] = "Minecraft";
-        agent["version"] = 1;
-
-        platform["os"] = settings->getOsName();
-        platform["version"] = settings->getOsVersion();
-        platform["word"] = settings->getWordSize();
-
-        payload["agent"] = agent;
-        payload["platform"] = platform;
-        payload["username"] = ui->nickEdit->text();
-        payload["password"] = ui->passEdit->text();
-        payload["ticket"] = settings->makeMinecraftUuid().remove('{').remove('}');
-        payload["launcherVersion"] = Settings::launcherVersion;
-
-        QJsonDocument jsonRequest(payload);
-
-        logger->append(this->objectName(), "Making login request...\n");
-        Reply loginReply = Util::makePost(Settings::authUrl, jsonRequest.toJson());
-
-        if (!loginReply.isOK()) {
-
-            canRun = false;
-            QMessageBox::critical(this, "У нас проблема :(", "Упс... Вот ведь незадача...\n"
-                                  + loginReply.getErrorString());
-            logger->append(this->objectName(), "Error: " + loginReply.getErrorString() + "\n");
-
-        } else { // Successful login request
-
-            QJsonParseError error;
-            QJsonDocument jsonLoginReply = QJsonDocument::fromJson(loginReply.reply(), &error);
-
-            if (!(error.error == QJsonParseError::NoError)) {
-
-                canRun = false;
-                QMessageBox::critical(this, "У нас проблема :(", "При попытке логина сервер овтетил ерунду...\n\n"
-                                      + error.errorString() + " в позиции " + QString::number(error.offset));
-                logger->append(this->objectName(), "JSON parse error: " + error.errorString()
-                               + " в поз. "  + QString::number(error.offset) + "\n");
-
-            } else { // Correct login request
-
-                QJsonObject loginReplyData = jsonLoginReply.object();
-
-                if (!loginReplyData["error"].isNull()) {
-
-                    canRun = false;
-                    QMessageBox::critical(this, "У нас проблема :(", loginReplyData["errorMessage"].toString());
-                    logger->append(this->objectName(), "Error: " + loginReplyData["errorMessage"].toString() + "\n");
-
-                } else { // No "error" field in responce
-
-                    // Prepare to run game in online-mode
-                    logger->append(this->objectName(), "OK\n");
-
-                    uuid = loginReplyData["clientToken"].toString();
-                    accessToken = loginReplyData["accessToken"].toString();
-                    gameVersion = settings->loadClientVersion();
-
-                    // Switch from "latest" to real version
-                    if (gameVersion == "latest") {
-
-                        logger->append(this->objectName(), "Looking for 'latest' version on update server...\n");
-                        Reply versionReply = Util::makeGet(settings->getVersionsUrl());
-
-                        if (!versionReply.isOK()) {
-
-                            canRun = false;
-                            QMessageBox::critical(this, "У нас проблема :(", "Не удалось определить версию для запуска!\n"
-                                                  + versionReply.getErrorString());
-                            logger->append(this->objectName(), "Error: " + versionReply.getErrorString() + "\n");
-
-                        } else { // Successful version request
-
-                            QJsonParseError error;
-                            QJsonDocument jsonVersionReply = QJsonDocument::fromJson(versionReply.reply(), &error);
-
-                            if (!(error.error == QJsonParseError::NoError)) {
-
-                                canRun = false;
-                                QMessageBox::critical(this, "У нас проблема :(", "Не удалось понять что же нужно запустить...\n"
-                                                      + error.errorString() + " в поз. "  + QString::number(error.offset));
-                                logger->append(this->objectName(), "JSON parse error: " + error.errorString()
-                                               + " в поз. "  + QString::number(error.offset) + "\n");
-
-                            } else { // Correct version reply
-
-                                QJsonObject latest = jsonVersionReply.object()["latest"].toObject();
-                                if (latest["release"].isNull()) {
-
-                                    canRun = false;
-                                    QMessageBox::critical(this, "У нас проблема :(", "Не удалось определить версию для запуска!\n");
-                                    logger->append(this->objectName(), "Error: empty game version\n");
-
-                                } else {
-
-                                    gameVersion = latest["release"].toString();
-                                    logger->append(this->objectName(), "Game version is " + gameVersion + "\n");
-
-                                }
-                            }
-                        }
-                    }
-
-                    // update json indexes before run (version, data, assets)
-                    logger->append(this->objectName(), "Updating game indexes..." + gameVersion + "\n");
-
-                    QString currentVersionDir = settings->getVersionsDir() + "/" + gameVersion + "/" ;
-
-                    Util::downloadFile(settings->getVersionUrl(gameVersion) + gameVersion + ".json", currentVersionDir + gameVersion + ".json");
-                    Util::downloadFile(settings->getVersionUrl(gameVersion) + "data.json", currentVersionDir + "data.json");
-
-                    QByteArray jsonData;
-                    jsonData.append(Util::getFileContetnts(currentVersionDir + gameVersion + ".json"));
-                    QJsonObject versionIndex = QJsonDocument::fromJson(jsonData).object();
-
-                    if (!versionIndex["assets"].isNull()) {
-                        QString assets = versionIndex["assets"].toString();
-                        Util::downloadFile(settings->getAssetsUrl() + "indexes/" + assets + ".json",
-                                           settings->getAssetsDir() + "/indexes/" + assets + ".json");
-                    }
-                }
-            }
-        }
-
-    } else { // Offline mode
-
-        logger->append(this->objectName(), "Offline mode is selected\n");
-
-        uuid = QString(QUuid::createUuid().toByteArray()).remove('{').remove('}');
-        accessToken = QString(QUuid::createUuid().toByteArray()).remove('{').remove('}');
-        gameVersion = settings->loadClientVersion();
-
-        if (gameVersion == "latest") {
-            logger->append(this->objectName(), "Looking for 'latest' local version\n");
-
-            // Great old date for comparsion!
-            // releaseDate used for store latest founded release date and write gameVersion if this happened
-            QDateTime releaseDate = QDateTime::fromString("1991-05-18T13:15:00+07:00", Qt::ISODate);
-
-            QDir verDir = QDir(settings->getVersionsDir());
-            QStringList verList = verDir.entryList();
-
-            for (QStringList::iterator nameit = verList.begin(), end = verList.end(); nameit != end; ++nameit) {
-                QString currentVersion = (*nameit);
-                QFile* versionFile = new QFile(settings->getVersionsDir()
-                                               + "/" + currentVersion
-                                               + "/" + currentVersion + ".json");
-                if (versionFile->open(QIODevice::ReadOnly)) {
-
-                    QJsonParseError error;
-                    QJsonDocument versionJson =  QJsonDocument::fromJson(versionFile->readAll(), &error);
-                    if (error.error == QJsonParseError::NoError) {
-
-                        QString currentTimeStr = versionJson.object()["releaseTime"].toString();
-                        QDateTime curRelTime = QDateTime::fromString(currentTimeStr, Qt::ISODate);
-
-                        if (curRelTime.isValid() && (curRelTime > releaseDate)) {
-                            releaseDate = curRelTime;
-                            gameVersion = currentVersion;
-                        }
-
-                    }
-                    versionFile->close();
-                }
-                delete versionFile;
-            }
-
-            if (gameVersion == "latest") {
-                canRun = false;
-                logger->append(this->objectName(), "Error: no local versions\n");
-                showUpdateDialog(QString("Похоже, что не установлено ни одной версии клиента. Выполните обновление.\n")
-                                 + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
-            }
-        }
-    }
-
-    // Game runned in another thread
-    if (canRun)
-        runGame(uuid, accessToken, gameVersion);
-    else
-        unfreezeInterface();
+    gameRunner->Run();
 }
 
-void LauncherWindow::runGame(QString uuid, QString accessToken, QString gameVersion) {
-
-    logger->append(this->objectName(), "Preparing game to run...\n");
-
-    QString java, libpath, classpath,
-            mainClass, minecraftArguments;
-
-    // Setup java binary
-    if (settings->loadClientJavaState()) {
-        java = settings->loadClientJava();
-    } else {
-        java = "java";
-    }
-
-    // Prepare library path
-    logger->append(this->objectName(), "Prepare natives directory...\n");
-    libpath = settings->getNativesDir();
-    Util::removeAll(libpath);
-
-    QDir libsDir = QDir(libpath);
-    libsDir.mkpath(libpath);
-
-    if (!libsDir.exists()) {
-        QMessageBox::critical(this, "У нас проблема :(",
-                              "Не удалось подготовить LIBRARY_PATH. Извините :(");
-        logger->append(this->objectName(), "Error: can't create natives directory!\n");
-        unfreezeInterface();
-        return;
-    }
-
-    // Open version index file
-    QFile* versionFile = new QFile(settings->getVersionsDir() + "/" + gameVersion + "/" + gameVersion + ".json");
-    logger->append(this->objectName(), "Reading version file: " + versionFile->fileName() + "\n");
-
-    if (!versionFile->open(QIODevice::ReadOnly)) {
-
-        logger->append(this->objectName(), "Error: can't open version file\n");
-        showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
-                         + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
-        delete versionFile;
-        return;
-    }
-
-    QJsonParseError error;
-    QJsonObject versionIndex = QJsonDocument::fromJson(versionFile->readAll(), &error).object();
-    versionFile->close();
-    delete versionFile;
-
-    if (!(error.error == QJsonParseError::NoError)) {
-
-        QMessageBox::critical(this, "У нас проблема :(", "Не удалось разобрать индекс версии...\n"
-                              + error.errorString() + "  поз. " + QString::number(error.offset));
-        logger->append(this->objectName(), "JSON parse error: " + error.errorString() + " в поз. "
-                       + QString::number(error.offset) + "\n");
-        unfreezeInterface();
-        return;
-    }
-
-    // Open data index file
-    QFile* dataIndexFile = new QFile(settings->getVersionsDir() + "/" + gameVersion + "/" + "data.json");
-    logger->append(this->objectName(), "Reading index file: " + dataIndexFile->fileName() + "\n");
-
-    if (!dataIndexFile->open(QIODevice::ReadOnly)) {
-
-        logger->append(this->objectName(), "Error: can't open data index file\n");
-        showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
-                         + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
-        delete dataIndexFile;
-        return;
-    }
-
-    QJsonDocument dataJson = QJsonDocument::fromJson(dataIndexFile->readAll(), &error);
-    dataIndexFile->close();
-    delete dataIndexFile;
-
-    if (!(error.error == QJsonParseError::NoError)) {
-
-        QMessageBox::critical(this, "У нас проблема :(", "Не удалось разобрать индекс библиотек...\n"
-                              + error.errorString() + "  поз. " + QString::number(error.offset));
-        logger->append(this->objectName(), "JSON parse error: " + error.errorString() + " в поз. "
-                       + QString::number(error.offset) + "\n");
-        unfreezeInterface();
-        return;
-    }
-
-    // Libs size and hash index
-    QJsonObject libIndex = dataJson.object()["libs"].toObject();
-
-    QJsonArray libraries = versionIndex["libraries"].toArray();
-    foreach (QJsonValue libValue, libraries) {
-
-        QJsonObject library = libValue.toObject();
-
-        QStringList entry = library["name"].toString().split(':');
-
-        // <package>:<name>:<version> to <package>/<name>/<version>/<name>-<version> and chahge <backage> format from a.b.c to a/b/c
-        QString libSuffix = entry.at(0);                  // package
-        libSuffix.replace('.', '/');                      // package format
-        libSuffix += "/" + entry.at(1)                    // + name
-                + "/" + entry.at(2)                       // + version
-                + "/" + entry.at(1) + "-" + entry.at(2);  // + name-version
-
-        // Check for allow-disallow rules
-        QJsonArray rules = library["rules"].toArray();
-        bool allowLib = true;
-        if (!rules.isEmpty()) {
-
-            // Disallow libray if not in allow list
-            allowLib = false;
-
-            foreach (QJsonValue ruleValue, rules) {
-                QJsonObject rule = ruleValue.toObject();
-
-                // Process allow variants (all or specified)
-                if (rule["action"].toString() == "allow") {
-                    if (rule["os"].toObject().isEmpty()) {
-                        allowLib = true;
-                    } else if (rule["os"].toObject()["name"].toString() == settings->getOsName()) {
-                        allowLib = true;
-                    }
-                }
-
-                // Make exclusions from allow-list
-                if (rule["action"].toString() == "disallow") {
-                    if (rule["os"].toObject()["name"].toString() == settings->getOsName()) {
-                        allowLib = false;
-                    }
-                }
-            }
-        }
-
-        if (!allowLib) {
-            logger->append(this->objectName(), "Skipping lib: " + libSuffix + ".jar\n");
-            continue;
-        }
-
-        if (library["natives"].isNull()) {
-
-            if (!isValidGameFile(settings->getLibsDir() + "/" + libSuffix + ".jar", libIndex[libSuffix + ".jar"].toObject()["hash"].toString())) {
-
-                showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
-                                 + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
-                unfreezeInterface();
-                return;
-            }
-
-            if (settings->getOsName() == "windows") libSuffix += ".jar;";
-            else libSuffix += ".jar:";
-
-            classpath += settings->getLibsDir() + "/" + libSuffix;
-
-        } else {
-
-            QString nativesSuffix = library["natives"].toObject()[settings->getOsName()].toString();
-            nativesSuffix.replace("${arch}", settings->getWordSize());
-
-            if (!nativesSuffix.isEmpty()) {
-                libSuffix += "-" + nativesSuffix + ".jar";
-            } else {
-                libSuffix += ".jar";
-            }
-
-            if (!isValidGameFile(settings->getLibsDir() + "/" + libSuffix, libIndex[libSuffix].toObject()["hash"].toString())) {
-
-                showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
-                                 + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
-                unfreezeInterface();
-                return;
-            }
-            Util::unzipArchive(settings->getLibsDir() + "/" + libSuffix, settings->getNativesDir());
-        }
-
-
-    }
-
-    // Add game jar to classpath
-    classpath += settings->getVersionsDir() + "/" + gameVersion + "/" + gameVersion + ".jar";
-
-    QString jarHash = dataJson.object()["main"].toObject()["hash"].toString();
-    if (!isValidGameFile(settings->getVersionsDir() + "/" + gameVersion + "/" + gameVersion + ".jar", jarHash)) {
-        showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
-                         + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
-        unfreezeInterface();
-        return;
-    }
-
-    // Open custom files index
-    if (!dataJson.object()["files"].toObject()["index"].isNull()) {
-
-        QJsonObject customFilesObject = dataJson.object()["files"].toObject();
-
-        QStringList mutableFileList;
-        QJsonArray mutableFileIndex = customFilesObject["mutables"].toArray();
-        foreach (QJsonValue entry, mutableFileIndex) {
-            mutableFileList.append(entry.toString());
-        }
-
-        QJsonObject regularFileIndex = customFilesObject["index"].toObject();
-        QString filesPrefix = settings->getClientPrefix(gameVersion);
-
-        foreach (QString file, regularFileIndex.keys()) {
-
-            QString hash;
-            if (mutableFileList.indexOf(file) == -1) {
-                hash = regularFileIndex[file].toObject()["hash"].toString();
-            } else {
-                hash = "mutable";
-            }
-
-            if (!isValidGameFile(filesPrefix + "/" + file, hash)) {
-                showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
-                                 + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
-                unfreezeInterface();
-                return;
-            }
-        }
-    }
-
-    // Setup mainClass
-    if (versionIndex["mainClass"].isNull()) {
-
-        QMessageBox::critical(this, "У нас проблема :(", "Вот беда. В конфигурационном файле не указан mainClass.");
-        logger->append(this->objectName(), "Error: can't read mainClass\n");
-        unfreezeInterface();
-        return;
-
-    } else {
-
-        mainClass = versionIndex["mainClass"].toString();
-
-    }
-
-    // Read assets index
-    QString assetsVersion;
-    if (versionIndex["assets"].isNull()) {
-
-        QMessageBox::critical(this, "У нас проблема !!!",  "Аааа! В конфигурационном файле не указаны ресурсы игры!");
-        logger->append(this->objectName(), "Error: can't read assets index name\n");
-        unfreezeInterface();
-        return;
-
-    } else {
-
-        assetsVersion = versionIndex["assets"].toString();
-
-        // Open assets index file
-        QFile* assetIndexFile = new QFile(settings->getAssetsDir() + "/indexes/" + assetsVersion + ".json");
-        logger->append(this->objectName(), "Reading index file: " + assetIndexFile->fileName() + "\n");
-
-        if (!assetIndexFile->open(QIODevice::ReadOnly)) {
-
-            logger->append(this->objectName(), "Error: can't open index file\n");
-            showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
-                             + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
-            delete assetIndexFile;
-            unfreezeInterface();
-            return;
-        }
-
-        QJsonObject assetIndex = QJsonDocument::fromJson(assetIndexFile->readAll(), &error).object()["objects"].toObject();
-        assetIndexFile->close();
-        delete assetIndexFile;
-
-        if (!(error.error == QJsonParseError::NoError)) {
-
-            QMessageBox::critical(this, "У нас проблема :(", "Не удалось разобрать индекс ресурсов...\n"
-                                  + error.errorString() + "  поз. " + QString::number(error.offset));
-            logger->append(this->objectName(), "JSON parse error: " + error.errorString() + " в поз. "
-                           + QString::number(error.offset) + "\n");
-            unfreezeInterface();
-            return;
-        }
-
-        // Check game resources if this setting enabled
-        if (settings->loadClientCheckAssetsState()) {
-
-            QString assetsPrefix = settings->getAssetsDir() + "/objects/";
-            foreach (QString key, assetIndex.keys()) {
-
-                QString hash = assetIndex[key].toObject()["hash"].toString();;
-                QString assetSuffix = hash.mid(0, 2);
-
-                if (!isValidGameFile(assetsPrefix + assetSuffix + "/" + hash, hash)) {
-                    showUpdateDialog(QString("Для запуска игры необходимо выполнить обновление! ")
-                                     + "Нажмите кнопку \"Проверить\", а затем \"Обновить\"");
-                    unfreezeInterface();
-                    return;
-                }
-            }
-
-        }
-    }
-
-    // Setup aruments
-    if (versionIndex["minecraftArguments"].isNull()) {
-
-        QMessageBox::critical(this, "У нас проблема :(", "В конфигурационном файле не указаны аргументы запуска.");
-        logger->append(this->objectName(), "Error: can't read minecraft arguments\n");
-        unfreezeInterface();
-        return;
-
-    } else {
-
-        minecraftArguments = versionIndex["minecraftArguments"].toString();
-    }
-
-    // Crazy way, but this must work
-    QStringList mcArgList;
-    foreach (QString mcArg, minecraftArguments.split(" ")) {
-
-        mcArg.replace("${auth_player_name}",  settings->loadLogin());
-        mcArg.replace("${version_name}",      gameVersion);
-        mcArg.replace("${game_directory}",    settings->getClientPrefix(gameVersion));
-        mcArg.replace("${assets_root}",       settings->getAssetsDir());
-        mcArg.replace("${assets_index_name}", assetsVersion);
-        mcArg.replace("${auth_uuid}",         uuid);
-        mcArg.replace("${auth_access_token}", accessToken);
-        mcArg.replace("${user_properties}",   "{}");
-        mcArg.replace("${user_type}",       "mojang");
-
-        mcArgList << mcArg;
-    }
-
-    // Width & height/fullscreen args
-    if(settings->loadClientWindowSizeState()) {
-        if(settings->loadClientFullscreenState()) {
-            mcArgList << "--fullscreen";
-        } else {
-            QRect mcRect;
-            if(settings->loadClientUseLauncherSizeState()) {
-                mcRect = this->geometry();
-            } else {
-                mcRect = settings->loadClientWindowGeometry();
-            }
-            mcArgList << "--width"  << QString::number(mcRect.width());
-            mcArgList << "--height" << QString::number(mcRect.height());
-        }
-    }
-
-    // RUN-RUN-RUN!
-    logger->append(this->objectName(), "Making run string...\n");
-    QStringList argList;
-
-    // Workaround for Oracle Java + StartSSL
-    argList << "-Djavax.net.ssl.trustStore=" + settings->getConfigDir() + "/keystore.ks"
-            << "-Djavax.net.ssl.trustStorePassword=123456";
-    argList << "-Dline.separator=\r\n";
-    argList << "-Dfile.encoding=UTF8";
-
-    // Setup user args
-    QStringList userArgList;
-    if (settings->loadClientJavaArgsState()) {
-        userArgList = settings->loadClientJavaArgs().split(" ");
-    }
-    if (!userArgList.isEmpty()) argList << userArgList;
-
-    argList << "-Djava.library.path=" + libpath
-            << "-cp" << classpath
-            << mainClass
-            << mcArgList;
-
-    QString stringargs = argList.join(' ');
-    logger->append(this->objectName(), "Run string: " + java + " " + stringargs + "\n");
-
-    logger->append(this->objectName(), "Try to launch game...\n");
-    minecraft = new QProcess(this);
-    minecraft->setProcessChannelMode(QProcess::MergedChannels);
-
-    // Set working directory
-    QDir(settings->getClientPrefix(gameVersion)).mkpath(settings->getClientPrefix(gameVersion));
-    minecraft->setWorkingDirectory(settings->getClientPrefix(gameVersion));
-
-    connect(minecraft, SIGNAL(error(QProcess::ProcessError)), this, SLOT(gameRunError(QProcess::ProcessError)));
-    connect(minecraft, SIGNAL(finished(int)), this, SLOT(gameRunFinished(int)));
-    connect(minecraft, SIGNAL(started()), this, SLOT(gameRunSuccess()));
-    connect(minecraft, SIGNAL(readyReadStandardOutput()), this, SLOT(gameRunReadyOutput()));
-    connect(minecraft, SIGNAL(readyReadStandardError()), this, SLOT(gameRunReadyOutput()));
-
-    minecraft->start(java, argList);
-
-}
-
-void LauncherWindow::gameRunSuccess() {
-
-    if (ui->hideLauncher->isChecked()) {
+void LauncherWindow::gameRunnerStarted()
+{
+    if ( ui->hideLauncher->isChecked() )
+    {
         this->hide();
-        logger->append(this->objectName(), "Main window hidden\n");
+        log( tr("Main window hidden.") );
     }
 }
 
-void LauncherWindow::gameRunReadyOutput() {
-    logger->append("Game", QString(minecraft->readAll()));
-}
-
-void LauncherWindow::gameRunError(QProcess::ProcessError error) {
-
-    logger->append(this->objectName(), "Running game error!\n");
-
-    switch(error) {
-    case QProcess::FailedToStart:
-        QMessageBox::critical(this, "Проблема!",
-                              "Смерть на взлёте! Игра не запускается!\n"
-                              + minecraft->errorString());
-        logger->append(this->objectName(), "Error: failed to start: "
-                       + minecraft->errorString() + "\n");
-        break;
-
-    case QProcess::Crashed:
-        QMessageBox::critical(this, "Проблема!",
-                              "Игра упала и не подымается :(\n"
-                              + minecraft->errorString());
-        logger->append(this->objectName(), "Error: crashed: "
-                       + minecraft->errorString() + "\n");
-        break;
-
-    case QProcess::Timedout:
-        QMessageBox::critical(this, "Проблема!",
-                              "Что-то долго игра не может запуститься...\n"
-                              + minecraft->errorString());
-        logger->append(this->objectName(), "Error: timeout: "
-                       + minecraft->errorString() + "\n");
-        break;
-
-    case QProcess::WriteError:
-        QMessageBox::critical(this, "Проблема!",
-                              "Игра не может писать :(\n"
-                              + minecraft->errorString());
-        logger->append(this->objectName(), "Error: write error: "
-                       + minecraft->errorString() + "\n");
-        break;
-
-    case QProcess::ReadError:
-        QMessageBox::critical(this, "Проблема!",
-                              "Игра не может читать :(!\n"
-                              + minecraft->errorString());
-        logger->append(this->objectName(), "Error: read error: "
-                       + minecraft->errorString() + "\n");
-        break;
-
-    case QProcess::UnknownError:
-    default:
-        QMessageBox::critical(this, "Проблема!",
-                              "Произошло что-то странное и игра не запустилась!\n"
-                              + minecraft->errorString());
-        logger->append(this->objectName(), "Error: "
-                       + minecraft->errorString() + "\n");
-        break;
-    }
-
+void LauncherWindow::gameRunnerError(const QString &message)
+{
+    gameRunner->deleteLater();
     unfreezeInterface();
-    delete minecraft;
+    showError(message);
 }
 
-void LauncherWindow::gameRunFinished(int exitCode) {
+void LauncherWindow::gameRunnerNeedUpdate(const QString &message)
+{
+    gameRunner->deleteLater();
+    unfreezeInterface();
+    showUpdateDialog(message);
+}
 
-    logger->append(this->objectName(), "Game process finished!\n");
+void LauncherWindow::gameRunnerFinished(int exitCode)
+{
+    delete gameRunner;
 
-    if (this->isHidden()) {
+    if ( this->isHidden() )
+    {
         this->show();
-        logger->append(this->objectName(), "Main window showed\n");
-    }
-
-    if (exitCode != 0) {
-
-        QMessageBox::critical(this, "Ну вот!",  "Кажется игра некорректно завершилась, посмотрите лог-файл.\n");
-        logger->append(this->objectName(), "Error: not null game exit code: " + QString::number(minecraft->exitCode()) + "\n");
-        logger->append(this->objectName(), "Main window showed\n");
-
+        log( tr("Main window visible.") );
     }
 
     unfreezeInterface();
-    delete minecraft;
+
+    if (exitCode != 0)
+    {
+        showError("Process finished incorrectly!");
+    }
 }
 
-bool LauncherWindow::isValidGameFile(QString fileName, QString hash) {
-
-    logger->append(this->objectName(), "Precheck: " + fileName + "\n");
-
-    if (!QFile::exists(fileName)) {
-
-        logger->append(this->objectName(), "Precheck: file not exists!\n");
-        return false;
-    }
-
-    if (hash == "mutable") return true;
-
-    QFile* file = new QFile(fileName);
-    if (!file->open(QIODevice::ReadOnly)) {
-
-        logger->append(this->objectName(), "Precheck: can't read file!\n");
-        delete file;
-        return false;
-
-    } else {
-
-        QByteArray data = file->readAll();
-        QString fileHash = QString(QCryptographicHash::hash(data, QCryptographicHash::Sha1).toHex());
-        file->close();
-        delete file;
-
-        if (fileHash != hash) {
-
-            logger->append(this->objectName(), "Precheck: bad checksumm!\n");
-            return false;
-        }
-    }
-
-    return true;
-}
-
-LauncherWindow::~LauncherWindow() {
-
+LauncherWindow::~LauncherWindow()
+{
     delete ui;
 }

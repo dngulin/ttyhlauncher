@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>323</width>
-    <height>196</height>
+    <width>320</width>
+    <height>200</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>О программе</string>
+   <string>About progam</string>
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
@@ -57,14 +57,14 @@
       </font>
      </property>
      <property name="text">
-      <string>ttyhlauncher</string>
+      <string notr="true">ttyhlauncher</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QLabel" name="descriptionLabel">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Лаунчер для Minecraft с открытым исходным кодом, распространяемый под лицензией GNU GPL v3&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;The opensource Minecraft launcher, distributed under the GNU GPL license version 3.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -74,7 +74,7 @@
    <item alignment="Qt::AlignHCenter">
     <widget class="QLabel" name="linkLabel">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/dngulin/ttyhlauncher&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://github.com/dngulin/ttyhlauncher&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string notr="true">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/dngulin/ttyhlauncher&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://github.com/dngulin/ttyhlauncher&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
@@ -102,7 +102,7 @@
         <enum>Qt::ActionsContextMenu</enum>
        </property>
        <property name="text">
-        <string>Лицензия</string>
+        <string>License</string>
        </property>
        <property name="autoDefault">
         <bool>false</bool>
@@ -115,7 +115,7 @@
         <enum>Qt::DefaultContextMenu</enum>
        </property>
        <property name="text">
-        <string>Закрыть</string>
+        <string>Close</string>
        </property>
        <property name="default">
         <bool>true</bool>
@@ -128,6 +128,7 @@
  </widget>
  <tabstops>
   <tabstop>closeButton</tabstop>
+  <tabstop>licenseButton</tabstop>
  </tabstops>
  <resources>
   <include location="resources.qrc"/>

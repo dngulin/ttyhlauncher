@@ -21,13 +21,15 @@ SOURCES += main.cpp \
     settings.cpp \
     logger.cpp \
     util.cpp \
-    reply.cpp \
-    downloadmanager.cpp \
-    clonedialog.cpp \
-    fetchdialog.cpp \
-    checkoutdialog.cpp \
-    exportdialog.cpp \
-    licensedialog.cpp
+    licensedialog.cpp \
+    jsonparser.cpp \
+    libraryinfo.cpp \
+    fileinfo.cpp \
+    gamerunner.cpp \
+    filefetcher.cpp \
+    datafetcher.cpp \
+    hashchecker.cpp \
+    logview.cpp
 
 HEADERS += launcherwindow.h \
     skinuploaddialog.h \
@@ -38,13 +40,15 @@ HEADERS += launcherwindow.h \
     settings.h \
     logger.h \
     util.h \
-    reply.h \
-    downloadmanager.h \
-    clonedialog.h \
-    fetchdialog.h \
-    checkoutdialog.h \
-    exportdialog.h \
-    licensedialog.h
+    licensedialog.h \
+    jsonparser.h \
+    libraryinfo.h \
+    fileinfo.h \
+    gamerunner.h \
+    filefetcher.h \
+    datafetcher.h \
+    hashchecker.h \
+    logview.h
 
 FORMS += launcherwindow.ui \
     skinuploaddialog.ui \
@@ -52,14 +56,12 @@ FORMS += launcherwindow.ui \
     updatedialog.ui \
     feedbackdialog.ui \
     aboutdialog.ui \
-    clonedialog.ui \
-    fetchdialog.ui \
-    checkoutdialog.ui \
-    exportdialog.ui \
     licensedialog.ui
 
-RESOURCES += \
-    resources.qrc
+RESOURCES += resources.qrc
+
+TRANSLATIONS += translations/ru.ts \
+    translations/koi7.ts
 
 RC_ICONS = resources/favicon.ico
 

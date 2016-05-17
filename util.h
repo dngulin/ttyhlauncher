@@ -2,24 +2,24 @@
 #define UTIL_H
 
 #include <QtCore>
-#include "reply.h"
 
-namespace Util {
+class Util
+{
+public:
+    static QByteArray makeGzip(const QByteArray &data);
 
-Reply makeGet(QString url);
-Reply makePost(QString url, QByteArray postData);
-quint64 getFileSize(QString url);
+    static QString getCommandOutput(const QString &command,
+                                    const QStringList &args);
 
-QByteArray makeGzip(const QByteArray& data);
+    static QString getFileContetnts(const QString &path);
 
-QString getCommandOutput(QString command, QStringList args);
-QString getFileContetnts(QString path);
+    static void removeAll(const QString &filePath);
 
-bool downloadFile(QString url, QString fileName);
-void removeAll(QString filePath);
-void recursiveFlist(QStringList *list, QString prefix, QString dpath);
-void unzipArchive(QString zipFilePath, QString extractionPath);
+    static void unzipArchive(const QString &zipFilePath,
+                             const QString &extractionPath);
 
-}
+private:
+    static void log(const QString &text);
+};
 
 #endif // UTIL_H

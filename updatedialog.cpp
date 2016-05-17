@@ -1,8 +1,6 @@
 #include "updatedialog.h"
 #include "ui_updatedialog.h"
 
-#include <QCryptographicHash>
-
 #include "settings.h"
 #include "logger.h"
 #include "util.h"
@@ -13,639 +11,577 @@ UpdateDialog::UpdateDialog(QString displayMessage, QWidget *parent) :
 {
     ui->setupUi(this);
 
-    dm = new DownloadManager(this);
-    connect(dm, SIGNAL(progressChanged(int)), ui->progressBar, SLOT(setValue(int)));
-    connect(dm, SIGNAL(beginDownloadFile(QString)), this, SLOT(downloadStarted(QString)));
-    connect(dm, SIGNAL(error(QString)), this, SLOT(error(QString)));
-    connect(dm, SIGNAL(finished()), this, SLOT(updateFinished()));
+    checker = new HashChecker();
+    checker->moveToThread(&checkThread);
+
+    // Check files sonnection
+    connect(&checkThread, &QThread::finished, checker, &QObject::deleteLater);
+
+    connect(this, &UpdateDialog::checkFiles, checker, &HashChecker::checkFiles);
+
+    connect(checker, &HashChecker::progress,
+            ui->progressBar, &QProgressBar::setValue);
+
+    connect(checker, &HashChecker::verificationFailed,
+            this, &UpdateDialog::addToFetchList);
+
+    connect(checker, &HashChecker::finished,
+            this, &UpdateDialog::checkFinished);
+
+    checkThread.start();
 
     settings = Settings::instance();
     logger = Logger::logger();
-    logger->append("UpdateDialog", "Update dialog opened\n");
 
-    ui->clientCombo->addItems(settings->getClientsNames());
-    ui->clientCombo->setCurrentIndex(settings->loadActiveClientId());
-    connect(ui->clientCombo, SIGNAL(activated(int)), settings, SLOT(saveActiveClientId(int)));
-    connect(ui->clientCombo, SIGNAL(activated(int)), this, SLOT(clientChanged()));
+    ui->clientCombo->addItems( settings->getClientCaptions() );
+    ui->clientCombo->setCurrentIndex( settings->loadActiveClientID() );
 
-    state = canCheck;
-    ui->log->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
+    // Old-style connection for overloaded signals
+    connect( ui->clientCombo, SIGNAL( activated(int) ),
+             settings, SLOT( saveActiveClientID(int) ) );
+
+    connect( ui->clientCombo, SIGNAL( activated(int) ),
+             this, SLOT( clientChanged() ) );
+
+    ui->log->setFont( QFontDatabase::systemFont(QFontDatabase::FixedFont) );
     ui->log->setPlainText(displayMessage);
-    ui->updateButton->setText("Проверить");
-    connect(ui->updateButton, SIGNAL(clicked()), this, SLOT(doCheck()));
 
-    if (ui->clientCombo->count() == 0) {
+    // Buttons
+    connect(ui->updateButton, &QPushButton::clicked,
+            this, &UpdateDialog::updateClicked);
+
+    connect(ui->cancelButton, &QPushButton::clicked,
+            this, &UpdateDialog::cancelClicked);
+
+    // Checking connections
+    connect(&versionsFetcher, &DataFetcher::finished,
+            this, &UpdateDialog::versionListRequested);
+
+    connect(&indexFetcher, &FileFetcher::filesFetchResult,
+            this, &UpdateDialog::versionIndexUpdated);
+
+    connect(&assetsFetcher, &FileFetcher::filesFetchResult,
+            this, &UpdateDialog::assetsIndexUpdated);
+
+    connect(&fileFetcher, &FileFetcher::filesFetchResult,
+            this, &UpdateDialog::updateComplete);
+
+    connect(&fileFetcher, &FileFetcher::filesFetchProgress,
+            ui->progressBar, &QProgressBar::setValue);
+
+    setState(CanCheck);
+
+    if (ui->clientCombo->count() == 0)
+    {
         ui->updateButton->setEnabled(false);
-        logger->append("UpdateDialog", "Error: empty client list!\n");
-        ui->log->setPlainText("Ошибка! Не удалось получить список клиентов!");
+        log( tr("Error! No clients available for check.") );
     }
 }
 
-void UpdateDialog::clientChanged() {
+void UpdateDialog::log(const QString &line, bool hidden)
+{
+    logger->appendLine(tr("UpdateDialog"), line);
+    if (!hidden)
+    {
+        ui->log->appendPlainText(line);
+    }
+}
 
-    logger->append("UpdateDialog", "Selected client: " + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
-    ui->log->setPlainText("Для проверки наличия обновлений выберите нужный клиент и нажмите кнопку \"Проверить\"");
+void UpdateDialog::error(const QString &line)
+{
+    log( tr("Error! %1").arg(line) );
+    setState(CanCheck);
+}
 
-    switch (state) {
+void UpdateDialog::setInteractable(bool state)
+{
+    ui->clientCombo->setEnabled(state);
+    ui->updateButton->setEnabled(state);
+    ui->cancelButton->setEnabled(!state);
+}
 
-    case canUpdate:
-        dm->reset();
-        removeList.clear();
-        ui->progressBar->setValue(0);
+void UpdateDialog::resetUpdateData()
+{
+    indexFetcher.cancel();
+    assetsFetcher.cancel();
+    fileFetcher.cancel();
 
-        disconnect(ui->updateButton, SIGNAL(clicked()), this, SLOT(doUpdate()));
+    checker->cancel();
 
-        ui->updateButton->setText("Проверить");
-        connect(ui->updateButton, SIGNAL(clicked()), this, SLOT(doCheck()));
-        state = canCheck;
+    removeList.clear();
+    checkList.clear();
+}
 
-    case canClose:
-        dm->reset();
-        removeList.clear();
-        ui->progressBar->setValue(0);
+void UpdateDialog::setState(UpdaterState newState)
+{
+    ui->progressBar->setValue(0);
+    state = newState;
 
-        disconnect(ui->updateButton, SIGNAL(clicked()), this, SLOT(close()));
+    switch (state)
+    {
+    case CanCheck:
+        resetUpdateData();
+        ui->updateButton->setText( tr("Check for updates") );
+        setInteractable(true);
 
-        ui->updateButton->setText("Проверить");
-        connect(ui->updateButton, SIGNAL(clicked()), this, SLOT(doCheck()));
-        state = canCheck;
+        break;
+
+    case Checking:
+        setInteractable(false);
+        doCheck();
+        break;
+
+    case CanUpdate:
+        ui->updateButton->setText( tr("Update client") );
+        setInteractable(true);
+        break;
+
+    case Updating:
+        setInteractable(false);
+        doUpdate();
+        break;
+
+    case CanClose:
+        ui->updateButton->setText( tr("Close updater") );
+        setInteractable(true);
+        break;
 
     default:
-    case canCheck:
-        dm->reset();
-        removeList.clear();
-        ui->progressBar->setValue(0);
+        log( tr("Error! Updater tool swithed to unknown state!") );
+        break;
     }
-
 }
 
-void UpdateDialog::doCheck() {
-    ui->clientCombo->setEnabled(false);
-    ui->updateButton->setEnabled(false);
+void UpdateDialog::clientChanged()
+{
+    setState(CanCheck);
+    ui->log->setPlainText( tr("Select client, then press 'Check' button") );
+}
 
-    ui->log->appendPlainText("");
-    ui->log->appendPlainText("Проверка клиента " + settings->getClientStrId(settings->loadActiveClientId())
-                             + ", версия " + settings->loadClientVersion());
-    logger->append("UpdateDialog", "Checking client version: " + settings->loadClientVersion() + "\n");
+void UpdateDialog::updateClicked()
+{
+    switch (state)
+    {
+    case CanCheck:
+        setState(Checking);
+        break;
 
-    // Setup begin checking data
+    case CanUpdate:
+        setState(Updating);
+        break;
 
-    bool needUpdate = false;
+    case CanClose:
+        this->close();
+        break;
+
+    default:
+        log( tr("Error! Update button clicked in not allowed state!") );
+        setState(CanCheck);
+        break;
+    }
+}
+
+void UpdateDialog::cancelClicked()
+{
+    switch (state)
+    {
+    case Checking:
+    case Updating:
+        log( tr("The operation is canceled!") );
+        setState(CanCheck);
+        break;
+
+    default:
+        log( tr("Error! Cancel button clicked in not allowed state!") );
+        setState(CanCheck);
+        break;
+    }
+}
+
+// Checking sequence
+
+void UpdateDialog::doCheck()
+{
+    int index = settings->loadActiveClientID();
+    QString clientString = settings->getClientName(index);
+
     clientVersion = settings->loadClientVersion();
-    QString versionsDir = settings->getVersionsDir();
 
-    // Check for latest version
-    if (clientVersion == "latest") {
+    ui->log->clear();
+    log( tr("Checking for updates... ") );
+    log( tr("Client: %1, version %2.").arg(clientString).arg(clientVersion) );
 
-        ui->log->appendPlainText("Определение последней версии клиента...");
-        logger->append("UpdateDialog", "Looking for latest version...\n");
+    if (clientVersion == "latest")
+    {
+        log( tr("Requesting latest client version...") );
+        versionsFetcher.makeGet( settings->getVersionsUrl() );
+    }
+    else
+    {
+        updateVersionIndex();
+    }
+}
 
-        Reply versionReply = Util::makeGet(settings->getVersionsUrl());
-        if (versionReply.isOK()) {
-
-            QJsonParseError error;
-            QJsonDocument jsonVersionReply = QJsonDocument::fromJson(versionReply.reply(), &error);
-
-            if (error.error == QJsonParseError::NoError) {
-
-                QJsonObject latest = jsonVersionReply.object()["latest"].toObject();
-
-                if (latest["release"].isNull()) {
-                    ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось определить последнюю версию клиента");
-                    logger->append("UpdateDialog", "Error: empty latest client version\n");
-
-                    ui->clientCombo->setEnabled(true);
-                    ui->updateButton->setEnabled(true);
-                    return;
-
-                } else {
-                    clientVersion = latest["release"].toString();
-                }
-
-            } else {
-                ui->log->appendPlainText("Проверка остановлена. Ошибка разбора JSON!");
-                logger->append("UpdateDialog", "Error: can't parse JSON\n");
-
-                ui->clientCombo->setEnabled(true);
-                ui->updateButton->setEnabled(true);
-                return;
-            }
-
-        } else {
-            ui->log->appendPlainText("Проверка остановлена. Ошибка: " + versionReply.getErrorString());
-            logger->append("UpdateDialog", "Error: " + versionReply.getErrorString() + "\n");
-
-            ui->clientCombo->setEnabled(true);
-            ui->updateButton->setEnabled(true);
-            return;
-        }
-
+void UpdateDialog::versionListRequested(bool result)
+{
+    if (!result)
+    {
+        error( tr("Latest version does not received.") );
+        return;
     }
 
-    // Check for version and data indexes
-    ui->log->appendPlainText("\n # Проверка файлов игры:");
-    logger->append("UpdateDialog", "Checking game files\n");
+    JsonParser versionsParser;
+    if ( !versionsParser.setJson( versionsFetcher.getData() ) )
+    {
+        log(versionsParser.getParserError(), true);
+        error( tr("Inavlid reply.") );
+        return;
+    }
 
+    if ( !versionsParser.hasLatestReleaseVersion() )
+    {
+        error( tr("Reply does not contains 'latest' version.") );
+        return;
+    }
+
+    clientVersion = versionsParser.getLatestReleaseVersion();
+    log(tr("Client version received: %1.").arg(clientVersion) );
+
+    updateVersionIndex();
+}
+
+void UpdateDialog::updateVersionIndex()
+{
+    QString versionsDir = settings->getVersionsDir();
     QString versionFilePrefix = versionsDir + "/" + clientVersion + "/";
     QString versionUrlPrefix = settings->getVersionUrl(clientVersion);
 
-    if (!downloadNow(versionUrlPrefix + clientVersion +".json",
-                             versionFilePrefix + clientVersion +".json")) {
+    QUrl versionUrl(versionUrlPrefix + clientVersion + ".json");
+    QString versionFile = versionFilePrefix + clientVersion + ".json";
 
-        ui->clientCombo->setEnabled(true);
-        ui->updateButton->setEnabled(true);
-        return;
-    }
+    QUrl dataUrl(versionUrlPrefix + "data.json");
+    QString dataFile = versionFilePrefix + "data.json";
 
-    if (!downloadNow(versionUrlPrefix + "data.json",
-                             versionFilePrefix + "data.json")) {
+    log( tr("Requesting actual version indexes...") );
 
-        ui->clientCombo->setEnabled(true);
-        ui->updateButton->setEnabled(true);
-        return;
-    }
-
-    // Reading info from indexes
-    QJsonDocument versionJson, dataJson;
-
-    // Reading version index
-    QFile* versionIndexfile = new QFile(versionFilePrefix + clientVersion +".json");
-    if (!versionIndexfile->open(QIODevice::ReadOnly)) {
-
-        ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось открыть " + clientVersion +".json");
-        logger->append("UpdateDialog", "Error: can't open " + clientVersion +".json\n");
-
-        ui->clientCombo->setEnabled(true);
-        ui->updateButton->setEnabled(true);
-        return;
-
-    } else {
-
-        QJsonParseError error;
-        versionJson = QJsonDocument::fromJson(versionIndexfile->readAll(), &error);
-
-        if (error.error != QJsonParseError::NoError) {
-
-            ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось разобрать" + clientVersion +".json");
-            logger->append("UpdateDialog", "Error: can't parse " + clientVersion +".json\n");
-
-            ui->clientCombo->setEnabled(true);
-            ui->updateButton->setEnabled(true);
-            return;
-
-        }
-        versionIndexfile->close();
-    }
-    delete versionIndexfile;
-
-    // Reading data index
-    QFile* dataIndexfile = new QFile(versionFilePrefix + "data.json");
-    if (!dataIndexfile->open(QIODevice::ReadOnly)) {
-
-        ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось открыть data.json");
-        logger->append("UpdateDialog", "Error: can't open data.json\n");
-
-        ui->clientCombo->setEnabled(true);
-        ui->updateButton->setEnabled(true);
-        return;
-
-    } else {
-
-        QJsonParseError error;
-        dataJson = QJsonDocument::fromJson(dataIndexfile->readAll(), &error);
-
-        if (error.error != QJsonParseError::NoError) {
-
-            ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось разобрать data.json");
-            logger->append("UpdateDialog", "Error: can't parse data.json\n");
-
-            ui->clientCombo->setEnabled(true);
-            ui->updateButton->setEnabled(true);
-            return;
-
-        }
-        dataIndexfile->close();
-    }
-    delete dataIndexfile;
-
-    // Check game files
-    QString url, fileName, displayName, checkSum;
-    quint64 size;
-
-    // Check main file
-    url = versionUrlPrefix + clientVersion + ".jar";
-    fileName = versionFilePrefix + clientVersion + ".jar";
-    displayName = "файл " + clientVersion + ".jar";
-    checkSum = dataJson.object()["main"].toObject()["hash"].toString();
-    size = dataJson.object()["main"].toObject()["size"].toInt();
-
-    if (addToQueryIfNeed(url, fileName, displayName, checkSum, size)) needUpdate = true;
-
-    // Check libs
-    ui->log->appendPlainText("\n # Проверка библиотек:");
-    logger->append("UpdateDialog", "Checking libs\n");
-
-    QString libFilePrefix = settings->getLibsDir() + "/";
-    QString libUrlPrefix = settings->getLibsUrl();
-
-    QJsonArray libraries = versionJson.object()["libraries"].toArray();
-    foreach (QJsonValue libValue, libraries) {
-        QJsonObject library = libValue.toObject();
-        QStringList entry = library["name"].toString().split(':');
-
-        // <package>:<name>:<version> to <package>/<name>/<version>/<name>-<version> and chahge <backage> format from a.b.c to a/b/c
-        QString libSuffix = entry.at(0);                // package
-        libSuffix.replace('.', '/');                    // package format
-        libSuffix += "/" + entry.at(1)                  // + name
-                + "/" + entry.at(2)                      // + version
-                + "/" + entry.at(1) + "-" + entry.at(2); // + name-version
-
-        // Check rules for disallow rules
-        QJsonArray rules = library["rules"].toArray();
-        bool allowLib = true;
-        if (!rules.isEmpty()) {
-
-            // Disallow libray if not in allow list
-            allowLib = false;
-
-            foreach (QJsonValue ruleValue, rules) {
-                QJsonObject rule = ruleValue.toObject();
-
-                // Process allow variants (all or specified)
-                if (rule["action"].toString() == "allow") {
-                    if (rule["os"].toObject().isEmpty()) {
-                        allowLib = true;
-                    } else if (rule["os"].toObject()["name"].toString() == settings->getOsName()) {
-                        allowLib = true;
-                    }
-                }
-
-                // Make exclusions from allow-list
-                if (rule["action"].toString() == "disallow") {
-                    if (rule["os"].toObject()["name"].toString() == settings->getOsName()) {
-                        allowLib = false;
-                    }
-                }
-            }
-        }
-        // Go to next lib entry, if this are disallowed
-        if (!allowLib) {
-            logger->append("UpdateDialog", "Skipping lib: " + libSuffix + ".jar\n");
-            continue;
-        }
-
-        // Check for natives entry: <package>/<name>-<version>-<native_string>
-        QString nativesSuffix = library["natives"].toObject()[settings->getOsName()].toString();
-        nativesSuffix.replace("${arch}", settings->getWordSize());
-        if (!nativesSuffix.isEmpty()) {
-            libSuffix += "-" + nativesSuffix + ".jar";
-        } else {
-            libSuffix += ".jar";
-        }
-
-        // Check each library file by exists and hash
-        url = libUrlPrefix + libSuffix;
-        fileName = libFilePrefix + libSuffix;
-        displayName = "файл " + libSuffix.split('/').last();
-        checkSum = dataJson.object()["libs"].toObject()[libSuffix].toObject()["hash"].toString();
-        size = dataJson.object()["libs"].toObject()[libSuffix].toObject()["size"].toInt();
-
-        if (addToQueryIfNeed(url, fileName, displayName, checkSum, size)) needUpdate = true;
-        QApplication::processEvents(); // Update text in log
-    }
-
-    // Check assets
-    ui->log->appendPlainText("\n # Проверка игровых ресурсов:");
-    logger->append("UpdateDialog", "Checking assets\n");
-
-    QJsonDocument assetsJson;
-    QString assetsVersion = versionJson.object()["assets"].toString();
-    QString assetsFilePrefix = settings->getAssetsDir() + "/objects/";
-    QString assetsUrlPrefix = settings->getAssetsUrl() + "objects/";
-
-    if (!downloadNow(settings->getAssetsUrl() + "indexes/" + assetsVersion + ".json",
-                             settings->getAssetsDir() + "/indexes/" + assetsVersion + ".json")) {
-
-        dm->reset();
-        ui->clientCombo->setEnabled(true);
-        ui->updateButton->setEnabled(true);
-        return;
-    }
-
-    // Reading assets index
-    QFile* assetsIndexfile = new QFile(settings->getAssetsDir() + "/indexes/" + assetsVersion + ".json");
-    if (!assetsIndexfile->open(QIODevice::ReadOnly)) {
-
-        ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось открыть " + assetsVersion +".json");
-        logger->append("UpdateDialog", "Error: can't open assets index " + assetsVersion +".json\n");
-        return;
-
-    } else {
-
-        QJsonParseError error;
-        assetsJson = QJsonDocument::fromJson(assetsIndexfile->readAll(), &error);
-
-        if (error.error != QJsonParseError::NoError) {
-
-            ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось разобрать " + assetsVersion +".json");
-            logger->append("UpdateDialog", "Error: can't parse assets index " + assetsVersion +".json\n");
-
-            dm->reset();
-            ui->clientCombo->setEnabled(true);
-            ui->updateButton->setEnabled(true);
-            return;
-
-        }
-        assetsIndexfile->close();
-    }
-    delete assetsIndexfile;
-
-    // Check each asset by exists and hash
-    QJsonObject assets = assetsJson.object()["objects"].toObject();
-
-    foreach (QString key, assets.keys()) {
-        QJsonObject asset = assets[key].toObject();
-
-        // Check each asset file
-        checkSum = asset["hash"].toString();
-        size = asset["size"].toInt();
-        url = assetsUrlPrefix + checkSum.mid(0, 2) + "/" + checkSum;
-        fileName = assetsFilePrefix + checkSum.mid(0, 2) + "/" + checkSum;
-        displayName = "ресурс " + key;
-
-        if (addToQueryIfNeed(url, fileName, displayName, checkSum, size)) needUpdate = true;
-        QApplication::processEvents(); // Update text in log
-    }
-
-    // Check additional files if defined
-    if (!dataJson.object()["files"].toObject()["index"].isNull()) {
-
-        ui->log->appendPlainText("\n # Проверка дополнительных модификаций:");
-        logger->append("UpdateDialog", "Checking custom files\n");
-
-        // Open installed files index
-        QJsonDocument installedDataJson;
-
-        if (QFile::exists(settings->getClientPrefix(clientVersion) + "/installed_data.json")) {
-
-            ui->log->appendPlainText("Проверка наличия устаревших файлов...");
-            logger->append("UpdateDialog", "Making deletion list...\n");
-
-            QFile* installedDataFile = new QFile(settings->getClientPrefix(clientVersion) + "/installed_data.json");
-            if (!installedDataFile->open(QIODevice::ReadOnly)) {
-
-                ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось открыть installed_data.json");
-                logger->append("UpdateDialog", "Error: can't open installed_files.json\n");
-
-                dm->reset();
-                ui->clientCombo->setEnabled(true);
-                ui->updateButton->setEnabled(true);
-                return;
-
-            } else {
-
-                QJsonParseError error;
-                installedDataJson = QJsonDocument::fromJson(installedDataFile->readAll(), &error);
-
-                if (error.error != QJsonParseError::NoError) {
-
-                    ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось разобрать installed_data.json");
-                    logger->append("UpdateDialog", "Error: can't parse installed_data.json\n");
-
-                    dm->reset();
-                    ui->clientCombo->setEnabled(true);
-                    ui->updateButton->setEnabled(true);
-                    return;
-
-                }
-                installedDataFile->close();
-            }
-            delete installedDataFile;
-
-            // Check for difference between current and previous installations
-            QStringList currentFileList = dataJson.object()["files"].toObject()["index"].toObject().keys();
-            QStringList previousFileList = installedDataJson.object()["files"].toObject()["index"].toObject().keys();
-
-            // Add file to deletion list if exist in previous installation and not exists in current
-            foreach (QString installedEntry, previousFileList) {
-                if (currentFileList.indexOf(installedEntry) == -1) {
-
-                    removeList.append(installedEntry);
-                    needUpdate = true;
-
-                    ui->log->appendPlainText(" >> Необходимо удалить: " + installedEntry);
-                    logger->append("UpdateDialog", "Marked to delete: " + installedEntry + "\n");
-                }
-            }
-        }
-
-        // Check custom files
-        ui->log->appendPlainText("Проверка файлов модификаций...");
-        logger->append("UpdateDialog", "Checking needed custom files...\n");
-
-        // Make mutable files list (that checks only by existence)
-        QStringList mutableList;
-        foreach (QJsonValue value, dataJson.object()["files"].toObject()["mutables"].toArray()) {
-            mutableList.append(value.toString());
-        }
-
-        QString filesFilePrefix = settings->getClientPrefix(clientVersion) + "/";
-        QString filesUrlPrefix = settings->getVersionUrl(clientVersion) + "files/";
-
-        foreach (QString key, dataJson.object()["files"].toObject()["index"].toObject().keys()) {
-
-            QJsonObject customFile
-                    = dataJson.object()["files"].toObject()["index"].toObject()[key].toObject();
-
-            // Check each custom file
-            checkSum = customFile["hash"].toString();
-            size = customFile["size"].toInt();
-            url = filesUrlPrefix + key;
-            fileName = filesFilePrefix + key;
-            displayName = "файл " + key;
-
-            if (mutableList.contains(key)) checkSum = "mutable"; // Download only if not exists
-
-            if (addToQueryIfNeed(url, fileName, displayName, checkSum, size)) needUpdate = true;
-            QApplication::processEvents(); // Update text in log
-        }
-    }
-
-    if (needUpdate) {
-
-        disconnect(ui->updateButton, SIGNAL(clicked()), this, SLOT(doCheck()));
-        ui->updateButton->setText("Обновить");
-        connect(ui->updateButton, SIGNAL(clicked()), this, SLOT(doUpdate()));
-        state = canUpdate;
-
-        ui->log->appendPlainText("\nТребуется обновление!");
-
-        if (!removeList.isEmpty()) {
-
-            ui->log->appendPlainText("Необходимо удалить: " + removeList.join(", "));
-            logger->append("UpdateDialog", "Check result: remove list: " + removeList.join(", ") + "\n");
-        }
-
-        if (dm->getDownloadsSize() != 0) {
-
-            ui->log->appendPlainText("Необходимо загрузить "
-                                     + QString::number((float(dm->getDownloadsSize()) / 1024 / 1024), 'f', 2)
-                                     + " МиБ");
-            logger->append("UpdateDialog", "Check result: need to download "
-                           + QString::number((float(dm->getDownloadsSize()) / 1024 / 1024), 'f', 2)
-                           + " MiB\n");
-        }
-
-    } else {
-        ui->log->appendPlainText("\nОбновление не требуется!");
-        logger->append("UpdateDialog", "Check result: no need updates\n");
-
-        disconnect(ui->updateButton, SIGNAL(clicked()), this, SLOT(doCheck()));
-        ui->updateButton->setText("Закрыть");
-        connect(ui->updateButton, SIGNAL(clicked()), this, SLOT(close()));
-        state = canClose;
-    }
-
-    ui->clientCombo->setEnabled(true);
-    ui->updateButton->setEnabled(true);
+    indexFetcher.add(versionUrl, versionFile);
+    indexFetcher.add(dataUrl, dataFile);
+    indexFetcher.fetchFiles();
 }
 
-void UpdateDialog::doUpdate() {
-    ui->clientCombo->setEnabled(false);
-    ui->updateButton->setEnabled(false);
+void UpdateDialog::versionIndexUpdated(bool result)
+{
+    if (!result)
+    {
+        error( tr("Can't update version indexes.") );
+        return;
+    }
 
-    if (!removeList.isEmpty()) {
+    processClientFiles();
+}
 
-        ui->log->appendPlainText("\n # Удаление устаревших модификаций:");
-        logger->append("UpdateDialog", "Removing files...\n");
+void UpdateDialog::processClientFiles()
+{
+    QString indexDir = settings->getVersionsDir() + "/" + clientVersion + "/";
+    QString indexName = indexDir + clientVersion + ".json";
+    QString dataName = indexDir + "data.json";
 
-        foreach (QString entry, removeList) {
-            ui->log->appendPlainText("Удаление: " + entry);
-            logger->append("UpdateDialog", "Remove " + entry +"\n");
+    if ( !versionParser.setJsonFromFile(indexName) )
+    {
+        log(versionParser.getParserError(), true);
+        error( tr("Can't read version index.") );
+        return;
+    }
 
-            QFile::remove(settings->getClientPrefix(clientVersion) + "/" + entry);
-            ui->progressBar->setValue(int((float(removeList.indexOf(entry) + 1) / removeList.size()) * 100));
+    if ( !dataParser.setJsonFromFile(dataName) )
+    {
+        error( tr("Can't read data index.") );
+        log(dataParser.getParserError(), true);
+        return;
+    }
+
+    // I. JAR
+    log( tr("Append main JAR to check list...") );
+    if ( !dataParser.hasJarFileInfo() )
+    {
+        error( tr("Main JAR does not described in data index.") );
+        return;
+    }
+
+    FileInfo jar;
+
+    jar.name = indexDir + clientVersion + ".jar";
+    jar.hash = dataParser.getJarFileInfo().hash;
+    jar.size = dataParser.getJarFileInfo().size;
+    jar.url = settings->getVersionUrl(clientVersion) + clientVersion + ".jar";
+
+    checkList.append(jar);
+
+    // II. LIBS
+    log( tr("Append libraries to checklist...") );
+    if ( !versionParser.hasLibraryList() )
+    {
+        error( tr("Libraries are not described in data index.") );
+        return;
+    }
+
+    QString libDir = settings->getLibsDir() + "/";
+    QString libUrl = settings->getLibsUrl();
+
+    QList<LibraryInfo> liblist = versionParser.getLibraryList();
+    foreach (LibraryInfo entry, liblist)
+    {
+        QString lib = entry.name;
+
+        if ( !dataParser.hasLibFileInfo(lib) )
+        {
+            error(tr("Data index does not contain library: %1.").arg(lib) );
+            return;
         }
 
+        FileInfo fileInfo = dataParser.getLibFileInfo(lib);
+
+        fileInfo.name = libDir + lib;
+        fileInfo.url = libUrl + lib;
+
+        checkList.append(fileInfo);
+    }
+
+    // III. ADDONS
+    if ( !dataParser.hasAddonsFilesInfo() )
+    {
+        error( tr("Addons are not described in data index.") );
+        return;
+    }
+
+    log( tr("Append addons to check-list...") );
+    QString clientPrefix = settings->getClientPrefix(clientVersion) + "/";
+    QString addonsUrl = settings->getVersionUrl(clientVersion) + "files/";
+
+    QList<FileInfo> addons = dataParser.getAddonsFilesInfo();
+    foreach (FileInfo addon, addons)
+    {
+        QString shortName = addon.name;
+        addon.name = clientPrefix + shortName;
+        addon.url = addonsUrl + shortName;
+
+        checkList.append(addon);
+    }
+
+    log( tr("Checking for obsolete addons...") );
+    QString installedIndex = clientPrefix + "installed_data.json";
+
+    JsonParser installedParser;
+    if ( installedParser.setJsonFromFile(installedIndex) )
+    {
+        typedef QHash<QString,FileInfo> mapInfo;
+
+        mapInfo newFiles = dataParser.getAddonsFilesInfoHashMap();
+        mapInfo oldFiles = installedParser.getAddonsFilesInfoHashMap();
+
+        foreach ( QString oldFile, oldFiles.keys() )
+        {
+            if ( !newFiles.contains(oldFile) )
+            {
+                removeList.append(oldFile);
+            }
+        }
+    }
+    else
+    {
+        QString msg = tr("Can't read installed data index: %1.");
+        log( msg.arg(installedIndex), true );
+        log(installedParser.getParserError(), true);
+    }
+
+    // IV. ASSETS
+    log( tr("Requesting actual assets index...") );
+    if ( !versionParser.hasAssetsVersion() )
+    {
+        error( tr("Assets are not described in version index.") );
+        return;
+    }
+
+    QString assetsName = versionParser.getAssetsVesrsion() + ".json";
+    QString assetsDir = settings->getAssetsDir() + "/indexes/";
+    QString assetsUrl = settings->getAssetsUrl() + "indexes/";
+
+    assetsFetcher.add(assetsUrl + assetsName, assetsDir + assetsName);
+    assetsFetcher.fetchFiles();
+}
+
+void UpdateDialog::assetsIndexUpdated(bool result)
+{
+    if (!result)
+    {
+        error( tr("Can't update assets index.") );
+        return;
+    }
+
+    processAssets();
+}
+
+void UpdateDialog::processAssets()
+{
+    QString assetsIndexDir = settings->getAssetsDir() + "/indexes/";
+    QString assetsName = versionParser.getAssetsVesrsion() + ".json";
+
+    JsonParser assetsParser;
+    if ( !assetsParser.setJsonFromFile(assetsIndexDir + assetsName) )
+    {
+        log(assetsParser.getParserError(), true);
+        error( tr("Can't read assets index.") );
+        return;
+    }
+
+    log( tr("Append assets files to check list...") );
+    if ( !assetsParser.hasAssetsList() )
+    {
+        error( tr("Assets list are not described in index.") );
+        return;
+    }
+
+    QString assetsDir = settings->getAssetsDir() + "/objects/";
+    QString assetsUrl = settings->getAssetsUrl() + "objects/";
+
+    QList<FileInfo> assets = assetsParser.getAssetsList();
+    foreach (FileInfo asset, assets)
+    {
+        QString shortName = asset.name;
+        asset.name = assetsDir + shortName;
+        asset.url = assetsUrl + shortName;
+
+        checkList.append( asset );
+    }
+
+    log( tr("Checking files...") );
+    emit checkFiles( checkList );
+}
+
+void UpdateDialog::checkFinished()
+{
+    log( tr("Done!") );
+
+    bool need_fetch = fileFetcher.getCount() > 0 ;
+    bool need_remove = !removeList.empty();
+
+    if (need_fetch || need_remove)
+    {
+        ui->log->appendPlainText("");
+
+        if ( need_remove )
+        {
+            foreach ( QString file, removeList )
+            {
+                log( tr("File: %1 will be removed.").arg(file) );
+            }
+        }
+
+        if ( need_fetch )
+        {
+            int count = fileFetcher.getCount();
+
+            double size = fileFetcher.getFetchSize() / 1024;
+            QString suffix = tr("KiB");
+
+            if ( size > 1024 * 1024 )
+            {
+                size = size / ( 1024 * 1024 );
+                suffix = tr("GiB");
+            }
+            else if ( size > 1024 )
+            {
+                size = size / 1024;
+                suffix = tr("MiB");
+            }
+
+            QString downloadCount = QString::number(count);
+            QString downloadSize = QString::number(size, 'f', 2);
+
+            log( tr("Need to download %1 files.").arg(downloadCount) );
+            log( tr("Download size %1 %2.").arg(downloadSize).arg(suffix) );
+        }
+
+        log( tr("Press update button to continue.") );
+        setState(UpdateDialog::CanUpdate);
+    }
+    else
+    {
+        log( tr("Client checking completed, no need update.") );
+        setState(UpdateDialog::CanClose);
+    }
+}
+
+void UpdateDialog::doUpdate()
+{
+    ui->log->appendPlainText("");
+
+    bool need_fetch = fileFetcher.getCount() > 0 ;
+    bool need_remove = !removeList.empty();
+
+    QString clientDir = settings->getClientPrefix(clientVersion) + "/";
+    QString versionDir = settings->getVersionsDir() + "/" + clientVersion + "/";
+
+    if (need_remove)
+    {
+        log( tr("Removing obsolete files...") );
+
+        int total   = removeList.size();
+        int current = 1;
+
+        foreach (QString entry, removeList)
+        {
+            log( tr("Removing: ") + entry );
+            QFile::remove(clientDir + entry);
+
+            current++;
+            ui->progressBar->setValue( int(float(current) * 100 / total) );
+        }
+
+        removeList.clear();
     }
 
     // Replace custom files index
-    QFile::remove(settings->getClientPrefix(clientVersion) + "/installed_data.json");
+    QFile::remove(clientDir + "installed_data.json");
+    QDir(clientDir).mkpath(clientDir);
+    QFile::copy( versionDir + "data.json", clientDir + "installed_data.json");
 
-    QDir(settings->getClientPrefix(clientVersion) + "/").mkpath(settings->getClientPrefix(clientVersion) + "/");
-    QFile::copy(settings->getVersionsDir() + "/" + clientVersion + "/data.json",
-                settings->getClientPrefix(clientVersion) + "/installed_data.json");
-
-    if (dm->getDownloadsSize() != 0) {
-
-        ui->log->appendPlainText("\n # Загрузка обновлений:");
-        logger->append("UpdateDialog", "Downloading started...\n");
-        dm->startDownloads();
-
-    } else {
-        updateFinished();
+    if (need_fetch)
+    {
+        log( tr("Downloading files...") );
+        fileFetcher.fetchFiles();
     }
-
-}
-
-void UpdateDialog::downloadStarted(QString displayName) {
-    ui->log->appendPlainText("Загружается " + displayName);
-}
-
-void UpdateDialog::error(QString errorString) {
-    ui->log->appendPlainText(" [!] Ошибка: " + errorString);
-}
-
-void UpdateDialog::updateFinished() {
-
-    ui->log->appendPlainText("\nОбновление выполнено!");
-    logger->append("UpdateDialog", "Update completed\n");
-
-    disconnect(ui->updateButton, SIGNAL(clicked()), this, SLOT(doUpdate()));
-    ui->updateButton->setText("Закрыть");
-    connect(ui->updateButton, SIGNAL(clicked()), this, SLOT(close()));
-    state = canUpdate;
-
-    ui->clientCombo->setEnabled(true);
-    ui->updateButton->setEnabled(true);
-}
-
-bool UpdateDialog::downloadNow(QString url, QString fileName) {
-
-    ui->log->appendPlainText("Загрузка: " + fileName.split("/").last());
-    logger->append("UpdateDialog", "Downloading "  + fileName.split("/").last() + "\n");
-
-    Reply reply = Util::makeGet(url);
-    if (!reply.isOK()) {
-        ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось загрузить файл");
-        logger->append("UpdateDialog", "Error: " + reply.getErrorString() + "\n");
-        return false;
-    } else {
-        QFile* file = new QFile(fileName);
-
-        QDir fdir = QFileInfo(fileName).absoluteDir();
-        fdir.mkpath(fdir.absolutePath());
-
-        if (file->open(QIODevice::WriteOnly)) {
-            file->write(reply.reply());
-            file->close();
-            delete file;
-            return true;
-        } else {
-            ui->log->appendPlainText("Проверка остановлена. Ошибка: не удалось сохранить файл");
-            logger->append("UpdateDialog", "Error: can't save file\n");
-            delete file;
-            return false;
-        }
+    else
+    {
+        updateComplete(true);
     }
-
-    return true;
 }
 
-bool UpdateDialog::addToQueryIfNeed(QString url, QString fileName, QString displayName, QString checkSum, quint64 size) {
+void UpdateDialog::updateComplete(bool result)
+{
+    ui->log->appendPlainText("");
 
-    ui->log->appendPlainText("Проверка: " + displayName);
-    logger->append("UpdateDialog", "Checking " + fileName + "\n");
-
-    if (!QFile::exists(fileName)) {
-
-        logger->append("UpdateDialog", "Checking: file does not exist\n");
-        dm->addEntry(url, fileName, displayName, size);
-        ui->log->appendPlainText(" >> Необходимо загрузить " + displayName + " ("
-                                 + QString::number((float(size) / 1024 / 1024), 'f', 2) + " МиБ)" );
-        return true;
-
-    } else if (checkSum != "mutable") {
-
-        QString fileHash;
-        QFile* file = new QFile(fileName);
-        if (!file->open(QIODevice::ReadOnly)) {
-            ui->log->appendPlainText("Ошибка: не удалось открыть " + displayName);
-            logger->append("UpdateDialog", "Error: can't open file " + fileName.split("/").last() + "\n");
-            delete file;
-            return false;
-        } else {
-            QByteArray data = file->readAll();
-            fileHash = QString(QCryptographicHash::hash(data, QCryptographicHash::Sha1).toHex());
-            file->close();
-            delete file;
-
-            if (fileHash != checkSum) {
-
-                logger->append("UpdateDialog", "Checking: bad checksum\n");
-                dm->addEntry(url, fileName, displayName, size);
-                ui->log->appendPlainText(" >> Необходимо загрузить " + displayName + " ("
-                                         + QString::number((float(size) / 1024 / 1024), 'f', 2) + " МиБ)" );
-                return true;
-            }
-        }
+    if (result)
+    {
+        log( tr("Update complete!") );
     }
+    else
+    {
+        log( tr("Update not completed. Some files was not downloaded.") );
 
-    return false;
+    }
+    setState(CanClose);
 }
 
-UpdateDialog::~UpdateDialog() {
+void UpdateDialog::addToFetchList(const FileInfo fileInfo)
+{
+    fileFetcher.add(fileInfo.url, fileInfo.name, fileInfo.size);
+}
 
-    logger->append("UpdateDialog", "Update dialog closed\n");
+UpdateDialog::~UpdateDialog()
+{
+    checkThread.quit();
+    checkThread.wait();
+
     delete ui;
 }

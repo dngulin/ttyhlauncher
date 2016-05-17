@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>322</width>
-    <height>154</height>
+    <width>350</width>
+    <height>180</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Загрузка скина</string>
+   <string>Upload skin</string>
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
@@ -38,27 +38,30 @@
    </property>
    <item>
     <layout class="QGridLayout" name="formLayout">
+     <property name="spacing">
+      <number>4</number>
+     </property>
      <item row="2" column="1">
       <widget class="QLineEdit" name="pathEdit"/>
      </item>
      <item row="0" column="0">
       <widget class="QLabel" name="nickLabel">
        <property name="text">
-        <string>Игровое имя</string>
+        <string>Nickname</string>
        </property>
       </widget>
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="passLabel">
        <property name="text">
-        <string>Пароль</string>
+        <string>Password</string>
        </property>
       </widget>
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="newpassLabel">
        <property name="text">
-        <string>Скин</string>
+        <string>Skin file</string>
        </property>
       </widget>
      </item>
@@ -82,25 +85,6 @@
     </layout>
    </item>
    <item>
-    <widget class="QFrame" name="messageFrame">
-     <property name="frameShape">
-      <enum>QFrame::Box</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QLabel" name="messageLabel">
-        <property name="text">
-         <string>Заполните форму и нажмите кнопку &quot;Загрузить&quot;</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -115,6 +99,30 @@
       </size>
      </property>
     </spacer>
+   </item>
+   <item>
+    <widget class="Line" name="lineTop">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="messageLabel">
+     <property name="text">
+      <string>Fill the form, then press &quot;Upload&quot; button.</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="LineBot">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="downLayout">
@@ -134,7 +142,7 @@
      <item>
       <widget class="QPushButton" name="sendButton">
        <property name="text">
-        <string>Загрузить</string>
+        <string>Upload</string>
        </property>
       </widget>
      </item>
@@ -143,11 +151,11 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>passEdit</tabstop>
-  <tabstop>pathEdit</tabstop>
   <tabstop>browseButton</tabstop>
   <tabstop>sendButton</tabstop>
   <tabstop>nickEdit</tabstop>
+  <tabstop>passEdit</tabstop>
+  <tabstop>pathEdit</tabstop>
  </tabstops>
  <resources>
   <include location="resources.qrc"/>

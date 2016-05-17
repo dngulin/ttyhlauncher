@@ -12,17 +12,21 @@ LicenseDialog::LicenseDialog(QWidget *parent) :
 
     logger = Logger::logger();
 
-    // load license from resources
     QFile licenseFile(":/resources/license.txt");
-    if (!licenseFile.open(QFile::ReadOnly | QFile::Text)) {
-        logger->append("LicenseDialog", "Can't open license\n");
+    if ( !licenseFile.open(QFile::ReadOnly | QFile::Text) )
+    {
+        logger->appendLine( tr("LicenseDialog"), tr("Can't open license.") );
     }
-    QTextStream textStream(&licenseFile);
-    ui->licenseText->setPlainText(textStream.readAll());
+    else
+    {
+        QTextStream textStream(&licenseFile);
+        ui->licenseText->setPlainText( textStream.readAll() );
 
-    licenseFile.close();
+        licenseFile.close();
+    }
 
-    connect(ui->closeButton, SIGNAL(clicked()), this, SLOT(close()));
+    connect(ui->closeButton, &QPushButton::clicked, this,
+            &LicenseDialog::close);
 }
 
 LicenseDialog::~LicenseDialog()

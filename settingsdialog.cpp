@@ -5,6 +5,8 @@
 #include <QDesktopServices>
 #include <QMessageBox>
 
+#include "jsonparser.h"
+
 SettingsDialog::SettingsDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SettingsDialog)
@@ -14,212 +16,258 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     settings = Settings::instance();
     logger = Logger::logger();
 
-    logger->append("SettingsDialog", "Settings dialog opened\n");
+    ui->clientCombo->addItems( settings->getClientCaptions() );
+    ui->clientCombo->setCurrentIndex( settings->loadActiveClientID() );
 
-    nam = new QNetworkAccessManager(this);
-    connect(nam, SIGNAL(finished(QNetworkReply*)), this, SLOT(makeVersionList(QNetworkReply*)));
+    connect(&fetcher, &DataFetcher::finished,
+            this, &SettingsDialog::makeVersionList);
 
-    // Setup client combobox
-    ui->clientCombo->addItems(settings->getClientsNames());
-    ui->clientCombo->setCurrentIndex(settings->loadActiveClientId());
-    connect(ui->clientCombo, SIGNAL(currentIndexChanged(int)), settings, SLOT(saveActiveClientId(int)));
-    connect(ui->clientCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(loadSettings()));
-    connect(ui->clientCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(loadVersionList()));
+    connect( ui->clientCombo, SIGNAL( currentIndexChanged(int) ), settings,
+             SLOT( saveActiveClientID(int) ) );
 
-    if (ui->clientCombo->count() == 0) {
+    connect( ui->clientCombo, SIGNAL( currentIndexChanged(int) ), this,
+             SLOT( loadSettings() ) );
+
+    connect( ui->clientCombo, SIGNAL( currentIndexChanged(int) ), this,
+             SLOT( loadVersionList() ) );
+
+    if (ui->clientCombo->count() == 0)
+    {
         ui->saveButton->setEnabled(false);
         ui->opendirButton->setEnabled(false);
 
-        logger->append("SettingsDialog", "Error: empty client list!\n");
-        ui->stateEdit->setText("Не удалось получить список клиентов");
-    } else {
-        emit ui->clientCombo->currentIndexChanged(ui->clientCombo->currentIndex());
+        msg( tr("Error: empty client list!") );
+    }
+    else
+    {
+        int id = ui->clientCombo->currentIndex();
+        emit ui->clientCombo->currentIndexChanged(id);
     }
 
-    connect(ui->javapathButton, SIGNAL(clicked()), this, SLOT(openFileDialog()));
-    connect(ui->saveButton, SIGNAL(clicked()), this, SLOT(saveSettings()));
-    connect(ui->opendirButton, SIGNAL(clicked()), this, SLOT(openClientDirectory()));
+    connect(ui->javapathButton, &QPushButton::clicked,
+            this, &SettingsDialog::openFileDialog);
+
+    connect(ui->saveButton, &QPushButton::clicked,
+            this, &SettingsDialog::saveSettings);
+
+    connect(ui->opendirButton, &QPushButton::clicked,
+            this, &SettingsDialog::openClientDirectory);
 }
 
 SettingsDialog::~SettingsDialog()
 {
-    logger->append("SettingsDialog", "Settings dialog closed\n");
     delete ui;
 }
 
+void SettingsDialog::msg(const QString &text)
+{
+    ui->stateEdit->setText(text);
+    log(text);
+}
 
-void SettingsDialog::loadVersionList() {
-    ui->stateEdit->setText("Составляется список версий...");
-    logger->append("SettingsDialog", "Making version list...\n");
+void SettingsDialog::log(const QString &text)
+{
+    logger->appendLine(tr("SettingsDialog"), text);
+}
+
+void SettingsDialog::loadVersionList()
+{
+    msg( tr("Loading version list...") );
 
     ui->versionCombo->setEnabled(false);
     ui->versionCombo->clear();
-    ui->versionCombo->addItem("Последняя доступная версия", "latest");
+    ui->versionCombo->addItem(tr("Latest version"), "latest");
 
-    QNetworkRequest request;
-    // FIXME: in release url depended at activeClient value
-    request.setUrl(QUrl(settings->getVersionsUrl()));
-    logger->append("SettingsDialog", "Making version list request...\n");
-    logger->append("SettingsDialog", "URL: " + settings->getVersionsUrl() +"\n");
-    nam->get(request);
+    fetcher.makeGet( QUrl( settings->getVersionsUrl() ) );
 }
 
-void SettingsDialog::makeVersionList(QNetworkReply* reply) {
-
-    // Check for connection error
-    if (reply->error() == QNetworkReply::NoError) {
-        logger->append("SettingsDialog", "OK\n");
-
-        QByteArray rawResponce = reply->readAll();
-        QJsonParseError error;
-        QJsonDocument json = QJsonDocument::fromJson(rawResponce, &error);
-
-        // Check for incorrect JSON
-        if (error.error == QJsonParseError::NoError) {
-
-            QJsonObject responce = json.object();
-
-            // Check for error in server answer
-            if (responce["error"].toString() != "") {
-                // Error in answer handler
-                ui->stateEdit->setText("Ошибка! " + responce["errorMessage"].toString());
-                logger->append("SettingsDialog", "Error: "
-                               + responce["errorMessage"].toString() + "\n");
-
-            } else {
-                // Correct login
-                logger->append("SettingsDialog", "List downloaded\n");
-
-                // Make remote version list
-                QJsonArray versions = responce["versions"].toArray();
-
-                foreach (QJsonValue value, versions) {
-                    QJsonObject version = value.toObject();
-                    if (version["type"].toString() == "release")
-                        ui->versionCombo->addItem(version["id"].toString(), version["id"].toString());
-                }
-
-                // Make additional local version list
-                appendVersionList("Список версий с сервера обновлений");
-            }
-
-        } else {
-            // JSON parse error
-            logger->append("SettingsDialog", "JSON parse error!\n");
-            appendVersionList("Локальные версии (ошибка обмена с севрером)");
-        }
-
-
-    } else {
-        // Connection error
-        logger->append("SettingsDialog", "Error: " + reply->errorString() +"\n");
-        appendVersionList("Локальные версии (сервер недоступен)");
+void SettingsDialog::makeVersionList(bool result)
+{
+    if (!result)
+    {
+        log( tr("Error: ") + fetcher.errorString() );
+        appendVersionList( tr("Local versions (server unreachable)") );
     }
-
+    else
+    {
+        JsonParser parser;
+        if ( !parser.setJson( fetcher.getData() ) )
+        {
+            log( tr("Error: ") + parser.getParserError() );
+            appendVersionList( tr("Local versions (bad server reply)") );
+        }
+        else
+        {
+            if ( !parser.hasVersionList() )
+            {
+                log( tr("Error: no version list!") );
+                appendVersionList( tr("Local versions (empty server reply)") );
+            }
+            else
+            {
+                foreach ( QString id, parser.getReleaseVersonList() )
+                {
+                    QString title = id;
+                    if ( isVersionInstalled(id) )
+                    {
+                        title += tr(" [prefix installed]");
+                    }
+                    ui->versionCombo->addItem(title, id);
+                }
+                appendVersionList( tr("Version list from update server") );
+            }
+        }
+    }
 }
 
-void SettingsDialog::appendVersionList(QString reason) {
-    logger->append("SettingsDialog", "Append local version list...\n");
+void SettingsDialog::appendVersionList(const QString &reason)
+{
+    log( tr("Append local version list...") );
     ui->stateEdit->setText(reason);
 
     QString prefix = settings->getClientDir() + "/versions";
+
     QDir verdir = QDir(prefix);
     QStringList subdirs = verdir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
-    foreach (QString ver, subdirs) {
-        QFile* file = new QFile(prefix + "/" + ver + "/" + ver + ".json");
-        if (file->exists()) {
-            // Add to version list unique local versions
-            if (ui->versionCombo->findData(ver) == -1) {
-                ui->versionCombo->addItem(ver + " (локальная версия)", ver);
+
+    foreach (QString id, subdirs)
+    {
+        QFile file(prefix + "/" + id + "/" + id + ".json");
+        if ( file.exists() )
+        {
+            if (ui->versionCombo->findData(id) == -1)
+            {
+                QString title = id + tr(" [local]");
+                if ( isVersionInstalled(id) )
+                {
+                    title += tr(" [prefix installed]");
+                }
+                ui->versionCombo->addItem(title, id);
             }
         }
-        delete file;
     }
 
-    int id = ui->versionCombo->findData(settings->loadClientVersion());
-    if (id != -1) ui->versionCombo->setCurrentIndex(id);
+    int id = ui->versionCombo->findData( settings->loadClientVersion() );
+    if (id != -1)
+    {
+        ui->versionCombo->setCurrentIndex(id);
+    }
     ui->versionCombo->setEnabled(true);
 }
 
-void SettingsDialog::logCurrentSettings() {
-    logger->append("SettingsDialog", "\tClient: " + settings->getClientStrId(settings->loadActiveClientId()) + "\n");
-    logger->append("SettingsDialog", "\tVersion: " + settings->loadClientVersion() + "\n");
-    logger->append("SettingsDialog", "\tUseCustomJava: " + QString(ui->javapathBox->isChecked() ? "true" : "false") + "\n");
-    logger->append("SettingsDialog", "\tCustomJava: " + ui->javapathEdit->text() + "\n");
-    logger->append("SettingsDialog", "\tUseCustomArgs: " + QString(ui->argsBox->isChecked() ? "true" : "false") + "\n");
-    logger->append("SettingsDialog", "\tCustomArgs: " + ui->argsEdit->text() + "\n");
-    logger->append("SettingsDialog", "\tSetWindowGeometry: " + QString(ui->sizeBox->isChecked() ? "true" : "false") + "\n");
-    logger->append("SettingsDialog", "\tCustomGeometry: " +
-                   QString::number(ui->widthSpinBox->value())  + "," +
-                   QString::number(ui->heightSpinBox->value()) + "\n");
-    logger->append("SettingsDialog", "\tMakeFullscreen: " + QString(ui->fullscreenRadio->isChecked() ? "true" : "false")+"\n");
-    logger->append("SettingsDialog", "\tUseLauncherSize: " + QString(ui->useLauncherRadio->isChecked() ? "true" : "false")+"\n");
-    logger->append("SettingsDialog", "\tCheckAssets: " + QString(ui->checkAssetsCombo->isChecked() ? "true" : "false")+"\n");
+void SettingsDialog::logCurrentSettings()
+{
+    QString yes = tr("true");
+    QString no = tr("false");
+
+    QString client = settings->getClientName( settings->loadActiveClientID() );
+
+    log(tr("\tClient: ") + client);
+    log( tr("\tVersion: ") + settings->loadClientVersion() );
+
+    log( tr("\tUseCustomJava: ") + (ui->javapathBox->isChecked() ? yes : no) );
+    log( tr("\tCustomJava: ") + ui->javapathEdit->text() );
+    log( tr("\tUseCustomArgs: ") + (ui->argsBox->isChecked() ? yes : no) );
+    log( tr("\tCustomArgs: ") + ui->argsEdit->text() );
+
+    log( tr("\tSetWindowGeometry: ") + (ui->sizeBox->isChecked() ? yes : no) );
+    log( tr("\tCustomGeometry: ")
+         + QString::number( ui->widthSpinBox->value() ) + ","
+         + QString::number( ui->heightSpinBox->value() ) );
+
+    log( tr("\tMakeFullscreen: ")
+         + (ui->fullscreenRadio->isChecked() ? yes : no) );
+    log( tr("\tUseLauncherSize: ")
+         + (ui->useLauncherRadio->isChecked() ? yes : no) );
+
+    log( tr("\tCheckAssets: ")
+         + (ui->checkAssetsCombo->isChecked() ? yes : no) );
 }
 
-void SettingsDialog::saveSettings() {
+bool SettingsDialog::isVersionInstalled(const QString &name)
+{
+    QString prefix = settings->getClientDir() + "/prefixes/";
+    return QFile(prefix + name + "/installed_data.json").exists();
+}
 
+void SettingsDialog::saveSettings()
+{
     int id = ui->versionCombo->currentIndex();
-    QString strid = ui->versionCombo->itemData(id).toString();
-    settings->saveClientVersion(strid);
+    QString version = ui->versionCombo->itemData(id).toString();
+    settings->saveClientVersion(version);
 
-    settings->saveClientJavaState(ui->javapathBox->isChecked());
-    settings->saveClientJava(ui->javapathEdit->text());
-    settings->saveClientJavaArgsState(ui->argsBox->isChecked());
-    settings->saveClientJavaArgs(ui->argsEdit->text());
-    settings->saveClientWindowGeometry(QRect(-1, -1, ui->widthSpinBox->value(), ui->heightSpinBox->value()));
-    settings->saveClientWindowSizeState(ui->sizeBox->isChecked());
-    settings->saveClientFullscreenState(ui->fullscreenRadio->isChecked());
-    settings->saveClientUseLauncherSizeState(ui->useLauncherRadio->isChecked());
-    settings->saveClientCheckAssetsState(ui->checkAssetsCombo->isChecked());
+    settings->saveClientJavaState( ui->javapathBox->isChecked() );
+    settings->saveClientJava( ui->javapathEdit->text() );
+    settings->saveClientJavaArgsState( ui->argsBox->isChecked() );
+    settings->saveClientJavaArgs( ui->argsEdit->text() );
 
-    logger->append("SettingsDialog", "Settings saved\n");
+    QRect g( -1, -1, ui->widthSpinBox->value(), ui->heightSpinBox->value() );
+    settings->saveClientWindowGeometry(g);
+
+    settings->saveClientWindowSizeState( ui->sizeBox->isChecked() );
+    settings->saveClientFullscreenState( ui->fullscreenRadio->isChecked() );
+
+    bool launcherSizeState = ui->useLauncherRadio->isChecked();
+    settings->saveClientUseLauncherSizeState(launcherSizeState);
+
+    settings->saveClientCheckAssetsState( ui->checkAssetsCombo->isChecked() );
+
+    log( tr("Settings saved:") );
     logCurrentSettings();
     this->close();
-
 }
 
-void SettingsDialog::loadSettings() {
-
+void SettingsDialog::loadSettings()
+{
     // Setup settings
-    ui->javapathBox->setChecked(settings->loadClientJavaState());
-    ui->javapathEdit->setText(settings->loadClientJava());
-    ui->argsBox->setChecked(settings->loadClientJavaArgsState());
-    ui->argsEdit->setText(settings->loadClientJavaArgs());
-    ui->widthSpinBox->setValue(settings->loadClientWindowGeometry().width());
-    ui->heightSpinBox->setValue(settings->loadClientWindowGeometry().height());
-    ui->sizeBox->setChecked(settings->loadClientWindowSizeState());
+    ui->javapathBox->setChecked( settings->loadClientJavaState() );
+    ui->javapathEdit->setText( settings->loadClientJava() );
+    ui->argsBox->setChecked( settings->loadClientJavaArgsState() );
+    ui->argsEdit->setText( settings->loadClientJavaArgs() );
+
+    QRect g = settings->loadClientWindowGeometry();
+    ui->widthSpinBox->setValue( g.width() );
+    ui->heightSpinBox->setValue( g.height() );
+
+    ui->sizeBox->setChecked( settings->loadClientWindowSizeState() );
 
     bool fullscreen = settings->loadClientFullscreenState();
     bool useLauncherSize = settings->loadClientUseLauncherSizeState();
     ui->fullscreenRadio->setChecked(fullscreen);
     ui->useLauncherRadio->setChecked(useLauncherSize);
-    if(!fullscreen && !useLauncherSize) {
+    if (!fullscreen && !useLauncherSize)
+    {
         ui->customSizeRadio->setChecked(true);
     }
 
     bool checkAssets = settings->loadClientCheckAssetsState();
     ui->checkAssetsCombo->setChecked(checkAssets);
 
-    logger->append("SettingsDialog", "Settings loaded\n");
+    log( tr("Settings loaded:") );
     logCurrentSettings();
 }
 
-void SettingsDialog::openFileDialog() {
-    QString javapath = QFileDialog::getOpenFileName(this, "Выберите исполняемый файл java", "", "");
+void SettingsDialog::openFileDialog()
+{
+    QString title = tr("Select a java executable");
+    QString javapath = QFileDialog::getOpenFileName(this, title, "", "");
     ui->javapathEdit->setText(javapath);
 }
 
-void SettingsDialog::openClientDirectory() {
-
-    QFile* clientDir = new QFile(settings->getClientDir());
-    if (clientDir->exists()) {
-        QUrl clientDirUrl = QUrl::fromLocalFile(clientDir->fileName());
+void SettingsDialog::openClientDirectory()
+{
+    QFile clientDir( settings->getClientDir() );
+    if ( clientDir.exists() )
+    {
+        QUrl clientDirUrl = QUrl::fromLocalFile( clientDir.fileName() );
         QDesktopServices::openUrl(clientDirUrl);
-    } else {
-        QMessageBox::critical(this, "У нас проблема :(", "Директория ещё не существует.\n"
-                              + clientDir->fileName());
-        logger->append("SettingsDialog", "Error: can't open client directory (not exists)\n");
     }
-    delete clientDir;
+    else
+    {
+        QString head = tr("Oops! We have a problem!");
+        QString msg = tr("Can't open client directory! %1");
+
+        log( msg.arg( clientDir.fileName() ) );
+        QMessageBox::critical( this, head, msg.arg( clientDir.fileName() ) );
+    }
 }

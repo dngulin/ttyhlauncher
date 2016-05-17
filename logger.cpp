@@ -4,11 +4,14 @@
 #include <QTime>
 #include <QDate>
 #include <QTextStream>
-#include <QApplication>
 
-Logger* Logger::myInstance = 0;
-Logger* Logger::logger() {
-    if (myInstance == 0) myInstance = new Logger();
+Logger *Logger::myInstance = NULL;
+Logger *Logger::logger()
+{
+    if (myInstance == NULL)
+    {
+        myInstance = new Logger();
+    }
     return myInstance;
 }
 
@@ -18,33 +21,52 @@ Logger::Logger(QObject *parent) :
     // Rotate logs
     int rotations = 3;
 
-    // remove latest index
-    QFile::remove(Settings::instance()->getBaseDir() + "/launcher." + QString::number(rotations - 1) + ".log");
+    QString baseDir = Settings::instance()->getBaseDir();
+    QString last = QString::number(rotations - 1);
 
-    // rotate logs
-    for (int i = rotations - 2; i >=0; i--) {
-        QFile::rename(Settings::instance()->getBaseDir()+ "/launcher." + QString::number(i) + ".log",
-                      Settings::instance()->getBaseDir()+ "/launcher." + QString::number(i + 1) + ".log");
+    QFile::remove(baseDir + "/launcher." + last + ".log");
+
+    for (int i = rotations - 2; i >= 0; i--)
+    {
+        QString cur = QString::number(i);
+        QString nxt = QString::number(i + 1);
+
+        QFile::rename(baseDir + "/launcher." + cur + ".log",
+                      baseDir + "/launcher." + nxt + ".log");
     }
 
-    QDir().mkpath(Settings::instance()->getBaseDir()); // Make dir, if not exist
-    logFile = new QFile(Settings::instance()->getBaseDir() + "/launcher.0.log");
+    // Setup logfile
+    QDir().mkpath(baseDir);
+    QString logFileName = baseDir + "/launcher.0.log";
 
-    if (!logFile->open(QIODevice::Append | QIODevice::Text)) qCritical() << "Can't setup logger!";
+    logFile.setFileName(logFileName);
 
-    append("Logger", QDate::currentDate().toString("dd.MM.yy")
-           + " ttyhlauncher-" + Settings::instance()->launcherVersion + " started.\n");
+    mode = QIODevice::Text | QIODevice::Append | QIODevice::WriteOnly;
 
+    if ( !logFile.open(mode) )
+    {
+        qCritical() << "Can't setup logger!";
+    }
+
+    QString date = QDate::currentDate().toString("dd.MM.yy");
+    QString version = Settings::instance()->launcherVersion;
+
+    QString msg = tr("%1, ttyhlauncher-%2 started.").arg(date).arg(version);
+
+    appendLine(tr("Logger"), msg);
 }
 
-void Logger::append(QString sender, QString text)
+void Logger::appendLine(const QString &sender, const QString &text)
 {
-    QString prefix = "(" + QTime::currentTime().toString("hh:mm:ss") + ") " + sender + " >> ";
+    QString time = QTime::currentTime().toString("hh:mm:ss");
+    QString prefix = "[" + time + "] " + sender + " >> ";
 
-    QTextStream(stdout) << prefix << text;
-    QTextStream textout(logFile);
-    if (logFile != 0) textout << prefix << text;
+    QTextStream(stdout) << prefix << text << "\n";
 
-    emit textAppended(prefix + text.trimmed());
-    QApplication::processEvents();
+    if ( logFile.isOpen() )
+    {
+        QTextStream(&logFile) << prefix << text << "\n";
+    }
+
+    emit lineAppended(prefix + text);
 }
