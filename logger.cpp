@@ -65,7 +65,10 @@ void Logger::appendLine(const QString &sender, const QString &text)
 
     if ( logFile.isOpen() )
     {
-        QTextStream(&logFile) << prefix << text << "\n";
+        QTextStream logStream(&logFile);
+        logStream.setCodec("UTF-8");
+
+        logStream << prefix << text << "\n";
     }
 
     emit lineAppended(prefix + text);
