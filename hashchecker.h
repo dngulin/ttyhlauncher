@@ -14,7 +14,7 @@ public:
     void cancel();
 
 public slots:
-    void checkFiles(const QList< FileInfo > &list);
+    void checkFiles(const QList< FileInfo > &list, bool stopOnBad);
 
 private:
     bool hashIsValid(const FileInfo fileInfo) const;

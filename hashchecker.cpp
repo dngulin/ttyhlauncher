@@ -16,7 +16,7 @@ bool HashChecker::isCancelled() const
     return cancelled;
 }
 
-void HashChecker::checkFiles(const QList<FileInfo> &list)
+void HashChecker::checkFiles(const QList<FileInfo> &list, bool stopOnBad)
 {
     setCancelled(false);
 
@@ -36,6 +36,11 @@ void HashChecker::checkFiles(const QList<FileInfo> &list)
         if ( !hashIsValid(entry) )
         {
             emit verificationFailed(entry);
+
+            if (stopOnBad)
+            {
+                return;
+            }
         }
     }
 

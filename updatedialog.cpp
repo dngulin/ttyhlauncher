@@ -245,7 +245,7 @@ void UpdateDialog::versionListRequested(bool result)
     }
 
     clientVersion = versionsParser.getLatestReleaseVersion();
-    log(tr("Client version received: %1.").arg(clientVersion) );
+    log( tr("Client version received: %1.").arg(clientVersion) );
 
     updateVersionIndex();
 }
@@ -335,7 +335,7 @@ void UpdateDialog::processClientFiles()
 
         if ( !dataParser.hasLibFileInfo(lib) )
         {
-            error(tr("Data index does not contain library: %1.").arg(lib) );
+            error( tr("Data index does not contain library: %1.").arg(lib) );
             return;
         }
 
@@ -374,7 +374,7 @@ void UpdateDialog::processClientFiles()
     JsonParser installedParser;
     if ( installedParser.setJsonFromFile(installedIndex) )
     {
-        typedef QHash<QString,FileInfo> mapInfo;
+        typedef QHash<QString, FileInfo> mapInfo;
 
         mapInfo newFiles = dataParser.getAddonsFilesInfoHashMap();
         mapInfo oldFiles = installedParser.getAddonsFilesInfoHashMap();
@@ -390,7 +390,7 @@ void UpdateDialog::processClientFiles()
     else
     {
         QString msg = tr("Can't read installed data index: %1.");
-        log( msg.arg(installedIndex), true );
+        log(msg.arg(installedIndex), true);
         log(installedParser.getParserError(), true);
     }
 
@@ -451,45 +451,45 @@ void UpdateDialog::processAssets()
         asset.name = assetsDir + shortName;
         asset.url = assetsUrl + shortName;
 
-        checkList.append( asset );
+        checkList.append(asset);
     }
 
     log( tr("Checking files...") );
-    emit checkFiles( checkList );
+    emit checkFiles(checkList, false);
 }
 
 void UpdateDialog::checkFinished()
 {
     log( tr("Done!") );
 
-    bool need_fetch = fileFetcher.getCount() > 0 ;
+    bool need_fetch = fileFetcher.getCount() > 0;
     bool need_remove = !removeList.empty();
 
     if (need_fetch || need_remove)
     {
         ui->log->appendPlainText("");
 
-        if ( need_remove )
+        if (need_remove)
         {
-            foreach ( QString file, removeList )
+            foreach (QString file, removeList)
             {
                 log( tr("File: %1 will be removed.").arg(file) );
             }
         }
 
-        if ( need_fetch )
+        if (need_fetch)
         {
             int count = fileFetcher.getCount();
 
             double size = fileFetcher.getFetchSize() / 1024;
             QString suffix = tr("KiB");
 
-            if ( size > 1024 * 1024 )
+            if (size > 1024 * 1024)
             {
-                size = size / ( 1024 * 1024 );
+                size = size / (1024 * 1024);
                 suffix = tr("GiB");
             }
-            else if ( size > 1024 )
+            else if (size > 1024)
             {
                 size = size / 1024;
                 suffix = tr("MiB");
@@ -516,7 +516,7 @@ void UpdateDialog::doUpdate()
 {
     ui->log->appendPlainText("");
 
-    bool need_fetch = fileFetcher.getCount() > 0 ;
+    bool need_fetch = fileFetcher.getCount() > 0;
     bool need_remove = !removeList.empty();
 
     QString clientDir = settings->getClientPrefix(clientVersion) + "/";
@@ -526,12 +526,12 @@ void UpdateDialog::doUpdate()
     {
         log( tr("Removing obsolete files...") );
 
-        int total   = removeList.size();
+        int total = removeList.size();
         int current = 1;
 
         foreach (QString entry, removeList)
         {
-            log( tr("Removing: ") + entry );
+            log(tr("Removing: ") + entry);
             QFile::remove(clientDir + entry);
 
             current++;
@@ -544,7 +544,7 @@ void UpdateDialog::doUpdate()
     // Replace custom files index
     QFile::remove(clientDir + "installed_data.json");
     QDir(clientDir).mkpath(clientDir);
-    QFile::copy( versionDir + "data.json", clientDir + "installed_data.json");
+    QFile::copy(versionDir + "data.json", clientDir + "installed_data.json");
 
     if (need_fetch)
     {
@@ -568,7 +568,6 @@ void UpdateDialog::updateComplete(bool result)
     else
     {
         log( tr("Update not completed. Some files was not downloaded.") );
-
     }
     setState(CanClose);
 }

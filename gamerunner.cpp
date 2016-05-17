@@ -455,7 +455,7 @@ void GameRunner::checkFiles()
     }
 
     log( tr("Begin files check...") );
-    emit beginCheck(checkList);
+    emit beginCheck(checkList, true);
 }
 
 void GameRunner::onBadChecksumm(const FileInfo fileInfo)

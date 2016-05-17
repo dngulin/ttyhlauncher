@@ -29,7 +29,7 @@ signals:
     void started();
     void finished(int exitCode);
 
-    void beginCheck( const QList<FileInfo>  list );
+    void beginCheck(const QList<FileInfo>  list, bool stopOnBad);
 
 private:
     // Initial data

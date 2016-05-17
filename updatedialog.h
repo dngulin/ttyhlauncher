@@ -59,7 +59,7 @@ private:
     void doUpdate();
 
 signals:
-    void checkFiles( const QList<FileInfo>  list );
+    void checkFiles(const QList<FileInfo> list, bool stopOnBad);
 
 private slots:
     void clientChanged();
