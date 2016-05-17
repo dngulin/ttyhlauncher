@@ -81,31 +81,29 @@ void Util::unzipArchive(const QString &zipFilePath,
         {
             zipFile.open(QIODevice::ReadOnly);
 
-            QFile *realFile = new QFile(
-                extractionPath + "/" + zip.getCurrentFileName() );
+            QFile file( extractionPath + "/" + zip.getCurrentFileName() );
 
-            QFileInfo rfInfo = QFileInfo(*realFile);
+            QFileInfo fileInfo = QFileInfo(file);
 
-            QDir rfDir = rfInfo.absoluteDir();
-            rfDir.mkpath( rfDir.absolutePath() );
+            QDir dir = fileInfo.absoluteDir();
+            dir.mkpath( dir.absolutePath() );
 
-            if ( !rfInfo.isDir() )
+            if ( !fileInfo.isDir() )
             {
-                log( QObject::tr("Extract: %1").arg( realFile->fileName() ) );
+                log( QObject::tr("Extract: %1").arg( file.fileName() ) );
 
-                if ( realFile->open(QIODevice::WriteOnly) )
+                if ( file.open(QIODevice::WriteOnly) )
                 {
-                    realFile->write( zipFile.readAll() );
-                    realFile->close();
+                    file.write( zipFile.readAll() );
+                    file.close();
                 }
                 else
                 {
-                    QString err = realFile->errorString();
+                    QString err = file.errorString();
                     log( QObject::tr("Extract error! %1").arg(err) );
                 }
             }
 
-            delete realFile;
             zipFile.close();
         }
         zip.close();
