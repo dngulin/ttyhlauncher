@@ -410,7 +410,7 @@ void LauncherWindow::gameRunnerNeedUpdate(const QString &message)
 
 void LauncherWindow::gameRunnerFinished(int exitCode)
 {
-    delete gameRunner;
+    gameRunner->deleteLater();
 
     if ( this->isHidden() )
     {
