@@ -47,25 +47,30 @@ bool HashChecker::hashIsValid(const FileInfo fileInfo) const
     {
         return false;
     }
-    else if (!fileInfo.isMutable)
+
+    if (!fileInfo.isMutable)
     {
+        QCryptographicHash hash(QCryptographicHash::Sha1);
+
         QFile file(fileInfo.name);
         if ( !file.open(QIODevice::ReadOnly) )
         {
             return false;
         }
-        else
+
+        bool readed = hash.addData(&file);
+        file.close();
+
+        if (!readed)
         {
-            QByteArray data = file.readAll();
-            file.close();
+            return false;
+        }
 
-            QCryptographicHash::Algorithm alg = QCryptographicHash::Sha1;
-            QByteArray sha = QCryptographicHash::hash(data, alg).toHex();
+        QString sha = QString( hash.result().toHex() );
 
-            if ( fileInfo.hash != QString(sha) )
-            {
-                return false;
-            }
+        if (fileInfo.hash != sha)
+        {
+            return false;
         }
     }
 
