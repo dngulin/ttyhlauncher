@@ -20,10 +20,6 @@ private:
     bool hashIsValid(const FileInfo fileInfo) const;
 
     bool cancelled;
-    mutable QMutex mutex;
-
-    void setCancelled(bool state);
-    bool isCancelled() const;
 
 signals:
     void progress( int percents );
