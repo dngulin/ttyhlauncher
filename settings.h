@@ -19,6 +19,9 @@ public:
 
     static const QString newsFeed;
 
+    static const QString updateServer;
+    static const QString buildServer;
+
 private:
     static const QString master;
     static Settings *myInstance;
@@ -33,7 +36,6 @@ private:
 
     QString dataPath;
     QString configPath;
-    QString updateServer;
 
     void log(const QString &text);
 

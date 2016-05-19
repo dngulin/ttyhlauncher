@@ -14,6 +14,9 @@ const QString Settings::launcherVersion = "1.0.5";
 
 const QString Settings::newsFeed = "https://ttyh.ru/misc.php?page=feed";
 
+const QString Settings::updateServer = "http://store.ttyh.ru";
+const QString Settings::buildServer = "https://build.ttyh.ru";
+
 // Master-server links
 const QString Settings::master = "https://master.ttyh.ru/index.php";
 const QString Settings::authUrl = master + "?act=login";
@@ -34,8 +37,6 @@ Settings *Settings::instance()
 Settings::Settings() : QObject()
 {
     nam = new QNetworkAccessManager(this);
-
-    updateServer = "http://store.ttyh.ru";
 
     Path::StandardLocation dataLocation = Path::GenericDataLocation;
     Path::StandardLocation configLocation = Path::GenericConfigLocation;
