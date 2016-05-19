@@ -145,7 +145,7 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     {
         this->show();
         ui->playButton->setEnabled(false);
-        showError( tr("No available clients!") );
+        showError(tr("No available clients!"), true);
     }
 }
 
@@ -240,9 +240,13 @@ QString LauncherWindow::escapeString(const QString &string)
            .replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
 }
 
-void LauncherWindow::showError(const QString &message)
+void LauncherWindow::showError(const QString &message, bool showInLog)
 {
-    log( tr("Error! %1").arg(message) );
+    if (showInLog)
+    {
+        log( tr("Error! %1").arg(message) );
+    }
+
     QMessageBox::critical(this, tr("Oops! Error!"), message);
 }
 
@@ -398,7 +402,7 @@ void LauncherWindow::gameRunnerError(const QString &message)
 {
     gameRunner->deleteLater();
     unfreezeInterface();
-    showError(message);
+    showError(message, false);
 }
 
 void LauncherWindow::gameRunnerNeedUpdate(const QString &message)
@@ -422,7 +426,7 @@ void LauncherWindow::gameRunnerFinished(int exitCode)
 
     if (exitCode != 0)
     {
-        showError("Process finished incorrectly!");
+        showError(tr("Process finished incorrectly!"), true);
     }
 }
 

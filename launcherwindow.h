@@ -20,15 +20,15 @@ class LauncherWindow : public QMainWindow
 public:
     explicit LauncherWindow(QWidget *parent = 0);
     ~LauncherWindow();
-    void closeEvent (QCloseEvent* event);
-    void keyPressEvent(QKeyEvent* pe);
+    void closeEvent(QCloseEvent *event);
+    void keyPressEvent(QKeyEvent *pe);
 
 signals:
     void windowClosed();
 
 private slots:
-    void appendToLog(const QString& text);
-    QString escapeString(const QString& string);
+    void appendToLog(const QString &text);
+    QString escapeString(const QString &string);
 
     void showSettingsDialog();
     void showSkinLoadDialog();
@@ -46,26 +46,26 @@ private slots:
     void unfreezeInterface();
 
     void playButtonClicked();
-    void gameRunnerError(const QString& message);
-    void gameRunnerNeedUpdate(const QString& message);
+    void gameRunnerError(const QString &message);
+    void gameRunnerNeedUpdate(const QString &message);
     void gameRunnerStarted();
     void gameRunnerFinished(int exitCode);
 
-    void showError(const QString & message);
+    void showError(const QString &message, bool showInLog);
 
 private:
     Ui::LauncherWindow *ui;
     QActionGroup *newsGroup;
 
-    Settings* settings;
-    Logger* logger;
+    Settings *settings;
+    Logger *logger;
 
     DataFetcher newsFetcher;
-    GameRunner* gameRunner;
+    GameRunner *gameRunner;
 
-    void log(const QString& line);
+    void log(const QString &line);
 
-    void appendLineToLog(const QString& line);
+    void appendLineToLog(const QString &line);
 
     void storeParameters();
 
