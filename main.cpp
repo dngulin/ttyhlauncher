@@ -10,11 +10,6 @@
 #include <QBitmap>
 #include <QMessageBox>
 
-QString tr(const char *str)
-{
-    return QApplication::translate("main", str);
-}
-
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -52,8 +47,10 @@ int main(int argc, char *argv[])
         {
             if ( !QFile::remove(orig) )
             {
-                QString title = tr("Update error");
-                QString text = tr("Can't remove old instance!");
+                QString title = QApplication::translate(
+                    "main", "Update error");
+                QString text = QApplication::translate(
+                    "main", "Can't remove old instance!");
 
                 QMessageBox::critical(NULL, title, text);
             }
@@ -61,8 +58,9 @@ int main(int argc, char *argv[])
 
         if ( !QFile::copy(temp, orig) )
         {
-            QString title = tr("Update error");
-            QString text = tr("Can't copy new instance!");
+            QString title = QApplication::translate("main", "Update error");
+            QString text = QApplication::translate(
+                "main", "Can't copy new instance!");
 
             QMessageBox::critical(NULL, title, text);
         }
@@ -73,8 +71,9 @@ int main(int argc, char *argv[])
 
             if (execlp(run, run, "-r", rem, NULL) == -1)
             {
-                QString title = tr("Update error");
-                QString text = tr("Can't run new instance!");
+                QString title = QApplication::translate("main", "Update error");
+                QString text = QApplication::translate(
+                    "main", "Can't run new instance!");
 
                 QMessageBox::critical(NULL, title, text);
                 return -1;
@@ -89,8 +88,10 @@ int main(int argc, char *argv[])
         {
             if ( !QFile::remove(temp) )
             {
-                QString title = tr("Update warning");
-                QString text = tr("Can't remove temporary instance.");
+                QString title = QApplication::translate(
+                    "main", "Update warning");
+                QString text = QApplication::translate(
+                    "main", "Can't remove temporary instance.");
 
                 QMessageBox::warning(NULL, title, text);
             }

@@ -20,7 +20,6 @@ public:
 
 private:
     static void log(const QString &text);
-    static QString tr(const char *str);
 };
 
 #endif // UTIL_H

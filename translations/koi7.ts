@@ -614,49 +614,6 @@
     </message>
 </context>
 <context>
-    <name>QObject</name>
-    <message>
-        <location filename="../util.cpp" line="47"/>
-        <source>Delete: %1</source>
-        <translation>ДЕЛЕТЕ: %1</translation>
-    </message>
-    <message>
-        <location filename="../util.cpp" line="73"/>
-        <source>Unzip archive: %1</source>
-        <translation>УНЗИП АРЦХИЖЕ: %1</translation>
-    </message>
-    <message>
-        <location filename="../util.cpp" line="93"/>
-        <source>Extract: %1</source>
-        <translation>ЕЬТРАЦТ: %1</translation>
-    </message>
-    <message>
-        <location filename="../util.cpp" line="103"/>
-        <source>Extract error! %1</source>
-        <translation>ЕЬТРАЦТ ЕРРОР! %1</translation>
-    </message>
-    <message>
-        <location filename="../util.cpp" line="120"/>
-        <source>Running: %1</source>
-        <translation>РУННИНГ: %1</translation>
-    </message>
-    <message>
-        <location filename="../util.cpp" line="131"/>
-        <source>Process started.</source>
-        <translation>ПРОЦЕСС СТАРТЕД.</translation>
-    </message>
-    <message>
-        <location filename="../util.cpp" line="134"/>
-        <source>Process finished.</source>
-        <translation>ПРОЦЕСС ФИНИСХЕД.</translation>
-    </message>
-    <message>
-        <location filename="../util.cpp" line="158"/>
-        <source>Util</source>
-        <translation>УТИЛ</translation>
-    </message>
-</context>
-<context>
     <name>Settings</name>
     <message>
         <location filename="../settings.cpp" line="55"/>
@@ -1319,6 +1276,84 @@
         <location filename="../updatedialog.cpp" line="570"/>
         <source>Update not completed. Some files was not downloaded.</source>
         <translation>УПДАТЕ НОТ ЦОМПЛЕТЕД. СОМЕ ФИЛЕС ВАС НОТ ДОВНЛОАДЕД.</translation>
+    </message>
+</context>
+<context>
+    <name>Util</name>
+    <message>
+        <location filename="../util.cpp" line="48"/>
+        <source>Delete: %1</source>
+        <translation>ДЕЛЕТЕ: %1</translation>
+    </message>
+    <message>
+        <location filename="../util.cpp" line="74"/>
+        <source>Unzip archive: %1</source>
+        <translation>УНЗИП АРЦХИЖЕ: %1</translation>
+    </message>
+    <message>
+        <location filename="../util.cpp" line="94"/>
+        <source>Extract: %1</source>
+        <translation>ЕЬТРАЦТ: %1</translation>
+    </message>
+    <message>
+        <location filename="../util.cpp" line="104"/>
+        <source>Extract error! %1</source>
+        <translation>ЕЬТРАЦТ ЕРРОР! %1</translation>
+    </message>
+    <message>
+        <location filename="../util.cpp" line="121"/>
+        <source>Running: %1</source>
+        <translation>РУННИНГ: %1</translation>
+    </message>
+    <message>
+        <location filename="../util.cpp" line="132"/>
+        <source>Process started.</source>
+        <translation>ПРОЦЕСС СТАРТЕД.</translation>
+    </message>
+    <message>
+        <location filename="../util.cpp" line="135"/>
+        <source>Process finished.</source>
+        <translation>ПРОЦЕСС ФИНИСХЕД.</translation>
+    </message>
+    <message>
+        <location filename="../util.cpp" line="159"/>
+        <source>Util</source>
+        <translation>УТИЛ</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <location filename="../main.cpp" line="50"/>
+        <location filename="../main.cpp" line="61"/>
+        <location filename="../main.cpp" line="74"/>
+        <source>Update error</source>
+        <translation>УПДАТЕ ЕРРОР</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="52"/>
+        <source>Can&apos;t remove old instance!</source>
+        <translation>ЦАН&apos;Т РЕМОЖЕ ОЛД ИНСТАНЦЕ!</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="62"/>
+        <source>Can&apos;t copy new instance!</source>
+        <translation>ЦАН&apos;Т ЦОПЫ НЕВ ИНСТАНЦЕ!</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="75"/>
+        <source>Can&apos;t run new instance!</source>
+        <translation>ЦАН&apos;Т РУН НЕВ ИНСТАНЦЕ!</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="91"/>
+        <source>Update warning</source>
+        <translation>УПДАТЕ ВАРНИНГ</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="93"/>
+        <source>Can&apos;t remove temporary instance.</source>
+        <translation>ЦАН&apos;Т РЕМОЖЕ ТЕМПОРАРЫ ИНСТАНЦЕ.</translation>
     </message>
 </context>
 </TS>

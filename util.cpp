@@ -45,7 +45,7 @@ QByteArray Util::makeGzip(const QByteArray &data)
 
 void Util::removeAll(const QString &filePath)
 {
-    log( tr("Delete: %1").arg(filePath) );
+    log( QApplication::translate("Util", "Delete: %1").arg(filePath) );
 
     QFileInfo fileInfo = QFileInfo(filePath);
 
@@ -71,7 +71,7 @@ void Util::removeAll(const QString &filePath)
 void Util::unzipArchive(const QString &zipFilePath,
                         const QString &extractionPath)
 {
-    log( tr("Unzip archive: %1").arg(zipFilePath) );
+    log( QApplication::translate("Util", "Unzip archive: %1").arg(zipFilePath) );
 
     QuaZip zip(zipFilePath);
     if ( zip.open(QuaZip::mdUnzip) )
@@ -91,7 +91,7 @@ void Util::unzipArchive(const QString &zipFilePath,
 
             if ( !fileInfo.isDir() )
             {
-                log( tr("Extract: %1").arg( file.fileName() ) );
+                log( QApplication::translate("Util", "Extract: %1").arg( file.fileName() ) );
 
                 if ( file.open(QIODevice::WriteOnly) )
                 {
@@ -101,7 +101,7 @@ void Util::unzipArchive(const QString &zipFilePath,
                 else
                 {
                     QString err = file.errorString();
-                    log( tr("Extract error! %1").arg(err) );
+                    log( QApplication::translate("Util", "Extract error! %1").arg(err) );
                 }
             }
 
@@ -118,7 +118,7 @@ QString Util::getCommandOutput(const QString &command, const QStringList &args)
     runString += command;
     runString += " " + args.join(" ");
 
-    log( tr("Running: %1").arg(runString) );
+    log( QApplication::translate("Util", "Running: %1").arg(runString) );
     output = "Output of \'" + runString + "\':\n";
 
     QProcess process;
@@ -129,10 +129,10 @@ QString Util::getCommandOutput(const QString &command, const QStringList &args)
     {
         output += "FAILED_TO_START\n";
     }
-    log( tr("Process started.") );
+    log( QApplication::translate("Util", "Process started.") );
 
     process.waitForFinished();
-    log( tr("Process finished.") );
+    log( QApplication::translate("Util", "Process finished.") );
 
     output += process.readAll();
 
@@ -156,10 +156,5 @@ QString Util::getFileContetnts(const QString &path)
 
 void Util::log(const QString &text)
 {
-    Logger::logger()->appendLine(tr("Util"), text);
-}
-
-QString Util::tr(const char *str)
-{
-    return QApplication::translate("util", str);
+    Logger::logger()->appendLine(QApplication::translate("Util", "Util"), text);
 }
