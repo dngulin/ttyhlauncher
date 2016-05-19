@@ -19,8 +19,6 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    qDebug() << a.applicationFilePath();
-
     // Setup translation
     QTranslator t;
     QDate today = QDate::currentDate();
