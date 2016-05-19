@@ -365,7 +365,7 @@ void LauncherWindow::playButtonClicked()
     QString login = ui->nickEdit->text();
     QString pass = ui->passEdit->text();
     bool isOnline = !ui->playOffline->isChecked();
-    QRect geometry = settings->loadClientWindowGeometry();
+    QRect geometry = this->geometry();
 
     gameRunner = new GameRunner(login, pass, isOnline, geometry);
 
