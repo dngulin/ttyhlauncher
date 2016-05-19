@@ -517,54 +517,59 @@
         <translation>НО АЖАИЛАБЛЕ ЦЛИЕНТС!</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="245"/>
+        <location filename="../launcherwindow.cpp" line="247"/>
         <source>Error! %1</source>
         <translation>ЕРРОР! %1</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="246"/>
+        <location filename="../launcherwindow.cpp" line="250"/>
         <source>Oops! Error!</source>
         <translation>ООПС! ЕРРОР!</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="251"/>
+        <location filename="../launcherwindow.cpp" line="255"/>
         <source>LauncherWindow</source>
         <translation>ЛАУНЦХЕРВИНДОВ</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="287"/>
+        <location filename="../launcherwindow.cpp" line="291"/>
         <source>Select a client, then press &apos;Check&apos; button.</source>
         <translation>СЕЛЕЦТ А ЦЛИЕНТ, ТХЕН ПРЕСС &apos;ЦХЕЦК&apos; БУТТОН.</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="311"/>
+        <location filename="../launcherwindow.cpp" line="315"/>
         <source>Play (offline)</source>
         <translation>ПЛАЫ (ОФФЛИНЕ)</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="315"/>
+        <location filename="../launcherwindow.cpp" line="319"/>
         <source>Play</source>
         <translation>ПЛАЫ</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="360"/>
+        <location filename="../launcherwindow.cpp" line="364"/>
         <source>Try to start game...</source>
         <translation>ТРЫ ТО СТАРТ ГАМЕ...</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="363"/>
+        <location filename="../launcherwindow.cpp" line="367"/>
         <source>Client: %1.</source>
         <translation>ЦЛИЕНТ: %1.</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="393"/>
+        <location filename="../launcherwindow.cpp" line="397"/>
         <source>Main window hidden.</source>
         <translation>МАИН ВИНДОВ ХИДДЕН.</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="418"/>
+        <location filename="../launcherwindow.cpp" line="422"/>
         <source>Main window visible.</source>
         <translation>МАИН ВИНДОВ ЖИСИБЛЕ.</translation>
+    </message>
+    <message>
+        <location filename="../launcherwindow.cpp" line="429"/>
+        <source>Process finished incorrectly!</source>
+        <translation>ПРОЦЕСС ФИНИСХЕД ИНЦОРРЕЦТЛЫ!</translation>
     </message>
 </context>
 <context>
@@ -616,32 +621,32 @@
         <translation>УНЗИП АРЦХИЖЕ: %1</translation>
     </message>
     <message>
-        <location filename="../util.cpp" line="94"/>
+        <location filename="../util.cpp" line="93"/>
         <source>Extract: %1</source>
         <translation>ЕЬТРАЦТ: %1</translation>
     </message>
     <message>
-        <location filename="../util.cpp" line="104"/>
+        <location filename="../util.cpp" line="103"/>
         <source>Extract error! %1</source>
         <translation>ЕЬТРАЦТ ЕРРОР! %1</translation>
     </message>
     <message>
-        <location filename="../util.cpp" line="122"/>
+        <location filename="../util.cpp" line="120"/>
         <source>Running: %1</source>
         <translation>РУННИНГ: %1</translation>
     </message>
     <message>
-        <location filename="../util.cpp" line="133"/>
+        <location filename="../util.cpp" line="131"/>
         <source>Process started.</source>
         <translation>ПРОЦЕСС СТАРТЕД.</translation>
     </message>
     <message>
-        <location filename="../util.cpp" line="136"/>
+        <location filename="../util.cpp" line="134"/>
         <source>Process finished.</source>
         <translation>ПРОЦЕСС ФИНИСХЕД.</translation>
     </message>
     <message>
-        <location filename="../util.cpp" line="160"/>
+        <location filename="../util.cpp" line="158"/>
         <source>Util</source>
         <translation>УТИЛ</translation>
     </message>
