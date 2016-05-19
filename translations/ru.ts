@@ -128,6 +128,11 @@
     </message>
     <message>
         <location filename="../feedbackdialog.cpp" line="147"/>
+        <source>Complete!</source>
+        <translation>Готово!</translation>
+    </message>
+    <message>
+        <location filename="../feedbackdialog.cpp" line="148"/>
         <source>Feedback log successfully uploaded!</source>
         <translation>Сообщение доставлено!</translation>
     </message>
@@ -968,63 +973,68 @@
         <translation>Загрузить</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="41"/>
+        <location filename="../skinuploaddialog.cpp" line="42"/>
         <source>SkinUploadDialog</source>
         <translation>Окно загрузки скина</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="52"/>
+        <location filename="../skinuploaddialog.cpp" line="53"/>
         <source>Uploading...</source>
         <translation>Загрузка...</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="58"/>
+        <location filename="../skinuploaddialog.cpp" line="59"/>
         <source>Error! Skin file does not exists!</source>
         <translation>Ошибка! Файл скина не существует!</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="64"/>
+        <location filename="../skinuploaddialog.cpp" line="65"/>
         <source>Error! Can&apos;t open skin file!</source>
         <translation>Ошибка! Не удалось открыть файл скина!</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="74"/>
+        <location filename="../skinuploaddialog.cpp" line="75"/>
         <source>Error! Skin image has wrong resolution!</source>
         <translation>Ошибка! Некорректный размер скина!</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="80"/>
+        <location filename="../skinuploaddialog.cpp" line="81"/>
         <source>Error! Nickname does not set!</source>
         <translation>Ошибка! Не указано имя пользователя!</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="86"/>
+        <location filename="../skinuploaddialog.cpp" line="87"/>
         <source>Error! Password does not set!</source>
         <translation>Ошибка! Не указан пароль!</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="112"/>
-        <location filename="../skinuploaddialog.cpp" line="126"/>
+        <location filename="../skinuploaddialog.cpp" line="113"/>
+        <location filename="../skinuploaddialog.cpp" line="127"/>
         <source>Error! %1</source>
         <translation>Ошибка! %1</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="120"/>
+        <location filename="../skinuploaddialog.cpp" line="121"/>
         <source>Bad server answer! %1</source>
         <translation>Некорректный ответ сервера! %1</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="143"/>
+        <location filename="../skinuploaddialog.cpp" line="131"/>
+        <source>Complete!</source>
+        <translation>Готово!</translation>
+    </message>
+    <message>
+        <location filename="../skinuploaddialog.cpp" line="150"/>
         <source>File selected: %1</source>
         <translation>Выбран файл: %1</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="130"/>
+        <location filename="../skinuploaddialog.cpp" line="132"/>
         <source>Skin successfully uploaded!</source>
         <translation>Скин загружен!</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="135"/>
+        <location filename="../skinuploaddialog.cpp" line="142"/>
         <source>Select a skin file</source>
         <translation>Выберите файл скина</translation>
     </message>

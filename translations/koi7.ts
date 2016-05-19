@@ -127,6 +127,11 @@
     </message>
     <message>
         <location filename="../feedbackdialog.cpp" line="147"/>
+        <source>Complete!</source>
+        <translation>ЦОМПЛЕТЕ!</translation>
+    </message>
+    <message>
+        <location filename="../feedbackdialog.cpp" line="148"/>
         <source>Feedback log successfully uploaded!</source>
         <translation>ФЕЕДБАЦК ЛОГ СУЦЦЕССФУЛЛЫ УПЛОАДЕД!</translation>
     </message>
@@ -967,63 +972,68 @@
         <translation>УПЛОАД</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="41"/>
+        <location filename="../skinuploaddialog.cpp" line="42"/>
         <source>SkinUploadDialog</source>
         <translation>СКИНУПЛОАДДИАЛОГ</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="52"/>
+        <location filename="../skinuploaddialog.cpp" line="53"/>
         <source>Uploading...</source>
         <translation>УПЛОАДИНГ...</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="58"/>
+        <location filename="../skinuploaddialog.cpp" line="59"/>
         <source>Error! Skin file does not exists!</source>
         <translation>ЕРРОР! СКИН ФИЛЕ ДОЕС НОТ ЕЬИСТС!</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="64"/>
+        <location filename="../skinuploaddialog.cpp" line="65"/>
         <source>Error! Can&apos;t open skin file!</source>
         <translation>ЕРРОР! ЦАН&apos;Т ОПЕН СКИН ФИЛЕ!</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="74"/>
+        <location filename="../skinuploaddialog.cpp" line="75"/>
         <source>Error! Skin image has wrong resolution!</source>
         <translation>ЕРРОР! СКИН ИМАГЕ ХАС ВРОНГ РЕСОЛУТИОН!</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="80"/>
+        <location filename="../skinuploaddialog.cpp" line="81"/>
         <source>Error! Nickname does not set!</source>
         <translation>ЕРРОР! НИЦКНАМЕ ДОЕС НОТ СЕТ!</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="86"/>
+        <location filename="../skinuploaddialog.cpp" line="87"/>
         <source>Error! Password does not set!</source>
         <translation>ЕРРОР! ПАССВОРД ДОЕС НОТ СЕТ!</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="112"/>
-        <location filename="../skinuploaddialog.cpp" line="126"/>
+        <location filename="../skinuploaddialog.cpp" line="113"/>
+        <location filename="../skinuploaddialog.cpp" line="127"/>
         <source>Error! %1</source>
         <translation>ЕРРОР! %1</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="120"/>
+        <location filename="../skinuploaddialog.cpp" line="121"/>
         <source>Bad server answer! %1</source>
         <translation>БАД СЕРЖЕР АНСВЕР! %1</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="130"/>
+        <location filename="../skinuploaddialog.cpp" line="131"/>
+        <source>Complete!</source>
+        <translation>ЦОМПЛЕТЕ!</translation>
+    </message>
+    <message>
+        <location filename="../skinuploaddialog.cpp" line="132"/>
         <source>Skin successfully uploaded!</source>
         <translation>СКИН СУЦЦЕССФУЛЛЫ УПЛОАДЕД!</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="135"/>
+        <location filename="../skinuploaddialog.cpp" line="142"/>
         <source>Select a skin file</source>
         <translation>СЕЛЕЦТ А СКИН ФИЛЕ</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="143"/>
+        <location filename="../skinuploaddialog.cpp" line="150"/>
         <source>File selected: %1</source>
         <translation>ФИЛЕ СЕЛЕЦТЕД: %1</translation>
     </message>

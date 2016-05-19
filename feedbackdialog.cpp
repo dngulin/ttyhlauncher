@@ -5,7 +5,7 @@
 #include "util.h"
 #include "jsonparser.h"
 
-#include <QDebug>
+#include <QMessageBox>
 
 FeedbackDialog::FeedbackDialog(QWidget *parent) :
     QDialog(parent),
@@ -144,5 +144,11 @@ void FeedbackDialog::requestFinished(bool result)
         return;
     }
 
-    msg( tr("Feedback log successfully uploaded!") );
+    QString title = tr("Complete!");
+    QString message = tr("Feedback log successfully uploaded!");
+
+    msg(message);
+    QMessageBox::information(this, title, message);
+
+    this->close();
 }

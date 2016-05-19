@@ -5,6 +5,7 @@
 #include "jsonparser.h"
 
 #include <QFileDialog>
+#include <QMessageBox>
 
 SkinUploadDialog::SkinUploadDialog(QWidget *parent) :
     QDialog(parent),
@@ -127,7 +128,13 @@ void SkinUploadDialog::requestFinished(bool result)
         return;
     }
 
-    msg( tr("Skin successfully uploaded!") );
+    QString title = tr("Complete!");
+    QString message = tr("Skin successfully uploaded!");
+
+    msg(message);
+    QMessageBox::information(this, title, message);
+
+    this->close();
 }
 
 void SkinUploadDialog::openFileDialog()
