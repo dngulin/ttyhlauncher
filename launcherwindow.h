@@ -25,6 +25,7 @@ public:
 
 signals:
     void windowClosed();
+    void exitApp();
 
 private slots:
     void appendToLog(const QString &text);

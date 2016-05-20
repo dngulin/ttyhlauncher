@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
         QString orig = args.value(argUpdate);
 
         QFile origFile(orig);
-        while ( true )
+        for (int i = 0; i < 25; i++)
         {
             if ( origFile.open(QIODevice::ReadWrite) )
             {
@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
         QString temp = args.value(argRemove);
 
         QFile tempFile(temp);
-        while ( true )
+        for (int i = 0; i < 25; i++)
         {
             if ( tempFile.open(QIODevice::ReadWrite) )
             {

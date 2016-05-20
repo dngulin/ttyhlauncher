@@ -153,7 +153,11 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
 
         if ( d->isNeedExit() )
         {
-            QApplication::exit(0);
+            connect(this, &LauncherWindow::exitApp, this, [](){
+                QApplication::exit(0);
+            }, Qt::QueuedConnection);
+
+            emit exitApp();
         }
 
         delete d;
