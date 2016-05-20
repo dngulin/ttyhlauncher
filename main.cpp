@@ -4,6 +4,7 @@
 #include "settings.h"
 
 #include <unistd.h>
+#include <fcntl.h>
 
 #include <QApplication>
 #include <QSplashScreen>
@@ -68,6 +69,11 @@ int main(int argc, char *argv[])
         {
             const char *run = orig.toLocal8Bit().data();
             const char *rem = temp.toLocal8Bit().data();
+
+            for (int fd = 3; fd < 2048; fd++)
+            {
+                fcntl(fd, F_SETFD, FD_CLOEXEC);
+            }
 
             if (execlp(run, run, "-r", rem, NULL) == -1)
             {

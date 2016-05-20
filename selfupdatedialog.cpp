@@ -7,6 +7,7 @@ typedef QStandardPaths Path;
 #include <QMessageBox>
 #include <QApplication>
 #include <unistd.h>
+#include <fcntl.h>
 
 #include "util.h"
 #include "settings.h"
@@ -146,6 +147,11 @@ void SelfUpdateDialog::downloadFinished(bool result)
 
         const char *run = exeNew.toLocal8Bit().data();
         const char *upd = exeOld.toLocal8Bit().data();
+
+        for (int fd = 3; fd < 2048; fd++)
+        {
+            fcntl(fd, F_SETFD, FD_CLOEXEC);
+        }
 
         if (execlp(run, run, "-u", upd, NULL) == -1)
         {
