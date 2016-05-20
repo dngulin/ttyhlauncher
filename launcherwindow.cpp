@@ -144,36 +144,38 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
 
     if (true)
     {
-        this->show();
-
-        QString msg = tr("New launcher version available!");
-
-        SelfUpdateDialog *d = new SelfUpdateDialog(msg, this);
-        d->exec();
-
-        if ( d->isNeedExit() )
+        connect(this, &LauncherWindow::windowOpened, this, [=]()
         {
-            connect(this, &LauncherWindow::exitApp, this, [](){
-                QApplication::exit(0);
-            }, Qt::QueuedConnection);
+            QString msg = tr("New launcher version available!");
 
-            emit exitApp();
-        }
-
-        delete d;
+            SelfUpdateDialog *d = new SelfUpdateDialog(msg, this);
+            d->exec();
+            delete d;
+        },
+        Qt::QueuedConnection);
     }
 
     if (ui->clientCombo->count() == 0)
     {
-        this->show();
-        ui->playButton->setEnabled(false);
-        showError(tr("No available clients!"), true);
+        connect(this, &LauncherWindow::windowOpened, this, [=]()
+        {
+            ui->playButton->setEnabled(false);
+            showError(tr("No available clients!"), true);
+        },
+        Qt::QueuedConnection);
     }
+}
+
+void LauncherWindow::showEvent(QShowEvent *event)
+{
+    QMainWindow::showEvent(event);
+    emit windowOpened();
+    event->accept();
 }
 
 void LauncherWindow::closeEvent(QCloseEvent *event)
 {
-    emit windowClosed();
+    QMainWindow::closeEvent(event);
     storeParameters();
     event->accept();
 }

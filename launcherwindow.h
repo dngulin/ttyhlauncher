@@ -20,12 +20,14 @@ class LauncherWindow : public QMainWindow
 public:
     explicit LauncherWindow(QWidget *parent = 0);
     ~LauncherWindow();
+
+protected:
+    void showEvent(QShowEvent *event);
     void closeEvent(QCloseEvent *event);
     void keyPressEvent(QKeyEvent *pe);
 
 signals:
-    void windowClosed();
-    void exitApp();
+    void windowOpened();
 
 private slots:
     void appendToLog(const QString &text);
