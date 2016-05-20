@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
         {
             if ( QProcess::startDetached(orig, QStringList() << "-r" << temp) )
             {
-                QApplication::exit(0);
+                return 0;
             }
             else
             {
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 
                 QMessageBox::critical(NULL, title, text);
 
-                QApplication::exit(-1);
+                return -1;
             }
         }
     }

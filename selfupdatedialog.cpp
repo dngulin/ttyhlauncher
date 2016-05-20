@@ -136,6 +136,7 @@ void SelfUpdateDialog::downloadFinished(bool result)
 
         log( tr("Restarting launcher...") );
 
+
         QString title = tr("Complete");
         QString text = tr("Download completed. Launcher will be restarted.");
         QMessageBox::information(this, title, text);
@@ -145,7 +146,7 @@ void SelfUpdateDialog::downloadFinished(bool result)
 
         if ( QProcess::startDetached(temp, QStringList() << "-u" << orig) )
         {
-            QApplication::exit(0);
+            exit(0); // Force exit
         }
         else
         {
