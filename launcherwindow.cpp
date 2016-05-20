@@ -142,11 +142,13 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
 
     connect(logger, &Logger::lineAppended, this, &LauncherWindow::appendToLog);
 
-    if (true)
+    QString latest = settings->getlatestVersion();
+
+    if (Settings::launcherVersion != latest)
     {
         connect(this, &LauncherWindow::windowOpened, this, [=]()
         {
-            QString msg = tr("New launcher version available!");
+            QString msg = tr("New launcher version avialable: %1").arg(latest);
 
             SelfUpdateDialog *d = new SelfUpdateDialog(msg, this);
             d->exec();

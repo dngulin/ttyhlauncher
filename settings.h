@@ -37,6 +37,8 @@ private:
     QString dataPath;
     QString configPath;
 
+    QString latestVersion;
+
     void log(const QString &text);
 
 public:
@@ -47,6 +49,9 @@ public:
     QString getAssetsUrl() const;
 
     void updateLocalData();
+    void fetchLatestVersion();
+
+    QString getlatestVersion() const;
 
     // Clients
     QStringList getClientCaptions() const;
