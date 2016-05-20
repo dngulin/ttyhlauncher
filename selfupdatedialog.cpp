@@ -6,8 +6,6 @@ typedef QStandardPaths Path;
 
 #include <QMessageBox>
 #include <QApplication>
-#include <unistd.h>
-#include <fcntl.h>
 
 #include "util.h"
 #include "settings.h"
@@ -142,18 +140,14 @@ void SelfUpdateDialog::downloadFinished(bool result)
         QString text = tr("Download completed. Launcher will be restarted.");
         QMessageBox::information(this, title, text);
 
-        QString exeNew = tempDir + "/ttyhlauncher.exe";
-        QString exeOld = QApplication::applicationFilePath();
+        QString temp = tempDir + "/ttyhlauncher.exe";
+        QString orig = QApplication::applicationFilePath();
 
-        const char *run = exeNew.toLocal8Bit().data();
-        const char *upd = exeOld.toLocal8Bit().data();
-
-        for (int fd = 3; fd < 2048; fd++)
+        if ( QProcess::startDetached(temp, QStringList() << "-u" << orig) )
         {
-            fcntl(fd, F_SETFD, FD_CLOEXEC);
+            QApplication::exit(0);
         }
-
-        if (execlp(run, run, "-u", upd, NULL) == -1)
+        else
         {
             QString title = tr("Update error");
             QString text = tr("Can't run temporary instance!");

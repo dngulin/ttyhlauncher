@@ -3,9 +3,6 @@
 #include "logger.h"
 #include "settings.h"
 
-#include <unistd.h>
-#include <fcntl.h>
-
 #include <QApplication>
 #include <QSplashScreen>
 #include <QBitmap>
@@ -67,22 +64,19 @@ int main(int argc, char *argv[])
         }
         else
         {
-            const char *run = orig.toLocal8Bit().data();
-            const char *rem = temp.toLocal8Bit().data();
-
-            for (int fd = 3; fd < 2048; fd++)
+            if ( QProcess::startDetached(orig, QStringList() << "-r" << temp) )
             {
-                fcntl(fd, F_SETFD, FD_CLOEXEC);
+                QApplication::exit(0);
             }
-
-            if (execlp(run, run, "-r", rem, NULL) == -1)
+            else
             {
                 QString title = QApplication::translate("main", "Update error");
                 QString text = QApplication::translate(
                     "main", "Can't run new instance!");
 
                 QMessageBox::critical(NULL, title, text);
-                return -1;
+
+                QApplication::exit(-1);
             }
         }
     }
