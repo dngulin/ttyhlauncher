@@ -33,15 +33,18 @@ int main(int argc, char *argv[])
         = new QSplashScreen(logo, Qt::FramelessWindowHint | Qt::SplashScreen);
 
     splash->setMask( logo.mask() );
-
     splash->show();
-    Settings::instance()->updateLocalData();
-    Settings::instance()->fetchLatestVersion();
-    splash->close();
 
+    Settings::instance()->updateLocalData();
+
+#ifdef Q_OS_WIN
+    Settings::instance()->fetchLatestVersion();
+#endif
+
+    splash->close();
     delete splash;
 
-    // Self-update options for replace and remove old executables
+#ifdef Q_OS_WIN
     QCommandLineParser args;
 
     QCommandLineOption argUpdate("u", "Update path", "path");
@@ -137,6 +140,7 @@ int main(int argc, char *argv[])
             }
         }
     }
+#endif
 
     LauncherWindow w;
     w.show();

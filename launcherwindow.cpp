@@ -142,6 +142,7 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
 
     connect(logger, &Logger::lineAppended, this, &LauncherWindow::appendToLog);
 
+#ifdef Q_OS_WIN
     QString latest = settings->getlatestVersion();
 
     if (Settings::launcherVersion != latest)
@@ -156,6 +157,7 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
         },
         Qt::QueuedConnection);
     }
+#endif
 
     if (ui->clientCombo->count() == 0)
     {
