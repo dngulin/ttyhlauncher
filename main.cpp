@@ -25,25 +25,6 @@ int main(int argc, char *argv[])
     }
     QApplication::installTranslator(&t);
 
-    Settings::instance();
-    Logger::logger();
-
-    QPixmap logo(":/resources/logo.png");
-    QSplashScreen *splash
-        = new QSplashScreen(logo, Qt::FramelessWindowHint | Qt::SplashScreen);
-
-    splash->setMask( logo.mask() );
-    splash->show();
-
-    Settings::instance()->updateLocalData();
-
-#ifdef Q_OS_WIN
-    Settings::instance()->fetchLatestVersion();
-#endif
-
-    splash->close();
-    delete splash;
-
 #ifdef Q_OS_WIN
     QCommandLineParser args;
 
@@ -141,6 +122,25 @@ int main(int argc, char *argv[])
         }
     }
 #endif
+
+    Settings::instance();
+    Logger::logger();
+
+    QPixmap logo(":/resources/logo.png");
+    QSplashScreen *splash
+        = new QSplashScreen(logo, Qt::FramelessWindowHint | Qt::SplashScreen);
+
+    splash->setMask( logo.mask() );
+    splash->show();
+
+    Settings::instance()->updateLocalData();
+
+#ifdef Q_OS_WIN
+    Settings::instance()->fetchLatestVersion();
+#endif
+
+    splash->close();
+    delete splash;
 
     LauncherWindow w;
     w.show();
