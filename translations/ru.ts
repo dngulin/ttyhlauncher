@@ -140,43 +140,49 @@
 <context>
     <name>FileFetcher</name>
     <message>
-        <location filename="../filefetcher.cpp" line="25"/>
+        <location filename="../filefetcher.cpp" line="28"/>
         <source>FileFetcher</source>
         <translation>Загрузчик файлов</translation>
     </message>
     <message>
-        <location filename="../filefetcher.cpp" line="60"/>
+        <location filename="../filefetcher.cpp" line="86"/>
+        <location filename="../filefetcher.cpp" line="175"/>
+        <source>Error! Fetcher is busy!</source>
+        <translation>Ошибка! Загрузчик занят!</translation>
+    </message>
+    <message>
+        <location filename="../filefetcher.cpp" line="92"/>
         <source>Request download size...</source>
         <translation>Запрос размера загружаемых файлов...</translation>
     </message>
     <message>
-        <location filename="../filefetcher.cpp" line="70"/>
-        <location filename="../filefetcher.cpp" line="143"/>
+        <location filename="../filefetcher.cpp" line="105"/>
+        <location filename="../filefetcher.cpp" line="195"/>
         <source>File list is empty.</source>
         <translation>Список файлов пуст.</translation>
     </message>
     <message>
-        <location filename="../filefetcher.cpp" line="106"/>
+        <location filename="../filefetcher.cpp" line="146"/>
         <source>Downloads size requested.</source>
         <translation>Размер файлов получен.</translation>
     </message>
     <message>
-        <location filename="../filefetcher.cpp" line="182"/>
+        <location filename="../filefetcher.cpp" line="243"/>
         <source>Error! %1</source>
         <translation>Ошибка! %1</translation>
     </message>
     <message>
-        <location filename="../filefetcher.cpp" line="193"/>
+        <location filename="../filefetcher.cpp" line="254"/>
         <source>File saved: %1</source>
         <translation>Файл сохранен: %1</translation>
     </message>
     <message>
-        <location filename="../filefetcher.cpp" line="212"/>
+        <location filename="../filefetcher.cpp" line="273"/>
         <source>Downloading finished.</source>
         <translation>Загрузка завершена.</translation>
     </message>
     <message>
-        <location filename="../filefetcher.cpp" line="131"/>
+        <location filename="../filefetcher.cpp" line="181"/>
         <source>Begin downloading files...</source>
         <translation>Загрузка файлов...</translation>
     </message>
@@ -508,72 +514,77 @@
         <translation>&amp;Загружать новости</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="34"/>
+        <location filename="../launcherwindow.cpp" line="35"/>
         <source>Welcome to the ttyhlauncher.</source>
         <translation>Вы запустили ttyhlauncher.</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="44"/>
+        <location filename="../launcherwindow.cpp" line="45"/>
         <source>Can&apos;t open logo resource.</source>
         <translation>Не удалось открыть ресурс с логотипом.</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="148"/>
+        <location filename="../launcherwindow.cpp" line="165"/>
         <source>No available clients!</source>
         <translation>Нет доступных клиентов!</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="247"/>
+        <location filename="../launcherwindow.cpp" line="273"/>
         <source>Error! %1</source>
         <translation>Ошибка! %1</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="291"/>
+        <location filename="../launcherwindow.cpp" line="317"/>
         <source>Select a client, then press &apos;Check&apos; button.</source>
         <translation>Выберите клиент и нажмите кнопку &quot;Проверить обновления&quot;.</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="367"/>
+        <location filename="../launcherwindow.cpp" line="393"/>
         <source>Client: %1.</source>
         <translation>Клиент: %1.</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="250"/>
+        <location filename="../launcherwindow.cpp" line="276"/>
         <source>Oops! Error!</source>
         <translation>Упс! Ошибка!</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="255"/>
+        <location filename="../launcherwindow.cpp" line="151"/>
+        <source>New launcher version avialable: %1</source>
+        <translation>Доступна новая версия лаунчера: %1</translation>
+    </message>
+    <message>
+        <location filename="../launcherwindow.cpp" line="281"/>
         <source>LauncherWindow</source>
         <translation>Главное окно</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="315"/>
+        <location filename="../launcherwindow.cpp" line="341"/>
         <source>Play (offline)</source>
         <translation>Играть (оффлайн)</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="319"/>
+        <location filename="../launcherwindow.cpp" line="345"/>
         <source>Play</source>
         <translation>Играть</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="364"/>
+        <location filename="../launcherwindow.cpp" line="390"/>
         <source>Try to start game...</source>
         <translation>Запуск игры...</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="397"/>
+        <location filename="../launcherwindow.cpp" line="423"/>
         <source>Main window hidden.</source>
         <translation>Окно скрыто.</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="422"/>
+        <location filename="../launcherwindow.cpp" line="448"/>
         <source>Main window visible.</source>
         <translation>Окно показано.</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="429"/>
+        <location filename="../launcherwindow.cpp" line="455"/>
         <source>Process finished incorrectly!</source>
         <translation>Процесс завершился некорректно!</translation>
     </message>
@@ -615,26 +626,134 @@
     </message>
 </context>
 <context>
+    <name>SelfUpdateDialog</name>
+    <message>
+        <location filename="../selfupdatedialog.ui" line="14"/>
+        <source>Launcher update available</source>
+        <translation>Доступно обновление лаунчера</translation>
+    </message>
+    <message>
+        <location filename="../selfupdatedialog.ui" line="83"/>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <location filename="../selfupdatedialog.ui" line="103"/>
+        <source>Update</source>
+        <translation>Обновить</translation>
+    </message>
+    <message>
+        <location filename="../selfupdatedialog.cpp" line="57"/>
+        <source>SelfUpdateDialog</source>
+        <translation>Диалог обновления лаунчера</translation>
+    </message>
+    <message>
+        <location filename="../selfupdatedialog.cpp" line="68"/>
+        <source>Requesting download size...</source>
+        <translation>Определение размера загрузки...</translation>
+    </message>
+    <message>
+        <location filename="../selfupdatedialog.cpp" line="80"/>
+        <source>Download cancelled.</source>
+        <translation>Загрузка отменена.</translation>
+    </message>
+    <message>
+        <location filename="../selfupdatedialog.cpp" line="92"/>
+        <source>Error! Can&apos;t determinate daownload size!</source>
+        <translation>Ошибка! Не удалось определить размер загрузки!</translation>
+    </message>
+    <message>
+        <location filename="../selfupdatedialog.cpp" line="101"/>
+        <source>KiB</source>
+        <translation>КиБ</translation>
+    </message>
+    <message>
+        <location filename="../selfupdatedialog.cpp" line="105"/>
+        <source>GiB</source>
+        <translation>ГиБ</translation>
+    </message>
+    <message>
+        <location filename="../selfupdatedialog.cpp" line="110"/>
+        <source>MiB</source>
+        <translation>МиБ</translation>
+    </message>
+    <message>
+        <location filename="../selfupdatedialog.cpp" line="114"/>
+        <source>Downloading launcher (%1 %2)...</source>
+        <translation>Загрузка лаунчера (%1 %2)...</translation>
+    </message>
+    <message>
+        <location filename="../selfupdatedialog.cpp" line="127"/>
+        <source>Download failed!</source>
+        <translation>Не удалось загрузить!</translation>
+    </message>
+    <message>
+        <location filename="../selfupdatedialog.cpp" line="137"/>
+        <source>Restarting launcher...</source>
+        <translation>Перезапуск лаунчера...</translation>
+    </message>
+    <message>
+        <location filename="../selfupdatedialog.cpp" line="140"/>
+        <source>Complete</source>
+        <translation>Готово</translation>
+    </message>
+    <message>
+        <location filename="../selfupdatedialog.cpp" line="141"/>
+        <source>Download completed. Launcher will be restarted.</source>
+        <translation>Загрузка завершена. Лаунчер будет перезапущен.</translation>
+    </message>
+    <message>
+        <location filename="../selfupdatedialog.cpp" line="153"/>
+        <source>Update error</source>
+        <translation>Ошибка обновления</translation>
+    </message>
+    <message>
+        <location filename="../selfupdatedialog.cpp" line="154"/>
+        <source>Can&apos;t run temporary instance!</source>
+        <translation>Не удалось запустить временную версию!</translation>
+    </message>
+    <message>
+        <location filename="../selfupdatedialog.cpp" line="156"/>
+        <source>Error! %1</source>
+        <translation>Ошибка! %1</translation>
+    </message>
+</context>
+<context>
     <name>Settings</name>
     <message>
-        <location filename="../settings.cpp" line="55"/>
+        <location filename="../settings.cpp" line="58"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="66"/>
+        <location filename="../settings.cpp" line="69"/>
         <source>Updating local data...</source>
         <translation>Обновление локальных данных...</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="89"/>
+        <location filename="../settings.cpp" line="92"/>
         <source>Error: no prefixes in prefixes.json</source>
         <translation>Ошибка: пустой список префиксов</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="94"/>
+        <location filename="../settings.cpp" line="97"/>
         <source>Error! %1</source>
         <translation>Ошибка! %1</translation>
+    </message>
+    <message>
+        <location filename="../settings.cpp" line="118"/>
+        <source>Requesting latest launcher version...</source>
+        <translation>Запрос последней версии лаунчера...</translation>
+    </message>
+    <message>
+        <location filename="../settings.cpp" line="125"/>
+        <source>Latest launcher version: %1.</source>
+        <translation>Последняя версия лаунчера: %1.</translation>
+    </message>
+    <message>
+        <location filename="../settings.cpp" line="129"/>
+        <source>Error! Latest launcher version not received!</source>
+        <translation>Ошибка! Не удалось загрузить последнюю версию лаунчера!</translation>
     </message>
 </context>
 <context>
@@ -1325,34 +1444,34 @@
 <context>
     <name>main</name>
     <message>
-        <location filename="../main.cpp" line="50"/>
-        <location filename="../main.cpp" line="61"/>
-        <location filename="../main.cpp" line="74"/>
+        <location filename="../main.cpp" line="76"/>
+        <location filename="../main.cpp" line="87"/>
+        <location filename="../main.cpp" line="101"/>
         <source>Update error</source>
         <translation>Ошибка обновления</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="52"/>
+        <location filename="../main.cpp" line="78"/>
         <source>Can&apos;t remove old instance!</source>
         <translation>Не удалось удалить старую версию!</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="62"/>
+        <location filename="../main.cpp" line="88"/>
         <source>Can&apos;t copy new instance!</source>
         <translation>Не удалось копировать новую версию!</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="75"/>
+        <location filename="../main.cpp" line="102"/>
         <source>Can&apos;t run new instance!</source>
         <translation>Не удалось запустить новую версию!</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="91"/>
+        <location filename="../main.cpp" line="131"/>
         <source>Update warning</source>
         <translation>Предупреждение</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="93"/>
+        <location filename="../main.cpp" line="133"/>
         <source>Can&apos;t remove temporary instance.</source>
         <translation>Не удалось удалить временную версию.</translation>
     </message>
