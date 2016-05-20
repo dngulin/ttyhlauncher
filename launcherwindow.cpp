@@ -150,6 +150,12 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
 
         SelfUpdateDialog *d = new SelfUpdateDialog(msg, this);
         d->exec();
+
+        if ( d->isNeedExit() )
+        {
+            QApplication::exit(0);
+        }
+
         delete d;
     }
 

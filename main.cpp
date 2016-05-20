@@ -41,6 +41,9 @@ int main(int argc, char *argv[])
         QString temp = a.applicationFilePath();
         QString orig = args.value(argUpdate);
 
+        QFileInfo origInfo(orig);
+        while ( !origInfo.isWritable() ) { continue; }
+
         if ( QFile::exists(orig) )
         {
             if ( !QFile::remove(orig) )
@@ -83,6 +86,9 @@ int main(int argc, char *argv[])
     else if ( args.isSet(argRemove) )
     {
         QString temp = args.value(argRemove);
+
+        QFileInfo tempInfo(temp);
+        while ( !tempInfo.isWritable() ) { continue; }
 
         if ( QFile::exists(temp) )
         {

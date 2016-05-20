@@ -17,11 +17,13 @@ public:
     explicit SelfUpdateDialog(const QString &text, QWidget *parent = 0);
     ~SelfUpdateDialog();
 
+    bool isNeedExit();
+
 private:
     Ui::SelfUpdateDialog *ui;
 
     FileFetcher fetcher;
-    bool complete;
+    bool needExit;
 
     void log(const QString &text);
     void msg(const QString &text);

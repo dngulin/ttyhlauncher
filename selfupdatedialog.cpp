@@ -17,6 +17,8 @@ SelfUpdateDialog::SelfUpdateDialog(const QString &text, QWidget *parent) :
 {
     ui->setupUi(this);
 
+    needExit = false;
+
     QString arch = Settings::instance()->getWordSize();
     QString server = Settings::buildServer;
     QString url = server + "/dev-" + arch + "-latest/ttyhlauncher.zip";
@@ -50,6 +52,11 @@ SelfUpdateDialog::SelfUpdateDialog(const QString &text, QWidget *parent) :
 SelfUpdateDialog::~SelfUpdateDialog()
 {
     delete ui;
+}
+
+bool SelfUpdateDialog::isNeedExit()
+{
+    return needExit;
 }
 
 void SelfUpdateDialog::log(const QString &text)
@@ -146,7 +153,7 @@ void SelfUpdateDialog::downloadFinished(bool result)
 
         if ( QProcess::startDetached(temp, QStringList() << "-u" << orig) )
         {
-            exit(0); // Force exit
+            needExit = true;
         }
         else
         {
