@@ -11,6 +11,8 @@ TEMPLATE = app
 
 LIBS += -lquazip5
 
+QMAKE_CXXFLAGS += -std=c++11
+
 SOURCES += main.cpp \
     launcherwindow.cpp \
     skinuploaddialog.cpp \
