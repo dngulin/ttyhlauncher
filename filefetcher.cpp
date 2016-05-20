@@ -11,6 +11,9 @@ FileFetcher::FileFetcher(QObject *parent) :
 
     hasFetchErrors = false;
 
+    fetchingSizes = false;
+    fetchingFiles = false;
+
     logger = Logger::logger();
 
     hiddenLenght = Settings::instance()->getBaseDir().length() + 1;
@@ -38,6 +41,11 @@ void FileFetcher::add(QUrl url, QString filename, quint64 size)
 
 void FileFetcher::reset()
 {
+    if (fetchingSizes || fetchingFiles)
+    {
+        cancel();
+    }
+
     fetched = 0;
     fetchSize = 0;
 
@@ -49,18 +57,45 @@ void FileFetcher::reset()
 void FileFetcher::cancel()
 {
     df.cancel();
-    reset();
+
+    if (fetchingSizes)
+    {
+        disconnect(&df, &DataFetcher::finished,
+                   this, &FileFetcher::sizeFetched);
+
+        fetchingSizes = false;
+    }
+
+    if (fetchingFiles)
+    {
+        disconnect(&df, &DataFetcher::finished, this,
+                   &FileFetcher::fileFetched);
+
+        disconnect(&df, &DataFetcher::progress,
+                   this, &FileFetcher::fileFetchProgress);
+
+        fetchingFiles = false;
+    }
 }
 
 // Fetch sizes
 void FileFetcher::fetchSizes()
 {
+    if (fetchingSizes || fetchingFiles)
+    {
+        log( tr("Error! Fetcher is busy!") );
+        return;
+    }
+
     if (fetchData.count() > 0)
     {
         log( tr("Request download size...") );
 
         connect(&df, &DataFetcher::finished, this, &FileFetcher::sizeFetched);
 
+        fetchingSizes = true;
+
+        hasFetchErrors = false;
         current = 0;
         fetchSize = 0;
         fetchCurrentSize();
@@ -68,7 +103,11 @@ void FileFetcher::fetchSizes()
     else
     {
         log( tr("File list is empty.") );
+
+        fetchingSizes = false;
+
         emit sizesFetchFinished();
+        emit sizesFetchResult(true);
     }
 }
 
@@ -89,6 +128,7 @@ void FileFetcher::sizeFetched(bool result)
     }
     else
     {
+        hasFetchErrors = true;
         emit sizesFetchError( df.errorString() );
     }
 
@@ -104,7 +144,11 @@ void FileFetcher::sizeFetched(bool result)
 
         current = 0;
         log( tr("Downloads size requested.") );
+
+        fetchingSizes = false;
+
         emit sizesFetchFinished();
+        emit sizesFetchResult(!hasFetchErrors);
     }
 }
 
@@ -126,6 +170,12 @@ void FileFetcher::setHiddenLenght(int len)
 // Fetch files
 void FileFetcher::fetchFiles()
 {
+    if (fetchingSizes || fetchingFiles)
+    {
+        log( tr("Error! Fetcher is busy!") );
+        return;
+    }
+
     if (fetchData.count() > 0)
     {
         log( tr("Begin downloading files...") );
@@ -134,6 +184,8 @@ void FileFetcher::fetchFiles()
         connect(&df, &DataFetcher::progress,
                 this, &FileFetcher::fileFetchProgress);
 
+        fetchingFiles = true;
+
         hasFetchErrors = false;
         current = 0;
         fetchCurrentFile();
@@ -141,7 +193,11 @@ void FileFetcher::fetchFiles()
     else
     {
         log( tr("File list is empty.") );
+
+        fetchingFiles = false;
+
         emit filesFetchFinished();
+        emit filesFetchResult(true);
     }
 }
 
@@ -158,6 +214,11 @@ void FileFetcher::fetchCurrentFile()
 void FileFetcher::fileFetchProgress(qint64 bytesReceived, qint64 bytesTotal)
 {
     Q_UNUSED(bytesTotal);
+
+    if (fetchSize <= 0)
+    {
+        return;
+    }
 
     float baseValue = (float(fetched) / fetchSize) * 100;
     float addValue = (float(bytesReceived) / fetchSize) * 100;
@@ -216,6 +277,8 @@ void FileFetcher::fileFetched(bool result)
 
         disconnect(&df, &DataFetcher::progress,
                    this, &FileFetcher::fileFetchProgress);
+
+        fetchingFiles = false;
 
         emit filesFetchFinished();
         emit filesFetchResult(!hasFetchErrors);

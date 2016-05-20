@@ -6,6 +6,7 @@
 #include "updatedialog.h"
 #include "feedbackdialog.h"
 #include "aboutdialog.h"
+#include "selfupdatedialog.h"
 
 #include "settings.h"
 #include "util.h"
@@ -140,6 +141,17 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
             &LauncherWindow::playButtonClicked);
 
     connect(logger, &Logger::lineAppended, this, &LauncherWindow::appendToLog);
+
+    if (true)
+    {
+        this->show();
+
+        QString msg = tr("New launcher version available!");
+
+        SelfUpdateDialog *d = new SelfUpdateDialog(msg, this);
+        d->exec();
+        delete d;
+    }
 
     if (ui->clientCombo->count() == 0)
     {

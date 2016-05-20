@@ -44,10 +44,14 @@ private:
 
     int hiddenLenght;
 
+    bool fetchingSizes;
+    bool fetchingFiles;
+
 signals:
     void sizesFetchProgress(int progress);
     void sizesFetchError(QString errorString);
     void sizesFetchFinished();
+    void sizesFetchResult(bool result);
 
     void filesFetchNewTarget(QString url, QString fname);
     void filesFetchError(QString errorString);

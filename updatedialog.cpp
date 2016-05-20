@@ -102,9 +102,9 @@ void UpdateDialog::setInteractable(bool state)
 
 void UpdateDialog::resetUpdateData()
 {
-    indexFetcher.cancel();
-    assetsFetcher.cancel();
-    fileFetcher.cancel();
+    indexFetcher.reset();
+    assetsFetcher.reset();
+    fileFetcher.reset();
 
     checker->cancel();
 
