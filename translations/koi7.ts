@@ -523,67 +523,67 @@
         <translation>ЦАН&apos;Т ОПЕН ЛОГО РЕСОУРЦЕ.</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="151"/>
+        <location filename="../launcherwindow.cpp" line="152"/>
         <source>New launcher version avialable: %1</source>
         <translation>НЕВ ЛАУНЦХЕР ЖЕРСИОН АЖИАЛАБЛЕ: %1</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="165"/>
+        <location filename="../launcherwindow.cpp" line="167"/>
         <source>No available clients!</source>
         <translation>НО АЖАИЛАБЛЕ ЦЛИЕНТС!</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="273"/>
+        <location filename="../launcherwindow.cpp" line="275"/>
         <source>Error! %1</source>
         <translation>ЕРРОР! %1</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="276"/>
+        <location filename="../launcherwindow.cpp" line="278"/>
         <source>Oops! Error!</source>
         <translation>ООПС! ЕРРОР!</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="281"/>
+        <location filename="../launcherwindow.cpp" line="283"/>
         <source>LauncherWindow</source>
         <translation>ЛАУНЦХЕРВИНДОВ</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="317"/>
+        <location filename="../launcherwindow.cpp" line="319"/>
         <source>Select a client, then press &apos;Check&apos; button.</source>
         <translation>СЕЛЕЦТ А ЦЛИЕНТ, ТХЕН ПРЕСС &apos;ЦХЕЦК&apos; БУТТОН.</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="341"/>
+        <location filename="../launcherwindow.cpp" line="343"/>
         <source>Play (offline)</source>
         <translation>ПЛАЫ (ОФФЛИНЕ)</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="345"/>
+        <location filename="../launcherwindow.cpp" line="347"/>
         <source>Play</source>
         <translation>ПЛАЫ</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="390"/>
+        <location filename="../launcherwindow.cpp" line="392"/>
         <source>Try to start game...</source>
         <translation>ТРЫ ТО СТАРТ ГАМЕ...</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="393"/>
+        <location filename="../launcherwindow.cpp" line="395"/>
         <source>Client: %1.</source>
         <translation>ЦЛИЕНТ: %1.</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="423"/>
+        <location filename="../launcherwindow.cpp" line="425"/>
         <source>Main window hidden.</source>
         <translation>МАИН ВИНДОВ ХИДДЕН.</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="448"/>
+        <location filename="../launcherwindow.cpp" line="450"/>
         <source>Main window visible.</source>
         <translation>МАИН ВИНДОВ ЖИСИБЛЕ.</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="455"/>
+        <location filename="../launcherwindow.cpp" line="457"/>
         <source>Process finished incorrectly!</source>
         <translation>ПРОЦЕСС ФИНИСХЕД ИНЦОРРЕЦТЛЫ!</translation>
     </message>
@@ -1443,34 +1443,49 @@
 <context>
     <name>main</name>
     <message>
-        <location filename="../main.cpp" line="76"/>
-        <location filename="../main.cpp" line="87"/>
-        <location filename="../main.cpp" line="101"/>
+        <location filename="../main.cpp" line="42"/>
+        <source>Launcher</source>
+        <translation>ЛАУНЦХЕР</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="49"/>
+        <source>Updating instance: %1</source>
+        <translation>УПДАТИНГ ИНСТАНЦЕ: %1</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="68"/>
+        <location filename="../main.cpp" line="81"/>
+        <location filename="../main.cpp" line="97"/>
         <source>Update error</source>
         <translation>УПДАТЕ ЕРРОР</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="78"/>
+        <location filename="../main.cpp" line="70"/>
         <source>Can&apos;t remove old instance!</source>
         <translation>ЦАН&apos;Т РЕМОЖЕ ОЛД ИНСТАНЦЕ!</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="88"/>
+        <location filename="../main.cpp" line="82"/>
         <source>Can&apos;t copy new instance!</source>
         <translation>ЦАН&apos;Т ЦОПЫ НЕВ ИНСТАНЦЕ!</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="102"/>
+        <location filename="../main.cpp" line="98"/>
         <source>Can&apos;t run new instance!</source>
         <translation>ЦАН&apos;Т РУН НЕВ ИНСТАНЦЕ!</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="131"/>
+        <location filename="../main.cpp" line="113"/>
+        <source>Removing instance: %1</source>
+        <translation>РЕМОЖИНГ ИНСТАНЦЕ: %1</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="132"/>
         <source>Update warning</source>
         <translation>УПДАТЕ ВАРНИНГ</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="133"/>
+        <location filename="../main.cpp" line="134"/>
         <source>Can&apos;t remove temporary instance.</source>
         <translation>ЦАН&apos;Т РЕМОЖЕ ТЕМПОРАРЫ ИНСТАНЦЕ.</translation>
     </message>

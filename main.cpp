@@ -25,6 +25,9 @@ int main(int argc, char *argv[])
     }
     QApplication::installTranslator(&t);
 
+    Settings::instance();
+    Logger::logger();
+
 #ifdef Q_OS_WIN
     QCommandLineParser args;
 
@@ -36,10 +39,15 @@ int main(int argc, char *argv[])
 
     args.process(a);
 
+    QString who = QApplication::translate("main", "Launcher");
+
     if ( args.isSet(argUpdate) )
-    {
+    {   
         QString temp = a.applicationFilePath();
         QString orig = args.value(argUpdate);
+
+        QString msg = QApplication::translate("main", "Updating instance: %1");
+        Logger::logger()->appendLine( who, msg.arg(orig) );
 
         QFile origFile(orig);
         for (int i = 0; i < 25; i++)
@@ -62,6 +70,8 @@ int main(int argc, char *argv[])
                 QString text = QApplication::translate(
                     "main", "Can't remove old instance!");
 
+                Logger::logger()->appendLine(who, text);
+
                 QMessageBox::critical(NULL, title, text);
             }
         }
@@ -71,6 +81,8 @@ int main(int argc, char *argv[])
             QString title = QApplication::translate("main", "Update error");
             QString text = QApplication::translate(
                 "main", "Can't copy new instance!");
+
+            Logger::logger()->appendLine(who, text);
 
             QMessageBox::critical(NULL, title, text);
         }
@@ -86,6 +98,8 @@ int main(int argc, char *argv[])
                 QString text = QApplication::translate(
                     "main", "Can't run new instance!");
 
+                Logger::logger()->appendLine(who, text);
+
                 QMessageBox::critical(NULL, title, text);
 
                 return -1;
@@ -95,6 +109,9 @@ int main(int argc, char *argv[])
     else if ( args.isSet(argRemove) )
     {
         QString temp = args.value(argRemove);
+
+        QString msg = QApplication::translate("main", "Removing instance: %1");
+        Logger::logger()->appendLine( who, msg.arg(temp) );
 
         QFile tempFile(temp);
         for (int i = 0; i < 25; i++)
@@ -117,14 +134,13 @@ int main(int argc, char *argv[])
                 QString text = QApplication::translate(
                     "main", "Can't remove temporary instance.");
 
+                Logger::logger()->appendLine(who, text);
+
                 QMessageBox::warning(NULL, title, text);
             }
         }
     }
 #endif
-
-    Settings::instance();
-    Logger::logger();
 
     QPixmap logo(":/resources/logo.png");
     QSplashScreen *splash
