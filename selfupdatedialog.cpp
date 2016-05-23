@@ -19,7 +19,7 @@ SelfUpdateDialog::SelfUpdateDialog(const QString &text, QWidget *parent) :
 
     QString arch = Settings::instance()->getWordSize();
     QString server = Settings::buildServer;
-    QString url = server + "/dev-" + arch + "-latest/ttyhlauncher.zip";
+    QString url = server + "/build-" + arch + "-latest/ttyhlauncher.zip";
 
     QString temp = Path::writableLocation(Path::TempLocation);
     QString path = temp + "/ttyhlauncher.zip";

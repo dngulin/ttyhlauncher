@@ -15,7 +15,7 @@ const QString Settings::launcherVersion = "1.1.0";
 const QString Settings::newsFeed = "https://ttyh.ru/misc.php?page=feed";
 
 const QString Settings::updateServer = "http://store.ttyh.ru";
-const QString Settings::buildServer = "https://build.ttyh.ru";
+const QString Settings::buildServer = "https://ttyh.ru/builds";
 
 // Master-server links
 const QString Settings::master = "https://master.ttyh.ru/index.php";
@@ -101,7 +101,7 @@ void Settings::updateLocalData()
 void Settings::fetchLatestVersion()
 {
     QString arch = getWordSize();
-    QUrl versionUrl(buildServer + "/dev-" + arch + "-latest/version.txt");
+    QUrl versionUrl(buildServer + "/build-" + arch + "-latest/version.txt");
     DataFetcher fetcher;
 
     QEventLoop loop;
