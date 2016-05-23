@@ -19,6 +19,9 @@ public:
 
     static const QString newsFeed;
 
+    static const QString updateServer;
+    static const QString buildServer;
+
 private:
     static const QString master;
     static Settings *myInstance;
@@ -33,7 +36,8 @@ private:
 
     QString dataPath;
     QString configPath;
-    QString updateServer;
+
+    QString latestVersion;
 
     void log(const QString &text);
 
@@ -45,6 +49,9 @@ public:
     QString getAssetsUrl() const;
 
     void updateLocalData();
+    void fetchLatestVersion();
+
+    QString getlatestVersion() const;
 
     // Clients
     QStringList getClientCaptions() const;

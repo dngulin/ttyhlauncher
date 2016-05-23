@@ -6,6 +6,7 @@
 #include "updatedialog.h"
 #include "feedbackdialog.h"
 #include "aboutdialog.h"
+#include "selfupdatedialog.h"
 
 #include "settings.h"
 #include "util.h"
@@ -141,17 +142,44 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
 
     connect(logger, &Logger::lineAppended, this, &LauncherWindow::appendToLog);
 
+#ifdef Q_OS_WIN
+    QString latest = settings->getlatestVersion();
+
+    if (Settings::launcherVersion != latest)
+    {
+        connect(this, &LauncherWindow::windowOpened, this, [=]()
+        {
+            QString msg = tr("New launcher version avialable: %1").arg(latest);
+
+            SelfUpdateDialog *d = new SelfUpdateDialog(msg, this);
+            d->exec();
+            delete d;
+        },
+        Qt::QueuedConnection);
+    }
+#endif
+
     if (ui->clientCombo->count() == 0)
     {
-        this->show();
-        ui->playButton->setEnabled(false);
-        showError(tr("No available clients!"), true);
+        connect(this, &LauncherWindow::windowOpened, this, [=]()
+        {
+            ui->playButton->setEnabled(false);
+            showError(tr("No available clients!"), true);
+        },
+        Qt::QueuedConnection);
     }
+}
+
+void LauncherWindow::showEvent(QShowEvent *event)
+{
+    QMainWindow::showEvent(event);
+    emit windowOpened();
+    event->accept();
 }
 
 void LauncherWindow::closeEvent(QCloseEvent *event)
 {
-    emit windowClosed();
+    QMainWindow::closeEvent(event);
     storeParameters();
     event->accept();
 }

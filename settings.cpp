@@ -10,9 +10,12 @@
 
 typedef QStandardPaths Path;
 
-const QString Settings::launcherVersion = "1.0.5";
+const QString Settings::launcherVersion = "1.1.0";
 
 const QString Settings::newsFeed = "https://ttyh.ru/misc.php?page=feed";
+
+const QString Settings::updateServer = "http://store.ttyh.ru";
+const QString Settings::buildServer = "https://ttyh.ru/builds";
 
 // Master-server links
 const QString Settings::master = "https://master.ttyh.ru/index.php";
@@ -33,9 +36,9 @@ Settings *Settings::instance()
 
 Settings::Settings() : QObject()
 {
-    nam = new QNetworkAccessManager(this);
+    latestVersion = launcherVersion;
 
-    updateServer = "http://store.ttyh.ru";
+    nam = new QNetworkAccessManager(this);
 
     Path::StandardLocation dataLocation = Path::GenericDataLocation;
     Path::StandardLocation configLocation = Path::GenericConfigLocation;
@@ -93,6 +96,43 @@ void Settings::updateLocalData()
     {
         log( tr("Error! %1").arg( parser.getParserError() ) );
     }
+}
+
+void Settings::fetchLatestVersion()
+{
+    QString arch = getWordSize();
+    QUrl versionUrl(buildServer + "/build-" + arch + "-latest/version.txt");
+    DataFetcher fetcher;
+
+    QEventLoop loop;
+
+    bool fetched = false;
+
+    QObject::connect(&fetcher, &DataFetcher::finished,
+                     [&loop, &fetched](bool result)
+    {
+        fetched = result;
+        loop.quit();
+    });
+
+    log( tr("Requesting latest launcher version...") );
+    fetcher.makeGet(versionUrl);
+    loop.exec();
+
+    if (fetched)
+    {
+        latestVersion = QString( fetcher.getData() ).trimmed();
+        log( tr("Latest launcher version: %1.").arg(latestVersion) );
+    }
+    else
+    {
+        log( tr("Error! Latest launcher version not received!") );
+    }
+}
+
+QString Settings::getlatestVersion() const
+{
+    return latestVersion;
 }
 
 QString Settings::getVersionsUrl() const

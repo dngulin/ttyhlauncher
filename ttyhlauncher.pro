@@ -11,6 +11,8 @@ TEMPLATE = app
 
 LIBS += -lquazip5
 
+QMAKE_CXXFLAGS += -std=c++11
+
 SOURCES += main.cpp \
     launcherwindow.cpp \
     skinuploaddialog.cpp \
@@ -29,7 +31,8 @@ SOURCES += main.cpp \
     filefetcher.cpp \
     datafetcher.cpp \
     hashchecker.cpp \
-    logview.cpp
+    logview.cpp \
+    selfupdatedialog.cpp
 
 HEADERS += launcherwindow.h \
     skinuploaddialog.h \
@@ -48,7 +51,8 @@ HEADERS += launcherwindow.h \
     filefetcher.h \
     datafetcher.h \
     hashchecker.h \
-    logview.h
+    logview.h \
+    selfupdatedialog.h
 
 FORMS += launcherwindow.ui \
     skinuploaddialog.ui \
@@ -56,7 +60,8 @@ FORMS += launcherwindow.ui \
     updatedialog.ui \
     feedbackdialog.ui \
     aboutdialog.ui \
-    licensedialog.ui
+    licensedialog.ui \
+    selfupdatedialog.ui
 
 RESOURCES += resources.qrc
 
