@@ -7,6 +7,7 @@
 #include "feedbackdialog.h"
 #include "aboutdialog.h"
 #include "selfupdatedialog.h"
+#include "storesettingsdialog.h"
 
 #include "settings.h"
 #include "util.h"
@@ -51,6 +52,9 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
 
     connect(ui->changeSkin, &QAction::triggered, this,
             &LauncherWindow::showSkinLoadDialog);
+
+    connect(ui->runStoreSettings, &QAction::triggered, this,
+            &LauncherWindow::showStoreSettingsDialog);
 
     connect(ui->updateManager, &QAction::triggered, this,
             &LauncherWindow::showUpdateManagerDialog);
@@ -310,6 +314,13 @@ void LauncherWindow::showSettingsDialog()
 void LauncherWindow::showSkinLoadDialog()
 {
     SkinUploadDialog *d = new SkinUploadDialog(this);
+    d->exec();
+    delete d;
+}
+
+void LauncherWindow::showStoreSettingsDialog()
+{
+    StoreSettingsDialog *d = new StoreSettingsDialog(this);
     d->exec();
     delete d;
 }

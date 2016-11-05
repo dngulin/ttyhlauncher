@@ -123,6 +123,13 @@ public:
     bool loadClientCheckAssetsState() const;
     void saveClientCheckAssetsState(bool state) const;
 
+    // Local TtyhStore settings
+    QString loadStoreExePath() const;
+    void saveStoreExePath(const QString &path) const;
+
+    QString loadStoreDirPath() const;
+    void saveStoreDirPath(const QString &path) const;
+
     // Custom
     QString makeMinecraftUuid() const;
 

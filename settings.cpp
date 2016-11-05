@@ -457,6 +457,35 @@ void Settings::saveClientCheckAssetsState(bool state) const
     settings->setValue(entry, state);
 }
 
+// Local store settings
+QString Settings::loadStoreExePath() const
+{
+    QString entry = "localstore/exe_path";
+    QString defaultPath = "ttyhstore";
+
+    return settings->value(entry, defaultPath).toString();
+}
+
+void Settings::saveStoreExePath(const QString &path) const
+{
+    QString entry = "localstore/exe_path";
+    settings->setValue(entry, path);
+}
+
+QString Settings::loadStoreDirPath() const
+{
+    QString entry = "localstore/dir_path";
+    QString defaultPath = QDir::homePath();
+
+    return settings->value(entry, defaultPath).toString();
+}
+
+void Settings::saveStoreDirPath(const QString &path) const
+{
+    QString entry = "localstore/dir_path";
+    settings->setValue(entry, path);
+}
+
 // News
 bool Settings::loadNewsState() const
 {
