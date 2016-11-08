@@ -7,7 +7,10 @@
 #include "feedbackdialog.h"
 #include "aboutdialog.h"
 #include "selfupdatedialog.h"
+
 #include "storesettingsdialog.h"
+#include "collectdialog.h"
+#include "clonedialog.h"
 
 #include "settings.h"
 #include "util.h"
@@ -53,9 +56,6 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     connect(ui->changeSkin, &QAction::triggered, this,
             &LauncherWindow::showSkinLoadDialog);
 
-    connect(ui->runStoreSettings, &QAction::triggered, this,
-            &LauncherWindow::showStoreSettingsDialog);
-
     connect(ui->updateManager, &QAction::triggered, this,
             &LauncherWindow::showUpdateManagerDialog);
 
@@ -64,6 +64,15 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
 
     connect(ui->aboutLauncher, &QAction::triggered, this,
             &LauncherWindow::showAboutDialog);
+
+    connect(ui->runStoreSettings, &QAction::triggered, this,
+            &LauncherWindow::showStoreSettingsDialog);
+
+    connect(ui->localStoreCollect, &QAction::triggered, this,
+            &LauncherWindow::showCollectDialog);
+
+    connect(ui->localStoreClone, &QAction::triggered, this,
+            &LauncherWindow::showCloneDialog);
 
     bool isOffline = settings->loadOfflineModeState();
     ui->playOffline->setChecked(isOffline);
@@ -318,13 +327,6 @@ void LauncherWindow::showSkinLoadDialog()
     delete d;
 }
 
-void LauncherWindow::showStoreSettingsDialog()
-{
-    StoreSettingsDialog *d = new StoreSettingsDialog(this);
-    d->exec();
-    delete d;
-}
-
 void LauncherWindow::showUpdateManagerDialog()
 {
     showUpdateDialog( tr("Select a client, then press 'Check' button.") );
@@ -340,6 +342,27 @@ void LauncherWindow::showFeedBackDialog()
 void LauncherWindow::showAboutDialog()
 {
     AboutDialog *d = new AboutDialog(this);
+    d->exec();
+    delete d;
+}
+
+void LauncherWindow::showStoreSettingsDialog()
+{
+    StoreSettingsDialog *d = new StoreSettingsDialog(this);
+    d->exec();
+    delete d;
+}
+
+void LauncherWindow::showCollectDialog()
+{
+    CollectDialog *d = new CollectDialog(this);
+    d->exec();
+    delete d;
+}
+
+void LauncherWindow::showCloneDialog()
+{
+    CloneDialog *d = new CloneDialog(this);
     d->exec();
     delete d;
 }

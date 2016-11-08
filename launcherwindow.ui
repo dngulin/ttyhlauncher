@@ -210,9 +210,12 @@
     </property>
     <widget class="QMenu" name="menuLocalVersions">
      <property name="title">
-      <string>Local versions</string>
+      <string>&amp;Local versions</string>
      </property>
      <addaction name="runStoreSettings"/>
+     <addaction name="localStoreCollect"/>
+     <addaction name="localStoreClone"/>
+     <addaction name="localStoreInstall"/>
     </widget>
     <addaction name="runSettings"/>
     <addaction name="changeSkin"/>
@@ -301,7 +304,22 @@
   </action>
   <action name="runStoreSettings">
    <property name="text">
-    <string>Repository settings</string>
+    <string>&amp;Repository settings</string>
+   </property>
+  </action>
+  <action name="localStoreCollect">
+   <property name="text">
+    <string>Collect repository</string>
+   </property>
+  </action>
+  <action name="localStoreClone">
+   <property name="text">
+    <string>Clone version</string>
+   </property>
+  </action>
+  <action name="localStoreInstall">
+   <property name="text">
+    <string>Install version</string>
    </property>
   </action>
  </widget>

@@ -141,6 +141,11 @@ QString Settings::getVersionsUrl() const
     return updateServer + "/" + client + "/versions/versions.json";
 }
 
+QString Settings::getVanillaVersionsUrl() const
+{
+    return QString( "http://s3.amazonaws.com/Minecraft.Download/versions/versions.json" );
+}
+
 QString Settings::getVersionUrl(const QString &version)
 {
     QString client = getClientName( loadActiveClientID() );

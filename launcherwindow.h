@@ -35,10 +35,13 @@ private slots:
 
     void showSettingsDialog();
     void showSkinLoadDialog();
-    void showStoreSettingsDialog();
     void showUpdateManagerDialog();
     void showFeedBackDialog();
     void showAboutDialog();
+
+    void showStoreSettingsDialog();
+    void showCollectDialog();
+    void showCloneDialog();
 
     void offlineModeChanged();
     void hideWindowModeChanged();

@@ -33,7 +33,9 @@ SOURCES += main.cpp \
     hashchecker.cpp \
     logview.cpp \
     selfupdatedialog.cpp \
-    storesettingsdialog.cpp
+    storesettingsdialog.cpp \
+    collectdialog.cpp \
+    clonedialog.cpp
 
 HEADERS += launcherwindow.h \
     skinuploaddialog.h \
@@ -54,7 +56,9 @@ HEADERS += launcherwindow.h \
     hashchecker.h \
     logview.h \
     selfupdatedialog.h \
-    storesettingsdialog.h
+    storesettingsdialog.h \
+    collectdialog.h \
+    clonedialog.h
 
 FORMS += launcherwindow.ui \
     skinuploaddialog.ui \
@@ -64,7 +68,9 @@ FORMS += launcherwindow.ui \
     aboutdialog.ui \
     licensedialog.ui \
     selfupdatedialog.ui \
-    storesettingsdialog.ui
+    storesettingsdialog.ui \
+    collectdialog.ui \
+    clonedialog.ui
 
 RESOURCES += resources.qrc
 

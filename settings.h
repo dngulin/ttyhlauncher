@@ -44,6 +44,7 @@ private:
 public:
     // Update URLs
     QString getVersionsUrl() const;
+    QString getVanillaVersionsUrl() const;
     QString getVersionUrl(const QString &version);
     QString getLibsUrl() const;
     QString getAssetsUrl() const;
