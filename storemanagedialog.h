@@ -8,21 +8,21 @@
 #include "datafetcher.h"
 
 namespace Ui {
-class CloneDialog;
+class StoreManageDialog;
 }
 
-class CloneDialog : public QDialog
+class StoreManageDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit CloneDialog(QWidget *parent = 0);
-    ~CloneDialog();
+    explicit StoreManageDialog(QWidget *parent = 0);
+    ~StoreManageDialog();
 
 private:
-    Ui::CloneDialog *ui;
+    Ui::StoreManageDialog *ui;
 
-    QProcess ttyhstore;
+    QProcess* ttyhstore;
     DataFetcher fetcher;
 
     Settings* settings;
@@ -31,10 +31,13 @@ private:
     void requestVersions();
     void log(const QString &line, bool hidden = false);
 
+    void setControlsEnabled(bool state);
+
 private slots:
+    void onCommandSwitched(int id);
     void onVersionsReply(bool result);
 
-    void clone();
+    void runCommand();
     void cancel();
 
     void onStart();

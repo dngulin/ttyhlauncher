@@ -213,9 +213,8 @@
       <string>&amp;Local versions</string>
      </property>
      <addaction name="runStoreSettings"/>
-     <addaction name="localStoreCollect"/>
-     <addaction name="localStoreClone"/>
-     <addaction name="localStoreInstall"/>
+     <addaction name="runStoreManage"/>
+     <addaction name="runStoreInstall"/>
     </widget>
     <addaction name="runSettings"/>
     <addaction name="changeSkin"/>
@@ -309,17 +308,17 @@
   </action>
   <action name="localStoreCollect">
    <property name="text">
-    <string>Collect repository</string>
+    <string>&amp;Collect repository</string>
    </property>
   </action>
-  <action name="localStoreClone">
+  <action name="runStoreManage">
    <property name="text">
-    <string>Clone version</string>
+    <string>Manage repository</string>
    </property>
   </action>
-  <action name="localStoreInstall">
+  <action name="runStoreInstall">
    <property name="text">
-    <string>Install version</string>
+    <string>&amp;Install version</string>
    </property>
   </action>
  </widget>

@@ -96,6 +96,11 @@ void DataFetcher::makePost(const QUrl &url, const QByteArray &postData)
     handleReply();
 }
 
+bool DataFetcher::isWaiting() const
+{
+    return waiting;
+}
+
 void DataFetcher::requestFinished()
 {
     bool result = true;

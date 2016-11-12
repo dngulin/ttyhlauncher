@@ -40,8 +40,7 @@ private slots:
     void showAboutDialog();
 
     void showStoreSettingsDialog();
-    void showCollectDialog();
-    void showCloneDialog();
+    void showStoreManageDialog();
 
     void offlineModeChanged();
     void hideWindowModeChanged();

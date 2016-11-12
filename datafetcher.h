@@ -16,6 +16,8 @@ public:
     void makeGet(const QUrl &url);
     void makePost(const QUrl &url, const QByteArray &postData);
 
+    bool isWaiting() const;
+
     const QByteArray &getData() const;
     quint64 getSize();
     const QString &errorString() const;

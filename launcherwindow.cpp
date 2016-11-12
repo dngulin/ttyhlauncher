@@ -9,8 +9,7 @@
 #include "selfupdatedialog.h"
 
 #include "storesettingsdialog.h"
-#include "collectdialog.h"
-#include "clonedialog.h"
+#include "storemanagedialog.h"
 
 #include "settings.h"
 #include "util.h"
@@ -68,11 +67,8 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     connect(ui->runStoreSettings, &QAction::triggered, this,
             &LauncherWindow::showStoreSettingsDialog);
 
-    connect(ui->localStoreCollect, &QAction::triggered, this,
-            &LauncherWindow::showCollectDialog);
-
-    connect(ui->localStoreClone, &QAction::triggered, this,
-            &LauncherWindow::showCloneDialog);
+    connect(ui->runStoreManage, &QAction::triggered, this,
+            &LauncherWindow::showStoreManageDialog);
 
     bool isOffline = settings->loadOfflineModeState();
     ui->playOffline->setChecked(isOffline);
@@ -353,16 +349,9 @@ void LauncherWindow::showStoreSettingsDialog()
     delete d;
 }
 
-void LauncherWindow::showCollectDialog()
+void LauncherWindow::showStoreManageDialog()
 {
-    CollectDialog *d = new CollectDialog(this);
-    d->exec();
-    delete d;
-}
-
-void LauncherWindow::showCloneDialog()
-{
-    CloneDialog *d = new CloneDialog(this);
+    StoreManageDialog *d = new StoreManageDialog(this);
     d->exec();
     delete d;
 }
