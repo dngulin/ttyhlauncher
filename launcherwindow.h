@@ -41,6 +41,7 @@ private slots:
 
     void showStoreSettingsDialog();
     void showStoreManageDialog();
+    void showStoreInstallDialog();
 
     void offlineModeChanged();
     void hideWindowModeChanged();

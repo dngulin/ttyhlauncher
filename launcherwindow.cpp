@@ -10,6 +10,7 @@
 
 #include "storesettingsdialog.h"
 #include "storemanagedialog.h"
+#include "storeinstalldialog.h"
 
 #include "settings.h"
 #include "util.h"
@@ -69,6 +70,9 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
 
     connect(ui->runStoreManage, &QAction::triggered, this,
             &LauncherWindow::showStoreManageDialog);
+
+    connect(ui->runStoreInstall, &QAction::triggered, this,
+            &LauncherWindow::showStoreInstallDialog);
 
     bool isOffline = settings->loadOfflineModeState();
     ui->playOffline->setChecked(isOffline);
@@ -352,6 +356,13 @@ void LauncherWindow::showStoreSettingsDialog()
 void LauncherWindow::showStoreManageDialog()
 {
     StoreManageDialog *d = new StoreManageDialog(this);
+    d->exec();
+    delete d;
+}
+
+void LauncherWindow::showStoreInstallDialog()
+{
+    StoreInstallDialog *d = new StoreInstallDialog(this);
     d->exec();
     delete d;
 }
