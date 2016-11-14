@@ -364,6 +364,7 @@ void StoreInstallDialog::cancelClicked()
 {
     if (installing)
     {
+        log( tr("Installation cancelled!") );
         installer->cancel();
         installList.clear();
         installing = false;
