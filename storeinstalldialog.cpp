@@ -367,6 +367,7 @@ void StoreInstallDialog::cancelClicked()
         installer->cancel();
         installList.clear();
         installing = false;
+        setInteractable(true);
     }
     else
     {
