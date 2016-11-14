@@ -6,6 +6,7 @@
 #include "settings.h"
 #include "logger.h"
 #include "fileinstaller.h"
+#include "fileinfo.h"
 
 namespace Ui {
 class StoreInstallDialog;
@@ -37,6 +38,18 @@ private:
     void setupPrefixes();
 
     void setInteractable(bool state);
+
+    bool installing;
+
+    QString storeDir;
+    QString clientDir;
+    QString storePrefix;
+    QString storeVersion;
+
+    void prepareVersion(const QString &jarHash);
+    void prepareLibararies(const QList<FileInfo> &libs);
+    void prepareAddons(const QHash<QString, FileInfo> &addons);
+    void prepareAssets();
 
 signals:
     void install(const QList<InstallInfo> &list);

@@ -39,12 +39,23 @@ StoreInstallDialog::StoreInstallDialog(QWidget *parent) :
     connect(ui->installButton, &QPushButton::clicked,
             this, &StoreInstallDialog::installClicked);
 
+    connect(ui->cancelButton, &QPushButton::clicked,
+            this, &StoreInstallDialog::cancelClicked);
+
     setupLocalStoreVersions();
     setupPrefixes();
+
+    installing = false;
 }
 
 StoreInstallDialog::~StoreInstallDialog()
 {
+    if (installing)
+    {
+        installer->cancel();
+        installing = false;
+    }
+
     installThread.quit();
     installThread.wait();
 
@@ -142,7 +153,6 @@ void StoreInstallDialog::installClicked()
         log( tr("Error: version for install not selected!") );
         return;
     }
-    QString versionName = version.split('/').last();
 
     int id = ui->prefixCombo->currentIndex();
     QString prefix = settings->getClientName(id);
@@ -151,133 +161,217 @@ void StoreInstallDialog::installClicked()
         log( tr("Error: installation prefix not selected!") );
         return;
     }
-    QString clientDir = settings->getBaseDir() + "/client_" + prefix;
-    QString clientVersionPath = clientDir + "/versions/" + versionName;
-    QString clientPrefixPath = clientDir + "/prefixes/" + versionName;
+
+    storeDir  = settings->loadStoreDirPath();
+    clientDir = settings->getBaseDir() + "/client_" + prefix;
+
+    QStringList versionData = version.split('/');
+    storePrefix = versionData.first();
+    storeVersion = versionData.last();
 
     QString beginMsg = tr("Try to install local version %1 to prefix %2");
     log( beginMsg.arg(version).arg(prefix) );
 
-    QString storeDirPath = settings->loadStoreDirPath();
-    QString storeVersionPath = storeDirPath + "/" + version;
-    QString indexPath = storeVersionPath + "/data.json";
+    QString dataIdxPath = storeDir + "/" + version + "/data.json";
 
-    JsonParser parser;
-    if ( !parser.setJsonFromFile(indexPath) )
+    JsonParser dataParser;
+    if ( !dataParser.setJsonFromFile(dataIdxPath) )
     {
         log( tr("Error: can't read data.json!") );
-        log( parser.getParserError() );
+        log( dataParser.getParserError() );
         return;
     }
 
-    if ( !parser.hasJarFileInfo() )
+    // Prepare files
+
+    if ( dataParser.hasJarFileInfo() )
     {
-        log( tr("Error: jar file not described in data.json!") );
-        return;
+        prepareVersion( dataParser.getJarFileInfo().hash );
+    }
+    else
+    {
+        log( tr("Error: jar file does not described in data.json!") );
     }
 
-    log( tr("Prepare main files...") );
-
-    // Main JAR
-    InstallInfo jarInfo;
-    jarInfo.hash    = parser.getJarFileInfo().hash;
-    jarInfo.srcPath = storeVersionPath + "/" + versionName + ".jar";
-    jarInfo.path    = clientVersionPath + "/" + versionName + ".jar";
-    installList.append(jarInfo);
-
-    // Index JSON
-    InstallInfo indexJsonInfo;
-    indexJsonInfo.hash    = "force";
-    indexJsonInfo.srcPath = storeVersionPath + "/" + versionName + ".json";
-    indexJsonInfo.path    = clientVersionPath + "/" + versionName + ".json";
-    installList.append(indexJsonInfo);
-
-    // Data JSON
-    InstallInfo dataJsonInfo;
-    dataJsonInfo.hash    = "force";
-    dataJsonInfo.srcPath = storeVersionPath + "/data.json";
-    dataJsonInfo.path    = clientVersionPath + "/data.json";
-    installList.append(dataJsonInfo);
-
-    // Libararies
-    if ( parser.hasLibsFileInfo() )
+    if ( dataParser.hasLibsFileInfo() )
     {
-        log( tr("Prepare libraries...") );
+        prepareLibararies( dataParser.getLibsFileInfo() );
+    }
+    else
+    {
+        log( tr("Error: libraries are not described in data.json") );
+    }
 
-        QString localLibsDir = settings->loadStoreDirPath() + "libraries/";
-        QString storeLibsDir = settings->getLibsDir() + "/";
+    if ( dataParser.hasAddonsFilesInfo() )
+    {
+        prepareAddons( dataParser.getAddonsFilesInfoHashMap() );
+    }
+    else
+    {
+        log( tr("Error: addons are not described in data.json") );
+    }
 
-        QList<FileInfo> libs = parser.getLibsFileInfo();
-        foreach(FileInfo lib, libs)
+    prepareAssets();
+
+    log( tr("Begin copy files...") );
+    setInteractable(false);
+    emit install(installList);
+    installing = true;
+}
+
+void StoreInstallDialog::prepareVersion(const QString &jarHash)
+{
+    log( tr("Prepare local version...") );
+
+    QString storeVerDir  = storeDir + "/" + storePrefix + "/" + storeVersion;
+    QString clientVerDir = clientDir + "/versions/" + storeVersion;
+
+    QStringList files;
+    files << storeVersion + ".jar" << storeVersion + ".json" << "data.json";
+
+    foreach (QString fileName, files)
+    {
+        InstallInfo info;
+        info.hash    = (fileName == storeVersion + ".jar") ? jarHash : "0";
+        info.srcPath = storeVerDir + "/" + fileName;
+        info.path    = clientVerDir + "/" + fileName;
+        installList.append(info);
+    }
+}
+
+void StoreInstallDialog::prepareLibararies(const QList<FileInfo> &libs)
+{
+    log( tr("Prepare libraries...") );
+
+    QString storeLibDir = storeDir + "/libraries/";
+    QString clientLibDir = settings->getLibsDir() + "/";
+
+    foreach(FileInfo lib, libs)
+    {
+        InstallInfo info;
+        info.hash    = lib.hash;
+        info.srcPath = storeLibDir + lib.name;
+        info.path    = clientLibDir + lib.name;
+        installList.append(info);
+    }
+}
+
+void StoreInstallDialog::prepareAddons(const QHash<QString, FileInfo> &addons)
+{
+    log( tr("Prepare addons...") );
+
+    QString storeVerDir  = storeDir + "/" + storePrefix + "/" + storeVersion;
+    QString clientPrefixDir = clientDir + "/prefixes/" + storeVersion;
+
+    foreach ( FileInfo addon, addons.values() )
+    {
+        InstallInfo info;
+        info.srcPath = storeVerDir + "/files/" + addon.name;
+        info.path    = clientPrefixDir + "/" + addon.name;
+        if (!addon.isMutable)
         {
-            InstallInfo libInfo;
-            libInfo.hash    = lib.hash;
-            libInfo.srcPath = storeLibsDir + lib.name;
-            libInfo.path    = localLibsDir + lib.name;
-
-            installList.append(libInfo);
+            info.hash = addon.hash;
         }
+        installList.append(info);
     }
 
-    // Files
-    QHash<QString, FileInfo> addonsMap;
-    if ( parser.hasAddonsFilesInfo() )
-    {
-        log( tr("Prepare addons...") );
-        addonsMap = parser.getAddonsFilesInfoHashMap();
-        foreach ( FileInfo addon, addonsMap.values() )
-        {
-            InstallInfo addonInfo;
-            addonInfo.srcPath = storeVersionPath + "/files/" + addon.name;
-            addonInfo.path    = clientPrefixPath + "/" + addon.name;
-
-            if (!addon.isMutable)
-            {
-                addonInfo.hash = addon.hash;
-            }
-
-            installList.append(addonInfo);
-        }
-    }
-
-    // Installed files
     JsonParser prefixParser;
-    QString installedData = clientPrefixPath + "/installed_data.json";
+    QString instIdxPath = clientPrefixDir + "/installed_data.json";
 
-    bool installed = prefixParser.setJsonFromFile(installedData) ;
+    bool installed = prefixParser.setJsonFromFile(instIdxPath) ;
     if ( installed && prefixParser.hasAddonsFilesInfo() )
     {
         log( tr("Read installed prefix...") );
-        QList<FileInfo> oldFiles = prefixParser.getAddonsFilesInfo();
-        foreach (FileInfo oldFile, oldFiles)
+        QList<FileInfo> oldAddons = prefixParser.getAddonsFilesInfo();
+        foreach (FileInfo oldAddon, oldAddons)
         {
-            if (!addonsMap.contains(oldFile.name))
+            if (!addons.contains(oldAddon.name))
             {
                 InstallInfo obsoleteInfo;
                 obsoleteInfo.action = InstallInfo::Delete;
-                obsoleteInfo.path   = clientPrefixPath + "/" + oldFile.name;
+                obsoleteInfo.path   = clientPrefixDir + "/" + oldAddon.name;
                 installList.append(obsoleteInfo);
             }
         }
     }
 
-    // Assets?
-
-    // InstalledData JSON
     InstallInfo installedInfo;
-    installedInfo.hash    = "force";
-    installedInfo.srcPath = storeVersionPath + "/data.json";
-    installedInfo.path    = installedData;
+    installedInfo.hash    = "0";
+    installedInfo.srcPath = storeVerDir + "/data.json";
+    installedInfo.path    = instIdxPath;
     installList.append(installedInfo);
-
-    log( tr("Begin installation...") );
-    setInteractable(false);
-    emit install(installList);
 }
+
+void StoreInstallDialog::prepareAssets()
+{
+    QString storeVerDir  = storeDir + "/" + storePrefix + "/" + storeVersion;
+    QString versionIdxPath = storeVerDir + "/" + storeVersion + ".json";
+
+    JsonParser indexParser;
+    if ( !indexParser.setJsonFromFile(versionIdxPath) )
+    {
+        log( tr("Error: can't parse index '%1'!").arg(versionIdxPath) );
+        log( indexParser.getParserError() );
+        return;
+    }
+
+    if ( !indexParser.hasAssetsVersion() )
+    {
+        QString msg = tr("Error: '%1' does not contains assets version!");
+        log( msg.arg(versionIdxPath) );
+        return;
+    }
+
+    QString assetsVer = indexParser.getAssetsVesrsion();
+    QString storeAssetsDir = storeDir + "/assets";
+    QString clientAssetsDir = settings->getAssetsDir();
+
+    InstallInfo assetsIdxInfo;
+    assetsIdxInfo.hash = "0";
+    assetsIdxInfo.srcPath = storeAssetsDir + "/indexes/" + assetsVer + ".json";
+    assetsIdxInfo.path = clientAssetsDir + "/indexes/" + assetsVer + ".json";
+    installList.append(assetsIdxInfo);
+
+    QString assetsIdxPath = storeAssetsDir + "/indexes/" + assetsVer + ".json";
+    JsonParser assetsParser;
+    if ( !assetsParser.setJsonFromFile(assetsIdxPath) )
+    {
+        log( tr("Error: can't parse index '%1'!").arg(assetsIdxPath) );
+        log( assetsParser.getParserError() );
+        return;
+    }
+
+    if ( !assetsParser.hasAssetsList() )
+    {
+        QString msg = tr("Error: '%1' does not contains assets version!");
+        log( msg.arg(assetsIdxPath) );
+        return;
+    }
+
+    QList<FileInfo> assets = assetsParser.getAssetsList();
+    foreach(FileInfo asset, assets)
+    {
+        InstallInfo assetInfo;
+        assetInfo.hash    = asset.hash;
+        assetInfo.srcPath = storeAssetsDir + "/objects/" + asset.name;
+        assetInfo.path    = clientAssetsDir + "/objects/" + asset.name;
+        installList.append(assetInfo);
+    }
+}
+
 
 void StoreInstallDialog::cancelClicked()
 {
-
+    if (installing)
+    {
+        installer->cancel();
+        installList.clear();
+        installing = false;
+    }
+    else
+    {
+        this->close();
+    }
 }
 
 void StoreInstallDialog::installError(const InstallInfo &info)
@@ -294,7 +388,8 @@ void StoreInstallDialog::installError(const InstallInfo &info)
 
 void StoreInstallDialog::installFinished()
 {
-    log( tr("Installation finished") );
+    log( tr("Installation finished!") );
     setInteractable(true);
     installList.clear();
+    installing = false;
 }
