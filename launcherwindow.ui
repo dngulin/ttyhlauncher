@@ -306,14 +306,9 @@
     <string>&amp;Repository settings</string>
    </property>
   </action>
-  <action name="localStoreCollect">
-   <property name="text">
-    <string>&amp;Collect repository</string>
-   </property>
-  </action>
   <action name="runStoreManage">
    <property name="text">
-    <string>Manage repository</string>
+    <string>&amp;Manage repository</string>
    </property>
   </action>
   <action name="runStoreInstall">

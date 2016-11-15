@@ -47,12 +47,12 @@
         <translation>POST запрос: %1</translation>
     </message>
     <message>
-        <location filename="../datafetcher.cpp" line="114"/>
+        <location filename="../datafetcher.cpp" line="119"/>
         <source>Bad login.</source>
         <translation>Неправильный логин или пароль.</translation>
     </message>
     <message>
-        <location filename="../datafetcher.cpp" line="122"/>
+        <location filename="../datafetcher.cpp" line="127"/>
         <source>Error! %1</source>
         <translation>Ошибка! %1</translation>
     </message>
@@ -469,122 +469,142 @@
         <translation>&amp;Инструменты</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.ui" line="217"/>
+        <location filename="../launcherwindow.ui" line="213"/>
+        <source>&amp;Local versions</source>
+        <translation>&amp;Локальные версии</translation>
+    </message>
+    <message>
+        <location filename="../launcherwindow.ui" line="226"/>
         <source>&amp;Help</source>
         <translation>&amp;Помощь</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.ui" line="231"/>
+        <location filename="../launcherwindow.ui" line="240"/>
         <source>&amp;Play offline</source>
         <translation>&amp;Играть оффлайн</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.ui" line="240"/>
+        <location filename="../launcherwindow.ui" line="249"/>
         <source>&amp;Client settings</source>
         <translation>&amp;Настройки</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.ui" line="249"/>
+        <location filename="../launcherwindow.ui" line="258"/>
         <source>&amp;Report a bug</source>
         <translation>&amp;Сообщить об ошибке</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.ui" line="258"/>
+        <location filename="../launcherwindow.ui" line="267"/>
         <source>&amp;Upload skin</source>
         <translation>&amp;Загрузить скин</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.ui" line="267"/>
+        <location filename="../launcherwindow.ui" line="276"/>
         <source>Update &amp;manager</source>
         <translation>&amp;Обновление клиента</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.ui" line="276"/>
+        <location filename="../launcherwindow.ui" line="285"/>
         <source>&amp;About</source>
         <translation>&amp;О программе</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.ui" line="284"/>
+        <location filename="../launcherwindow.ui" line="293"/>
         <source>&amp;Hide launcher window</source>
         <translation>&amp;Скрывать окно при запуске</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.ui" line="292"/>
+        <location filename="../launcherwindow.ui" line="301"/>
         <source>&amp;Load news</source>
         <translation>&amp;Загружать новости</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="35"/>
+        <location filename="../launcherwindow.ui" line="306"/>
+        <source>&amp;Repository settings</source>
+        <translation>&amp;Параметры хранилища</translation>
+    </message>
+    <message>
+        <location filename="../launcherwindow.ui" line="311"/>
+        <source>&amp;Manage repository</source>
+        <translation>&amp;Управление хранилищем</translation>
+    </message>
+    <message>
+        <location filename="../launcherwindow.ui" line="316"/>
+        <source>&amp;Install version</source>
+        <translation>Установить &amp;локальную версию</translation>
+    </message>
+    <message>
+        <location filename="../launcherwindow.cpp" line="39"/>
         <source>Welcome to the ttyhlauncher.</source>
         <translation>Вы запустили ttyhlauncher.</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="45"/>
+        <location filename="../launcherwindow.cpp" line="49"/>
         <source>Can&apos;t open logo resource.</source>
         <translation>Не удалось открыть ресурс с логотипом.</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="167"/>
+        <location filename="../launcherwindow.cpp" line="180"/>
         <source>No available clients!</source>
         <translation>Нет доступных клиентов!</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="275"/>
+        <location filename="../launcherwindow.cpp" line="288"/>
         <source>Error! %1</source>
         <translation>Ошибка! %1</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="319"/>
+        <location filename="../launcherwindow.cpp" line="332"/>
         <source>Select a client, then press &apos;Check&apos; button.</source>
         <translation>Выберите клиент и нажмите кнопку &quot;Проверить обновления&quot;.</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="395"/>
+        <location filename="../launcherwindow.cpp" line="429"/>
         <source>Client: %1.</source>
         <translation>Клиент: %1.</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="278"/>
+        <location filename="../launcherwindow.cpp" line="291"/>
         <source>Oops! Error!</source>
         <translation>Упс! Ошибка!</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="152"/>
+        <location filename="../launcherwindow.cpp" line="165"/>
         <source>New launcher version avialable: %1</source>
         <translation>Доступна новая версия лаунчера: %1</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="283"/>
+        <location filename="../launcherwindow.cpp" line="296"/>
         <source>LauncherWindow</source>
         <translation>Главное окно</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="343"/>
+        <location filename="../launcherwindow.cpp" line="377"/>
         <source>Play (offline)</source>
         <translation>Играть (оффлайн)</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="347"/>
+        <location filename="../launcherwindow.cpp" line="381"/>
         <source>Play</source>
         <translation>Играть</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="392"/>
+        <location filename="../launcherwindow.cpp" line="426"/>
         <source>Try to start game...</source>
         <translation>Запуск игры...</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="425"/>
+        <location filename="../launcherwindow.cpp" line="459"/>
         <source>Main window hidden.</source>
         <translation>Окно скрыто.</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="450"/>
+        <location filename="../launcherwindow.cpp" line="484"/>
         <source>Main window visible.</source>
         <translation>Окно показано.</translation>
     </message>
     <message>
-        <location filename="../launcherwindow.cpp" line="457"/>
+        <location filename="../launcherwindow.cpp" line="491"/>
         <source>Process finished incorrectly!</source>
         <translation>Процесс завершился некорректно!</translation>
     </message>
@@ -1113,6 +1133,315 @@
         <location filename="../skinuploaddialog.cpp" line="142"/>
         <source>Select a skin file</source>
         <translation>Выберите файл скина</translation>
+    </message>
+</context>
+<context>
+    <name>StoreInstallDialog</name>
+    <message>
+        <location filename="../storeinstalldialog.ui" line="14"/>
+        <source>Install local version</source>
+        <translation>Установить локальную версию</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.ui" line="40"/>
+        <source>Local version</source>
+        <translation>Локальная версия</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.ui" line="50"/>
+        <source>Install as</source>
+        <translation>Установить как</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.ui" line="91"/>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.ui" line="111"/>
+        <source>Install</source>
+        <translation>Установить</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="67"/>
+        <source>StoreInstallDialog</source>
+        <translation>Окно установки локальной версии</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="76"/>
+        <source>Read local prefixes...</source>
+        <translation>Чтение локальных префикосв...</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="89"/>
+        <source>Local prefixes list ready</source>
+        <translation>Список локальных префиксов готов</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="93"/>
+        <source>Local prefixes list not defined in index!</source>
+        <translation>Локальные префиксы не описаны в индексе!</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="98"/>
+        <source>Can&apos;t read local prefixes!</source>
+        <translation>Не удалось прочесть индекс локальных префиксов!</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="105"/>
+        <source>Read local versions for prefix %1...</source>
+        <translation>Чтение локальных версий для префикса %1...</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="121"/>
+        <source>Local version list not defined in index!</source>
+        <translation>Локальные версии не описаны в индексе!</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="126"/>
+        <source>Can&apos;t read local versions for prefix %1!</source>
+        <translation>Не удалось прочесть индекс локальных версий для префикса %1!</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="153"/>
+        <source>Error: version for install not selected!</source>
+        <translation>Ошибка: не указана версия для установки!</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="161"/>
+        <source>Error: installation prefix not selected!</source>
+        <translation>Ошибка: не указан клиент для установки!</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="172"/>
+        <source>Try to install local version %1 to prefix %2</source>
+        <translation>Попытка установить локальную версию %1 в префикс %2</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="180"/>
+        <source>Error: can&apos;t read data.json!</source>
+        <translation>Ошибка: не удалось прочесть data.json!</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="193"/>
+        <source>Error: jar file does not described in data.json!</source>
+        <translation>Ошибка: JAR-файл не описан в data.json! </translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="202"/>
+        <source>Error: libraries are not described in data.json</source>
+        <translation>Ошибка: библиотеки не описаны в data.json</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="211"/>
+        <source>Error: addons are not described in data.json</source>
+        <translation>Ошибка: модификации не описаны в data.json</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="216"/>
+        <source>Begin copy files...</source>
+        <translation>Копирование файлов...</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="224"/>
+        <source>Prepare local version...</source>
+        <translation>Подготовка локальной версии...</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="244"/>
+        <source>Prepare libraries...</source>
+        <translation>Подготовка библиотек...</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="261"/>
+        <source>Prepare addons...</source>
+        <translation>Подготовка модификаций...</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="284"/>
+        <source>Read installed prefix...</source>
+        <translation>Чтение установленного префикса...</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="313"/>
+        <location filename="../storeinstalldialog.cpp" line="339"/>
+        <source>Error: can&apos;t parse index &apos;%1&apos;!</source>
+        <translation>Ошибка: не удалось разобрать индекс &apos;%1&apos;!</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="320"/>
+        <location filename="../storeinstalldialog.cpp" line="346"/>
+        <source>Error: &apos;%1&apos; does not contains assets version!</source>
+        <translation>Ошибка: &apos;%1&apos; не содержит версию ресурсов! </translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="367"/>
+        <source>Installation cancelled!</source>
+        <translation>Установка отменена!</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="383"/>
+        <source>Error: can&apos;t delete file: %1</source>
+        <translation>Ошибка: не удалось удалить файл: %1</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="387"/>
+        <source>Error: can&apos;t update file: %1</source>
+        <translation>Ошибка: не удалось обновить файл: %1</translation>
+    </message>
+    <message>
+        <location filename="../storeinstalldialog.cpp" line="393"/>
+        <source>Installation finished!</source>
+        <translation>Установка завершена!</translation>
+    </message>
+</context>
+<context>
+    <name>StoreManageDialog</name>
+    <message>
+        <location filename="../storemanagedialog.ui" line="14"/>
+        <source>Manage local repository</source>
+        <translation>Управление локальным хранилищем</translation>
+    </message>
+    <message>
+        <location filename="../storemanagedialog.ui" line="40"/>
+        <source>Command</source>
+        <translation>Команда</translation>
+    </message>
+    <message>
+        <location filename="../storemanagedialog.ui" line="77"/>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <location filename="../storemanagedialog.ui" line="97"/>
+        <source>Execute</source>
+        <translation>Выполнить</translation>
+    </message>
+    <message>
+        <location filename="../storemanagedialog.cpp" line="69"/>
+        <source>StoreManageDialog</source>
+        <translation>Окно управления хранилищем</translation>
+    </message>
+    <message>
+        <location filename="../storemanagedialog.cpp" line="91"/>
+        <source>Requesting version list for &apos;clone&apos;...</source>
+        <translation>Зпрос возможных версий для клонирования...</translation>
+    </message>
+    <message>
+        <location filename="../storemanagedialog.cpp" line="99"/>
+        <source>Versions list received. Parsing...</source>
+        <translation>Список версий принят. Разбор...</translation>
+    </message>
+    <message>
+        <location filename="../storemanagedialog.cpp" line="104"/>
+        <source>Error: </source>
+        <translation>Ошибка: </translation>
+    </message>
+    <message>
+        <location filename="../storemanagedialog.cpp" line="110"/>
+        <source>Error: reply not contain version list!</source>
+        <translation>Ошибка: ответ сервера не содержит список версий! </translation>
+    </message>
+    <message>
+        <location filename="../storemanagedialog.cpp" line="117"/>
+        <source>Versions list for clone is ready!</source>
+        <translation>Список версий для клонированя готов!</translation>
+    </message>
+    <message>
+        <location filename="../storemanagedialog.cpp" line="126"/>
+        <source>Version list not received</source>
+        <translation>Список версий не принят</translation>
+    </message>
+    <message>
+        <location filename="../storemanagedialog.cpp" line="143"/>
+        <source>Error: version for cloning is empty!</source>
+        <translation>Ошибка: версия для клонирования не указана!</translation>
+    </message>
+    <message>
+        <location filename="../storemanagedialog.cpp" line="173"/>
+        <source>ttyhstore cancelled by user</source>
+        <translation>ttyhstore прерван пользователем</translation>
+    </message>
+    <message>
+        <location filename="../storemanagedialog.cpp" line="195"/>
+        <source>ttyhstore finished with code %1.</source>
+        <translation>ttyhstore завершился с кодом %1.</translation>
+    </message>
+    <message>
+        <location filename="../storemanagedialog.cpp" line="210"/>
+        <source>Error: %1</source>
+        <translation>Ошибка: %1</translation>
+    </message>
+</context>
+<context>
+    <name>StoreSettingsDialog</name>
+    <message>
+        <location filename="../storesettingsdialog.ui" line="14"/>
+        <source>Local store settings</source>
+        <translation>Настройки локального хранилища</translation>
+    </message>
+    <message>
+        <location filename="../storesettingsdialog.ui" line="35"/>
+        <source>Locations</source>
+        <translation>Расположение</translation>
+    </message>
+    <message>
+        <location filename="../storesettingsdialog.ui" line="56"/>
+        <source>Store Manager</source>
+        <translation>Менеджер</translation>
+    </message>
+    <message>
+        <location filename="../storesettingsdialog.ui" line="66"/>
+        <location filename="../storesettingsdialog.ui" line="83"/>
+        <source>...</source>
+        <translation>...</translation>
+    </message>
+    <message>
+        <location filename="../storesettingsdialog.ui" line="73"/>
+        <source>Store Location</source>
+        <translation>Директория</translation>
+    </message>
+    <message>
+        <location filename="../storesettingsdialog.ui" line="128"/>
+        <source>Save</source>
+        <translation>Сохранить</translation>
+    </message>
+    <message>
+        <location filename="../storesettingsdialog.cpp" line="34"/>
+        <source>StoreSettingsDialog</source>
+        <translation>Окно настроек хранилища</translation>
+    </message>
+    <message>
+        <location filename="../storesettingsdialog.cpp" line="42"/>
+        <source>Load:</source>
+        <translation>Загружено:</translation>
+    </message>
+    <message>
+        <location filename="../storesettingsdialog.cpp" line="43"/>
+        <location filename="../storesettingsdialog.cpp" line="56"/>
+        <source>Store manager: </source>
+        <translation>Менеджер хранилища:</translation>
+    </message>
+    <message>
+        <location filename="../storesettingsdialog.cpp" line="44"/>
+        <location filename="../storesettingsdialog.cpp" line="57"/>
+        <source>Store directory: </source>
+        <translation>Директория хранилища:</translation>
+    </message>
+    <message>
+        <location filename="../storesettingsdialog.cpp" line="55"/>
+        <source>Save:</source>
+        <translation>Сохранено:</translation>
+    </message>
+    <message>
+        <location filename="../storesettingsdialog.cpp" line="73"/>
+        <source>Select the ttyhstore executable</source>
+        <translation>Укажите путь к исполняемому файлу ttyhstore</translation>
+    </message>
+    <message>
+        <location filename="../storesettingsdialog.cpp" line="84"/>
+        <source>Select a repository location</source>
+        <translation>Выберите раположение репозитория</translation>
     </message>
 </context>
 <context>
