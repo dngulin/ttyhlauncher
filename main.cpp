@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     QString who = QApplication::translate("main", "Launcher");
 
     if ( args.isSet(argUpdate) )
-    {   
+    {
         QString temp = a.applicationFilePath();
         QString orig = args.value(argUpdate);
 
