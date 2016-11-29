@@ -145,7 +145,6 @@ int main(int argc, char *argv[])
     QPixmap logo(":/resources/logo.png");
     QSplashScreen *splash
         = new QSplashScreen(logo, Qt::FramelessWindowHint | Qt::SplashScreen);
-
     splash->setMask( logo.mask() );
     splash->show();
 
