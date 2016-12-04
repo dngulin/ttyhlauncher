@@ -10,7 +10,7 @@
 
 typedef QStandardPaths Path;
 
-const QString Settings::launcherVersion = "1.1.0";
+const QString Settings::launcherVersion = "1.2.0";
 
 const QString Settings::newsFeed = "https://ttyh.ru/misc.php?page=feed";
 
@@ -143,7 +143,8 @@ QString Settings::getVersionsUrl() const
 
 QString Settings::getVanillaVersionsUrl() const
 {
-    return QString( "http://s3.amazonaws.com/Minecraft.Download/versions/versions.json" );
+    return QString(
+        "http://s3.amazonaws.com/Minecraft.Download/versions/versions.json");
 }
 
 QString Settings::getVersionUrl(const QString &version)
