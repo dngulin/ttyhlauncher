@@ -44,6 +44,7 @@ private:
 public:
     // Update URLs
     QString getVersionsUrl() const;
+    QString getVanillaVersionsUrl() const;
     QString getVersionUrl(const QString &version);
     QString getLibsUrl() const;
     QString getAssetsUrl() const;
@@ -122,6 +123,13 @@ public:
 
     bool loadClientCheckAssetsState() const;
     void saveClientCheckAssetsState(bool state) const;
+
+    // Local TtyhStore settings
+    QString loadStoreExePath() const;
+    void saveStoreExePath(const QString &path) const;
+
+    QString loadStoreDirPath() const;
+    void saveStoreDirPath(const QString &path) const;
 
     // Custom
     QString makeMinecraftUuid() const;

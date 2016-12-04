@@ -32,7 +32,12 @@ SOURCES += main.cpp \
     datafetcher.cpp \
     hashchecker.cpp \
     logview.cpp \
-    selfupdatedialog.cpp
+    selfupdatedialog.cpp \
+    storesettingsdialog.cpp \
+    storemanagedialog.cpp \
+    storeinstalldialog.cpp \
+    installinfo.cpp \
+    fileinstaller.cpp
 
 HEADERS += launcherwindow.h \
     skinuploaddialog.h \
@@ -52,7 +57,12 @@ HEADERS += launcherwindow.h \
     datafetcher.h \
     hashchecker.h \
     logview.h \
-    selfupdatedialog.h
+    selfupdatedialog.h \
+    storesettingsdialog.h \
+    storemanagedialog.h \
+    storeinstalldialog.h \
+    installinfo.h \
+    fileinstaller.h
 
 FORMS += launcherwindow.ui \
     skinuploaddialog.ui \
@@ -61,7 +71,10 @@ FORMS += launcherwindow.ui \
     feedbackdialog.ui \
     aboutdialog.ui \
     licensedialog.ui \
-    selfupdatedialog.ui
+    selfupdatedialog.ui \
+    storesettingsdialog.ui \
+    storemanagedialog.ui \
+    storeinstalldialog.ui
 
 RESOURCES += resources.qrc
 

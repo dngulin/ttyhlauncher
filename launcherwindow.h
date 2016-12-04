@@ -39,6 +39,10 @@ private slots:
     void showFeedBackDialog();
     void showAboutDialog();
 
+    void showStoreSettingsDialog();
+    void showStoreManageDialog();
+    void showStoreInstallDialog();
+
     void offlineModeChanged();
     void hideWindowModeChanged();
     void fetchNewsModeChanged();

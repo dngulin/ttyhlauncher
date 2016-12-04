@@ -10,7 +10,7 @@
 
 typedef QStandardPaths Path;
 
-const QString Settings::launcherVersion = "1.1.0";
+const QString Settings::launcherVersion = "1.2.0";
 
 const QString Settings::newsFeed = "https://ttyh.ru/misc.php?page=feed";
 
@@ -139,6 +139,12 @@ QString Settings::getVersionsUrl() const
 {
     QString client = getClientName( loadActiveClientID() );
     return updateServer + "/" + client + "/versions/versions.json";
+}
+
+QString Settings::getVanillaVersionsUrl() const
+{
+    return QString(
+        "http://s3.amazonaws.com/Minecraft.Download/versions/versions.json");
 }
 
 QString Settings::getVersionUrl(const QString &version)
@@ -455,6 +461,35 @@ void Settings::saveClientCheckAssetsState(bool state) const
     QString entry = "client-" + client + "/check_assets";
 
     settings->setValue(entry, state);
+}
+
+// Local store settings
+QString Settings::loadStoreExePath() const
+{
+    QString entry = "localstore/exe_path";
+    QString defaultPath = "ttyhstore";
+
+    return settings->value(entry, defaultPath).toString();
+}
+
+void Settings::saveStoreExePath(const QString &path) const
+{
+    QString entry = "localstore/exe_path";
+    settings->setValue(entry, path);
+}
+
+QString Settings::loadStoreDirPath() const
+{
+    QString entry = "localstore/dir_path";
+    QString defaultPath = QDir::homePath();
+
+    return settings->value(entry, defaultPath).toString();
+}
+
+void Settings::saveStoreDirPath(const QString &path) const
+{
+    QString entry = "localstore/dir_path";
+    settings->setValue(entry, path);
 }
 
 // News

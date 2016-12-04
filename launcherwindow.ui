@@ -208,9 +208,18 @@
     <property name="title">
      <string>&amp;Tools</string>
     </property>
+    <widget class="QMenu" name="menuLocalVersions">
+     <property name="title">
+      <string>&amp;Local versions</string>
+     </property>
+     <addaction name="runStoreSettings"/>
+     <addaction name="runStoreManage"/>
+     <addaction name="runStoreInstall"/>
+    </widget>
     <addaction name="runSettings"/>
     <addaction name="changeSkin"/>
     <addaction name="updateManager"/>
+    <addaction name="menuLocalVersions"/>
    </widget>
    <widget class="QMenu" name="helpMenu">
     <property name="title">
@@ -290,6 +299,21 @@
    </property>
    <property name="text">
     <string>&amp;Load news</string>
+   </property>
+  </action>
+  <action name="runStoreSettings">
+   <property name="text">
+    <string>&amp;Repository settings</string>
+   </property>
+  </action>
+  <action name="runStoreManage">
+   <property name="text">
+    <string>&amp;Manage repository</string>
+   </property>
+  </action>
+  <action name="runStoreInstall">
+   <property name="text">
+    <string>&amp;Install version</string>
    </property>
   </action>
  </widget>

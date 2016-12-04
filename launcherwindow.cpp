@@ -8,6 +8,10 @@
 #include "aboutdialog.h"
 #include "selfupdatedialog.h"
 
+#include "storesettingsdialog.h"
+#include "storemanagedialog.h"
+#include "storeinstalldialog.h"
+
 #include "settings.h"
 #include "util.h"
 #include "jsonparser.h"
@@ -60,6 +64,15 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
 
     connect(ui->aboutLauncher, &QAction::triggered, this,
             &LauncherWindow::showAboutDialog);
+
+    connect(ui->runStoreSettings, &QAction::triggered, this,
+            &LauncherWindow::showStoreSettingsDialog);
+
+    connect(ui->runStoreManage, &QAction::triggered, this,
+            &LauncherWindow::showStoreManageDialog);
+
+    connect(ui->runStoreInstall, &QAction::triggered, this,
+            &LauncherWindow::showStoreInstallDialog);
 
     bool isOffline = settings->loadOfflineModeState();
     ui->playOffline->setChecked(isOffline);
@@ -329,6 +342,27 @@ void LauncherWindow::showFeedBackDialog()
 void LauncherWindow::showAboutDialog()
 {
     AboutDialog *d = new AboutDialog(this);
+    d->exec();
+    delete d;
+}
+
+void LauncherWindow::showStoreSettingsDialog()
+{
+    StoreSettingsDialog *d = new StoreSettingsDialog(this);
+    d->exec();
+    delete d;
+}
+
+void LauncherWindow::showStoreManageDialog()
+{
+    StoreManageDialog *d = new StoreManageDialog(this);
+    d->exec();
+    delete d;
+}
+
+void LauncherWindow::showStoreInstallDialog()
+{
+    StoreInstallDialog *d = new StoreInstallDialog(this);
     d->exec();
     delete d;
 }

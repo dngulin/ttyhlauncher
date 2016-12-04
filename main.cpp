@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     QString who = QApplication::translate("main", "Launcher");
 
     if ( args.isSet(argUpdate) )
-    {   
+    {
         QString temp = a.applicationFilePath();
         QString orig = args.value(argUpdate);
 
@@ -145,7 +145,6 @@ int main(int argc, char *argv[])
     QPixmap logo(":/resources/logo.png");
     QSplashScreen *splash
         = new QSplashScreen(logo, Qt::FramelessWindowHint | Qt::SplashScreen);
-
     splash->setMask( logo.mask() );
     splash->show();
 
