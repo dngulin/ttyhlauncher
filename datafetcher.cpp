@@ -35,7 +35,12 @@ void DataFetcher::reset()
 
 void DataFetcher::handleReply()
 {
-    timer->singleShot(Settings::timeout, this, &DataFetcher::timeout);
+    timer->setSingleShot(true);
+
+    connect(timer, &QTimer::timeout,
+            this, &DataFetcher::timeout);
+
+    timer->start(Settings::timeout);
 
     connect(reply, &QNetworkReply::readyRead,
             this, &DataFetcher::stopTimer);
@@ -52,6 +57,9 @@ void DataFetcher::handleReply()
 void DataFetcher::unhandleReply()
 {
     stopTimer();
+
+    disconnect(timer, &QTimer::timeout,
+               this, &DataFetcher::timeout);
 
     disconnect(reply, &QNetworkReply::readyRead,
                this, &DataFetcher::stopTimer);
