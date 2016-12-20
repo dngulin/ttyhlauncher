@@ -8,6 +8,12 @@ DataFetcher::DataFetcher(QObject *parent) : QObject(parent)
 
     nam = Settings::instance()->getNetworkAccessManager();
     logger = Logger::logger();
+    timer = new QTimer(this);
+}
+
+DataFetcher::~DataFetcher()
+{
+    delete timer;
 }
 
 void DataFetcher::log(const QString &text)
@@ -29,6 +35,11 @@ void DataFetcher::reset()
 
 void DataFetcher::handleReply()
 {
+    timer->singleShot(Settings::timeout, this, &DataFetcher::timeout);
+
+    connect(reply, &QNetworkReply::readyRead,
+            this, &DataFetcher::stopTimer);
+
     connect(reply, &QNetworkReply::finished,
             this, &DataFetcher::requestFinished);
 
@@ -40,6 +51,11 @@ void DataFetcher::handleReply()
 
 void DataFetcher::unhandleReply()
 {
+    stopTimer();
+
+    disconnect(reply, &QNetworkReply::readyRead,
+               this, &DataFetcher::stopTimer);
+
     disconnect(reply, &QNetworkReply::finished,
                this, &DataFetcher::requestFinished);
 
@@ -134,10 +150,28 @@ void DataFetcher::requestFinished()
 
 void DataFetcher::fetchProgress(qint64 bytesReceived, qint64 bytesTotal)
 {
+    stopTimer();
     emit progress(bytesReceived, bytesTotal);
 }
 
 void DataFetcher::cancel()
 {
     reset();
+}
+
+void DataFetcher::timeout()
+{
+    if (waiting)
+    {
+        log( tr("Error! Connection timed out!") );
+        reply->abort();
+    }
+}
+
+void DataFetcher::stopTimer()
+{
+    if ( timer->isActive() )
+    {
+        timer->stop();
+    }
 }

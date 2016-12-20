@@ -27,34 +27,39 @@
 <context>
     <name>DataFetcher</name>
     <message>
-        <location filename="../datafetcher.cpp" line="15"/>
+        <location filename="../datafetcher.cpp" line="21"/>
         <source>DataFetcher</source>
         <translation>Загрузчик данных</translation>
     </message>
     <message>
-        <location filename="../datafetcher.cpp" line="70"/>
+        <location filename="../datafetcher.cpp" line="86"/>
         <source>Make HEAD request: %1</source>
         <translation>HEAD запрос: %1</translation>
     </message>
     <message>
-        <location filename="../datafetcher.cpp" line="79"/>
+        <location filename="../datafetcher.cpp" line="95"/>
         <source>Make GET request: %1</source>
         <translation>GET запрос: %1</translation>
     </message>
     <message>
-        <location filename="../datafetcher.cpp" line="88"/>
+        <location filename="../datafetcher.cpp" line="104"/>
         <source>Make POST request: %1</source>
         <translation>POST запрос: %1</translation>
     </message>
     <message>
-        <location filename="../datafetcher.cpp" line="119"/>
+        <location filename="../datafetcher.cpp" line="135"/>
         <source>Bad login.</source>
         <translation>Неправильный логин или пароль.</translation>
     </message>
     <message>
-        <location filename="../datafetcher.cpp" line="127"/>
+        <location filename="../datafetcher.cpp" line="143"/>
         <source>Error! %1</source>
         <translation>Ошибка! %1</translation>
+    </message>
+    <message>
+        <location filename="../datafetcher.cpp" line="166"/>
+        <source>Error! Connection timed out!</source>
+        <translation>Ошибка! Превышено ожидание ответа от сервера!</translation>
     </message>
 </context>
 <context>
@@ -741,37 +746,37 @@
 <context>
     <name>Settings</name>
     <message>
-        <location filename="../settings.cpp" line="58"/>
+        <location filename="../settings.cpp" line="60"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="69"/>
+        <location filename="../settings.cpp" line="71"/>
         <source>Updating local data...</source>
         <translation>Обновление локальных данных...</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="92"/>
+        <location filename="../settings.cpp" line="94"/>
         <source>Error: no prefixes in prefixes.json</source>
         <translation>Ошибка: пустой список префиксов</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="97"/>
+        <location filename="../settings.cpp" line="99"/>
         <source>Error! %1</source>
         <translation>Ошибка! %1</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="118"/>
+        <location filename="../settings.cpp" line="120"/>
         <source>Requesting latest launcher version...</source>
         <translation>Запрос последней версии лаунчера...</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="125"/>
+        <location filename="../settings.cpp" line="127"/>
         <source>Latest launcher version: %1.</source>
         <translation>Последняя версия лаунчера: %1.</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="129"/>
+        <location filename="../settings.cpp" line="131"/>
         <source>Error! Latest launcher version not received!</source>
         <translation>Ошибка! Не удалось загрузить последнюю версию лаунчера!</translation>
     </message>
