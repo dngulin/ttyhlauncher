@@ -38,7 +38,7 @@ void DataFetcher::handleReply()
     timer->setSingleShot(true);
 
     connect(timer, &QTimer::timeout,
-            this, &DataFetcher::timeout);
+            this, &DataFetcher::onTimeout);
 
     timer->start(Settings::timeout);
 
@@ -46,10 +46,10 @@ void DataFetcher::handleReply()
             this, &DataFetcher::stopTimer);
 
     connect(reply, &QNetworkReply::finished,
-            this, &DataFetcher::requestFinished);
+            this, &DataFetcher::onRequestFinished);
 
     connect(reply, &QNetworkReply::downloadProgress,
-            this, &DataFetcher::fetchProgress);
+            this, &DataFetcher::onDownloadProgress);
 
     waiting = true;
 }
@@ -59,16 +59,16 @@ void DataFetcher::unhandleReply()
     stopTimer();
 
     disconnect(timer, &QTimer::timeout,
-               this, &DataFetcher::timeout);
+               this, &DataFetcher::onTimeout);
 
     disconnect(reply, &QNetworkReply::readyRead,
                this, &DataFetcher::stopTimer);
 
     disconnect(reply, &QNetworkReply::finished,
-               this, &DataFetcher::requestFinished);
+               this, &DataFetcher::onRequestFinished);
 
     disconnect(reply, &QNetworkReply::downloadProgress,
-               this, &DataFetcher::fetchProgress);
+               this, &DataFetcher::onDownloadProgress);
 
     waiting = false;
     reply->deleteLater();
@@ -125,7 +125,7 @@ bool DataFetcher::isWaiting() const
     return waiting;
 }
 
-void DataFetcher::requestFinished()
+void DataFetcher::onRequestFinished()
 {
     bool result = true;
 
@@ -156,7 +156,7 @@ void DataFetcher::requestFinished()
     emit finished(result);
 }
 
-void DataFetcher::fetchProgress(qint64 bytesReceived, qint64 bytesTotal)
+void DataFetcher::onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)
 {
     stopTimer();
     emit progress(bytesReceived, bytesTotal);
@@ -167,7 +167,7 @@ void DataFetcher::cancel()
     reset();
 }
 
-void DataFetcher::timeout()
+void DataFetcher::onTimeout()
 {
     if (waiting)
     {

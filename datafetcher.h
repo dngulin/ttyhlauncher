@@ -49,11 +49,11 @@ public slots:
     void cancel();
 
 private slots:
-    void timeout();
+    void onTimeout();
     void stopTimer();
 
-    void requestFinished();
-    void fetchProgress(qint64 bytesReceived, qint64 bytesTotal);
+    void onRequestFinished();
+    void onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
 };
 
 #endif // DATAFETCHER_H

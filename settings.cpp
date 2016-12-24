@@ -24,7 +24,7 @@ const QString Settings::changePasswrdUrl = master + "?act=chpass";
 const QString Settings::skinUploadUrl = master + "?act=setskin";
 const QString Settings::feedbackUrl = master + "?act=feedback";
 
-const int Settings::timeout = 5000;
+const int Settings::timeout = 3000;
 
 Settings *Settings::myInstance = NULL;
 Settings *Settings::instance()
