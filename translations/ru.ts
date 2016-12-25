@@ -32,32 +32,32 @@
         <translation>Загрузчик данных</translation>
     </message>
     <message>
-        <location filename="../datafetcher.cpp" line="86"/>
+        <location filename="../datafetcher.cpp" line="94"/>
         <source>Make HEAD request: %1</source>
         <translation>HEAD запрос: %1</translation>
     </message>
     <message>
-        <location filename="../datafetcher.cpp" line="95"/>
+        <location filename="../datafetcher.cpp" line="103"/>
         <source>Make GET request: %1</source>
         <translation>GET запрос: %1</translation>
     </message>
     <message>
-        <location filename="../datafetcher.cpp" line="104"/>
+        <location filename="../datafetcher.cpp" line="112"/>
         <source>Make POST request: %1</source>
         <translation>POST запрос: %1</translation>
     </message>
     <message>
-        <location filename="../datafetcher.cpp" line="135"/>
+        <location filename="../datafetcher.cpp" line="143"/>
         <source>Bad login.</source>
         <translation>Неправильный логин или пароль.</translation>
     </message>
     <message>
-        <location filename="../datafetcher.cpp" line="143"/>
+        <location filename="../datafetcher.cpp" line="151"/>
         <source>Error! %1</source>
         <translation>Ошибка! %1</translation>
     </message>
     <message>
-        <location filename="../datafetcher.cpp" line="166"/>
+        <location filename="../datafetcher.cpp" line="174"/>
         <source>Error! Connection timed out!</source>
         <translation>Ошибка! Превышено ожидание ответа от сервера!</translation>
     </message>
@@ -336,97 +336,102 @@
         <translation>Проверка файлов...</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="467"/>
+        <location filename="../gamerunner.cpp" line="463"/>
+        <source>Bad checksumm for %1</source>
+        <translation>Не удалось проверить контрольную сумму для %1</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="466"/>
         <source>Client files are obsolete.</source>
         <translation>Файлы клиента устарели.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="472"/>
+        <location filename="../gamerunner.cpp" line="471"/>
         <source>Prepare run data...</source>
         <translation>Подготовка данных для запуска...</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="492"/>
+        <location filename="../gamerunner.cpp" line="491"/>
         <source>Can&apos;t create natives directory!</source>
         <translation>Не удалось создать директорию для библиотек!</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="516"/>
+        <location filename="../gamerunner.cpp" line="515"/>
         <source>No main class in %1.json!</source>
         <translation>В %1.json не указан главный класс!</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="524"/>
+        <location filename="../gamerunner.cpp" line="523"/>
         <source>No assets in %1.json!</source>
         <translation>В %1.json не указаны ресурсы!</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="532"/>
+        <location filename="../gamerunner.cpp" line="531"/>
         <source>No minecraft args in %1.json!</source>
         <translation>В %1.json не указаны аргументы запуска!</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="654"/>
+        <location filename="../gamerunner.cpp" line="653"/>
         <source>Failed to start! Java not found!</source>
         <translation>Не удалось запустить игру! Java не найдена!</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="658"/>
+        <location filename="../gamerunner.cpp" line="657"/>
         <source>Game crashed! %1</source>
         <translation>Игра упала! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="662"/>
+        <location filename="../gamerunner.cpp" line="661"/>
         <source>Game start timeout! %1</source>
         <translation>Игра не запустилась! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="666"/>
+        <location filename="../gamerunner.cpp" line="665"/>
         <source>Game can&apos;t write! %1</source>
         <translation>Игра не может писать! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="670"/>
+        <location filename="../gamerunner.cpp" line="669"/>
         <source>Game can&apos;t read! %1</source>
         <translation>Игра не может читать! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="675"/>
+        <location filename="../gamerunner.cpp" line="674"/>
         <source>Mysterious error! %1</source>
         <translation>Загадочная ошибка! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="682"/>
+        <location filename="../gamerunner.cpp" line="681"/>
         <source>Game started.</source>
         <translation>Игра запущена.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="688"/>
+        <location filename="../gamerunner.cpp" line="687"/>
         <source>Game finished with code %1.</source>
         <translation>Игра завершилась с кодом %1.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="694"/>
+        <location filename="../gamerunner.cpp" line="693"/>
         <source>Error! %1</source>
         <translation>Ошибка! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="700"/>
+        <location filename="../gamerunner.cpp" line="699"/>
         <source>Need update! %1</source>
         <translation>Требуется обновление! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="633"/>
+        <location filename="../gamerunner.cpp" line="632"/>
         <source>Run string: </source>
         <translation>Строка запуска: </translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="639"/>
+        <location filename="../gamerunner.cpp" line="638"/>
         <source>GameRunner</source>
         <translation>Пусковая установка</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="644"/>
+        <location filename="../gamerunner.cpp" line="643"/>
         <source>Game</source>
         <translation>Игра</translation>
     </message>

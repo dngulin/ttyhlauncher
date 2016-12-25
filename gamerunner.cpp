@@ -460,8 +460,7 @@ void GameRunner::checkFiles()
 
 void GameRunner::onBadChecksumm(const FileInfo fileInfo)
 {
-    Q_UNUSED(fileInfo);
-
+    log( tr("Bad checksumm for %1.").arg(fileInfo.name) );
     checker->cancel();
 
     emitNeedUpdate( tr("Client files are obsolete.") );
@@ -624,11 +623,11 @@ void GameRunner::runGame()
     connect(&minecraft, &QProcess::readyReadStandardError,
             this, &GameRunner::gameLog);
 
-    connect( &minecraft, SIGNAL( error(QProcess::ProcessError) ),
-             this, SLOT( onGameError(QProcess::ProcessError) ) );
+    connect( &minecraft, SIGNAL(error(QProcess::ProcessError)),
+             this, SLOT(onGameError(QProcess::ProcessError)));
 
-    connect( &minecraft, SIGNAL( finished(int) ), this,
-             SLOT( onGameFinished(int) ) );
+    connect( &minecraft, SIGNAL(finished(int)), this,
+             SLOT(onGameFinished(int)));
 
     log( tr("Run string: ") + java + " " + argList.join(' ') );
     minecraft.start(java, argList);

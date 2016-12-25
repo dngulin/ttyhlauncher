@@ -32,32 +32,32 @@
         <translation>ДАТАФЕТЦХЕР</translation>
     </message>
     <message>
-        <location filename="../datafetcher.cpp" line="86"/>
+        <location filename="../datafetcher.cpp" line="94"/>
         <source>Make HEAD request: %1</source>
         <translation>МАКЕ ХЕАД РЕЯУЕСТ: %1</translation>
     </message>
     <message>
-        <location filename="../datafetcher.cpp" line="95"/>
+        <location filename="../datafetcher.cpp" line="103"/>
         <source>Make GET request: %1</source>
         <translation>МАКЕ ГЕТ РЕЯУЕСТ: %1</translation>
     </message>
     <message>
-        <location filename="../datafetcher.cpp" line="104"/>
+        <location filename="../datafetcher.cpp" line="112"/>
         <source>Make POST request: %1</source>
         <translation>МАКЕ ПОСТ РЕЯУЕСТ: %1</translation>
     </message>
     <message>
-        <location filename="../datafetcher.cpp" line="135"/>
+        <location filename="../datafetcher.cpp" line="143"/>
         <source>Bad login.</source>
         <translation>БАД ЛОГИН.</translation>
     </message>
     <message>
-        <location filename="../datafetcher.cpp" line="143"/>
+        <location filename="../datafetcher.cpp" line="151"/>
         <source>Error! %1</source>
         <translation>ЕРРОР! %1</translation>
     </message>
     <message>
-        <location filename="../datafetcher.cpp" line="166"/>
+        <location filename="../datafetcher.cpp" line="174"/>
         <source>Error! Connection timed out!</source>
         <translation>ЕРРОР! ЦОННЕЦТИОН ТИМЕД ОУТ!</translation>
     </message>
@@ -335,97 +335,102 @@
         <translation>БЕГИН ФИЛЕС ЦХЕЦК...</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="467"/>
+        <location filename="../gamerunner.cpp" line="463"/>
+        <source>Bad checksumm for %1</source>
+        <translation>БАД ЦХЕЦКСУММ ФОР %1</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="466"/>
         <source>Client files are obsolete.</source>
         <translation>ЦЛИЕНТ ФИЛЕС АРЕ ОБСОЛЕТЕ.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="472"/>
+        <location filename="../gamerunner.cpp" line="471"/>
         <source>Prepare run data...</source>
         <translation>ПРЕПАРЕ РУН ДАТА...</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="492"/>
+        <location filename="../gamerunner.cpp" line="491"/>
         <source>Can&apos;t create natives directory!</source>
         <translation>ЦАН&apos;Т ЦРЕАТЕ НАТИЖЕС ДИРЕЦТОРЫ!</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="516"/>
+        <location filename="../gamerunner.cpp" line="515"/>
         <source>No main class in %1.json!</source>
         <translation>НО МАИН ЦЛАСС ИН %1.ЙСОН!</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="524"/>
+        <location filename="../gamerunner.cpp" line="523"/>
         <source>No assets in %1.json!</source>
         <translation>НО АССЕТС ИН %1.ЙСОН!</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="532"/>
+        <location filename="../gamerunner.cpp" line="531"/>
         <source>No minecraft args in %1.json!</source>
         <translation>НО МИНЕЦРАФТ АРГС ИН %1.ЙСОН!</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="633"/>
+        <location filename="../gamerunner.cpp" line="632"/>
         <source>Run string: </source>
         <translation>РУН СТРИНГ:</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="639"/>
+        <location filename="../gamerunner.cpp" line="638"/>
         <source>GameRunner</source>
         <translation>ГАМЕРУННЕР</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="644"/>
+        <location filename="../gamerunner.cpp" line="643"/>
         <source>Game</source>
         <translation>ГАМЕ</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="654"/>
+        <location filename="../gamerunner.cpp" line="653"/>
         <source>Failed to start! Java not found!</source>
         <translation>ФАИЛЕД ТО СТАРТ! ЙАЖА НОТ ФОУНД!</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="658"/>
+        <location filename="../gamerunner.cpp" line="657"/>
         <source>Game crashed! %1</source>
         <translation>ГАМЕ ЦРАСХЕД! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="662"/>
+        <location filename="../gamerunner.cpp" line="661"/>
         <source>Game start timeout! %1</source>
         <translation>ГАМЕ СТАРТ ТИМЕОУТ! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="666"/>
+        <location filename="../gamerunner.cpp" line="665"/>
         <source>Game can&apos;t write! %1</source>
         <translation>ГАМЕ ЦАН&apos;Т ВРИТЕ! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="670"/>
+        <location filename="../gamerunner.cpp" line="669"/>
         <source>Game can&apos;t read! %1</source>
         <translation>ГАМЕ ЦАН&apos;Т РЕАД! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="675"/>
+        <location filename="../gamerunner.cpp" line="674"/>
         <source>Mysterious error! %1</source>
         <translation>МЫСТЕРИОУС ЕРРОР! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="682"/>
+        <location filename="../gamerunner.cpp" line="681"/>
         <source>Game started.</source>
         <translation>ГАМЕ СТАРТЕД.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="688"/>
+        <location filename="../gamerunner.cpp" line="687"/>
         <source>Game finished with code %1.</source>
         <translation>ГАМЕ ФИНИСХЕД ВИТХ ЦОДЕ %1.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="694"/>
+        <location filename="../gamerunner.cpp" line="693"/>
         <source>Error! %1</source>
         <translation>ЕРРОР! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="700"/>
+        <location filename="../gamerunner.cpp" line="699"/>
         <source>Need update! %1</source>
         <translation>НЕЕД УПДАТЕ! %1</translation>
     </message>
