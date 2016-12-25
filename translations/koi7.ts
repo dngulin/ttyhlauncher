@@ -336,8 +336,12 @@
     </message>
     <message>
         <location filename="../gamerunner.cpp" line="463"/>
+        <source>Bad checksumm for %1.</source>
+        <translation>БАД ЦХЕЦКСУММ ФОР %1.</translation>
+    </message>
+    <message>
         <source>Bad checksumm for %1</source>
-        <translation>БАД ЦХЕЦКСУММ ФОР %1</translation>
+        <translation type="vanished">БАД ЦХЕЦКСУММ ФОР %1</translation>
     </message>
     <message>
         <location filename="../gamerunner.cpp" line="466"/>

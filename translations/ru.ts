@@ -336,9 +336,8 @@
         <translation>Проверка файлов...</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="463"/>
         <source>Bad checksumm for %1</source>
-        <translation>Не удалось проверить контрольную сумму для %1</translation>
+        <translation type="vanished">Не удалось проверить контрольную сумму для %1</translation>
     </message>
     <message>
         <location filename="../gamerunner.cpp" line="466"/>
@@ -424,6 +423,11 @@
         <location filename="../gamerunner.cpp" line="632"/>
         <source>Run string: </source>
         <translation>Строка запуска: </translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="463"/>
+        <source>Bad checksumm for %1.</source>
+        <translation>Не удалось проверить контрольную сумму для %1.</translation>
     </message>
     <message>
         <location filename="../gamerunner.cpp" line="638"/>
