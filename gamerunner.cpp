@@ -59,7 +59,7 @@ void GameRunner::requestAcessToken()
 {
     if (isOnline)
     {
-        log("Requesting acess token...");
+        log( tr("Requesting access token...") );
 
         // Make JSON login request, see: http://wiki.vg/Authentication
         QJsonObject payload, agent, platform;

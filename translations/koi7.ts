@@ -264,18 +264,6 @@
         <translation>ЛАТЕСТ ЖЕРСИОН: %1</translation>
     </message>
     <message>
-        <source>Updating version indexes...</source>
-        <translation type="vanished">УПДАТИНГ ЖЕРСИОН ИНДЕЬЕС...</translation>
-    </message>
-    <message>
-        <source>Updating assets index...</source>
-        <translation type="vanished">УПДАТИНГ АССЕТС ИНДЕЬ...</translation>
-    </message>
-    <message>
-        <source>Version index not conatins assets version.</source>
-        <translation type="vanished">ЖЕРСИОН ИНДЕЬ НОТ ЦОНАТИНС АССЕТС ЖЕРСИОН.</translation>
-    </message>
-    <message>
         <location filename="../gamerunner.cpp" line="413"/>
         <source>Can&apos;t parse version index! %1</source>
         <translation>ЦАН&apos;Т ПАРСЕ ЖЕРСИОН ИНДЕЬ! %1</translation>
@@ -284,6 +272,11 @@
         <location filename="../gamerunner.cpp" line="403"/>
         <source>Prepare file list for checking...</source>
         <translation>ПРЕПАРЕ ФИЛЕ ЛИСТ ФОР ЦХЕЦКИНГ...</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="62"/>
+        <source>Requesting access token...</source>
+        <translation>РЕЯУЕСТИНГ АЦЦЕСС ТОКЕН...</translation>
     </message>
     <message>
         <location filename="../gamerunner.cpp" line="244"/>
@@ -364,14 +357,6 @@
         <location filename="../gamerunner.cpp" line="529"/>
         <source>Begin files check...</source>
         <translation>БЕГИН ФИЛЕС ЦХЕЦК...</translation>
-    </message>
-    <message>
-        <source>Bad checksumm for %1.</source>
-        <translation type="vanished">БАД ЦХЕЦКСУММ ФОР %1.</translation>
-    </message>
-    <message>
-        <source>Bad checksumm for %1</source>
-        <translation type="vanished">БАД ЦХЕЦКСУММ ФОР %1</translation>
     </message>
     <message>
         <location filename="../gamerunner.cpp" line="535"/>

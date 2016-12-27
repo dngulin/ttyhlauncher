@@ -220,18 +220,6 @@
         <translation>Запрос списка версий...</translation>
     </message>
     <message>
-        <source>Updating version indexes...</source>
-        <translation type="vanished">Обновлении индексов версии...</translation>
-    </message>
-    <message>
-        <source>Updating assets index...</source>
-        <translation type="vanished">Обновление индекса ресурсов...</translation>
-    </message>
-    <message>
-        <source>Version index not conatins assets version.</source>
-        <translation type="vanished">Индекс версии не содержит версию ресурсов.</translation>
-    </message>
-    <message>
         <location filename="../gamerunner.cpp" line="403"/>
         <source>Prepare file list for checking...</source>
         <translation>Подготовка списка файлов для проверки...</translation>
@@ -250,6 +238,11 @@
         <location filename="../gamerunner.cpp" line="111"/>
         <source>Can&apos;t make login! %1</source>
         <translation>Не удалось выполнить логин! %1</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="62"/>
+        <source>Requesting access token...</source>
+        <translation>Запрос ключа доступа...</translation>
     </message>
     <message>
         <location filename="../gamerunner.cpp" line="121"/>
@@ -372,10 +365,6 @@
         <translation>Не удалось проверить контрольную сумму для %1.</translation>
     </message>
     <message>
-        <source>Bad checksumm for %1</source>
-        <translation type="vanished">Не удалось проверить контрольную сумму для %1</translation>
-    </message>
-    <message>
         <location filename="../gamerunner.cpp" line="538"/>
         <source>Client files are obsolete.</source>
         <translation>Файлы клиента устарели.</translation>
@@ -459,10 +448,6 @@
         <location filename="../gamerunner.cpp" line="704"/>
         <source>Run string: </source>
         <translation>Строка запуска: </translation>
-    </message>
-    <message>
-        <source>Bad checksumm for %1.</source>
-        <translation type="vanished">Не удалось проверить контрольную сумму для %1.</translation>
     </message>
     <message>
         <location filename="../gamerunner.cpp" line="710"/>
