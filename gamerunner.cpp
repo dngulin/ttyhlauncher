@@ -30,7 +30,7 @@ GameRunner::GameRunner(const QString &login, const QString &pass,
     connect(this, &GameRunner::beginCheck, checker, &HashChecker::checkFiles);
 
     connect(checker, &HashChecker::verificationFailed,
-            this, &GameRunner::onBadChecksumm);
+            this, &GameRunner::onBadChecksum);
 
     connect(checker, &HashChecker::finished,
             this, &GameRunner::runGame);
@@ -194,13 +194,13 @@ void GameRunner::determinateVersion()
             else
             {
                 log( tr("Latest local version: %1").arg(version) );
-                updateVersionIndex();
+                checkIndexes();
             }
         }
     }
     else
     {
-        updateVersionIndex();
+        checkIndexes();
     }
 }
 
@@ -234,32 +234,25 @@ void GameRunner::versionsListReceived(bool result)
     version = parser.getLatestReleaseVersion();
     log( tr("Latest version: %1").arg(version) );
 
-    updateVersionIndex();
+    checkIndexes();
 }
 
-void GameRunner::updateVersionIndex()
+void GameRunner::checkIndexes()
 {
     if (isOnline)
     {
-        log( tr("Updating version indexes...") );
+        log( tr("Checking indexes...") );
 
-        QString url = settings->getVersionUrl(version);
-        QString dir = settings->getVersionsDir() + "/" + version + "/";
+        QString verDir = settings->getVersionsDir() + "/" + version + "/";
+        versionIndexPath = verDir + version + ".json";
+        dataIndexPath = verDir + "data.json";
 
-        QString versionIndexUrl = url + version + ".json";
-        QString versionIndexPath = dir + version + ".json";
+        QString verUrl = settings->getVersionUrl(version);
+        versionIndexUrl = verUrl + version + ".json";
+        dataIndexUrl = verUrl + "data.json";
 
-        QString dataIndexUrl = url + "data.json";
-        QString dataIndexPath = dir + "data.json";
-
-        downloader.reset();
-        downloader.add(versionIndexUrl, versionIndexPath);
-        downloader.add(dataIndexUrl, dataIndexPath);
-
-        connect(&downloader, &FileFetcher::filesFetchFinished,
-                this, &GameRunner::versionIndexesUpdated);
-
-        downloader.fetchFiles();
+        // First request in chain: versionIndex, dataIndex, assetsIndex
+        requestVersionIndex();
     }
     else
     {
@@ -267,63 +260,142 @@ void GameRunner::updateVersionIndex()
     }
 }
 
-void GameRunner::versionIndexesUpdated()
+void GameRunner::requestVersionIndex()
 {
-    disconnect(&downloader, &FileFetcher::filesFetchFinished,
-               this, &GameRunner::versionIndexesUpdated);
-
-    updateAssetsIndex();
+    if ( QFile::exists(versionIndexPath) )
+    {
+        log( tr("Requesting version index...") );
+        connect(&fetcher, &DataFetcher::finished,
+                this, &GameRunner::versionIndexReceived);
+        fetcher.makeGet(versionIndexUrl);
+    }
+    else
+    {
+        checkFiles();
+    }
 }
 
-void GameRunner::updateAssetsIndex()
+void GameRunner::versionIndexReceived(bool result)
 {
-    log( tr("Updating assets index...") );
+    disconnect(&fetcher, &DataFetcher::finished,
+               this, &GameRunner::versionIndexReceived);
 
-    QString versionDir = settings->getVersionsDir() + "/" + version + "/";
-    QString versionIndexPath = versionDir + version + ".json";
-
-    JsonParser parser;
-
-    if ( parser.setJsonFromFile(versionIndexPath) )
+    if (result)
     {
-        if ( parser.hasAssetsVersion() )
+        QString locHash = getFileHash(versionIndexPath);
+        QString srvHash = getDataHash( fetcher.getData() );
+
+        if (locHash == srvHash)
         {
-            QString assets = parser.getAssetsVesrsion();
-
-            QString url = settings->getAssetsUrl();
-            QString dir = settings->getAssetsDir();
-
-            QString assetsUrl = url + "indexes/" + assets + ".json";
-            QString assetsPath = dir + "/indexes/" + assets + ".json";
-
-            downloader.reset();
-            downloader.add(assetsUrl, assetsPath);
-
-            connect(&downloader, &FileFetcher::filesFetchFinished,
-                    this, &GameRunner::assetsIndexUpdated);
-
-            downloader.fetchFiles();
+            requestDataIndex();
         }
         else
         {
-            emitError( tr("Version index not conatins assets version.") );
+            emitNeedUpdate( tr("Version index is obsolete!") );
             return;
         }
     }
     else
     {
-        QString message = tr("Can't parse version index! %1");
-        emitError( message.arg( parser.getParserError() ) );
-        return;
+        requestDataIndex();
     }
 }
 
-void GameRunner::assetsIndexUpdated()
+void GameRunner::requestDataIndex()
 {
-    disconnect(&downloader, &FileFetcher::filesFetchFinished,
-               this, &GameRunner::assetsIndexUpdated);
+    if ( QFile::exists(dataIndexPath) )
+    {
+        log( tr("Requesting data index...") );
+        connect(&fetcher, &DataFetcher::finished,
+                this, &GameRunner::dataIndexReceived);
+        fetcher.makeGet(dataIndexUrl);
+    }
+    else
+    {
+        checkFiles();
+    }
+}
 
-    checkFiles();
+void GameRunner::dataIndexReceived(bool result)
+{
+    disconnect(&fetcher, &DataFetcher::finished,
+               this, &GameRunner::dataIndexReceived);
+
+    if (result)
+    {
+        QString locHash = getFileHash(dataIndexPath);
+        QString srvHash = getDataHash( fetcher.getData() );
+
+        if (locHash == srvHash)
+        {
+            requestAssetsIndex();
+        }
+        else
+        {
+            emitNeedUpdate( tr("Data index is obsolete!") );
+        }
+    }
+    else
+    {
+        requestAssetsIndex();
+    }
+}
+
+void GameRunner::requestAssetsIndex()
+{
+    JsonParser parser;
+    if ( parser.setJsonFromFile(versionIndexPath) && parser.hasAssetsVersion() )
+    {
+        QString assets = parser.getAssetsVesrsion();
+
+        QString dir = settings->getAssetsDir();
+        QString url = settings->getAssetsUrl();
+
+        assetsIndexPath = dir + "/indexes/" + assets + ".json";
+        assetsIndexUrl = url + "indexes/" + assets + ".json";
+
+        if ( QFile::exists(assetsIndexPath) )
+        {
+            log( tr("Requesting assets index...") );
+            connect(&fetcher, &DataFetcher::finished,
+                    this, &GameRunner::assetsIndexReceived);
+            fetcher.makeGet(assetsIndexUrl);
+        }
+        else
+        {
+            checkFiles();
+        }
+    }
+    else
+    {
+        checkFiles();
+    }
+}
+
+void GameRunner::assetsIndexReceived(bool result)
+{
+    disconnect(&fetcher, &DataFetcher::finished,
+               this, &GameRunner::assetsIndexReceived);
+
+    if (result)
+    {
+        QString locHash = getFileHash(assetsIndexPath);
+        QString srvHash = getDataHash( fetcher.getData() );
+
+        if (locHash == srvHash)
+        {
+            checkFiles();
+        }
+        else
+        {
+            emitNeedUpdate( tr("Assets index is obsolete!") );
+            return;
+        }
+    }
+    else
+    {
+        checkFiles();
+    }
 }
 
 void GameRunner::checkFiles()
@@ -458,9 +530,9 @@ void GameRunner::checkFiles()
     emit beginCheck(checkList, true);
 }
 
-void GameRunner::onBadChecksumm(const FileInfo fileInfo)
+void GameRunner::onBadChecksum(const FileInfo fileInfo)
 {
-    log( tr("Bad checksumm for %1.").arg(fileInfo.name) );
+    log( tr("Bad checksum for %1.").arg(fileInfo.name) );
     checker->cancel();
 
     emitNeedUpdate( tr("Client files are obsolete.") );
@@ -698,4 +770,28 @@ void GameRunner::emitNeedUpdate(const QString &message)
 {
     log( tr("Need update! %1").arg(message) );
     emit needUpdate(message);
+}
+
+QString GameRunner::getFileHash(const QString &path)
+{
+    QString result = "0";
+    QCryptographicHash hash(QCryptographicHash::Sha1);
+    QFile file(path);
+    if ( file.open(QIODevice::ReadOnly) )
+    {
+        if ( hash.addData(&file) )
+        {
+            result = QString( hash.result().toHex() );
+        }
+        file.close();
+    }
+
+    return result;
+}
+
+QString GameRunner::getDataHash(const QByteArray &data)
+{
+    QCryptographicHash hash(QCryptographicHash::Sha1);
+    hash.addData(data);
+    return QString( hash.result().toHex() );
 }
