@@ -264,177 +264,212 @@
         <translation>ЛАТЕСТ ЖЕРСИОН: %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="244"/>
         <source>Updating version indexes...</source>
-        <translation>УПДАТИНГ ЖЕРСИОН ИНДЕЬЕС...</translation>
+        <translation type="vanished">УПДАТИНГ ЖЕРСИОН ИНДЕЬЕС...</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="280"/>
         <source>Updating assets index...</source>
-        <translation>УПДАТИНГ АССЕТС ИНДЕЬ...</translation>
+        <translation type="vanished">УПДАТИНГ АССЕТС ИНДЕЬ...</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="309"/>
         <source>Version index not conatins assets version.</source>
-        <translation>ЖЕРСИОН ИНДЕЬ НОТ ЦОНАТИНС АССЕТС ЖЕРСИОН.</translation>
+        <translation type="vanished">ЖЕРСИОН ИНДЕЬ НОТ ЦОНАТИНС АССЕТС ЖЕРСИОН.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="315"/>
-        <location filename="../gamerunner.cpp" line="341"/>
+        <location filename="../gamerunner.cpp" line="413"/>
         <source>Can&apos;t parse version index! %1</source>
         <translation>ЦАН&apos;Т ПАРСЕ ЖЕРСИОН ИНДЕЬ! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="331"/>
+        <location filename="../gamerunner.cpp" line="403"/>
         <source>Prepare file list for checking...</source>
         <translation>ПРЕПАРЕ ФИЛЕ ЛИСТ ФОР ЦХЕЦКИНГ...</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="348"/>
+        <location filename="../gamerunner.cpp" line="244"/>
+        <source>Checking indexes...</source>
+        <translation>ЦХЕЦКИНГ ИНДЕЬЕС...</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="267"/>
+        <source>Requesting version index...</source>
+        <translation>РЕЯУЕСТИНГ ЖЕРСИОН ИНДЕЬ...</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="294"/>
+        <source>Version index is obsolete!</source>
+        <translation>ЖЕРСИОН ИНДЕЬ ИС ОБСОЛЕТЕ!</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="308"/>
+        <source>Requesting data index...</source>
+        <translation>РЕЯУЕСТИНГ ДАТА ИНДЕЬ...</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="335"/>
+        <source>Data index is obsolete!</source>
+        <translation>ДАТА ИНДЕЬ ИС ОБСОЛЕТЕ!</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="359"/>
+        <source>Requesting assets index...</source>
+        <translation>РЕЯУЕСТИНГ АССЕТС ИНДЕЬ...</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="391"/>
+        <source>Assets index is obsolete!</source>
+        <translation>АССЕТС ИНДЕЬ ИС ОБСОЛЕТЕ!</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="420"/>
         <source>Can&apos;t parse data index! %1</source>
         <translation>ЦАН&apos;Т ПАРСЕ ДАТА ИНДЕЬ! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="356"/>
+        <location filename="../gamerunner.cpp" line="428"/>
         <source>Main JAR does not described in data index.</source>
         <translation>МАИН ЙАР ДОЕС НОТ ДЕСЦРИБЕД ИН ДАТА ИНДЕЬ.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="372"/>
+        <location filename="../gamerunner.cpp" line="444"/>
         <source>Libraries are not described in data index.</source>
         <translation>ЛИБРАРИЕС АРЕ НОТ ДЕСЦРИБЕД ИН ДАТА ИНДЕЬ.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="386"/>
+        <location filename="../gamerunner.cpp" line="458"/>
         <source>Data index not contains library: %1</source>
         <translation>ДАТА ИНДЕЬ НОТ ЦОНТАИНС ЛИБРАРЫ: %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="401"/>
+        <location filename="../gamerunner.cpp" line="473"/>
         <source>Addons are not described in data index.</source>
         <translation>АДДОНС АРЕ НОТ ДЕСЦРИБЕД ИН ДАТА ИНДЕЬ.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="423"/>
+        <location filename="../gamerunner.cpp" line="495"/>
         <source>Assets are not described in version index.</source>
         <translation>АССЕТС АРЕ НОТ ДЕСЦРИБЕД ИН ЖЕРСИОН ИНДЕЬ.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="432"/>
+        <location filename="../gamerunner.cpp" line="504"/>
         <source>Can&apos;t parse assets index: </source>
         <translation>ЦАН&apos;Т ПАРСЕ АССЕТС ИНДЕЬ:</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="439"/>
+        <location filename="../gamerunner.cpp" line="511"/>
         <source>Assets list are not described in index.</source>
         <translation>АССЕТС ЛИСТ АРЕ НОТ ДЕСЦРИБЕД ИН ИНДЕЬ.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="457"/>
+        <location filename="../gamerunner.cpp" line="529"/>
         <source>Begin files check...</source>
         <translation>БЕГИН ФИЛЕС ЦХЕЦК...</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="463"/>
         <source>Bad checksumm for %1.</source>
-        <translation>БАД ЦХЕЦКСУММ ФОР %1.</translation>
+        <translation type="vanished">БАД ЦХЕЦКСУММ ФОР %1.</translation>
     </message>
     <message>
         <source>Bad checksumm for %1</source>
         <translation type="vanished">БАД ЦХЕЦКСУММ ФОР %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="466"/>
+        <location filename="../gamerunner.cpp" line="535"/>
+        <source>Bad checksum for %1.</source>
+        <translation>БАД ЦХЕЦКСУМ ФОР %1.</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="538"/>
         <source>Client files are obsolete.</source>
         <translation>ЦЛИЕНТ ФИЛЕС АРЕ ОБСОЛЕТЕ.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="471"/>
+        <location filename="../gamerunner.cpp" line="543"/>
         <source>Prepare run data...</source>
         <translation>ПРЕПАРЕ РУН ДАТА...</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="491"/>
+        <location filename="../gamerunner.cpp" line="563"/>
         <source>Can&apos;t create natives directory!</source>
         <translation>ЦАН&apos;Т ЦРЕАТЕ НАТИЖЕС ДИРЕЦТОРЫ!</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="515"/>
+        <location filename="../gamerunner.cpp" line="587"/>
         <source>No main class in %1.json!</source>
         <translation>НО МАИН ЦЛАСС ИН %1.ЙСОН!</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="523"/>
+        <location filename="../gamerunner.cpp" line="595"/>
         <source>No assets in %1.json!</source>
         <translation>НО АССЕТС ИН %1.ЙСОН!</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="531"/>
+        <location filename="../gamerunner.cpp" line="603"/>
         <source>No minecraft args in %1.json!</source>
         <translation>НО МИНЕЦРАФТ АРГС ИН %1.ЙСОН!</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="632"/>
+        <location filename="../gamerunner.cpp" line="704"/>
         <source>Run string: </source>
         <translation>РУН СТРИНГ:</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="638"/>
+        <location filename="../gamerunner.cpp" line="710"/>
         <source>GameRunner</source>
         <translation>ГАМЕРУННЕР</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="643"/>
+        <location filename="../gamerunner.cpp" line="715"/>
         <source>Game</source>
         <translation>ГАМЕ</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="653"/>
+        <location filename="../gamerunner.cpp" line="725"/>
         <source>Failed to start! Java not found!</source>
         <translation>ФАИЛЕД ТО СТАРТ! ЙАЖА НОТ ФОУНД!</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="657"/>
+        <location filename="../gamerunner.cpp" line="729"/>
         <source>Game crashed! %1</source>
         <translation>ГАМЕ ЦРАСХЕД! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="661"/>
+        <location filename="../gamerunner.cpp" line="733"/>
         <source>Game start timeout! %1</source>
         <translation>ГАМЕ СТАРТ ТИМЕОУТ! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="665"/>
+        <location filename="../gamerunner.cpp" line="737"/>
         <source>Game can&apos;t write! %1</source>
         <translation>ГАМЕ ЦАН&apos;Т ВРИТЕ! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="669"/>
+        <location filename="../gamerunner.cpp" line="741"/>
         <source>Game can&apos;t read! %1</source>
         <translation>ГАМЕ ЦАН&apos;Т РЕАД! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="674"/>
+        <location filename="../gamerunner.cpp" line="746"/>
         <source>Mysterious error! %1</source>
         <translation>МЫСТЕРИОУС ЕРРОР! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="681"/>
+        <location filename="../gamerunner.cpp" line="753"/>
         <source>Game started.</source>
         <translation>ГАМЕ СТАРТЕД.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="687"/>
+        <location filename="../gamerunner.cpp" line="759"/>
         <source>Game finished with code %1.</source>
         <translation>ГАМЕ ФИНИСХЕД ВИТХ ЦОДЕ %1.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="693"/>
+        <location filename="../gamerunner.cpp" line="765"/>
         <source>Error! %1</source>
         <translation>ЕРРОР! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="699"/>
+        <location filename="../gamerunner.cpp" line="771"/>
         <source>Need update! %1</source>
         <translation>НЕЕД УПДАТЕ! %1</translation>
     </message>
@@ -1277,33 +1312,33 @@
     </message>
     <message>
         <location filename="../storeinstalldialog.cpp" line="313"/>
-        <location filename="../storeinstalldialog.cpp" line="339"/>
+        <location filename="../storeinstalldialog.cpp" line="351"/>
         <source>Error: can&apos;t parse index &apos;%1&apos;!</source>
         <translation>ЕРРОР: ЦАН&apos;Т ПАРСЕ ИНДЕЬ &apos;%1&apos;!</translation>
     </message>
     <message>
         <location filename="../storeinstalldialog.cpp" line="320"/>
-        <location filename="../storeinstalldialog.cpp" line="346"/>
+        <location filename="../storeinstalldialog.cpp" line="358"/>
         <source>Error: &apos;%1&apos; does not contains assets version!</source>
         <translation>ЕРРОР: &apos;%1&apos; ДОЕС НОТ ЦОНТАИНС АССЕТС ЖЕРСИОН!</translation>
     </message>
     <message>
-        <location filename="../storeinstalldialog.cpp" line="367"/>
+        <location filename="../storeinstalldialog.cpp" line="378"/>
         <source>Installation cancelled!</source>
         <translation>ИНСТАЛЛАТИОН ЦАНЦЕЛЛЕД!</translation>
     </message>
     <message>
-        <location filename="../storeinstalldialog.cpp" line="383"/>
+        <location filename="../storeinstalldialog.cpp" line="394"/>
         <source>Error: can&apos;t delete file: %1</source>
         <translation>ЕРРОР: ЦАН&apos;Т ДЕЛЕТЕ ФИЛЕ: %1</translation>
     </message>
     <message>
-        <location filename="../storeinstalldialog.cpp" line="387"/>
+        <location filename="../storeinstalldialog.cpp" line="398"/>
         <source>Error: can&apos;t update file: %1</source>
         <translation>ЕРРОР: ЦАН&apos;Т УПДАТЕ ФИЛЕ: %1</translation>
     </message>
     <message>
-        <location filename="../storeinstalldialog.cpp" line="393"/>
+        <location filename="../storeinstalldialog.cpp" line="404"/>
         <source>Installation finished!</source>
         <translation>ИНСТАЛЛАТИОН ФИНИСХЕД!</translation>
     </message>
