@@ -329,16 +329,17 @@ void StoreInstallDialog::prepareAssets()
     InstallInfo assetsIdxInfo;
     assetsIdxInfo.srcPath = storeAssetsDir + "/indexes/" + assetsVer + ".json";
     assetsIdxInfo.path = clientAssetsDir + "/indexes/" + assetsVer + ".json";
+    assetsIdxInfo.hash = "0";
 
     QCryptographicHash idxHash(QCryptographicHash::Sha1);
     QFile idxFile(assetsIdxInfo.srcPath);
-    if ( idxHash.addData(&idxFile) )
+    if ( idxFile.open(QIODevice::ReadOnly) )
     {
-        assetsIdxInfo.hash = QString( idxHash.result().toHex() );
-    }
-    else
-    {
-        assetsIdxInfo.hash = "0";
+        if ( idxHash.addData(&idxFile) )
+        {
+            assetsIdxInfo.hash = QString( idxHash.result().toHex() );
+        }
+        idxFile.close();
     }
 
     installList.append(assetsIdxInfo);

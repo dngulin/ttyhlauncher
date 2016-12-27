@@ -48,31 +48,24 @@ bool HashChecker::hashIsValid(const FileInfo fileInfo) const
         return false;
     }
 
-    if (!fileInfo.isMutable)
+    if (fileInfo.isMutable)
     {
-        QCryptographicHash hash(QCryptographicHash::Sha1);
-
-        QFile file(fileInfo.name);
-        if ( !file.open(QIODevice::ReadOnly) )
-        {
-            return false;
-        }
-
-        bool readed = hash.addData(&file);
-        file.close();
-
-        if (!readed)
-        {
-            return false;
-        }
-
-        QString sha = QString( hash.result().toHex() );
-
-        if (fileInfo.hash != sha)
-        {
-            return false;
-        }
+        return true;
     }
 
-    return true;
+    QFile file(fileInfo.name);
+    QCryptographicHash hash(QCryptographicHash::Sha1);
+
+    if ( file.open(QIODevice::ReadOnly) )
+    {
+        bool isValid = false;
+        if ( hash.addData(&file) )
+        {
+            isValid = (QString( hash.result().toHex() ) == fileInfo.hash);
+        }
+        file.close();
+        return isValid;
+    }
+
+    return false;
 }

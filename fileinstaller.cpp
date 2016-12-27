@@ -34,12 +34,9 @@ void FileInstaller::processFile(const InstallInfo &info)
 
     if (info.action == InstallInfo::Delete)
     {
-        if (fileExists)
+        if ( fileExists && !QFile::remove(info.path) )
         {
-            if ( !QFile::remove(info.path) )
-            {
-                emit installFailed(info);
-            }
+            emit installFailed(info);
         }
     }
     else if (info.action == InstallInfo::Update)
@@ -51,13 +48,19 @@ void FileInstaller::processFile(const InstallInfo &info)
                 return;
             }
 
-            QCryptographicHash hash(QCryptographicHash::Sha1);
             QFile file(info.path);
+            QCryptographicHash hash(QCryptographicHash::Sha1);
 
-            if ( hash.addData(&file) )
+            if ( file.open(QIODevice::ReadOnly) )
             {
-                QString sha = QString( hash.result().toHex() );
-                if (info.hash == sha)
+                bool hashSame = false;
+                if ( hash.addData(&file) )
+                {
+                    hashSame = (QString( hash.result().toHex() ) == info.hash);
+                }
+                file.close();
+
+                if (hashSame)
                 {
                     return;
                 }
