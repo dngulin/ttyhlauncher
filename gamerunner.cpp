@@ -188,7 +188,7 @@ void GameRunner::determinateVersion()
             if (version == "latest")
             {
                 QString message = tr("Local versions not found.");
-                emitNeedUpdate(message);
+                emitError(message);
                 return;
             }
             else
@@ -527,15 +527,17 @@ void GameRunner::checkFiles()
     }
 
     log( tr("Begin files check...") );
-    emit beginCheck(checkList, true);
+    bool stopOnBadHash = isOnline;
+    emit beginCheck(checkList, stopOnBadHash);
 }
 
 void GameRunner::onBadChecksum(const FileInfo fileInfo)
 {
     log( tr("Bad checksum for %1.").arg(fileInfo.name) );
-    checker->cancel();
-
-    emitNeedUpdate( tr("Client files are obsolete.") );
+    if (isOnline)
+    {
+        emitNeedUpdate( tr("Client files are obsolete.") );
+    }
 }
 
 void GameRunner::runGame()
