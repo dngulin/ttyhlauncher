@@ -86,9 +86,6 @@ private:
     void emitError(const QString &message);
     void emitNeedUpdate(const QString &message);
 
-    QString getFileHash(const QString &path);
-    QString getDataHash(const QByteArray &data);
-
 private slots:
     void acessTokenReceived(bool result);
     void versionsListReceived(bool result);

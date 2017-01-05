@@ -282,10 +282,8 @@ void GameRunner::versionIndexReceived(bool result)
 
     if (result)
     {
-        QString locHash = getFileHash(versionIndexPath);
-        QString srvHash = getDataHash( fetcher.getData() );
-
-        if (locHash == srvHash)
+        QString hash = HashChecker::getDataHash( fetcher.getData() );
+        if ( HashChecker::isFileHashValid(versionIndexPath, hash) )
         {
             requestDataIndex();
         }
@@ -323,10 +321,8 @@ void GameRunner::dataIndexReceived(bool result)
 
     if (result)
     {
-        QString locHash = getFileHash(dataIndexPath);
-        QString srvHash = getDataHash( fetcher.getData() );
-
-        if (locHash == srvHash)
+        QString hash = HashChecker::getDataHash( fetcher.getData() );
+        if ( HashChecker::isFileHashValid(dataIndexPath, hash) )
         {
             requestAssetsIndex();
         }
@@ -379,10 +375,8 @@ void GameRunner::assetsIndexReceived(bool result)
 
     if (result)
     {
-        QString locHash = getFileHash(assetsIndexPath);
-        QString srvHash = getDataHash( fetcher.getData() );
-
-        if (locHash == srvHash)
+        QString hash = HashChecker::getDataHash( fetcher.getData() );
+        if ( HashChecker::isFileHashValid(assetsIndexPath, hash) )
         {
             checkFiles();
         }
@@ -772,28 +766,4 @@ void GameRunner::emitNeedUpdate(const QString &message)
 {
     log( tr("Need update! %1").arg(message) );
     emit needUpdate(message);
-}
-
-QString GameRunner::getFileHash(const QString &path)
-{
-    QString result = "0";
-    QCryptographicHash hash(QCryptographicHash::Sha1);
-    QFile file(path);
-    if ( file.open(QIODevice::ReadOnly) )
-    {
-        if ( hash.addData(&file) )
-        {
-            result = QString( hash.result().toHex() );
-        }
-        file.close();
-    }
-
-    return result;
-}
-
-QString GameRunner::getDataHash(const QByteArray &data)
-{
-    QCryptographicHash hash(QCryptographicHash::Sha1);
-    hash.addData(data);
-    return QString( hash.result().toHex() );
 }

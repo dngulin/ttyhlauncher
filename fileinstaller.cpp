@@ -1,4 +1,5 @@
 #include "fileinstaller.h"
+#include "hashchecker.h"
 
 FileInstaller::FileInstaller()
 {
@@ -48,22 +49,9 @@ void FileInstaller::processFile(const InstallInfo &info)
                 return;
             }
 
-            QFile file(info.path);
-            QCryptographicHash hash(QCryptographicHash::Sha1);
-
-            if ( file.open(QIODevice::ReadOnly) )
+            if ( HashChecker::isFileHashValid(info.path, info.hash) )
             {
-                bool hashSame = false;
-                if ( hash.addData(&file) )
-                {
-                    hashSame = (QString( hash.result().toHex() ) == info.hash);
-                }
-                file.close();
-
-                if (hashSame)
-                {
-                    return;
-                }
+                return;
             }
 
             // Delete exists file before copy

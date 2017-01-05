@@ -2,6 +2,7 @@
 #include "ui_storeinstalldialog.h"
 
 #include "jsonparser.h"
+#include "hashchecker.h"
 
 StoreInstallDialog::StoreInstallDialog(QWidget *parent) :
     QDialog(parent),
@@ -329,19 +330,7 @@ void StoreInstallDialog::prepareAssets()
     InstallInfo assetsIdxInfo;
     assetsIdxInfo.srcPath = storeAssetsDir + "/indexes/" + assetsVer + ".json";
     assetsIdxInfo.path = clientAssetsDir + "/indexes/" + assetsVer + ".json";
-    assetsIdxInfo.hash = "0";
-
-    QCryptographicHash idxHash(QCryptographicHash::Sha1);
-    QFile idxFile(assetsIdxInfo.srcPath);
-    if ( idxFile.open(QIODevice::ReadOnly) )
-    {
-        if ( idxHash.addData(&idxFile) )
-        {
-            assetsIdxInfo.hash = QString( idxHash.result().toHex() );
-        }
-        idxFile.close();
-    }
-
+    assetsIdxInfo.hash = HashChecker::getFileHash(assetsIdxInfo.srcPath);
     installList.append(assetsIdxInfo);
 
     QString assetsIdxPath = storeAssetsDir + "/indexes/" + assetsVer + ".json";
