@@ -2,6 +2,7 @@
 #include "ui_storeinstalldialog.h"
 
 #include "jsonparser.h"
+#include "hashchecker.h"
 
 StoreInstallDialog::StoreInstallDialog(QWidget *parent) :
     QDialog(parent),
@@ -10,7 +11,7 @@ StoreInstallDialog::StoreInstallDialog(QWidget *parent) :
     ui->setupUi(this);
 
     settings = Settings::instance();
-    logger   = Logger::logger();
+    logger = Logger::logger();
 
     ui->log->setFont( QFontDatabase::systemFont(QFontDatabase::FixedFont) );
 
@@ -162,7 +163,7 @@ void StoreInstallDialog::installClicked()
         return;
     }
 
-    storeDir  = settings->loadStoreDirPath();
+    storeDir = settings->loadStoreDirPath();
     clientDir = settings->getBaseDir() + "/client_" + prefix;
 
     QStringList versionData = version.split('/');
@@ -186,7 +187,7 @@ void StoreInstallDialog::installClicked()
 
     if ( dataParser.hasJarFileInfo() )
     {
-        prepareVersion( dataParser.getJarFileInfo().hash );
+        prepareVersion(dataParser.getJarFileInfo().hash);
     }
     else
     {
@@ -223,7 +224,7 @@ void StoreInstallDialog::prepareVersion(const QString &jarHash)
 {
     log( tr("Prepare local version...") );
 
-    QString storeVerDir  = storeDir + "/" + storePrefix + "/" + storeVersion;
+    QString storeVerDir = storeDir + "/" + storePrefix + "/" + storeVersion;
     QString clientVerDir = clientDir + "/versions/" + storeVersion;
 
     QStringList files;
@@ -232,9 +233,9 @@ void StoreInstallDialog::prepareVersion(const QString &jarHash)
     foreach (QString fileName, files)
     {
         InstallInfo info;
-        info.hash    = (fileName == storeVersion + ".jar") ? jarHash : "0";
+        info.hash = (fileName == storeVersion + ".jar") ? jarHash : "0";
         info.srcPath = storeVerDir + "/" + fileName;
-        info.path    = clientVerDir + "/" + fileName;
+        info.path = clientVerDir + "/" + fileName;
         installList.append(info);
     }
 }
@@ -246,12 +247,12 @@ void StoreInstallDialog::prepareLibararies(const QList<FileInfo> &libs)
     QString storeLibDir = storeDir + "/libraries/";
     QString clientLibDir = settings->getLibsDir() + "/";
 
-    foreach(FileInfo lib, libs)
+    foreach (FileInfo lib, libs)
     {
         InstallInfo info;
-        info.hash    = lib.hash;
+        info.hash = lib.hash;
         info.srcPath = storeLibDir + lib.name;
-        info.path    = clientLibDir + lib.name;
+        info.path = clientLibDir + lib.name;
         installList.append(info);
     }
 }
@@ -260,14 +261,14 @@ void StoreInstallDialog::prepareAddons(const QHash<QString, FileInfo> &addons)
 {
     log( tr("Prepare addons...") );
 
-    QString storeVerDir  = storeDir + "/" + storePrefix + "/" + storeVersion;
+    QString storeVerDir = storeDir + "/" + storePrefix + "/" + storeVersion;
     QString clientPrefixDir = clientDir + "/prefixes/" + storeVersion;
 
     foreach ( FileInfo addon, addons.values() )
     {
         InstallInfo info;
         info.srcPath = storeVerDir + "/files/" + addon.name;
-        info.path    = clientPrefixDir + "/" + addon.name;
+        info.path = clientPrefixDir + "/" + addon.name;
         if (!addon.isMutable)
         {
             info.hash = addon.hash;
@@ -278,33 +279,33 @@ void StoreInstallDialog::prepareAddons(const QHash<QString, FileInfo> &addons)
     JsonParser prefixParser;
     QString instIdxPath = clientPrefixDir + "/installed_data.json";
 
-    bool installed = prefixParser.setJsonFromFile(instIdxPath) ;
+    bool installed = prefixParser.setJsonFromFile(instIdxPath);
     if ( installed && prefixParser.hasAddonsFilesInfo() )
     {
         log( tr("Read installed prefix...") );
         QList<FileInfo> oldAddons = prefixParser.getAddonsFilesInfo();
         foreach (FileInfo oldAddon, oldAddons)
         {
-            if (!addons.contains(oldAddon.name))
+            if ( !addons.contains(oldAddon.name) )
             {
                 InstallInfo obsoleteInfo;
                 obsoleteInfo.action = InstallInfo::Delete;
-                obsoleteInfo.path   = clientPrefixDir + "/" + oldAddon.name;
+                obsoleteInfo.path = clientPrefixDir + "/" + oldAddon.name;
                 installList.append(obsoleteInfo);
             }
         }
     }
 
     InstallInfo installedInfo;
-    installedInfo.hash    = "0";
+    installedInfo.hash = "0";
     installedInfo.srcPath = storeVerDir + "/data.json";
-    installedInfo.path    = instIdxPath;
+    installedInfo.path = instIdxPath;
     installList.append(installedInfo);
 }
 
 void StoreInstallDialog::prepareAssets()
 {
-    QString storeVerDir  = storeDir + "/" + storePrefix + "/" + storeVersion;
+    QString storeVerDir = storeDir + "/" + storePrefix + "/" + storeVersion;
     QString versionIdxPath = storeVerDir + "/" + storeVersion + ".json";
 
     JsonParser indexParser;
@@ -327,9 +328,9 @@ void StoreInstallDialog::prepareAssets()
     QString clientAssetsDir = settings->getAssetsDir();
 
     InstallInfo assetsIdxInfo;
-    assetsIdxInfo.hash = "0";
     assetsIdxInfo.srcPath = storeAssetsDir + "/indexes/" + assetsVer + ".json";
     assetsIdxInfo.path = clientAssetsDir + "/indexes/" + assetsVer + ".json";
+    assetsIdxInfo.hash = HashChecker::getFileHash(assetsIdxInfo.srcPath);
     installList.append(assetsIdxInfo);
 
     QString assetsIdxPath = storeAssetsDir + "/indexes/" + assetsVer + ".json";
@@ -349,16 +350,15 @@ void StoreInstallDialog::prepareAssets()
     }
 
     QList<FileInfo> assets = assetsParser.getAssetsList();
-    foreach(FileInfo asset, assets)
+    foreach (FileInfo asset, assets)
     {
         InstallInfo assetInfo;
-        assetInfo.hash    = asset.hash;
+        assetInfo.hash = asset.hash;
         assetInfo.srcPath = storeAssetsDir + "/objects/" + asset.name;
-        assetInfo.path    = clientAssetsDir + "/objects/" + asset.name;
+        assetInfo.path = clientAssetsDir + "/objects/" + asset.name;
         installList.append(assetInfo);
     }
 }
-
 
 void StoreInstallDialog::cancelClicked()
 {

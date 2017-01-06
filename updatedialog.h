@@ -28,12 +28,12 @@ private:
     Logger *logger;
 
     QThread checkThread;
-    HashChecker* checker;
+    HashChecker *checker;
 
-    DataFetcher versionsFetcher;
-    FileFetcher indexFetcher, assetsFetcher, fileFetcher;
+    DataFetcher dataFetcher;
+    FileFetcher fileFetcher;
 
-    JsonParser versionParser, dataParser;
+    JsonParser versionParser, dataParser, assetsParser;
 
     QString clientVersion;
 
@@ -52,9 +52,10 @@ private:
     void setInteractable(bool state);
 
     void doCheck();
-    void updateVersionIndex();
-    void processClientFiles();
-    void processAssets();
+    void requestVersionIndex();
+    void requestDataIndex();
+    void requestAssetsIndex();
+    void processIndexesData();
 
     void doUpdate();
 
@@ -66,10 +67,10 @@ private slots:
     void updateClicked();
     void cancelClicked();
 
-    // Checking slots
-    void versionListRequested(bool result);
-    void versionIndexUpdated(bool result);
-    void assetsIndexUpdated(bool result);
+    void versionListReceived(bool result);
+    void versionIndexReceived(bool result);
+    void dataIndexReceived(bool result);
+    void assetsIndexReceived(bool result);
 
     void addToFetchList(const FileInfo fileInfo);
     void checkFinished();

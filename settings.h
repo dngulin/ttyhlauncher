@@ -22,6 +22,8 @@ public:
     static const QString updateServer;
     static const QString buildServer;
 
+    static const int timeout;
+
 private:
     static const QString master;
     static Settings *myInstance;

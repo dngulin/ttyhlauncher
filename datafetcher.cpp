@@ -8,6 +8,12 @@ DataFetcher::DataFetcher(QObject *parent) : QObject(parent)
 
     nam = Settings::instance()->getNetworkAccessManager();
     logger = Logger::logger();
+    timer = new QTimer(this);
+}
+
+DataFetcher::~DataFetcher()
+{
+    delete timer;
 }
 
 void DataFetcher::log(const QString &text)
@@ -29,22 +35,40 @@ void DataFetcher::reset()
 
 void DataFetcher::handleReply()
 {
+    timer->setSingleShot(true);
+
+    connect(timer, &QTimer::timeout,
+            this, &DataFetcher::onTimeout);
+
+    timer->start(Settings::timeout);
+
+    connect(reply, &QNetworkReply::readyRead,
+            this, &DataFetcher::stopTimer);
+
     connect(reply, &QNetworkReply::finished,
-            this, &DataFetcher::requestFinished);
+            this, &DataFetcher::onRequestFinished);
 
     connect(reply, &QNetworkReply::downloadProgress,
-            this, &DataFetcher::fetchProgress);
+            this, &DataFetcher::onDownloadProgress);
 
     waiting = true;
 }
 
 void DataFetcher::unhandleReply()
 {
+    stopTimer();
+
+    disconnect(timer, &QTimer::timeout,
+               this, &DataFetcher::onTimeout);
+
+    disconnect(reply, &QNetworkReply::readyRead,
+               this, &DataFetcher::stopTimer);
+
     disconnect(reply, &QNetworkReply::finished,
-               this, &DataFetcher::requestFinished);
+               this, &DataFetcher::onRequestFinished);
 
     disconnect(reply, &QNetworkReply::downloadProgress,
-               this, &DataFetcher::fetchProgress);
+               this, &DataFetcher::onDownloadProgress);
 
     waiting = false;
     reply->deleteLater();
@@ -101,7 +125,7 @@ bool DataFetcher::isWaiting() const
     return waiting;
 }
 
-void DataFetcher::requestFinished()
+void DataFetcher::onRequestFinished()
 {
     bool result = true;
 
@@ -132,12 +156,30 @@ void DataFetcher::requestFinished()
     emit finished(result);
 }
 
-void DataFetcher::fetchProgress(qint64 bytesReceived, qint64 bytesTotal)
+void DataFetcher::onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)
 {
+    stopTimer();
     emit progress(bytesReceived, bytesTotal);
 }
 
 void DataFetcher::cancel()
 {
     reset();
+}
+
+void DataFetcher::onTimeout()
+{
+    if (waiting)
+    {
+        log( tr("Error! Connection timed out!") );
+        reply->abort();
+    }
+}
+
+void DataFetcher::stopTimer()
+{
+    if ( timer->isActive() )
+    {
+        timer->stop();
+    }
 }

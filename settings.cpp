@@ -10,7 +10,7 @@
 
 typedef QStandardPaths Path;
 
-const QString Settings::launcherVersion = "1.2.0";
+const QString Settings::launcherVersion = "1.2.1";
 
 const QString Settings::newsFeed = "https://ttyh.ru/misc.php?page=feed";
 
@@ -23,6 +23,8 @@ const QString Settings::authUrl = master + "?act=login";
 const QString Settings::changePasswrdUrl = master + "?act=chpass";
 const QString Settings::skinUploadUrl = master + "?act=setskin";
 const QString Settings::feedbackUrl = master + "?act=feedback";
+
+const int Settings::timeout = 3000;
 
 Settings *Settings::myInstance = NULL;
 Settings *Settings::instance()

@@ -22,7 +22,7 @@ void HashChecker::checkFiles(const QList<FileInfo> &list, bool stopOnBad)
         current++;
         emit progress( int(float(current) / total * 100) );
 
-        if ( !hashIsValid(entry) )
+        if ( !checkFile(entry) )
         {
             emit verificationFailed(entry);
 
@@ -36,43 +36,69 @@ void HashChecker::checkFiles(const QList<FileInfo> &list, bool stopOnBad)
     emit finished();
 }
 
-void HashChecker::cancel()
-{
-    cancelled = true;
-}
-
-bool HashChecker::hashIsValid(const FileInfo fileInfo) const
+bool HashChecker::checkFile(const FileInfo fileInfo) const
 {
     if ( !QFile::exists(fileInfo.name) )
     {
         return false;
     }
 
-    if (!fileInfo.isMutable)
+    if (fileInfo.isMutable)
     {
-        QCryptographicHash hash(QCryptographicHash::Sha1);
-
-        QFile file(fileInfo.name);
-        if ( !file.open(QIODevice::ReadOnly) )
-        {
-            return false;
-        }
-
-        bool readed = hash.addData(&file);
-        file.close();
-
-        if (!readed)
-        {
-            return false;
-        }
-
-        QString sha = QString( hash.result().toHex() );
-
-        if (fileInfo.hash != sha)
-        {
-            return false;
-        }
+        return true;
     }
 
-    return true;
+    return isFileHashValid(fileInfo.name, fileInfo.hash);
+}
+
+void HashChecker::cancel()
+{
+    cancelled = true;
+}
+
+QString HashChecker::getDataHash(const QByteArray &data)
+{
+    QCryptographicHash sha(QCryptographicHash::Sha1);
+    sha.addData(data);
+    return QString( sha.result().toHex() );
+}
+
+QString HashChecker::getFileHash(const QString &path)
+{
+    QString hash = "";
+
+    QCryptographicHash sha(QCryptographicHash::Sha1);
+    QFile file(path);
+
+    if ( file.open(QIODevice::ReadOnly) )
+    {
+        if ( sha.addData(&file) )
+        {
+            hash = QString( sha.result().toHex() );
+        }
+        file.close();
+    }
+
+    return hash;
+}
+
+bool HashChecker::isFileHashValid(const QString &path, const QString &hash)
+{
+    QCryptographicHash sha(QCryptographicHash::Sha1);
+    QFile file(path);
+
+    bool shaReady = false;
+    if ( file.open(QIODevice::ReadOnly) )
+    {
+        shaReady = sha.addData(&file);
+        file.close();
+    }
+
+    if (shaReady)
+    {
+        QString fileHash( sha.result().toHex() );
+        return fileHash.toLower() == hash.toLower();
+    }
+
+    return false;
 }

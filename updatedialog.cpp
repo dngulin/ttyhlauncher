@@ -37,11 +37,11 @@ UpdateDialog::UpdateDialog(QString displayMessage, QWidget *parent) :
     ui->clientCombo->setCurrentIndex( settings->loadActiveClientID() );
 
     // Old-style connection for overloaded signals
-    connect( ui->clientCombo, SIGNAL( activated(int) ),
-             settings, SLOT( saveActiveClientID(int) ) );
+    connect( ui->clientCombo, SIGNAL(activated(int)),
+             settings, SLOT(saveActiveClientID(int)));
 
-    connect( ui->clientCombo, SIGNAL( activated(int) ),
-             this, SLOT( clientChanged() ) );
+    connect( ui->clientCombo, SIGNAL(activated(int)),
+             this, SLOT(clientChanged()));
 
     ui->log->setFont( QFontDatabase::systemFont(QFontDatabase::FixedFont) );
     ui->log->setPlainText(displayMessage);
@@ -53,16 +53,7 @@ UpdateDialog::UpdateDialog(QString displayMessage, QWidget *parent) :
     connect(ui->cancelButton, &QPushButton::clicked,
             this, &UpdateDialog::cancelClicked);
 
-    // Checking connections
-    connect(&versionsFetcher, &DataFetcher::finished,
-            this, &UpdateDialog::versionListRequested);
-
-    connect(&indexFetcher, &FileFetcher::filesFetchResult,
-            this, &UpdateDialog::versionIndexUpdated);
-
-    connect(&assetsFetcher, &FileFetcher::filesFetchResult,
-            this, &UpdateDialog::assetsIndexUpdated);
-
+    // Downloading conncetions
     connect(&fileFetcher, &FileFetcher::filesFetchResult,
             this, &UpdateDialog::updateComplete);
 
@@ -102,12 +93,8 @@ void UpdateDialog::setInteractable(bool state)
 
 void UpdateDialog::resetUpdateData()
 {
-    indexFetcher.reset();
-    assetsFetcher.reset();
     fileFetcher.reset();
-
     checker->cancel();
-
     removeList.clear();
     checkList.clear();
 }
@@ -203,27 +190,33 @@ void UpdateDialog::cancelClicked()
 void UpdateDialog::doCheck()
 {
     int index = settings->loadActiveClientID();
-    QString clientString = settings->getClientName(index);
+    QString client = settings->getClientName(index);
 
     clientVersion = settings->loadClientVersion();
 
     ui->log->clear();
     log( tr("Checking for updates... ") );
-    log( tr("Client: %1, version %2.").arg(clientString).arg(clientVersion) );
+    log( tr("Client: %1, version %2.").arg(client).arg(clientVersion) );
 
     if (clientVersion == "latest")
     {
         log( tr("Requesting latest client version...") );
-        versionsFetcher.makeGet( settings->getVersionsUrl() );
+        connect(&dataFetcher, &DataFetcher::finished,
+                this, &UpdateDialog::versionListReceived);
+
+        dataFetcher.makeGet( settings->getVersionsUrl() );
     }
     else
     {
-        updateVersionIndex();
+        requestVersionIndex();
     }
 }
 
-void UpdateDialog::versionListRequested(bool result)
+void UpdateDialog::versionListReceived(bool result)
 {
+    disconnect(&dataFetcher, &DataFetcher::finished,
+               this, &UpdateDialog::versionListReceived);
+
     if (!result)
     {
         error( tr("Latest version does not received.") );
@@ -231,7 +224,7 @@ void UpdateDialog::versionListRequested(bool result)
     }
 
     JsonParser versionsParser;
-    if ( !versionsParser.setJson( versionsFetcher.getData() ) )
+    if ( !versionsParser.setJson( dataFetcher.getData() ) )
     {
         log(versionsParser.getParserError(), true);
         error( tr("Inavlid reply.") );
@@ -247,59 +240,184 @@ void UpdateDialog::versionListRequested(bool result)
     clientVersion = versionsParser.getLatestReleaseVersion();
     log( tr("Client version received: %1.").arg(clientVersion) );
 
-    updateVersionIndex();
+    requestVersionIndex();
 }
 
-void UpdateDialog::updateVersionIndex()
+void UpdateDialog::requestVersionIndex()
 {
-    QString versionsDir = settings->getVersionsDir();
-    QString versionFilePrefix = versionsDir + "/" + clientVersion + "/";
     QString versionUrlPrefix = settings->getVersionUrl(clientVersion);
+    QString versionUrl = versionUrlPrefix + clientVersion + ".json";
 
-    QUrl versionUrl(versionUrlPrefix + clientVersion + ".json");
-    QString versionFile = versionFilePrefix + clientVersion + ".json";
+    log( tr("Requesting actual version index...") );
 
-    QUrl dataUrl(versionUrlPrefix + "data.json");
-    QString dataFile = versionFilePrefix + "data.json";
+    connect(&dataFetcher, &DataFetcher::finished,
+            this, &UpdateDialog::versionIndexReceived);
 
-    log( tr("Requesting actual version indexes...") );
-
-    indexFetcher.add(versionUrl, versionFile);
-    indexFetcher.add(dataUrl, dataFile);
-    indexFetcher.fetchFiles();
+    dataFetcher.makeGet(versionUrl);
 }
 
-void UpdateDialog::versionIndexUpdated(bool result)
+void UpdateDialog::versionIndexReceived(bool result)
 {
+    disconnect(&dataFetcher, &DataFetcher::finished,
+               this, &UpdateDialog::versionIndexReceived);
+
     if (!result)
     {
-        error( tr("Can't update version indexes.") );
+        error( tr("Can't get version index.") );
         return;
     }
 
-    processClientFiles();
-}
-
-void UpdateDialog::processClientFiles()
-{
-    QString indexDir = settings->getVersionsDir() + "/" + clientVersion + "/";
-    QString indexName = indexDir + clientVersion + ".json";
-    QString dataName = indexDir + "data.json";
-
-    if ( !versionParser.setJsonFromFile(indexName) )
+    QByteArray versionIndex = dataFetcher.getData();
+    if ( !versionParser.setJson(versionIndex) )
     {
         log(versionParser.getParserError(), true);
         error( tr("Can't read version index.") );
         return;
     }
 
-    if ( !dataParser.setJsonFromFile(dataName) )
+    QString hash = HashChecker::getDataHash(versionIndex);
+
+    QString pathPtrn = "%1/%2/%2.json";
+    QString versionsDir = settings->getVersionsDir();
+    QString path = pathPtrn.arg(versionsDir).arg(clientVersion);
+
+    if ( !HashChecker::isFileHashValid(path, hash) )
     {
-        error( tr("Can't read data index.") );
-        log(dataParser.getParserError(), true);
+        QString versionUrlPrefix = settings->getVersionUrl(clientVersion);
+
+        FileInfo indexInfo;
+        indexInfo.name = path;
+        indexInfo.hash = hash;
+        indexInfo.size = versionIndex.size();
+        indexInfo.url = versionUrlPrefix + clientVersion + ".json";
+
+        log( tr("Version index is obsolete.") );
+        addToFetchList(indexInfo);
+    }
+
+    requestDataIndex();
+}
+
+void UpdateDialog::requestDataIndex()
+{
+    QString versionUrlPrefix = settings->getVersionUrl(clientVersion);
+    QString dataUrl = versionUrlPrefix + "data.json";
+
+    log( tr("Requesting actual data index...") );
+
+    connect(&dataFetcher, &DataFetcher::finished,
+            this, &UpdateDialog::dataIndexReceived);
+
+    dataFetcher.makeGet(dataUrl);
+}
+
+void UpdateDialog::dataIndexReceived(bool result)
+{
+    disconnect(&dataFetcher, &DataFetcher::finished,
+               this, &UpdateDialog::dataIndexReceived);
+
+    if (!result)
+    {
+        error( tr("Can't get data index.") );
         return;
     }
 
+    QByteArray dataIndex = dataFetcher.getData();
+    if ( !dataParser.setJson(dataIndex) )
+    {
+        log(dataParser.getParserError(), true);
+        error( tr("Can't read data index.") );
+        return;
+    }
+
+    QString hash = HashChecker::getDataHash(dataIndex);
+
+    QString pathPtrn = "%1/%2/data.json";
+    QString versionsDir = settings->getVersionsDir();
+    QString path = pathPtrn.arg(versionsDir).arg(clientVersion);
+
+    if ( !HashChecker::isFileHashValid(path, hash) )
+    {
+        QString versionUrlPrefix = settings->getVersionUrl(clientVersion);
+
+        FileInfo indexInfo;
+        indexInfo.name = path;
+        indexInfo.hash = hash;
+        indexInfo.size = dataIndex.size();
+        indexInfo.url = versionUrlPrefix + "data.json";
+
+        log( tr("Data index is obsolete.") );
+        addToFetchList(indexInfo);
+    }
+
+    requestAssetsIndex();
+}
+
+void UpdateDialog::requestAssetsIndex()
+{
+    log( tr("Requesting actual assets index...") );
+    if ( !versionParser.hasAssetsVersion() )
+    {
+        error( tr("Assets are not described in version index.") );
+        return;
+    }
+
+    QString assetsName = versionParser.getAssetsVesrsion() + ".json";
+    QString assetsUrl = settings->getAssetsUrl() + "indexes/";
+
+    connect(&dataFetcher, &DataFetcher::finished,
+            this, &UpdateDialog::assetsIndexReceived);
+
+    dataFetcher.makeGet(assetsUrl + assetsName);
+}
+
+void UpdateDialog::assetsIndexReceived(bool result)
+{
+    disconnect(&dataFetcher, &DataFetcher::finished,
+               this, &UpdateDialog::assetsIndexReceived);
+
+    if (!result)
+    {
+        error( tr("Can't get assets index.") );
+        return;
+    }
+
+    QByteArray assetsIndex = dataFetcher.getData();
+    if ( !assetsParser.setJson(assetsIndex) )
+    {
+        log(assetsParser.getParserError(), true);
+        error( tr("Can't read assets index.") );
+        return;
+    }
+
+    QString hash = HashChecker::getDataHash(assetsIndex);
+
+    QString pathPtrn = "%1/indexes/%2.json";
+    QString assetsDir = settings->getAssetsDir();
+    QString assetsVersion = versionParser.getAssetsVesrsion();
+    QString path = pathPtrn.arg(assetsDir).arg(assetsVersion);
+
+    if ( !HashChecker::isFileHashValid(path, hash) )
+    {
+        QString urlPtrn = "%1indexes/%2.json";
+        QString assetsUrl = settings->getAssetsUrl();
+        QString url = urlPtrn.arg(assetsUrl).arg(assetsVersion);
+
+        FileInfo indexInfo;
+        indexInfo.name = path;
+        indexInfo.hash = hash;
+        indexInfo.size = assetsIndex.size();
+        indexInfo.url = url;
+
+        log( tr("Assets index is obsolete.") );
+        addToFetchList(indexInfo);
+    }
+
+    processIndexesData();
+}
+
+void UpdateDialog::processIndexesData()
+{
     // I. JAR
     log( tr("Append main JAR to check list...") );
     if ( !dataParser.hasJarFileInfo() )
@@ -310,6 +428,7 @@ void UpdateDialog::processClientFiles()
 
     FileInfo jar;
 
+    QString indexDir = settings->getVersionsDir() + "/" + clientVersion + "/";
     jar.name = indexDir + clientVersion + ".jar";
     jar.hash = dataParser.getJarFileInfo().hash;
     jar.size = dataParser.getJarFileInfo().size;
@@ -340,7 +459,6 @@ void UpdateDialog::processClientFiles()
         }
 
         FileInfo fileInfo = dataParser.getLibFileInfo(lib);
-
         fileInfo.name = libDir + lib;
         fileInfo.url = libUrl + lib;
 
@@ -395,45 +513,6 @@ void UpdateDialog::processClientFiles()
     }
 
     // IV. ASSETS
-    log( tr("Requesting actual assets index...") );
-    if ( !versionParser.hasAssetsVersion() )
-    {
-        error( tr("Assets are not described in version index.") );
-        return;
-    }
-
-    QString assetsName = versionParser.getAssetsVesrsion() + ".json";
-    QString assetsDir = settings->getAssetsDir() + "/indexes/";
-    QString assetsUrl = settings->getAssetsUrl() + "indexes/";
-
-    assetsFetcher.add(assetsUrl + assetsName, assetsDir + assetsName);
-    assetsFetcher.fetchFiles();
-}
-
-void UpdateDialog::assetsIndexUpdated(bool result)
-{
-    if (!result)
-    {
-        error( tr("Can't update assets index.") );
-        return;
-    }
-
-    processAssets();
-}
-
-void UpdateDialog::processAssets()
-{
-    QString assetsIndexDir = settings->getAssetsDir() + "/indexes/";
-    QString assetsName = versionParser.getAssetsVesrsion() + ".json";
-
-    JsonParser assetsParser;
-    if ( !assetsParser.setJsonFromFile(assetsIndexDir + assetsName) )
-    {
-        log(assetsParser.getParserError(), true);
-        error( tr("Can't read assets index.") );
-        return;
-    }
-
     log( tr("Append assets files to check list...") );
     if ( !assetsParser.hasAssetsList() )
     {
@@ -441,10 +520,11 @@ void UpdateDialog::processAssets()
         return;
     }
 
+    QList<FileInfo> assets = assetsParser.getAssetsList();
+
     QString assetsDir = settings->getAssetsDir() + "/objects/";
     QString assetsUrl = settings->getAssetsUrl() + "objects/";
 
-    QList<FileInfo> assets = assetsParser.getAssetsList();
     foreach (FileInfo asset, assets)
     {
         QString shortName = asset.name;
@@ -481,7 +561,7 @@ void UpdateDialog::checkFinished()
         {
             int count = fileFetcher.getCount();
 
-            double size = fileFetcher.getFetchSize() / 1024;
+            double size = double( fileFetcher.getFetchSize() ) / 1024;
             QString suffix = tr("KiB");
 
             if (size > 1024 * 1024)
@@ -516,37 +596,7 @@ void UpdateDialog::doUpdate()
 {
     ui->log->appendPlainText("");
 
-    bool need_fetch = fileFetcher.getCount() > 0;
-    bool need_remove = !removeList.empty();
-
-    QString clientDir = settings->getClientPrefix(clientVersion) + "/";
-    QString versionDir = settings->getVersionsDir() + "/" + clientVersion + "/";
-
-    if (need_remove)
-    {
-        log( tr("Removing obsolete files...") );
-
-        int total = removeList.size();
-        int current = 1;
-
-        foreach (QString entry, removeList)
-        {
-            log(tr("Removing: ") + entry);
-            QFile::remove(clientDir + entry);
-
-            current++;
-            ui->progressBar->setValue( int(float(current) * 100 / total) );
-        }
-
-        removeList.clear();
-    }
-
-    // Replace custom files index
-    QFile::remove(clientDir + "installed_data.json");
-    QDir(clientDir).mkpath(clientDir);
-    QFile::copy(versionDir + "data.json", clientDir + "installed_data.json");
-
-    if (need_fetch)
+    if (fileFetcher.getCount() > 0)
     {
         log( tr("Downloading files...") );
         fileFetcher.fetchFiles();
@@ -559,14 +609,45 @@ void UpdateDialog::doUpdate()
 
 void UpdateDialog::updateComplete(bool result)
 {
-    ui->log->appendPlainText("");
-
     if (result)
     {
+        QString clientDir
+            = settings->getClientPrefix(clientVersion) + "/";
+        QString versionDir
+            = settings->getVersionsDir() + "/" + clientVersion + "/";
+
+        // Remove obsolete files
+        if ( !removeList.empty() )
+        {
+            log( tr("Removing obsolete files...") );
+
+            int total = removeList.size();
+            int current = 1;
+
+            foreach (QString entry, removeList)
+            {
+                log(tr("Removing: ") + entry);
+                QFile::remove(clientDir + entry);
+
+                current++;
+                ui->progressBar->setValue( int(float(current) * 100 / total) );
+            }
+
+            removeList.clear();
+        }
+
+        // Update installed_data index
+        QFile::remove(clientDir + "installed_data.json");
+        QDir(clientDir).mkpath(clientDir);
+        QFile::copy(versionDir + "data.json",
+                    clientDir + "installed_data.json");
+
+        ui->log->appendPlainText("");
         log( tr("Update complete!") );
     }
     else
     {
+        ui->log->appendPlainText("");
         log( tr("Update not completed. Some files was not downloaded.") );
     }
     setState(CanClose);

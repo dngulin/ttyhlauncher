@@ -12,7 +12,6 @@
 #include "fileinfo.h"
 #include "libraryinfo.h"
 
-
 class GameRunner : public QObject
 {
     Q_OBJECT
@@ -29,7 +28,7 @@ signals:
     void started();
     void finished(int exitCode);
 
-    void beginCheck(const QList<FileInfo>  list, bool stopOnBad);
+    void beginCheck(const QList<FileInfo> list, bool stopOnBad);
 
 private:
     // Initial data
@@ -45,9 +44,17 @@ private:
     QString clientToken;
     QString accessToken;
 
+    // Checking urls and pathes in online mode
+    QString versionIndexUrl;
+    QString versionIndexPath;
+    QString dataIndexUrl;
+    QString dataIndexPath;
+    QString assetsIndexUrl;
+    QString assetsIndexPath;
+
     // Checking data
     QThread checkThread;
-    HashChecker* checker;
+    HashChecker *checker;
 
     QList<FileInfo> checkList;
 
@@ -56,11 +63,9 @@ private:
     QProcess minecraft;
 
     // Additional data
-    Settings* settings;
-    Logger* logger;
-
+    Settings *settings;
+    Logger *logger;
     DataFetcher fetcher;
-    FileFetcher downloader;
 
     // Logging
     void log(const QString &text);
@@ -68,23 +73,28 @@ private:
     // Run steps
     void requestAcessToken();
     void determinateVersion();
-    void updateVersionIndex();
-    void updateAssetsIndex();
-    void checkFiles();
 
+    void checkIndexes();
+    void requestVersionIndex();
+    void requestDataIndex();
+    void requestAssetsIndex();
+
+    void checkFiles();
     void runGame();
 
-    void readVersionIndexInfo(const QString& indexName);
+    void readVersionIndexInfo(const QString &indexName);
     void emitError(const QString &message);
     void emitNeedUpdate(const QString &message);
 
 private slots:
     void acessTokenReceived(bool result);
     void versionsListReceived(bool result);
-    void versionIndexesUpdated();
-    void assetsIndexUpdated();
 
-    void onBadChecksumm(const FileInfo fileInfo);
+    void versionIndexReceived(bool result);
+    void dataIndexReceived(bool result);
+    void assetsIndexReceived(bool result);
+
+    void onBadChecksum(const FileInfo fileInfo);
 
     void gameLog();
     void onGameError(QProcess::ProcessError error);

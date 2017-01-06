@@ -11,6 +11,7 @@ class DataFetcher : public QObject
     Q_OBJECT
 public:
     explicit DataFetcher(QObject *parent = 0);
+    ~DataFetcher();
 
     void makeHead(const QUrl &url);
     void makeGet(const QUrl &url);
@@ -25,6 +26,7 @@ public:
 private:
     QNetworkAccessManager *nam;
     QNetworkReply *reply;
+    QTimer *timer;
 
     bool waiting;
 
@@ -47,8 +49,11 @@ public slots:
     void cancel();
 
 private slots:
-    void requestFinished();
-    void fetchProgress(qint64 bytesReceived, qint64 bytesTotal);
+    void onTimeout();
+    void stopTimer();
+
+    void onRequestFinished();
+    void onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
 };
 
 #endif // DATAFETCHER_H
