@@ -14,6 +14,6 @@ This minecraft launcher is designed for using custom update and session servers.
 
 ### Dependencies
 
-1. Qt-5.3.1 or higher (core, gui, widgets, network)
+1. Qt-5.5 or higher (core, gui, widgets, network)
 2. libquazip-[r254](http://sourceforge.net/p/quazip/code/254/) or higher
 
