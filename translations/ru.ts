@@ -220,17 +220,17 @@
         <translation>Запрос списка версий...</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="397"/>
+        <location filename="../gamerunner.cpp" line="400"/>
         <source>Prepare file list for checking...</source>
         <translation>Подготовка списка файлов для проверки...</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="422"/>
+        <location filename="../gamerunner.cpp" line="425"/>
         <source>Main JAR does not described in data index.</source>
         <translation>Основной JAR не описан в индексе данных.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="438"/>
+        <location filename="../gamerunner.cpp" line="441"/>
         <source>Libraries are not described in data index.</source>
         <translation>Библиотеки не описаны в индексе данных.</translation>
     </message>
@@ -295,167 +295,174 @@
         <translation>Запрос индекса версии...</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="292"/>
+        <location filename="../gamerunner.cpp" line="274"/>
+        <location filename="../gamerunner.cpp" line="314"/>
+        <location filename="../gamerunner.cpp" line="364"/>
+        <source>Need to download running version!</source>
+        <translation>Необходимо загрузить запускаемую версию!</translation>
+    </message>
+    <message>
+        <location filename="../gamerunner.cpp" line="293"/>
         <source>Version index is obsolete!</source>
         <translation>Индекс версии устарел!</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="306"/>
+        <location filename="../gamerunner.cpp" line="307"/>
         <source>Requesting data index...</source>
         <translation>Запрос индекса данных...</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="331"/>
+        <location filename="../gamerunner.cpp" line="333"/>
         <source>Data index is obsolete!</source>
         <translation>Индекс данных устарел!</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="355"/>
+        <location filename="../gamerunner.cpp" line="357"/>
         <source>Requesting assets index...</source>
         <translation>Запрос индекса ресурсов...</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="385"/>
+        <location filename="../gamerunner.cpp" line="388"/>
         <source>Assets index is obsolete!</source>
         <translation>Индекс ресурсов устарел!</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="407"/>
+        <location filename="../gamerunner.cpp" line="410"/>
         <source>Can&apos;t parse version index! %1</source>
         <translation>Не удалось разобрать индекс версии! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="414"/>
+        <location filename="../gamerunner.cpp" line="417"/>
         <source>Can&apos;t parse data index! %1</source>
         <translation>Не удалось разобрать индекс данных! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="452"/>
+        <location filename="../gamerunner.cpp" line="455"/>
         <source>Data index not contains library: %1</source>
         <translation>Индекс данных не содержит библиотеку: %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="467"/>
+        <location filename="../gamerunner.cpp" line="470"/>
         <source>Addons are not described in data index.</source>
         <translation>Модификации не описаны в индексе данных.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="489"/>
+        <location filename="../gamerunner.cpp" line="492"/>
         <source>Assets are not described in version index.</source>
         <translation>Ресурсы не описаны в индексе версии.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="498"/>
+        <location filename="../gamerunner.cpp" line="501"/>
         <source>Can&apos;t parse assets index: </source>
         <translation>Не удалось разобрать индекс ресурсов: </translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="505"/>
+        <location filename="../gamerunner.cpp" line="508"/>
         <source>Assets list are not described in index.</source>
         <translation>Индекс ресурсов пуст.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="523"/>
+        <location filename="../gamerunner.cpp" line="526"/>
         <source>Begin files check...</source>
         <translation>Проверка файлов...</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="530"/>
+        <location filename="../gamerunner.cpp" line="533"/>
         <source>Bad checksum for %1.</source>
         <translation>Не удалось проверить контрольную сумму для %1.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="533"/>
+        <location filename="../gamerunner.cpp" line="536"/>
         <source>Client files are obsolete.</source>
         <translation>Файлы клиента устарели.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="539"/>
+        <location filename="../gamerunner.cpp" line="542"/>
         <source>Prepare run data...</source>
         <translation>Подготовка данных для запуска...</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="559"/>
+        <location filename="../gamerunner.cpp" line="562"/>
         <source>Can&apos;t create natives directory!</source>
         <translation>Не удалось создать директорию для библиотек!</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="583"/>
+        <location filename="../gamerunner.cpp" line="586"/>
         <source>No main class in %1.json!</source>
         <translation>В %1.json не указан главный класс!</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="591"/>
+        <location filename="../gamerunner.cpp" line="594"/>
         <source>No assets in %1.json!</source>
         <translation>В %1.json не указаны ресурсы!</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="599"/>
+        <location filename="../gamerunner.cpp" line="602"/>
         <source>No minecraft args in %1.json!</source>
         <translation>В %1.json не указаны аргументы запуска!</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="721"/>
+        <location filename="../gamerunner.cpp" line="724"/>
         <source>Failed to start! Java not found!</source>
         <translation>Не удалось запустить игру! Java не найдена!</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="725"/>
+        <location filename="../gamerunner.cpp" line="728"/>
         <source>Game crashed! %1</source>
         <translation>Игра упала! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="729"/>
+        <location filename="../gamerunner.cpp" line="732"/>
         <source>Game start timeout! %1</source>
         <translation>Игра не запустилась! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="733"/>
+        <location filename="../gamerunner.cpp" line="736"/>
         <source>Game can&apos;t write! %1</source>
         <translation>Игра не может писать! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="737"/>
+        <location filename="../gamerunner.cpp" line="740"/>
         <source>Game can&apos;t read! %1</source>
         <translation>Игра не может читать! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="742"/>
+        <location filename="../gamerunner.cpp" line="745"/>
         <source>Mysterious error! %1</source>
         <translation>Загадочная ошибка! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="749"/>
+        <location filename="../gamerunner.cpp" line="752"/>
         <source>Game started.</source>
         <translation>Игра запущена.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="755"/>
+        <location filename="../gamerunner.cpp" line="758"/>
         <source>Game finished with code %1.</source>
         <translation>Игра завершилась с кодом %1.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="761"/>
+        <location filename="../gamerunner.cpp" line="764"/>
         <source>Error! %1</source>
         <translation>Ошибка! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="767"/>
+        <location filename="../gamerunner.cpp" line="770"/>
         <source>Need update! %1</source>
         <translation>Требуется обновление! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="700"/>
+        <location filename="../gamerunner.cpp" line="703"/>
         <source>Run string: </source>
         <translation>Строка запуска: </translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="706"/>
+        <location filename="../gamerunner.cpp" line="709"/>
         <source>GameRunner</source>
         <translation>Пусковая установка</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="711"/>
+        <location filename="../gamerunner.cpp" line="714"/>
         <source>Game</source>
         <translation>Игра</translation>
     </message>

@@ -271,7 +271,8 @@ void GameRunner::requestVersionIndex()
     }
     else
     {
-        checkFiles();
+        emitNeedUpdate( tr("Need to download running version!") );
+        return;
     }
 }
 
@@ -310,7 +311,8 @@ void GameRunner::requestDataIndex()
     }
     else
     {
-        checkFiles();
+        emitNeedUpdate( tr("Need to download running version!") );
+        return;
     }
 }
 
@@ -359,7 +361,8 @@ void GameRunner::requestAssetsIndex()
         }
         else
         {
-            checkFiles();
+            emitNeedUpdate( tr("Need to download running version!") );
+            return;
         }
     }
     else
