@@ -654,12 +654,16 @@ void GameRunner::runGame()
     // RUN RUN RUN
     QStringList argList;
 
-    // Workaround for Oracle Java + StartSSL
-    QString keystore = settings->getConfigDir() + "/keystore.ks";
-    QString newline = "\r\n";
+    if ( settings->loadClientJavaKeystoreState() )
+    {
+        QString ksPath = settings->loadClientJavaKeystorePath();
+        QString ksPass = settings->loadClientJavaKeystorePass();
 
-    argList << "-Djavax.net.ssl.trustStore=" + keystore
-            << "-Djavax.net.ssl.trustStorePassword=123456"; // SO SAFE
+        argList << "-Djavax.net.ssl.trustStore=" + ksPath
+                << "-Djavax.net.ssl.trustStorePassword=" + ksPass;
+    }
+
+    QString newline = "\r\n";
     argList << "-Dline.separator=" + newline;
     argList << "-Dfile.encoding=UTF8";
 

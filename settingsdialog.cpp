@@ -22,14 +22,14 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     connect(&fetcher, &DataFetcher::finished,
             this, &SettingsDialog::makeVersionList);
 
-    connect( ui->clientCombo, SIGNAL( currentIndexChanged(int) ), settings,
-             SLOT( saveActiveClientID(int) ) );
+    connect( ui->clientCombo, SIGNAL(currentIndexChanged(int)), settings,
+             SLOT(saveActiveClientID(int)));
 
-    connect( ui->clientCombo, SIGNAL( currentIndexChanged(int) ), this,
-             SLOT( loadSettings() ) );
+    connect( ui->clientCombo, SIGNAL(currentIndexChanged(int)), this,
+             SLOT(loadSettings()));
 
-    connect( ui->clientCombo, SIGNAL( currentIndexChanged(int) ), this,
-             SLOT( loadVersionList() ) );
+    connect( ui->clientCombo, SIGNAL(currentIndexChanged(int)), this,
+             SLOT(loadVersionList()));
 
     if (ui->clientCombo->count() == 0)
     {
@@ -45,7 +45,10 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     }
 
     connect(ui->javapathButton, &QPushButton::clicked,
-            this, &SettingsDialog::openFileDialog);
+            this, &SettingsDialog::chooseJavaPath);
+
+    connect(ui->ksPathButton, &QPushButton::clicked,
+            this, &SettingsDialog::chooseJavaPath);
 
     connect(ui->saveButton, &QPushButton::clicked,
             this, &SettingsDialog::saveSettings);
@@ -182,6 +185,9 @@ void SettingsDialog::logCurrentSettings()
 
     log( tr("\tCheckAssets: ")
          + (ui->checkAssetsCombo->isChecked() ? yes : no) );
+
+    log( tr("\tUseJavaKeystore: ")
+         + (ui->keystoreBox->isChecked() ? yes : no) );
 }
 
 bool SettingsDialog::isVersionInstalled(const QString &name)
@@ -209,6 +215,11 @@ void SettingsDialog::saveSettings()
 
     bool launcherSizeState = ui->useLauncherRadio->isChecked();
     settings->saveClientUseLauncherSizeState(launcherSizeState);
+
+    bool ksState = ui->keystoreBox->isChecked();
+    settings->saveClientJavaKeystoreState(ksState);
+    settings->saveClientJavaKeystorePath( ui->ksPathEdit->text() );
+    settings->saveClientJavaKeystorePass( ui->ksPassEdit->text() );
 
     settings->saveClientCheckAssetsState( ui->checkAssetsCombo->isChecked() );
 
@@ -240,6 +251,12 @@ void SettingsDialog::loadSettings()
         ui->customSizeRadio->setChecked(true);
     }
 
+    bool useKeystore = settings->loadClientJavaKeystoreState();
+    ui->keystoreBox->setChecked(useKeystore);
+
+    ui->ksPathEdit->setText( settings->loadClientJavaKeystorePath() );
+    ui->ksPassEdit->setText( settings->loadClientJavaKeystorePass() );
+
     bool checkAssets = settings->loadClientCheckAssetsState();
     ui->checkAssetsCombo->setChecked(checkAssets);
 
@@ -247,11 +264,18 @@ void SettingsDialog::loadSettings()
     logCurrentSettings();
 }
 
-void SettingsDialog::openFileDialog()
+void SettingsDialog::chooseJavaPath()
 {
     QString title = tr("Select a java executable");
     QString javapath = QFileDialog::getOpenFileName(this, title, "", "");
     ui->javapathEdit->setText(javapath);
+}
+
+void SettingsDialog::chooseJavaKeystore()
+{
+    QString title = tr("Select a java keystore file");
+    QString javapath = QFileDialog::getOpenFileName(this, title, "", "");
+    ui->ksPathEdit->setText(javapath);
 }
 
 void SettingsDialog::openClientDirectory()

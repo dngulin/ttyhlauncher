@@ -25,8 +25,8 @@ private:
 
     DataFetcher fetcher;
 
-    Settings* settings;
-    Logger* logger;
+    Settings *settings;
+    Logger *logger;
 
     void msg(const QString &text);
     void log(const QString &text);
@@ -39,7 +39,8 @@ private:
 private slots:
     void saveSettings();
     void loadSettings();
-    void openFileDialog();
+    void chooseJavaPath();
+    void chooseJavaKeystore();
     void openClientDirectory();
     void loadVersionList();
     void makeVersionList(bool result);

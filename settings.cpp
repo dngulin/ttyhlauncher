@@ -449,6 +449,54 @@ void Settings::saveClientJavaArgs(const QString &args) const
     settings->setValue(entry, args);
 }
 
+bool Settings::loadClientJavaKeystoreState() const
+{
+    QString client = getClientName( loadActiveClientID() );
+    QString entry = "client-" + client + "/java_keystore_enabled";
+
+    return settings->value(entry, false).toBool();
+}
+
+void Settings::saveClientJavaKeystoreState(bool state) const
+{
+    QString client = getClientName( loadActiveClientID() );
+    QString entry = "client-" + client + "/java_keystore_enabled";
+
+    settings->setValue(entry, state);
+}
+
+QString Settings::loadClientJavaKeystorePath() const
+{
+    QString client = getClientName( loadActiveClientID() );
+    QString entry = "client-" + client + "/java_keystore_path";
+
+    return settings->value(entry, "").toString();
+}
+
+void Settings::saveClientJavaKeystorePath(const QString &path) const
+{
+    QString client = getClientName( loadActiveClientID() );
+    QString entry = "client-" + client + "/java_keystore_path";
+
+    settings->setValue(entry, path);
+}
+
+QString Settings::loadClientJavaKeystorePass() const
+{
+    QString client = getClientName( loadActiveClientID() );
+    QString entry = "client-" + client + "/java_keystore_password";
+
+    return settings->value(entry, "").toString();
+}
+
+void Settings::saveClientJavaKeystorePass(const QString &pass) const
+{
+    QString client = getClientName( loadActiveClientID() );
+    QString entry = "client-" + client + "/java_keystore_password";
+
+    settings->setValue(entry, pass);
+}
+
 bool Settings::loadClientCheckAssetsState() const
 {
     QString client = getClientName( loadActiveClientID() );

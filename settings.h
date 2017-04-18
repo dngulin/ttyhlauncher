@@ -111,6 +111,15 @@ public:
     QString loadClientJavaArgs() const;
     void saveClientJavaArgs(const QString &args) const;
 
+    bool loadClientJavaKeystoreState() const;
+    void saveClientJavaKeystoreState(bool state) const;
+
+    QString loadClientJavaKeystorePath() const;
+    void saveClientJavaKeystorePath(const QString &path) const;
+
+    QString loadClientJavaKeystorePass() const;
+    void saveClientJavaKeystorePass(const QString &pass) const;
+
     bool loadClientWindowSizeState() const;
     void saveClientWindowSizeState(bool s) const;
 
