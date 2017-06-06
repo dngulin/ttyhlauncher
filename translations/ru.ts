@@ -1122,12 +1122,17 @@
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.ui" line="113"/>
+        <location filename="../skinuploaddialog.ui" line="88"/>
+        <source>Skin For Slim Player Model</source>
+        <translation>Скин для slim-модели игрока</translation>
+    </message>
+    <message>
+        <location filename="../skinuploaddialog.ui" line="120"/>
         <source>Fill the form, then press &quot;Upload&quot; button.</source>
         <translation>Заполните форму и нажмите кнопку &quot;Загрузить&quot;.</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.ui" line="145"/>
+        <location filename="../skinuploaddialog.ui" line="152"/>
         <source>Upload</source>
         <translation>Загрузить</translation>
     </message>
@@ -1167,33 +1172,33 @@
         <translation>Ошибка! Не указан пароль!</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="113"/>
-        <location filename="../skinuploaddialog.cpp" line="127"/>
+        <location filename="../skinuploaddialog.cpp" line="118"/>
+        <location filename="../skinuploaddialog.cpp" line="132"/>
         <source>Error! %1</source>
         <translation>Ошибка! %1</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="121"/>
+        <location filename="../skinuploaddialog.cpp" line="126"/>
         <source>Bad server answer! %1</source>
         <translation>Некорректный ответ сервера! %1</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="131"/>
+        <location filename="../skinuploaddialog.cpp" line="136"/>
         <source>Complete!</source>
         <translation>Готово!</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="150"/>
+        <location filename="../skinuploaddialog.cpp" line="155"/>
         <source>File selected: %1</source>
         <translation>Выбран файл: %1</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="132"/>
+        <location filename="../skinuploaddialog.cpp" line="137"/>
         <source>Skin successfully uploaded!</source>
         <translation>Скин загружен!</translation>
     </message>
     <message>
-        <location filename="../skinuploaddialog.cpp" line="142"/>
+        <location filename="../skinuploaddialog.cpp" line="147"/>
         <source>Select a skin file</source>
         <translation>Выберите файл скина</translation>
     </message>
