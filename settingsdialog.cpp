@@ -48,7 +48,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
             this, &SettingsDialog::chooseJavaPath);
 
     connect(ui->ksPathButton, &QPushButton::clicked,
-            this, &SettingsDialog::chooseJavaPath);
+            this, &SettingsDialog::chooseJavaKeystore);
 
     connect(ui->saveButton, &QPushButton::clicked,
             this, &SettingsDialog::saveSettings);
