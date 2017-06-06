@@ -98,6 +98,11 @@ void SkinUploadDialog::uploadSkin()
     QByteArray skin( skinfile.readAll() );
     payload["skinData"] = QString( skin.toBase64() );
 
+    if ( ui->slimSkinCheck->isChecked() )
+    {
+        payload["skinModel"] = "slim";
+    }
+
     QJsonDocument jsonRequest(payload);
 
     uploader.makePost( Settings::skinUploadUrl, jsonRequest.toJson() );
