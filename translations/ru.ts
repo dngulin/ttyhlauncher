@@ -402,67 +402,67 @@
         <translation>В %1.json не указаны аргументы запуска!</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="724"/>
+        <location filename="../gamerunner.cpp" line="728"/>
         <source>Failed to start! Java not found!</source>
         <translation>Не удалось запустить игру! Java не найдена!</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="728"/>
+        <location filename="../gamerunner.cpp" line="732"/>
         <source>Game crashed! %1</source>
         <translation>Игра упала! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="732"/>
+        <location filename="../gamerunner.cpp" line="736"/>
         <source>Game start timeout! %1</source>
         <translation>Игра не запустилась! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="736"/>
+        <location filename="../gamerunner.cpp" line="740"/>
         <source>Game can&apos;t write! %1</source>
         <translation>Игра не может писать! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="740"/>
+        <location filename="../gamerunner.cpp" line="744"/>
         <source>Game can&apos;t read! %1</source>
         <translation>Игра не может читать! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="745"/>
+        <location filename="../gamerunner.cpp" line="749"/>
         <source>Mysterious error! %1</source>
         <translation>Загадочная ошибка! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="752"/>
+        <location filename="../gamerunner.cpp" line="756"/>
         <source>Game started.</source>
         <translation>Игра запущена.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="758"/>
+        <location filename="../gamerunner.cpp" line="762"/>
         <source>Game finished with code %1.</source>
         <translation>Игра завершилась с кодом %1.</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="764"/>
+        <location filename="../gamerunner.cpp" line="768"/>
         <source>Error! %1</source>
         <translation>Ошибка! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="770"/>
+        <location filename="../gamerunner.cpp" line="774"/>
         <source>Need update! %1</source>
         <translation>Требуется обновление! %1</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="703"/>
+        <location filename="../gamerunner.cpp" line="707"/>
         <source>Run string: </source>
         <translation>Строка запуска: </translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="709"/>
+        <location filename="../gamerunner.cpp" line="713"/>
         <source>GameRunner</source>
         <translation>Пусковая установка</translation>
     </message>
     <message>
-        <location filename="../gamerunner.cpp" line="714"/>
+        <location filename="../gamerunner.cpp" line="718"/>
         <source>Game</source>
         <translation>Игра</translation>
     </message>
@@ -881,11 +881,13 @@
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="176"/>
+        <location filename="../settingsdialog.ui" line="250"/>
         <source>Path</source>
         <translation>Путь</translation>
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="186"/>
+        <location filename="../settingsdialog.ui" line="236"/>
         <source>...</source>
         <translation>...</translation>
     </message>
@@ -901,16 +903,26 @@
     </message>
     <message>
         <location filename="../settingsdialog.ui" line="221"/>
+        <source>Set java &amp;keystore</source>
+        <translation>Указать хранилище &amp;ключей</translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog.ui" line="243"/>
+        <source>Password</source>
+        <translation>Пароль</translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog.ui" line="267"/>
         <source>Check assets before run</source>
         <translation>Проверять ресурсы перед запуском игры</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="253"/>
+        <location filename="../settingsdialog.ui" line="299"/>
         <source>Open client directory...</source>
         <translation>Открыть директорию клиента...</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.ui" line="273"/>
+        <location filename="../settingsdialog.ui" line="319"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>
@@ -920,154 +932,164 @@
         <translation>Ошибка: список клиентов пуст!</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="70"/>
+        <location filename="../settingsdialog.cpp" line="73"/>
         <source>SettingsDialog</source>
         <translation>Окно настроек</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="75"/>
+        <location filename="../settingsdialog.cpp" line="78"/>
         <source>Loading version list...</source>
         <translation>Загрузка списка версий...</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="79"/>
+        <location filename="../settingsdialog.cpp" line="82"/>
         <source>Latest version</source>
         <translation>Последняя версия</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="88"/>
-        <location filename="../settingsdialog.cpp" line="96"/>
+        <location filename="../settingsdialog.cpp" line="91"/>
+        <location filename="../settingsdialog.cpp" line="99"/>
         <source>Error: </source>
         <translation>Ошибка: </translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="89"/>
+        <location filename="../settingsdialog.cpp" line="92"/>
         <source>Local versions (server unreachable)</source>
         <translation>Локальные версии (сервер не отвечает)</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="97"/>
+        <location filename="../settingsdialog.cpp" line="100"/>
         <source>Local versions (bad server reply)</source>
         <translation>Локальные версии (сервер ответил ерунду)</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="103"/>
+        <location filename="../settingsdialog.cpp" line="106"/>
         <source>Error: no version list!</source>
         <translation>Ошибка: список версий пуст!</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="104"/>
+        <location filename="../settingsdialog.cpp" line="107"/>
         <source>Local versions (empty server reply)</source>
         <translation>Локальные версии (пустой ответ сервера)</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="113"/>
-        <location filename="../settingsdialog.cpp" line="143"/>
+        <location filename="../settingsdialog.cpp" line="116"/>
+        <location filename="../settingsdialog.cpp" line="146"/>
         <source> [prefix installed]</source>
         <translation> [префикс установлен]</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="117"/>
+        <location filename="../settingsdialog.cpp" line="120"/>
         <source>Version list from update server</source>
         <translation>Список версий с сервера обновлений</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="125"/>
+        <location filename="../settingsdialog.cpp" line="128"/>
         <source>Append local version list...</source>
         <translation>Добавление локальных версий...</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="140"/>
+        <location filename="../settingsdialog.cpp" line="143"/>
         <source> [local]</source>
         <translation> [локальная]</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="160"/>
+        <location filename="../settingsdialog.cpp" line="163"/>
         <source>true</source>
         <translation>да</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="161"/>
+        <location filename="../settingsdialog.cpp" line="164"/>
         <source>false</source>
         <translation>нет</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="165"/>
+        <location filename="../settingsdialog.cpp" line="168"/>
         <source>	Client: </source>
         <translation>	Клиент: </translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="166"/>
+        <location filename="../settingsdialog.cpp" line="169"/>
         <source>	Version: </source>
         <translation>	Версия: </translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="168"/>
+        <location filename="../settingsdialog.cpp" line="171"/>
         <source>	UseCustomJava: </source>
         <translation>	Указан путь к Java: </translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="169"/>
+        <location filename="../settingsdialog.cpp" line="172"/>
         <source>	CustomJava: </source>
         <translation>	Путь к Java: </translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="170"/>
+        <location filename="../settingsdialog.cpp" line="173"/>
         <source>	UseCustomArgs: </source>
         <translation>	Указаны параметры Java: </translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="171"/>
+        <location filename="../settingsdialog.cpp" line="174"/>
         <source>	CustomArgs: </source>
         <translation>	Параметры Java: </translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="173"/>
+        <location filename="../settingsdialog.cpp" line="176"/>
         <source>	SetWindowGeometry: </source>
         <translation>	Изменять размер окна игры: </translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="174"/>
+        <location filename="../settingsdialog.cpp" line="177"/>
         <source>	CustomGeometry: </source>
         <translation>	Свой размер: </translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="178"/>
+        <location filename="../settingsdialog.cpp" line="181"/>
         <source>	MakeFullscreen: </source>
         <translation>	Полный экран: </translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="180"/>
+        <location filename="../settingsdialog.cpp" line="183"/>
         <source>	UseLauncherSize: </source>
         <translation>	По размеру лаунчера: </translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="183"/>
+        <location filename="../settingsdialog.cpp" line="186"/>
         <source>	CheckAssets: </source>
         <translation>	Проверять ресурсы: </translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="215"/>
+        <location filename="../settingsdialog.cpp" line="189"/>
+        <source>	UseJavaKeystore: </source>
+        <translation>	Указан путь к keystore: </translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog.cpp" line="226"/>
         <source>Settings saved:</source>
         <translation>Настройки сохранены:</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="246"/>
+        <location filename="../settingsdialog.cpp" line="263"/>
         <source>Settings loaded:</source>
         <translation>Settings loaded:</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="252"/>
+        <location filename="../settingsdialog.cpp" line="269"/>
         <source>Select a java executable</source>
         <translation>Укажите путь к Java</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="268"/>
+        <location filename="../settingsdialog.cpp" line="276"/>
+        <source>Select a java keystore file</source>
+        <translation>Укажите путь к хранилищу ключей</translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog.cpp" line="292"/>
         <source>Can&apos;t open client directory! %1</source>
         <translation>Не удалось открыть директорию клиента: %1</translation>
     </message>
     <message>
-        <location filename="../settingsdialog.cpp" line="267"/>
+        <location filename="../settingsdialog.cpp" line="291"/>
         <source>Oops! We have a problem!</source>
         <translation>Ой! Вот ведь незадача!</translation>
     </message>
