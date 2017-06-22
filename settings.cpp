@@ -10,7 +10,7 @@
 
 typedef QStandardPaths Path;
 
-const QString Settings::launcherVersion = "1.2.2";
+const QString Settings::launcherVersion = "1.2.3";
 
 const QString Settings::newsFeed = "https://ttyh.ru/misc.php?page=feed";
 
