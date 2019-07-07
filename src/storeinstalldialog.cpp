@@ -1,5 +1,5 @@
 #include "storeinstalldialog.h"
-#include "ui_storeinstalldialog.h"
+#include "../data/ui_storeinstalldialog.h"
 
 #include "jsonparser.h"
 #include "hashchecker.h"

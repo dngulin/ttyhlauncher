@@ -1,5 +1,5 @@
 #include "aboutdialog.h"
-#include "ui_aboutdialog.h"
+#include "../data/ui_aboutdialog.h"
 
 #include "settings.h"
 #include "licensedialog.h"

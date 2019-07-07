@@ -1,5 +1,5 @@
 #include "feedbackdialog.h"
-#include "ui_feedbackdialog.h"
+#include "../data/ui_feedbackdialog.h"
 
 #include "settings.h"
 #include "util.h"

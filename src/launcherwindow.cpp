@@ -1,5 +1,5 @@
 #include "launcherwindow.h"
-#include "ui_launcherwindow.h"
+#include "../data/ui_launcherwindow.h"
 
 #include "settingsdialog.h"
 #include "skinuploaddialog.h"

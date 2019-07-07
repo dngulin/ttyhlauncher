@@ -1,5 +1,5 @@
 #include "updatedialog.h"
-#include "ui_updatedialog.h"
+#include "../data/ui_updatedialog.h"
 
 #include "settings.h"
 #include "logger.h"
