@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include <QtCore>
 #include <QStandardPaths>
 #include <QSysInfo>
@@ -10,7 +12,7 @@
 
 typedef QStandardPaths Path;
 
-const QString Settings::launcherVersion = "1.2.3";
+const QString Settings::launcherVersion = PROJECT_VERSION;
 
 const QString Settings::newsFeed = "https://ttyh.ru/misc.php?page=feed";
 

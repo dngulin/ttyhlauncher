@@ -1,5 +1,5 @@
 #include "licensedialog.h"
-#include "ui_licensedialog.h"
+#include "../data/ui_licensedialog.h"
 
 #include <QFile>
 #include <QTextStream>

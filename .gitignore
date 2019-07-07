@@ -1,8 +1,2 @@
-*.o
-*.app
-moc_*
-ui_*
-Makefile
-.qmake*
-ttyhlauncher.pro.user*
+CMakeLists.txt.user*
 *.zip
