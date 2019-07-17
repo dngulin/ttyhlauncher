@@ -1,5 +1,5 @@
 #include "selfupdatedialog.h"
-#include "../data/ui_selfupdatedialog.h"
+#include "../ui/ui_selfupdatedialog.h"
 
 #include <QStandardPaths>
 typedef QStandardPaths Path;

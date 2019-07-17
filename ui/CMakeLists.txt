@@ -1,7 +1,4 @@
-configure_file("resources.qrc.in" "resources.qrc" @ONLY)
-
 target_sources(ttyhlauncher PUBLIC
-  "${CMAKE_CURRENT_BINARY_DIR}/resources.qrc"
   "${CMAKE_CURRENT_SOURCE_DIR}/launcherwindow.ui"
   "${CMAKE_CURRENT_SOURCE_DIR}/skinuploaddialog.ui"
   "${CMAKE_CURRENT_SOURCE_DIR}/settingsdialog.ui"

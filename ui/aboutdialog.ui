@@ -14,7 +14,7 @@
    <string>About progam</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resources.qrc">
+   <iconset resource="../resources/resources.qrc">
     <normaloff>:/resources/about.png</normaloff>:/resources/about.png</iconset>
   </property>
   <property name="modal">
@@ -45,7 +45,7 @@
       <string/>
      </property>
      <property name="pixmap">
-      <pixmap resource="resources.qrc">:/resources/favicon.png</pixmap>
+      <pixmap resource="../resources/resources.qrc">:/resources/favicon.png</pixmap>
      </property>
     </widget>
    </item>
@@ -131,7 +131,7 @@
   <tabstop>licenseButton</tabstop>
  </tabstops>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="../resources/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

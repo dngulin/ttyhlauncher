@@ -1,5 +1,5 @@
 #include "storemanagedialog.h"
-#include "../data/ui_storemanagedialog.h"
+#include "../ui/ui_storemanagedialog.h"
 
 #include "jsonparser.h"
 

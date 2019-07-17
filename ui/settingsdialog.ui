@@ -14,7 +14,7 @@
    <string>Client settings</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resources.qrc">
+   <iconset resource="../resources/resources.qrc">
     <normaloff>:/resources/configure.png</normaloff>:/resources/configure.png</iconset>
   </property>
   <property name="modal">
@@ -351,7 +351,7 @@
   <tabstop>opendirButton</tabstop>
  </tabstops>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="../resources/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

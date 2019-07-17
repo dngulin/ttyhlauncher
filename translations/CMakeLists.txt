@@ -17,3 +17,7 @@ add_custom_target(update_ts
 
 qt5_add_translation(QM_FILES ${TS_FILES})
 add_custom_target(update_qm DEPENDS ${QM_FILES})
+
+configure_file("translations.qrc.in" "translations.qrc" @ONLY)
+
+target_sources(ttyhlauncher PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/translations.qrc")

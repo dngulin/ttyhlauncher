@@ -1,5 +1,5 @@
 #include "storesettingsdialog.h"
-#include "../data/ui_storesettingsdialog.h"
+#include "../ui/ui_storesettingsdialog.h"
 
 #include <QFileDialog>
 

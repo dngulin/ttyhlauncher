@@ -1,3 +1,5 @@
+target_sources(ttyhlauncher PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/resources.qrc")
+
 if(UNIX AND NOT APPLE)
   install(FILES "unix/ttyhlauncher.desktop"
     DESTINATION "${CMAKE_INSTALL_DATADIR}/applications"

@@ -1,5 +1,5 @@
 #include "skinuploaddialog.h"
-#include "../data/ui_skinuploaddialog.h"
+#include "../ui/ui_skinuploaddialog.h"
 
 #include "settings.h"
 #include "jsonparser.h"
