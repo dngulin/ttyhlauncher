@@ -4,8 +4,10 @@ set -eu
 TARGET='ttyhlauncher_koi7.ts'
 COUNT="$(xmlstarlet sel -t -v "count(TS/context/message)" "$TARGET")"
 
+echo "$COUNT"
+
 for i in $(seq 1 "$COUNT"); do
-    TYPE=$(xmlstarlet sel -T -t -v "(TS/context/message/translation)[$i]/@type" "$TARGET")
+    TYPE="$(xmlstarlet sel -T -t -v "(TS/context/message/translation)[$i]/@type" "$TARGET" || true)"
 
     if [ "$TYPE" = 'unfinished' ]; then
         SRC="$(xmlstarlet sel -T -t -v "(TS/context/message/source)[$i]" "$TARGET")"

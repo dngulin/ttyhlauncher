@@ -14,7 +14,7 @@
    <string>License</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resources.qrc">
+   <iconset resource="../resources/resources.qrc">
     <normaloff>:/resources/about.png</normaloff>:/resources/about.png</iconset>
   </property>
   <property name="modal">
@@ -76,7 +76,7 @@
   <tabstop>closeButton</tabstop>
  </tabstops>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="../resources/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

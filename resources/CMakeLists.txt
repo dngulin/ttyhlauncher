@@ -1,3 +1,5 @@
+target_sources(ttyhlauncher PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/resources.qrc")
+
 if(UNIX AND NOT APPLE)
   install(FILES "unix/ttyhlauncher.desktop"
     DESTINATION "${CMAKE_INSTALL_DATADIR}/applications"
@@ -8,9 +10,8 @@ if(UNIX AND NOT APPLE)
 elseif(WIN32)
   set(RC_FILE "${CMAKE_CURRENT_BINARY_DIR}/favicon.rc")
 
-  file(GENERATE
-    OUTPUT ${RC_FILE}
-    CONTENT "IDI_ICON1 ICON \"${CMAKE_CURRENT_SOURCE_DIR}/favicon.ico\""
+  file(WRITE ${RC_FILE}
+    "IDI_ICON1 ICON \"${CMAKE_CURRENT_SOURCE_DIR}/favicon.ico\""
   )
   target_sources(ttyhlauncher PUBLIC ${RC_FILE})
 elseif(APPLE)

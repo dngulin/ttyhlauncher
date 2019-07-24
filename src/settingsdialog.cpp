@@ -1,5 +1,5 @@
 #include "settingsdialog.h"
-#include "../data/ui_settingsdialog.h"
+#include "../ui/ui_settingsdialog.h"
 
 #include <QFileDialog>
 #include <QDesktopServices>

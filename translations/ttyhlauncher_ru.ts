@@ -4,22 +4,22 @@
 <context>
     <name>AboutDialog</name>
     <message>
-        <location filename="../data/aboutdialog.ui" line="14"/>
+        <location filename="../ui/aboutdialog.ui" line="14"/>
         <source>About progam</source>
         <translation>О программе</translation>
     </message>
     <message>
-        <location filename="../data/aboutdialog.ui" line="67"/>
+        <location filename="../ui/aboutdialog.ui" line="67"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;The opensource Minecraft launcher, distributed under the GNU GPL license version 3.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Лаунчер для Minecraft с открытым исходным кодом, распространяемый под лицензией GNU GPL v3&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../data/aboutdialog.ui" line="105"/>
+        <location filename="../ui/aboutdialog.ui" line="105"/>
         <source>License</source>
         <translation>Лицензия</translation>
     </message>
     <message>
-        <location filename="../data/aboutdialog.ui" line="118"/>
+        <location filename="../ui/aboutdialog.ui" line="118"/>
         <source>Close</source>
         <translation>Закрыть</translation>
     </message>
@@ -65,32 +65,32 @@
 <context>
     <name>FeedbackDialog</name>
     <message>
-        <location filename="../data/feedbackdialog.ui" line="14"/>
+        <location filename="../ui/feedbackdialog.ui" line="14"/>
         <source>Feedback</source>
         <translation>Обратная связь</translation>
     </message>
     <message>
-        <location filename="../data/feedbackdialog.ui" line="47"/>
+        <location filename="../ui/feedbackdialog.ui" line="47"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
     <message>
-        <location filename="../data/feedbackdialog.ui" line="54"/>
+        <location filename="../ui/feedbackdialog.ui" line="54"/>
         <source>Nickname</source>
         <translation>Игровое имя</translation>
     </message>
     <message>
-        <location filename="../data/feedbackdialog.ui" line="73"/>
+        <location filename="../ui/feedbackdialog.ui" line="73"/>
         <source>Short trouble description</source>
         <translation>Краткое описание проблемы</translation>
     </message>
     <message>
-        <location filename="../data/feedbackdialog.ui" line="87"/>
+        <location filename="../ui/feedbackdialog.ui" line="87"/>
         <source>Fill the form, then press &quot;Send&quot; button</source>
         <translation>Заполните форму и нажмите кнопку &quot;Отправить&quot;</translation>
     </message>
     <message>
-        <location filename="../data/feedbackdialog.ui" line="119"/>
+        <location filename="../ui/feedbackdialog.ui" line="119"/>
         <source>Send</source>
         <translation>Отправить</translation>
     </message>
@@ -470,107 +470,107 @@
 <context>
     <name>LauncherWindow</name>
     <message>
-        <location filename="../data/launcherwindow.ui" line="20"/>
+        <location filename="../ui/launcherwindow.ui" line="20"/>
         <source>Ttyh Launcher</source>
         <translation>Пусковая установка</translation>
     </message>
     <message>
-        <location filename="../data/launcherwindow.ui" line="115"/>
+        <location filename="../ui/launcherwindow.ui" line="115"/>
         <source>Remember password</source>
         <translation>Запомнить пароль</translation>
     </message>
     <message>
-        <location filename="../data/launcherwindow.ui" line="122"/>
+        <location filename="../ui/launcherwindow.ui" line="122"/>
         <source>Player Name</source>
         <translation>Игровое имя</translation>
     </message>
     <message>
-        <location filename="../data/launcherwindow.ui" line="129"/>
+        <location filename="../ui/launcherwindow.ui" line="129"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
     <message>
-        <location filename="../data/launcherwindow.ui" line="136"/>
+        <location filename="../ui/launcherwindow.ui" line="136"/>
         <source>Clinet</source>
         <translation>Клиент</translation>
     </message>
     <message>
-        <location filename="../data/launcherwindow.ui" line="171"/>
+        <location filename="../ui/launcherwindow.ui" line="171"/>
         <source>Play!</source>
         <translation>Играть!</translation>
     </message>
     <message>
-        <location filename="../data/launcherwindow.ui" line="201"/>
+        <location filename="../ui/launcherwindow.ui" line="201"/>
         <source>&amp;Options</source>
         <translation>&amp;Опции</translation>
     </message>
     <message>
-        <location filename="../data/launcherwindow.ui" line="209"/>
+        <location filename="../ui/launcherwindow.ui" line="209"/>
         <source>&amp;Tools</source>
         <translation>&amp;Инструменты</translation>
     </message>
     <message>
-        <location filename="../data/launcherwindow.ui" line="213"/>
+        <location filename="../ui/launcherwindow.ui" line="213"/>
         <source>&amp;Local versions</source>
         <translation>&amp;Локальные версии</translation>
     </message>
     <message>
-        <location filename="../data/launcherwindow.ui" line="226"/>
+        <location filename="../ui/launcherwindow.ui" line="226"/>
         <source>&amp;Help</source>
         <translation>&amp;Помощь</translation>
     </message>
     <message>
-        <location filename="../data/launcherwindow.ui" line="240"/>
+        <location filename="../ui/launcherwindow.ui" line="240"/>
         <source>&amp;Play offline</source>
         <translation>&amp;Играть оффлайн</translation>
     </message>
     <message>
-        <location filename="../data/launcherwindow.ui" line="249"/>
+        <location filename="../ui/launcherwindow.ui" line="249"/>
         <source>&amp;Client settings</source>
         <translation>&amp;Настройки</translation>
     </message>
     <message>
-        <location filename="../data/launcherwindow.ui" line="258"/>
+        <location filename="../ui/launcherwindow.ui" line="258"/>
         <source>&amp;Report a bug</source>
         <translation>&amp;Сообщить об ошибке</translation>
     </message>
     <message>
-        <location filename="../data/launcherwindow.ui" line="267"/>
+        <location filename="../ui/launcherwindow.ui" line="267"/>
         <source>&amp;Upload skin</source>
         <translation>&amp;Загрузить скин</translation>
     </message>
     <message>
-        <location filename="../data/launcherwindow.ui" line="276"/>
+        <location filename="../ui/launcherwindow.ui" line="276"/>
         <source>Update &amp;manager</source>
         <translation>&amp;Обновление клиента</translation>
     </message>
     <message>
-        <location filename="../data/launcherwindow.ui" line="285"/>
+        <location filename="../ui/launcherwindow.ui" line="285"/>
         <source>&amp;About</source>
         <translation>&amp;О программе</translation>
     </message>
     <message>
-        <location filename="../data/launcherwindow.ui" line="293"/>
+        <location filename="../ui/launcherwindow.ui" line="293"/>
         <source>&amp;Hide launcher window</source>
         <translation>&amp;Скрывать окно при запуске</translation>
     </message>
     <message>
-        <location filename="../data/launcherwindow.ui" line="301"/>
+        <location filename="../ui/launcherwindow.ui" line="301"/>
         <source>&amp;Load news</source>
         <translation>&amp;Загружать новости</translation>
     </message>
     <message>
-        <location filename="../data/launcherwindow.ui" line="306"/>
+        <location filename="../ui/launcherwindow.ui" line="306"/>
         <source>&amp;Repository settings</source>
         <translation>&amp;Параметры хранилища</translation>
     </message>
     <message>
-        <location filename="../data/launcherwindow.ui" line="311"/>
+        <location filename="../ui/launcherwindow.ui" line="311"/>
         <source>&amp;Manage repository</source>
         <translation>&amp;Управление хранилищем</translation>
     </message>
     <message>
-        <location filename="../data/launcherwindow.ui" line="316"/>
+        <location filename="../ui/launcherwindow.ui" line="316"/>
         <source>&amp;Install version</source>
         <translation>Установить &amp;локальную версию</translation>
     </message>
@@ -653,12 +653,12 @@
 <context>
     <name>LicenseDialog</name>
     <message>
-        <location filename="../data/licensedialog.ui" line="14"/>
+        <location filename="../ui/licensedialog.ui" line="14"/>
         <source>License</source>
         <translation>Лицензия</translation>
     </message>
     <message>
-        <location filename="../data/licensedialog.ui" line="67"/>
+        <location filename="../ui/licensedialog.ui" line="67"/>
         <source>Close</source>
         <translation>Закрыть</translation>
     </message>
@@ -689,17 +689,17 @@
 <context>
     <name>SelfUpdateDialog</name>
     <message>
-        <location filename="../data/selfupdatedialog.ui" line="14"/>
+        <location filename="../ui/selfupdatedialog.ui" line="14"/>
         <source>Launcher update available</source>
         <translation>Доступно обновление лаунчера</translation>
     </message>
     <message>
-        <location filename="../data/selfupdatedialog.ui" line="83"/>
+        <location filename="../ui/selfupdatedialog.ui" line="83"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="../data/selfupdatedialog.ui" line="103"/>
+        <location filename="../ui/selfupdatedialog.ui" line="103"/>
         <source>Update</source>
         <translation>Обновить</translation>
     </message>
@@ -820,109 +820,109 @@
 <context>
     <name>SettingsDialog</name>
     <message>
-        <location filename="../data/settingsdialog.ui" line="14"/>
+        <location filename="../ui/settingsdialog.ui" line="14"/>
         <source>Client settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../data/settingsdialog.ui" line="42"/>
+        <location filename="../ui/settingsdialog.ui" line="42"/>
         <source>Version selection</source>
         <translation>Версия клиента</translation>
     </message>
     <message>
-        <location filename="../data/settingsdialog.ui" line="51"/>
+        <location filename="../ui/settingsdialog.ui" line="51"/>
         <source>Client</source>
         <translation>Клиент</translation>
     </message>
     <message>
-        <location filename="../data/settingsdialog.ui" line="61"/>
+        <location filename="../ui/settingsdialog.ui" line="61"/>
         <source>State</source>
         <translation>Статус</translation>
     </message>
     <message>
-        <location filename="../data/settingsdialog.ui" line="78"/>
+        <location filename="../ui/settingsdialog.ui" line="78"/>
         <source>Version</source>
         <translation>Версия</translation>
     </message>
     <message>
-        <location filename="../data/settingsdialog.ui" line="91"/>
+        <location filename="../ui/settingsdialog.ui" line="91"/>
         <source>&amp;Set game window size</source>
         <translation>Указать &amp;размер окна игры</translation>
     </message>
     <message>
-        <location filename="../data/settingsdialog.ui" line="103"/>
+        <location filename="../ui/settingsdialog.ui" line="103"/>
         <source>&amp;Own:</source>
         <translation>&amp;Свой:</translation>
     </message>
     <message>
-        <location filename="../data/settingsdialog.ui" line="113"/>
+        <location filename="../ui/settingsdialog.ui" line="113"/>
         <source>&amp;Launcher window size</source>
         <translation>&amp;По окну лаунчера</translation>
     </message>
     <message>
-        <location filename="../data/settingsdialog.ui" line="120"/>
+        <location filename="../ui/settingsdialog.ui" line="120"/>
         <source>&amp;Fullscreen</source>
         <translation>&amp;На весь экран</translation>
     </message>
     <message>
-        <location filename="../data/settingsdialog.ui" line="127"/>
+        <location filename="../ui/settingsdialog.ui" line="127"/>
         <source>Height:</source>
         <translation>Высота:</translation>
     </message>
     <message>
-        <location filename="../data/settingsdialog.ui" line="144"/>
+        <location filename="../ui/settingsdialog.ui" line="144"/>
         <source>Width:</source>
         <translation>Ширина:</translation>
     </message>
     <message>
-        <location filename="../data/settingsdialog.ui" line="164"/>
+        <location filename="../ui/settingsdialog.ui" line="164"/>
         <source>Set &amp;path to Java executable</source>
         <translation>Указать путь к &amp;Java</translation>
     </message>
     <message>
-        <location filename="../data/settingsdialog.ui" line="176"/>
-        <location filename="../data/settingsdialog.ui" line="250"/>
+        <location filename="../ui/settingsdialog.ui" line="176"/>
+        <location filename="../ui/settingsdialog.ui" line="250"/>
         <source>Path</source>
         <translation>Путь</translation>
     </message>
     <message>
-        <location filename="../data/settingsdialog.ui" line="186"/>
-        <location filename="../data/settingsdialog.ui" line="236"/>
+        <location filename="../ui/settingsdialog.ui" line="186"/>
+        <location filename="../ui/settingsdialog.ui" line="236"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../data/settingsdialog.ui" line="196"/>
+        <location filename="../ui/settingsdialog.ui" line="196"/>
         <source>Set &amp;Java runtime parameters</source>
         <translation>Указать &amp;параметры Java</translation>
     </message>
     <message>
-        <location filename="../data/settingsdialog.ui" line="208"/>
+        <location filename="../ui/settingsdialog.ui" line="208"/>
         <source>Parameters</source>
         <translation>Параметры</translation>
     </message>
     <message>
-        <location filename="../data/settingsdialog.ui" line="221"/>
+        <location filename="../ui/settingsdialog.ui" line="221"/>
         <source>Set java &amp;keystore</source>
         <translation>Указать хранилище &amp;ключей</translation>
     </message>
     <message>
-        <location filename="../data/settingsdialog.ui" line="243"/>
+        <location filename="../ui/settingsdialog.ui" line="243"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
     <message>
-        <location filename="../data/settingsdialog.ui" line="267"/>
+        <location filename="../ui/settingsdialog.ui" line="267"/>
         <source>Check assets before run</source>
         <translation>Проверять ресурсы перед запуском игры</translation>
     </message>
     <message>
-        <location filename="../data/settingsdialog.ui" line="299"/>
+        <location filename="../ui/settingsdialog.ui" line="299"/>
         <source>Open client directory...</source>
         <translation>Открыть директорию клиента...</translation>
     </message>
     <message>
-        <location filename="../data/settingsdialog.ui" line="319"/>
+        <location filename="../ui/settingsdialog.ui" line="319"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>
@@ -1097,42 +1097,42 @@
 <context>
     <name>SkinUploadDialog</name>
     <message>
-        <location filename="../data/skinuploaddialog.ui" line="14"/>
+        <location filename="../ui/skinuploaddialog.ui" line="14"/>
         <source>Upload skin</source>
         <translation>Загрузить скин</translation>
     </message>
     <message>
-        <location filename="../data/skinuploaddialog.ui" line="50"/>
+        <location filename="../ui/skinuploaddialog.ui" line="50"/>
         <source>Nickname</source>
         <translation>Игровое имя</translation>
     </message>
     <message>
-        <location filename="../data/skinuploaddialog.ui" line="57"/>
+        <location filename="../ui/skinuploaddialog.ui" line="57"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
     <message>
-        <location filename="../data/skinuploaddialog.ui" line="64"/>
+        <location filename="../ui/skinuploaddialog.ui" line="64"/>
         <source>Skin file</source>
         <translation>Файл скина</translation>
     </message>
     <message>
-        <location filename="../data/skinuploaddialog.ui" line="71"/>
+        <location filename="../ui/skinuploaddialog.ui" line="71"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../data/skinuploaddialog.ui" line="88"/>
+        <location filename="../ui/skinuploaddialog.ui" line="88"/>
         <source>Skin For Slim Player Model</source>
         <translation>Скин для slim-модели игрока</translation>
     </message>
     <message>
-        <location filename="../data/skinuploaddialog.ui" line="120"/>
+        <location filename="../ui/skinuploaddialog.ui" line="120"/>
         <source>Fill the form, then press &quot;Upload&quot; button.</source>
         <translation>Заполните форму и нажмите кнопку &quot;Загрузить&quot;.</translation>
     </message>
     <message>
-        <location filename="../data/skinuploaddialog.ui" line="152"/>
+        <location filename="../ui/skinuploaddialog.ui" line="152"/>
         <source>Upload</source>
         <translation>Загрузить</translation>
     </message>
@@ -1206,27 +1206,27 @@
 <context>
     <name>StoreInstallDialog</name>
     <message>
-        <location filename="../data/storeinstalldialog.ui" line="14"/>
+        <location filename="../ui/storeinstalldialog.ui" line="14"/>
         <source>Install local version</source>
         <translation>Установить локальную версию</translation>
     </message>
     <message>
-        <location filename="../data/storeinstalldialog.ui" line="40"/>
+        <location filename="../ui/storeinstalldialog.ui" line="40"/>
         <source>Local version</source>
         <translation>Локальная версия</translation>
     </message>
     <message>
-        <location filename="../data/storeinstalldialog.ui" line="50"/>
+        <location filename="../ui/storeinstalldialog.ui" line="50"/>
         <source>Install as</source>
         <translation>Установить как</translation>
     </message>
     <message>
-        <location filename="../data/storeinstalldialog.ui" line="91"/>
+        <location filename="../ui/storeinstalldialog.ui" line="91"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="../data/storeinstalldialog.ui" line="111"/>
+        <location filename="../ui/storeinstalldialog.ui" line="111"/>
         <source>Install</source>
         <translation>Установить</translation>
     </message>
@@ -1366,22 +1366,22 @@
 <context>
     <name>StoreManageDialog</name>
     <message>
-        <location filename="../data/storemanagedialog.ui" line="14"/>
+        <location filename="../ui/storemanagedialog.ui" line="14"/>
         <source>Manage local repository</source>
         <translation>Управление локальным хранилищем</translation>
     </message>
     <message>
-        <location filename="../data/storemanagedialog.ui" line="40"/>
+        <location filename="../ui/storemanagedialog.ui" line="40"/>
         <source>Command</source>
         <translation>Команда</translation>
     </message>
     <message>
-        <location filename="../data/storemanagedialog.ui" line="77"/>
+        <location filename="../ui/storemanagedialog.ui" line="77"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="../data/storemanagedialog.ui" line="97"/>
+        <location filename="../ui/storemanagedialog.ui" line="97"/>
         <source>Execute</source>
         <translation>Выполнить</translation>
     </message>
@@ -1444,33 +1444,33 @@
 <context>
     <name>StoreSettingsDialog</name>
     <message>
-        <location filename="../data/storesettingsdialog.ui" line="14"/>
+        <location filename="../ui/storesettingsdialog.ui" line="14"/>
         <source>Local store settings</source>
         <translation>Настройки локального хранилища</translation>
     </message>
     <message>
-        <location filename="../data/storesettingsdialog.ui" line="35"/>
+        <location filename="../ui/storesettingsdialog.ui" line="35"/>
         <source>Locations</source>
         <translation>Расположение</translation>
     </message>
     <message>
-        <location filename="../data/storesettingsdialog.ui" line="56"/>
+        <location filename="../ui/storesettingsdialog.ui" line="56"/>
         <source>Store Manager</source>
         <translation>Менеджер</translation>
     </message>
     <message>
-        <location filename="../data/storesettingsdialog.ui" line="66"/>
-        <location filename="../data/storesettingsdialog.ui" line="83"/>
+        <location filename="../ui/storesettingsdialog.ui" line="66"/>
+        <location filename="../ui/storesettingsdialog.ui" line="83"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../data/storesettingsdialog.ui" line="73"/>
+        <location filename="../ui/storesettingsdialog.ui" line="73"/>
         <source>Store Location</source>
         <translation>Директория</translation>
     </message>
     <message>
-        <location filename="../data/storesettingsdialog.ui" line="128"/>
+        <location filename="../ui/storesettingsdialog.ui" line="128"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>
@@ -1515,22 +1515,22 @@
 <context>
     <name>UpdateDialog</name>
     <message>
-        <location filename="../data/updatedialog.ui" line="14"/>
+        <location filename="../ui/updatedialog.ui" line="14"/>
         <source>Update manager</source>
         <translation>Обновление клиента</translation>
     </message>
     <message>
-        <location filename="../data/updatedialog.ui" line="44"/>
+        <location filename="../ui/updatedialog.ui" line="44"/>
         <source>Client for update</source>
         <translation>Обновляемый клиент</translation>
     </message>
     <message>
-        <location filename="../data/updatedialog.ui" line="85"/>
+        <location filename="../ui/updatedialog.ui" line="85"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="../data/updatedialog.ui" line="105"/>
+        <location filename="../ui/updatedialog.ui" line="105"/>
         <source>Update</source>
         <translation>Обновить</translation>
     </message>
