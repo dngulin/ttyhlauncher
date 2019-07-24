@@ -9,7 +9,7 @@ namespace Ttyh
 {
 namespace Json
 {
-class LibraryDownloadInfo: DownloadInfo
+class LibraryDownloadInfo: public DownloadInfo
 {
 public:
     explicit LibraryDownloadInfo(const QJsonObject &jObject);
