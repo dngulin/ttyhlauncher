@@ -24,6 +24,14 @@ add_executable(ttyhlauncher WIN32 MACOSX_BUNDLE
   "storeinstalldialog.cpp"
   "installinfo.cpp"
   "fileinstaller.cpp"
+  "json/downloadinfo.cpp"
+  "json/downloadinfo.h"
+  "json/assetdownloadinfo.cpp"
+  "json/assetdownloadinfo.h"
+  "json/libararydownloadinfo.cpp"
+  "json/libararydownloadinfo.h"
+  "json/loggingdownloadinfo.cpp"
+  "json/loggingdownloadinfo.h"
 )
 add_dependencies(ttyhlauncher update_qm)
 
