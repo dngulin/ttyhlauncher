@@ -11,16 +11,15 @@ namespace Json
 class CheckInfo
 {
 public:
+    CheckInfo();
     explicit CheckInfo(const QJsonObject &jObject);
-    QJsonObject toJObject() const;
 
     QString hash;
     int size;
 
 private:
-    const QString keyHash = "hash";
-    const QString keySize = "size";
-
+    static const char* keyHash;
+    static const char* keySize;
 };
 }
 }

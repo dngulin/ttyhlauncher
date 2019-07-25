@@ -30,10 +30,10 @@ add_executable(ttyhlauncher WIN32 MACOSX_BUNDLE
   "json/assetdownloadinfo.h"
   "json/libararydownloadinfo.cpp"
   "json/libararydownloadinfo.h"
-  "json/loggingdownloadinfo.cpp"
-  "json/loggingdownloadinfo.h"
   "json/checkinfo.cpp"
   "json/checkinfo.h"
+  "json/assetsindex.cpp"
+  "json/assetsindex.h"
 )
 add_dependencies(ttyhlauncher update_qm)
 

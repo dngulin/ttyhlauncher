@@ -13,12 +13,11 @@ class LibraryDownloadInfo: public DownloadInfo
 {
 public:
     explicit LibraryDownloadInfo(const QJsonObject &jObject);
-    QJsonObject toJObject() const override;
 
     int totalSize;
 
 protected:
-    const QString keyTotalSize = "totalSize";
+    static const char* keyTotalSize;
 };
 }
 }

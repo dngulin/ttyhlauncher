@@ -12,16 +12,15 @@ class DownloadInfo
 {
 public:
     explicit DownloadInfo(const QJsonObject &jObject);
-    virtual QJsonObject toJObject() const;
 
     QString url;
     QString sha1;
     int size;
 
 protected:
-    const QString keyUrl = "url";
-    const QString keySha1 = "sha1";
-    const QString keySize = "size";
+    static const char* keyUrl;
+    static const char* keySha1;
+    static const char* keySize;
 
 };
 }
