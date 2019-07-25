@@ -16,10 +16,6 @@ public:
 
     QString id;
     int totalSize;
-
-protected:
-    static const char* keyId;
-    static const char* keyTotalSize;
 };
 }
 }

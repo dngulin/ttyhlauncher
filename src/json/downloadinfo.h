@@ -16,12 +16,6 @@ public:
     QString url;
     QString sha1;
     int size;
-
-protected:
-    static const char* keyUrl;
-    static const char* keySha1;
-    static const char* keySize;
-
 };
 }
 }

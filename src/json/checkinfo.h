@@ -16,10 +16,6 @@ public:
 
     QString hash;
     int size;
-
-private:
-    static const char* keyHash;
-    static const char* keySize;
 };
 }
 }

@@ -16,9 +16,6 @@ public:
     explicit AssetsIndex(const QJsonObject &jObject);
 
     QHash<QString, CheckInfo> objects;
-
-private:
-    const QString keyObjects = "objects";
 };
 }
 }

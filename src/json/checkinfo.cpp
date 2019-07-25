@@ -1,8 +1,5 @@
 #include "checkinfo.h"
 
-const char* Ttyh::Json::CheckInfo::keyHash = "hash";
-const char* Ttyh::Json::CheckInfo::keySize = "size";
-
 Ttyh::Json::CheckInfo::CheckInfo()
 {
     hash = "";
@@ -11,6 +8,6 @@ Ttyh::Json::CheckInfo::CheckInfo()
 
 Ttyh::Json::CheckInfo::CheckInfo(const QJsonObject &jObject)
 {
-    hash = jObject[keyHash].toString();
-    size = jObject[keySize].toInt();
+    hash = jObject["hash"].toString();
+    size = jObject["size"].toInt();
 }
