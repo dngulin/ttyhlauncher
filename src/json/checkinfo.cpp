@@ -2,7 +2,7 @@
 
 Ttyh::Json::CheckInfo::CheckInfo()
 {
-    hash = "";
+    hash = QString();
     size = 0;
 }
 
