@@ -4,7 +4,7 @@
 
 #include <QtCore/QJsonObject>
 #include <QtCore/QHash>
-#include "prefix.h"
+#include "prefixinfo.h"
 
 namespace Ttyh
 {
@@ -15,7 +15,7 @@ class PrefixesIndex
 public:
     explicit PrefixesIndex(const QJsonObject &jObject);
 
-    QHash<QString, Prefix> prefixes;
+    QHash<QString, PrefixInfo> prefixes;
 
     QJsonObject toJsonObject() const;
 

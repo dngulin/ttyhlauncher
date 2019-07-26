@@ -5,7 +5,7 @@ Ttyh::Json::PrefixesIndex::PrefixesIndex(const QJsonObject &jObject)
     auto jPrefixes = jObject[keyPrefixes].toObject();
 
     foreach(auto name, jPrefixes.keys()) {
-        prefixes.insert(name, Prefix(jPrefixes[name].toObject()));
+        prefixes.insert(name, PrefixInfo(jPrefixes[name].toObject()));
     }
 }
 

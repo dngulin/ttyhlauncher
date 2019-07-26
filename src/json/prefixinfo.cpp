@@ -1,18 +1,18 @@
-#include "prefix.h"
+#include "prefixinfo.h"
 
-Ttyh::Json::Prefix::Prefix()
+Ttyh::Json::PrefixInfo::PrefixInfo()
 {
     type = QString();
     about = QString();
 }
 
-Ttyh::Json::Prefix::Prefix(const QJsonObject &jObject)
+Ttyh::Json::PrefixInfo::PrefixInfo(const QJsonObject &jObject)
 {
     type = jObject[keyType].toString();
     about = jObject[keyAbout].toString();
 }
 
-QJsonObject Ttyh::Json::Prefix::toJsonObject() const
+QJsonObject Ttyh::Json::PrefixInfo::toJsonObject() const
 {
     return QJsonObject{
         {keyType, type},

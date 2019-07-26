@@ -1,5 +1,5 @@
-#ifndef PREFIX_H
-#define PREFIX_H
+#ifndef PREFIXINFO_H
+#define PREFIXINFO_H
 
 
 #include <QtCore/QJsonObject>
@@ -8,11 +8,11 @@ namespace Ttyh
 {
 namespace Json
 {
-class Prefix
+class PrefixInfo
 {
 public:
-    Prefix();
-    explicit Prefix(const QJsonObject &jObject);
+    PrefixInfo();
+    explicit PrefixInfo(const QJsonObject &jObject);
 
     QString type;
     QString about;
@@ -27,4 +27,4 @@ protected:
 }
 
 
-#endif //PREFIX_H
+#endif //PREFIXINFO_H
