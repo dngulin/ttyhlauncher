@@ -44,6 +44,8 @@ add_executable(ttyhlauncher WIN32 MACOSX_BUNDLE
   "json/prefixesindex.h"
   "json/prefixversionsindex.cpp"
   "json/prefixversionsindex.h"
+  "json/dataindex.cpp"
+  "json/dataindex.h"
 )
 add_dependencies(ttyhlauncher update_qm)
 
