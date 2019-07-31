@@ -5,7 +5,7 @@
 #include <QtCore/QDateTime>
 #include "filelogger.h"
 
-Ttyh::Logs::FileLogger::FileLogger(const QString &dirName, int logsCount): QObject(nullptr)
+Ttyh::Logs::FileLogger::FileLogger(const QString &dirName, int logsCount) : QObject(nullptr)
 {
     auto dataPath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
     auto logsPath = QString("%1/%2/%3").arg(dataPath, dirName, "logs");
@@ -18,7 +18,8 @@ Ttyh::Logs::FileLogger::FileLogger(const QString &dirName, int logsCount): QObje
         if (QFile::exists(currLog))
             QFile::remove(currLog);
 
-        if (i == 0) break;
+        if (i == 0)
+            break;
 
         auto prevLog = logFilePath.arg(logsPath, QString::number(i - 1));
 
@@ -55,8 +56,7 @@ void Ttyh::Logs::FileLogger::log(const QString &lvl, const QString &who, const Q
 
 void Ttyh::Logs::FileLogger::raw(const QString &line)
 {
-    if (logFile.isOpen())
-    {
+    if (logFile.isOpen()) {
         QTextStream stream(&logFile);
         stream.setCodec("UTF-8");
         stream << line << "\n";

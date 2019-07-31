@@ -5,12 +5,12 @@ Ttyh::Json::LibraryInfo::LibraryInfo(const QJsonObject &jObject)
 {
     name = jObject["name"].toString();
 
-    foreach(auto jRule, jObject["rules"].toArray()) {
+    foreach (auto jRule, jObject["rules"].toArray()) {
         rules << LibraryRule(jRule.toObject());
     }
 
     auto jNatives = jObject["natives"].toObject();
-    foreach(auto osName, jNatives.keys()) {
+    foreach (auto osName, jNatives.keys()) {
         natives.insert(osName, jNatives[osName].toString());
     }
 }

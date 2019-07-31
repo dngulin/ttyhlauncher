@@ -1,14 +1,11 @@
 #ifndef PREFIXVERSIONSINDEX_H
 #define PREFIXVERSIONSINDEX_H
 
-
 #include <QtCore/QJsonObject>
 #include <QtCore/QStringList>
 
-namespace Ttyh
-{
-namespace Json
-{
+namespace Ttyh {
+namespace Json {
 class PrefixVersionsIndex
 {
 public:
@@ -20,5 +17,4 @@ public:
 }
 }
 
-
-#endif //PREFIXVERSIONSINDEX_H
+#endif // PREFIXVERSIONSINDEX_H

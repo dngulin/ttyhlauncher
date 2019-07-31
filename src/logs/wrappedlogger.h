@@ -1,15 +1,12 @@
 #ifndef WRAPPEDLOGGER_H
 #define WRAPPEDLOGGER_H
 
-
 #include <QtCore/QString>
 #include <QtCore/QSharedPointer>
 #include "filelogger.h"
 
-namespace Ttyh
-{
-namespace Logs
-{
+namespace Ttyh {
+namespace Logs {
 class WrappedLogger
 {
 public:
@@ -26,5 +23,4 @@ private:
 }
 }
 
-
-#endif //WRAPPEDLOGGER_H
+#endif // WRAPPEDLOGGER_H

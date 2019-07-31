@@ -1,16 +1,13 @@
 #ifndef DATAINDEX_H
 #define DATAINDEX_H
 
-
 #include <QtCore/QJsonObject>
 #include <QtCore/QHash>
 #include <QtCore/QStringList>
 #include "checkinfo.h"
 
-namespace Ttyh
-{
-namespace Json
-{
+namespace Ttyh {
+namespace Json {
 class DataIndex
 {
 public:
@@ -24,5 +21,4 @@ public:
 }
 }
 
-
-#endif //DATAINDEX_H
+#endif // DATAINDEX_H

@@ -14,8 +14,5 @@ Ttyh::Json::PrefixInfo::PrefixInfo(const QJsonObject &jObject)
 
 QJsonObject Ttyh::Json::PrefixInfo::toJsonObject() const
 {
-    return QJsonObject{
-        {keyType, type},
-        {keyAbout, about}
-    };
+    return QJsonObject { { keyType, type }, { keyAbout, about } };
 }

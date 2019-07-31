@@ -1,15 +1,12 @@
 #ifndef ASSETSINDEX_H
 #define ASSETSINDEX_H
 
-
 #include <QtCore/QJsonObject>
 #include <QtCore/QHash>
 #include "checkinfo.h"
 
-namespace Ttyh
-{
-namespace Json
-{
+namespace Ttyh {
+namespace Json {
 class AssetsIndex
 {
 public:
@@ -20,5 +17,4 @@ public:
 }
 }
 
-
-#endif //ASSETSINDEX_H
+#endif // ASSETSINDEX_H

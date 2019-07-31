@@ -1,13 +1,10 @@
 #ifndef LIBRARYRULE_H
 #define LIBRARYRULE_H
 
-
 #include <QtCore/QJsonObject>
 
-namespace Ttyh
-{
-namespace Json
-{
+namespace Ttyh {
+namespace Json {
 class LibraryRule
 {
 public:
@@ -19,5 +16,4 @@ public:
 }
 }
 
-
-#endif //LIBRARYRULE_H
+#endif // LIBRARYRULE_H

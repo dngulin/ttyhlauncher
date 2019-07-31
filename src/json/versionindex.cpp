@@ -11,13 +11,12 @@ Ttyh::Json::VersionIndex::VersionIndex(const QJsonObject &jObject)
     if (jObject.contains(assetIndexKey)) {
         auto assetsInfo = AssetDownloadInfo(jObject[assetIndexKey].toObject());
         assetsIndex = QString("%1/%2").arg(assetsInfo.sha1, assetsInfo.id);
-    }
-    else {
+    } else {
         assetsIndex = jObject["assets"].toString();
     }
 
     auto jLibraries = jObject["libraries"].toArray();
-    foreach(auto jLibraryInfo, jLibraries) {
+    foreach (auto jLibraryInfo, jLibraries) {
         libraries << LibraryInfo(jLibraryInfo.toObject());
     }
 
@@ -25,12 +24,11 @@ Ttyh::Json::VersionIndex::VersionIndex(const QJsonObject &jObject)
 
     const QString argumentsKey = "arguments";
     if (jObject.contains(argumentsKey)) {
-        auto jArgs = jObject[argumentsKey]["game"].toArray();
-        foreach(auto token, jArgs) {
-            if (token.isString()) gameArguments << token.toString();
+        foreach (auto token, jObject[argumentsKey]["game"].toArray()) {
+            if (token.isString())
+                gameArguments << token.toString();
         }
-    }
-    else {
+    } else {
         gameArguments = jObject["minecraftArguments"].toString().split(' ');
     }
 }

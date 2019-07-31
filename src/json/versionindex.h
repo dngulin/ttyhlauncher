@@ -1,16 +1,13 @@
 #ifndef VERSIONINDEX_H
 #define VERSIONINDEX_H
 
-
 #include <QtCore/QJsonObject>
 #include <QtCore/QList>
 #include <QtCore/QDateTime>
 #include "libraryinfo.h"
 
-namespace Ttyh
-{
-namespace Json
-{
+namespace Ttyh {
+namespace Json {
 class VersionIndex
 {
 public:
@@ -28,5 +25,4 @@ public:
 }
 }
 
-
-#endif //VERSIONINDEX_H
+#endif // VERSIONINDEX_H

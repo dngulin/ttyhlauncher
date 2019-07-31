@@ -1,16 +1,13 @@
 #ifndef LIBRARYINFO_H
 #define LIBRARYINFO_H
 
-
 #include <QtCore/QJsonObject>
 #include <QtCore/QList>
 #include <QtCore/QHash>
 #include "libraryrule.h"
 
-namespace Ttyh
-{
-namespace Json
-{
+namespace Ttyh {
+namespace Json {
 class LibraryInfo
 {
 public:
@@ -23,5 +20,4 @@ public:
 }
 }
 
-
-#endif //LIBRARYINFO_H
+#endif // LIBRARYINFO_H

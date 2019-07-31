@@ -1,13 +1,10 @@
 #ifndef CHECKINFO_H
 #define CHECKINFO_H
 
-
 #include <QtCore/QJsonObject>
 
-namespace Ttyh
-{
-namespace Json
-{
+namespace Ttyh {
+namespace Json {
 class CheckInfo
 {
 public:
@@ -20,5 +17,4 @@ public:
 }
 }
 
-
-#endif //CHECKINFO_H
+#endif // CHECKINFO_H

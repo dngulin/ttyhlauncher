@@ -1,15 +1,12 @@
 #ifndef ASSETDOWNLOADINFO_H
 #define ASSETDOWNLOADINFO_H
 
-
 #include <QJsonObject>
 #include "downloadinfo.h"
 
-namespace Ttyh
-{
-namespace Json
-{
-class AssetDownloadInfo: public DownloadInfo
+namespace Ttyh {
+namespace Json {
+class AssetDownloadInfo : public DownloadInfo
 {
 public:
     explicit AssetDownloadInfo(const QJsonObject &jObject);
@@ -20,5 +17,4 @@ public:
 }
 }
 
-
-#endif //ASSETDOWNLOADINFO_H
+#endif // ASSETDOWNLOADINFO_H

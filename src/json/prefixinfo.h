@@ -1,13 +1,10 @@
 #ifndef PREFIXINFO_H
 #define PREFIXINFO_H
 
-
 #include <QtCore/QJsonObject>
 
-namespace Ttyh
-{
-namespace Json
-{
+namespace Ttyh {
+namespace Json {
 class PrefixInfo
 {
 public:
@@ -20,11 +17,10 @@ public:
     QJsonObject toJsonObject() const;
 
 protected:
-    static constexpr const char* keyType = "type";
-    static constexpr const char* keyAbout = "about";
+    static constexpr const char *keyType = "type";
+    static constexpr const char *keyAbout = "about";
 };
 }
 }
 
-
-#endif //PREFIXINFO_H
+#endif // PREFIXINFO_H

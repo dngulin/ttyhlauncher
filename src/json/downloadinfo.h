@@ -1,13 +1,10 @@
 #ifndef DOWNLOADINFO_H
 #define DOWNLOADINFO_H
 
-
 #include <QtCore/QJsonObject>
 
-namespace Ttyh
-{
-namespace Json
-{
+namespace Ttyh {
+namespace Json {
 class DownloadInfo
 {
 public:
@@ -20,5 +17,4 @@ public:
 }
 }
 
-
-#endif //DOWNLOADINFO_H
+#endif // DOWNLOADINFO_H
