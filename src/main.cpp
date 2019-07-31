@@ -8,8 +8,29 @@
 #include <QBitmap>
 #include <QMessageBox>
 
+#include <QtCore/QSharedPointer>
+#include <logs/filelogger.h>
+#include <logs/wrappedlogger.h>
+
+namespace Ttyh {
+void test() {
+    const QString dirName = "ttyhlauncher2";
+    const int logCount = 3;
+
+    auto logger = QSharedPointer<Logs::FileLogger>(new Logs::FileLogger(dirName, logCount), &QObject::deleteLater);
+    QObject::connect(logger.data(), &Logs::FileLogger::onLog, [](const QString &line){
+        QTextStream(stdout) << line << endl;
+    });
+
+    auto wrapper = Logs::WrappedLogger(logger, "Test");
+    wrapper.info("Hello the logging world!");
+}
+}
+
 int main(int argc, char *argv[])
 {
+    Ttyh::test();
+
     QApplication a(argc, argv);
 
     // Setup translation
