@@ -3,7 +3,7 @@
 
 
 #include <QtCore/QString>
-#include <QtCore/QPointer>
+#include <QtCore/QSharedPointer>
 #include "filelogger.h"
 
 namespace Ttyh
@@ -13,7 +13,7 @@ namespace Logs
 class WrappedLogger
 {
 public:
-    WrappedLogger(const QPointer<FileLogger> &logger, const QString &who);
+    WrappedLogger(const QSharedPointer<FileLogger> &logger, const QString &who);
 
     void info(const QString &msg);
     void warning(const QString &msg);
@@ -21,7 +21,7 @@ public:
 
 private:
     QString who;
-    QPointer<FileLogger> logger;
+    QSharedPointer<FileLogger> logger;
 };
 }
 }

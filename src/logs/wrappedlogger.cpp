@@ -2,7 +2,7 @@
 
 #include "wrappedlogger.h"
 
-Ttyh::Logs::WrappedLogger::WrappedLogger(const QPointer<FileLogger> &logger, const QString &who)
+Ttyh::Logs::WrappedLogger::WrappedLogger(const QSharedPointer<FileLogger> &logger, const QString &who)
 {
     this->logger = logger;
     this->who = who;
