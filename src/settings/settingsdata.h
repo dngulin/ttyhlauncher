@@ -9,7 +9,7 @@ namespace Settings {
 class SettingsData
 {
 public:
-    explicit SettingsData(const QJsonObject &jObject);
+    explicit SettingsData(const QJsonObject &jObject = QJsonObject());
     QJsonObject toJsonObject() const;
 
     QString username;
@@ -17,7 +17,7 @@ public:
     bool savePassword;
 
     QString profile;
-    QString revision;
+    QString ticket;
 
     QSize windowSize;
     bool windowMaximized;
@@ -29,7 +29,7 @@ private:
     static constexpr const char *keySavePassword = "save_password";
 
     static constexpr const char *keyProfile = "profile";
-    static constexpr const char *keyRevision = "revision";
+    static constexpr const char *keyTicket = "ticket";
 
     static constexpr const char *keyWindowSizeW = "window_width";
     static constexpr const char *keyWindowSizeH = "window_height";

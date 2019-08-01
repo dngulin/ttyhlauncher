@@ -38,6 +38,7 @@ add_executable(ttyhlauncher WIN32 MACOSX_BUNDLE
   "logs/logger.cpp"
   "logs/namedlogger.cpp"
   "settings/settingsdata.cpp"
+  "settings/settingsmanager.cpp"
 )
 add_dependencies(ttyhlauncher update_qm)
 

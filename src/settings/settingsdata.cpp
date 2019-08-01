@@ -8,7 +8,7 @@ Ttyh::Settings::SettingsData::SettingsData(const QJsonObject &jObject)
     savePassword = jObject[keySavePassword].toBool(true);
 
     profile = jObject[keyProfile].toString("");
-    revision = jObject[keyRevision].toString(QUuid::createUuid().toString(QUuid::WithoutBraces));
+    ticket = jObject[keyTicket].toString(QUuid::createUuid().toString(QUuid::WithoutBraces));
 
     windowSize = QSize(jObject[keyWindowSizeW].toInt(800), jObject[keyWindowSizeH].toInt(600));
     windowMaximized = jObject[keyWindowMaximized].toBool(false);
@@ -24,12 +24,12 @@ QJsonObject Ttyh::Settings::SettingsData::toJsonObject() const
     jObject[keySavePassword] = savePassword;
 
     jObject[keyProfile] = profile;
-    jObject[keyRevision] = revision;
+    jObject[keyTicket] = ticket;
 
     jObject[keyWindowSizeW] = windowSize.width();
     jObject[keyWindowSizeH] = windowSize.height();
     jObject[keyWindowMaximized] = windowMaximized;
-    jObject[keyHideWindowOnRun] = keyHideWindowOnRun;
+    jObject[keyHideWindowOnRun] = hideWindowOnRun;
 
     return jObject;
 }

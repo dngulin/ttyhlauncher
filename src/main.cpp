@@ -11,9 +11,11 @@
 #include <QtCore/QSharedPointer>
 #include <logs/logger.h>
 #include <logs/namedlogger.h>
+#include <settings/settingsmanager.h>
 
 namespace Ttyh {
 using namespace Logs;
+using namespace Settings;
 
 void test()
 {
@@ -24,8 +26,12 @@ void test()
     QObject::connect(logger.data(), &Logger::onLog,
                      [](const QString &line) { QTextStream(stdout) << line << endl; });
 
+    auto settings = QSharedPointer<SettingsManager>(new SettingsManager(dirName, logger));
+
     auto testLogger = Logs::NamedLogger(logger, "Test");
     testLogger.info("Hello the logging world!");
+
+    testLogger.warning(settings->data.ticket);
 }
 }
 
