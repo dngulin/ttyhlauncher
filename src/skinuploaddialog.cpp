@@ -1,7 +1,7 @@
 #include "skinuploaddialog.h"
 #include "../ui/ui_skinuploaddialog.h"
 
-#include "settings.h"
+#include "oldsettings.h"
 #include "jsonparser.h"
 
 #include <QFileDialog>
@@ -13,8 +13,8 @@ SkinUploadDialog::SkinUploadDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    logger = Logger::logger();
-    Settings *settings = Settings::instance();
+    logger = OldLogger::logger();
+    OldSettings *settings = OldSettings::instance();
 
     ui->nickEdit->setText( settings->loadLogin() );
 
@@ -105,7 +105,7 @@ void SkinUploadDialog::uploadSkin()
 
     QJsonDocument jsonRequest(payload);
 
-    uploader.makePost( Settings::skinUploadUrl, jsonRequest.toJson() );
+    uploader.makePost( OldSettings::skinUploadUrl, jsonRequest.toJson() );
     skinfile.close();
 }
 

@@ -3,8 +3,8 @@
 
 #include <QDialog>
 
-#include "settings.h"
-#include "logger.h"
+#include "oldsettings.h"
+#include "oldlogger.h"
 #include "filefetcher.h"
 #include "datafetcher.h"
 #include "jsonparser.h"
@@ -24,8 +24,8 @@ public:
 
 private:
     Ui::UpdateDialog *ui;
-    Settings *settings;
-    Logger *logger;
+    OldSettings *settings;
+    OldLogger *logger;
 
     QThread checkThread;
     HashChecker *checker;

@@ -3,8 +3,8 @@
 
 #include <QObject>
 
-#include "settings.h"
-#include "logger.h"
+#include "oldsettings.h"
+#include "oldlogger.h"
 #include "datafetcher.h"
 #include "filefetcher.h"
 #include "jsonparser.h"
@@ -63,8 +63,8 @@ private:
     QProcess minecraft;
 
     // Additional data
-    Settings *settings;
-    Logger *logger;
+    OldSettings *settings;
+    OldLogger *logger;
     DataFetcher fetcher;
 
     // Logging

@@ -4,7 +4,7 @@
 #include <QStandardPaths>
 #include <QSysInfo>
 
-#include "settings.h"
+#include "oldsettings.h"
 #include "filefetcher.h"
 #include "jsonparser.h"
 
@@ -12,33 +12,33 @@
 
 typedef QStandardPaths Path;
 
-const QString Settings::launcherVersion = PROJECT_VERSION;
+const QString OldSettings::launcherVersion = PROJECT_VERSION;
 
-const QString Settings::newsFeed = "https://ttyh.ru/misc.php?page=feed";
+const QString OldSettings::newsFeed = "https://ttyh.ru/misc.php?page=feed";
 
-const QString Settings::updateServer = "http://store.ttyh.ru";
-const QString Settings::buildServer = "https://ttyh.ru/builds";
+const QString OldSettings::updateServer = "http://store.ttyh.ru";
+const QString OldSettings::buildServer = "https://ttyh.ru/builds";
 
 // Master-server links
-const QString Settings::master = "https://master.ttyh.ru/index.php";
-const QString Settings::authUrl = master + "?act=login";
-const QString Settings::changePasswrdUrl = master + "?act=chpass";
-const QString Settings::skinUploadUrl = master + "?act=setskin";
-const QString Settings::feedbackUrl = master + "?act=feedback";
+const QString OldSettings::master = "https://master.ttyh.ru/index.php";
+const QString OldSettings::authUrl = master + "?act=login";
+const QString OldSettings::changePasswrdUrl = master + "?act=chpass";
+const QString OldSettings::skinUploadUrl = master + "?act=setskin";
+const QString OldSettings::feedbackUrl = master + "?act=feedback";
 
-const int Settings::timeout = 3000;
+const int OldSettings::timeout = 3000;
 
-Settings *Settings::myInstance = NULL;
-Settings *Settings::instance()
+OldSettings *OldSettings::myInstance = NULL;
+OldSettings *OldSettings::instance()
 {
     if (myInstance == NULL)
     {
-        myInstance = new Settings();
+        myInstance = new OldSettings();
     }
     return myInstance;
 }
 
-Settings::Settings() : QObject()
+OldSettings::OldSettings() : QObject()
 {
     latestVersion = launcherVersion;
 
@@ -57,12 +57,12 @@ Settings::Settings() : QObject()
     settings = new QSettings(configPath + "/config.ini", QSettings::IniFormat);
 }
 
-void Settings::log(const QString &text)
+void OldSettings::log(const QString &text)
 {
-    Logger::logger()->appendLine(tr("Settings"), text);
+    OldLogger::logger()->appendLine(tr("Settings"), text);
 }
 
-void Settings::updateLocalData()
+void OldSettings::updateLocalData()
 {
     QUrl keystoreUrl(updateServer + "/store.ks");
     QString keystorePath = configPath + "/keystore.ks";
@@ -102,7 +102,7 @@ void Settings::updateLocalData()
     }
 }
 
-void Settings::fetchLatestVersion()
+void OldSettings::fetchLatestVersion()
 {
     QString arch = getWordSize();
     QUrl versionUrl(buildServer + "/build-" + arch + "-latest/version.txt");
@@ -134,55 +134,55 @@ void Settings::fetchLatestVersion()
     }
 }
 
-QString Settings::getlatestVersion() const
+QString OldSettings::getlatestVersion() const
 {
     return latestVersion;
 }
 
-QString Settings::getVersionsUrl() const
+QString OldSettings::getVersionsUrl() const
 {
     QString client = getClientName( loadActiveClientID() );
     return updateServer + "/" + client + "/versions/versions.json";
 }
 
-QString Settings::getVanillaVersionsUrl() const
+QString OldSettings::getVanillaVersionsUrl() const
 {
     return QString(
         "http://s3.amazonaws.com/Minecraft.Download/versions/versions.json");
 }
 
-QString Settings::getVersionUrl(const QString &version)
+QString OldSettings::getVersionUrl(const QString &version)
 {
     QString client = getClientName( loadActiveClientID() );
     return updateServer + "/" + client + "/" + version + "/";
 }
 
-QString Settings::getLibsUrl() const
+QString OldSettings::getLibsUrl() const
 {
     return updateServer + "/libraries/";
 }
 
-QString Settings::getAssetsUrl() const
+QString OldSettings::getAssetsUrl() const
 {
     return updateServer + "/assets/";
 }
 
-QStringList Settings::getClientCaptions() const
+QStringList OldSettings::getClientCaptions() const
 {
     return clients.values();
 }
 
-QStringList Settings::getClientNames() const
+QStringList OldSettings::getClientNames() const
 {
     return clients.keys();
 }
 
-int Settings::getClientID(const QString &strid) const
+int OldSettings::getClientID(const QString &strid) const
 {
     return clients.keys().indexOf(strid);
 }
 
-QString Settings::getClientCaption(int index) const
+QString OldSettings::getClientCaption(int index) const
 {
     QString name = getClientName(index);
 
@@ -194,7 +194,7 @@ QString Settings::getClientCaption(int index) const
     return "Unknown client";
 }
 
-QString Settings::getClientName(int index) const
+QString OldSettings::getClientName(int index) const
 {
     if (index < 0 || clients.size() <= index)
     {
@@ -204,40 +204,40 @@ QString Settings::getClientName(int index) const
     return clients.keys()[index];
 }
 
-int Settings::loadActiveClientID() const
+int OldSettings::loadActiveClientID() const
 {
     QString strid = settings->value("launcher/client", "default").toString();
     return getClientID(strid);
 }
 
-void Settings::saveActiveClientID(int id) const
+void OldSettings::saveActiveClientID(int id) const
 {
     QString client = getClientName(id);
     settings->setValue("launcher/client", client);
 }
 
-QString Settings::loadLogin() const
+QString OldSettings::loadLogin() const
 {
     return settings->value("launcher/login", "Player").toString();
 }
 
-void Settings::saveLogin(const QString &login) const
+void OldSettings::saveLogin(const QString &login) const
 {
     settings->setValue("launcher/login", login);
 }
 
-bool Settings::loadPassStoreState() const
+bool OldSettings::loadPassStoreState() const
 {
     return settings->value("launcher/save_password", false).toBool();
 }
 
-void Settings::savePassStoreState(bool state) const
+void OldSettings::savePassStoreState(bool state) const
 {
     settings->setValue("launcher/save_password", state);
 }
 
 // Password stored as base64-encoded string
-QString Settings::loadPassword() const
+QString OldSettings::loadPassword() const
 {
     QString encodedPass = settings->value("launcher/password", "").toString();
     QByteArray ba;
@@ -245,14 +245,14 @@ QString Settings::loadPassword() const
     return QByteArray::fromBase64(ba);
 }
 
-void Settings::savePassword(const QString &password) const
+void OldSettings::savePassword(const QString &password) const
 {
     QByteArray ba;
     ba.append(password);
     settings->setValue( "launcher/password", QString( ba.toBase64() ) );
 }
 
-QString Settings::makeMinecraftUuid() const
+QString OldSettings::makeMinecraftUuid() const
 {
     QString def = QString( QUuid::createUuid().toByteArray().toBase64() );
     QString id = settings->value("launcher/revision", def).toString();
@@ -263,7 +263,7 @@ QString Settings::makeMinecraftUuid() const
 }
 
 // Minecraft window geometry
-QRect Settings::loadClientWindowGeometry() const
+QRect OldSettings::loadClientWindowGeometry() const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/window_geometry_custom";
@@ -272,7 +272,7 @@ QRect Settings::loadClientWindowGeometry() const
     return qvariant_cast<QRect>(rect);
 }
 
-void Settings::saveClientWindowGeometry(const QRect &g) const
+void OldSettings::saveClientWindowGeometry(const QRect &g) const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/window_geometry_custom";
@@ -280,21 +280,21 @@ void Settings::saveClientWindowGeometry(const QRect &g) const
     settings->setValue(entry, g);
 }
 
-bool Settings::loadClientWindowSizeState() const
+bool OldSettings::loadClientWindowSizeState() const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/window_geometry_set";
     return settings->value(entry, false).toBool();
 }
 
-void Settings::saveClientWindowSizeState(bool state) const
+void OldSettings::saveClientWindowSizeState(bool state) const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/window_geometry_set";
     settings->setValue(entry, state);
 }
 
-bool Settings::loadClientUseLauncherSizeState() const
+bool OldSettings::loadClientUseLauncherSizeState() const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/window_geometry_from_launcher";
@@ -302,7 +302,7 @@ bool Settings::loadClientUseLauncherSizeState() const
     return settings->value(entry, false).toBool();
 }
 
-void Settings::saveClientUseLauncherSizeState(bool state) const
+void OldSettings::saveClientUseLauncherSizeState(bool state) const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/window_geometry_from_launcher";
@@ -310,7 +310,7 @@ void Settings::saveClientUseLauncherSizeState(bool state) const
     return settings->setValue(entry, state);
 }
 
-bool Settings::loadClientFullscreenState() const
+bool OldSettings::loadClientFullscreenState() const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/window_geometry_fullscreen";
@@ -318,7 +318,7 @@ bool Settings::loadClientFullscreenState() const
     return settings->value(entry, false).toBool();
 }
 
-void Settings::saveClientFullscreenState(bool state) const
+void OldSettings::saveClientFullscreenState(bool state) const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/window_geometry_fullscreen";
@@ -327,7 +327,7 @@ void Settings::saveClientFullscreenState(bool state) const
 }
 
 // Launcher window geometry
-QRect Settings::loadWindowGeometry() const
+QRect OldSettings::loadWindowGeometry() const
 {
     QRect def = QRect(-1, -1, 600, 400);
     QVariant value = settings->value("launcher/window_geometry", def);
@@ -335,43 +335,43 @@ QRect Settings::loadWindowGeometry() const
     return qvariant_cast<QRect>(value);
 }
 
-void Settings::saveWindowGeometry(const QRect &geom) const
+void OldSettings::saveWindowGeometry(const QRect &geom) const
 {
     settings->setValue("launcher/window_geometry", geom);
 }
 
-bool Settings::loadMaximizedState() const
+bool OldSettings::loadMaximizedState() const
 {
     return settings->value("launcher/window_maximized", false).toBool();
 }
 
-void Settings::saveMaximizedState(bool state) const
+void OldSettings::saveMaximizedState(bool state) const
 {
     settings->setValue("launcher/window_maximized", state);
 }
 
-bool Settings::loadOfflineModeState() const
+bool OldSettings::loadOfflineModeState() const
 {
     return settings->value("launcher/offline_mode", false).toBool();
 }
 
-void Settings::saveOfflineModeState(bool offlineState) const
+void OldSettings::saveOfflineModeState(bool offlineState) const
 {
     settings->setValue("launcher/offline_mode", offlineState);
 }
 
-bool Settings::loadHideWindowModeState() const
+bool OldSettings::loadHideWindowModeState() const
 {
     return settings->value("launcher/hide_on_run", true).toBool();
 }
 
-void Settings::saveHideWindowModeState(bool hideState) const
+void OldSettings::saveHideWindowModeState(bool hideState) const
 {
     settings->setValue("launcher/hide_on_run", hideState);
 }
 
 // Client settings
-QString Settings::loadClientVersion() const
+QString OldSettings::loadClientVersion() const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/version";
@@ -379,7 +379,7 @@ QString Settings::loadClientVersion() const
     return settings->value(entry, "latest").toString();
 }
 
-void Settings::saveClientVersion(const QString &version) const
+void OldSettings::saveClientVersion(const QString &version) const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/version";
@@ -387,7 +387,7 @@ void Settings::saveClientVersion(const QString &version) const
     settings->setValue(entry, version);
 }
 
-bool Settings::loadClientJavaState() const
+bool OldSettings::loadClientJavaState() const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/custom_java_enabled";
@@ -395,7 +395,7 @@ bool Settings::loadClientJavaState() const
     return settings->value(entry, false).toBool();
 }
 
-void Settings::saveClientJavaState(bool state) const
+void OldSettings::saveClientJavaState(bool state) const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/custom_java_enabled";
@@ -403,7 +403,7 @@ void Settings::saveClientJavaState(bool state) const
     settings->setValue(entry, state);
 }
 
-QString Settings::loadClientJava() const
+QString OldSettings::loadClientJava() const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/custom_java";
@@ -411,7 +411,7 @@ QString Settings::loadClientJava() const
     return settings->value(entry, "").toString();
 }
 
-void Settings::saveClientJava(const QString &java) const
+void OldSettings::saveClientJava(const QString &java) const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/custom_java";
@@ -419,7 +419,7 @@ void Settings::saveClientJava(const QString &java) const
     settings->setValue(entry, java);
 }
 
-bool Settings::loadClientJavaArgsState() const
+bool OldSettings::loadClientJavaArgsState() const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/cutsom_args_enabled";
@@ -427,7 +427,7 @@ bool Settings::loadClientJavaArgsState() const
     return settings->value(entry, false).toBool();
 }
 
-void Settings::saveClientJavaArgsState(bool state) const
+void OldSettings::saveClientJavaArgsState(bool state) const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/cutsom_args_enabled";
@@ -435,7 +435,7 @@ void Settings::saveClientJavaArgsState(bool state) const
     settings->setValue(entry, state);
 }
 
-QString Settings::loadClientJavaArgs() const
+QString OldSettings::loadClientJavaArgs() const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/cutsom_args";
@@ -443,7 +443,7 @@ QString Settings::loadClientJavaArgs() const
     return settings->value(entry, "").toString();
 }
 
-void Settings::saveClientJavaArgs(const QString &args) const
+void OldSettings::saveClientJavaArgs(const QString &args) const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/cutsom_args";
@@ -451,7 +451,7 @@ void Settings::saveClientJavaArgs(const QString &args) const
     settings->setValue(entry, args);
 }
 
-bool Settings::loadClientJavaKeystoreState() const
+bool OldSettings::loadClientJavaKeystoreState() const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/java_keystore_enabled";
@@ -459,7 +459,7 @@ bool Settings::loadClientJavaKeystoreState() const
     return settings->value(entry, false).toBool();
 }
 
-void Settings::saveClientJavaKeystoreState(bool state) const
+void OldSettings::saveClientJavaKeystoreState(bool state) const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/java_keystore_enabled";
@@ -467,7 +467,7 @@ void Settings::saveClientJavaKeystoreState(bool state) const
     settings->setValue(entry, state);
 }
 
-QString Settings::loadClientJavaKeystorePath() const
+QString OldSettings::loadClientJavaKeystorePath() const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/java_keystore_path";
@@ -475,7 +475,7 @@ QString Settings::loadClientJavaKeystorePath() const
     return settings->value(entry, "").toString();
 }
 
-void Settings::saveClientJavaKeystorePath(const QString &path) const
+void OldSettings::saveClientJavaKeystorePath(const QString &path) const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/java_keystore_path";
@@ -483,7 +483,7 @@ void Settings::saveClientJavaKeystorePath(const QString &path) const
     settings->setValue(entry, path);
 }
 
-QString Settings::loadClientJavaKeystorePass() const
+QString OldSettings::loadClientJavaKeystorePass() const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/java_keystore_password";
@@ -491,7 +491,7 @@ QString Settings::loadClientJavaKeystorePass() const
     return settings->value(entry, "").toString();
 }
 
-void Settings::saveClientJavaKeystorePass(const QString &pass) const
+void OldSettings::saveClientJavaKeystorePass(const QString &pass) const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/java_keystore_password";
@@ -499,7 +499,7 @@ void Settings::saveClientJavaKeystorePass(const QString &pass) const
     settings->setValue(entry, pass);
 }
 
-bool Settings::loadClientCheckAssetsState() const
+bool OldSettings::loadClientCheckAssetsState() const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/check_assets";
@@ -507,7 +507,7 @@ bool Settings::loadClientCheckAssetsState() const
     return settings->value(entry, true).toBool();
 }
 
-void Settings::saveClientCheckAssetsState(bool state) const
+void OldSettings::saveClientCheckAssetsState(bool state) const
 {
     QString client = getClientName( loadActiveClientID() );
     QString entry = "client-" + client + "/check_assets";
@@ -516,7 +516,7 @@ void Settings::saveClientCheckAssetsState(bool state) const
 }
 
 // Local store settings
-QString Settings::loadStoreExePath() const
+QString OldSettings::loadStoreExePath() const
 {
     QString entry = "localstore/exe_path";
     QString defaultPath = "ttyhstore";
@@ -524,13 +524,13 @@ QString Settings::loadStoreExePath() const
     return settings->value(entry, defaultPath).toString();
 }
 
-void Settings::saveStoreExePath(const QString &path) const
+void OldSettings::saveStoreExePath(const QString &path) const
 {
     QString entry = "localstore/exe_path";
     settings->setValue(entry, path);
 }
 
-QString Settings::loadStoreDirPath() const
+QString OldSettings::loadStoreDirPath() const
 {
     QString entry = "localstore/dir_path";
     QString defaultPath = QDir::homePath();
@@ -538,66 +538,66 @@ QString Settings::loadStoreDirPath() const
     return settings->value(entry, defaultPath).toString();
 }
 
-void Settings::saveStoreDirPath(const QString &path) const
+void OldSettings::saveStoreDirPath(const QString &path) const
 {
     QString entry = "localstore/dir_path";
     settings->setValue(entry, path);
 }
 
 // News
-bool Settings::loadNewsState() const
+bool OldSettings::loadNewsState() const
 {
     return settings->value("launcher/load_news", true).toBool();
 }
 
-void Settings::saveNewsState(bool state) const
+void OldSettings::saveNewsState(bool state) const
 {
     settings->setValue("launcher/load_news", state);
 }
 
 // Directories
-QString Settings::getBaseDir() const
+QString OldSettings::getBaseDir() const
 {
     return dataPath;
 }
 
-QString Settings::getClientDir() const
+QString OldSettings::getClientDir() const
 {
     return dataPath + "/client_" + getClientName( loadActiveClientID() );
 }
 
-QString Settings::getClientPrefix(const QString &version) const
+QString OldSettings::getClientPrefix(const QString &version) const
 {
     return getClientDir() + "/prefixes/" + version;
 }
 
-QString Settings::getAssetsDir() const
+QString OldSettings::getAssetsDir() const
 {
     return dataPath + "/assets";
 }
 
-QString Settings::getLibsDir() const
+QString OldSettings::getLibsDir() const
 {
     return dataPath + "/libraries";
 }
 
-QString Settings::getVersionsDir() const
+QString OldSettings::getVersionsDir() const
 {
     return getClientDir() + "/versions";
 }
 
-QString Settings::getNativesDir() const
+QString OldSettings::getNativesDir() const
 {
     return getClientDir() + "/natives";
 }
 
-QString Settings::getConfigDir() const
+QString OldSettings::getConfigDir() const
 {
     return configPath;
 }
 
 // Platform information
-QString Settings::getOsName() const
+QString OldSettings::getOsName() const
 {
 #ifdef Q_OS_WIN
     return "windows";
@@ -610,7 +610,7 @@ QString Settings::getOsName() const
 #endif
 }
 
-QString Settings::getOsVersion() const
+QString OldSettings::getOsVersion() const
 {
 #ifdef Q_OS_WIN
     switch (QSysInfo::WindowsVersion)
@@ -685,12 +685,12 @@ QString Settings::getOsVersion() const
 #endif
 }
 
-QString Settings::getWordSize() const
+QString OldSettings::getWordSize() const
 {
     return QString::number(QSysInfo::WordSize);
 }
 
-QNetworkAccessManager *Settings::getNetworkAccessManager() const
+QNetworkAccessManager *OldSettings::getNetworkAccessManager() const
 {
     return nam;
 }

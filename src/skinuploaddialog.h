@@ -3,7 +3,7 @@
 
 #include <QDialog>
 
-#include "logger.h"
+#include "oldlogger.h"
 #include "datafetcher.h"
 
 namespace Ui {
@@ -21,7 +21,7 @@ public:
 private:
     Ui::SkinUploadDialog *ui;
 
-    Logger *logger;
+    OldLogger *logger;
     DataFetcher uploader;
 
     void log(const QString &text);

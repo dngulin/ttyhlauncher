@@ -1,14 +1,14 @@
-#ifndef SETTINGS_H
-#define SETTINGS_H
+#ifndef OLDSETTINGS_H
+#define OLDSETTINGS_H
 
 #include <QtCore>
 #include <QNetworkAccessManager>
 
-class Settings : public QObject
+class OldSettings : public QObject
 {
     Q_OBJECT
 public:
-    static Settings *instance();
+    static OldSettings *instance();
 
     static const QString authUrl;
     static const QString changePasswrdUrl;
@@ -26,10 +26,10 @@ public:
 
 private:
     static const QString master;
-    static Settings *myInstance;
+    static OldSettings *myInstance;
 
 private:
-    Settings();
+    OldSettings();
     QSettings *settings;
 
     QNetworkAccessManager *nam;
@@ -158,8 +158,8 @@ public slots:
     void saveMaximizedState(bool state) const;
 
 private:
-    Settings &operator=(Settings const &);
-    Settings(Settings const &);
+    OldSettings &operator=(OldSettings const &);
+    OldSettings(OldSettings const &);
 };
 
-#endif // SETTINGS_H
+#endif //OLDSETTINGS_H

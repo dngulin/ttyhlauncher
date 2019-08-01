@@ -1,8 +1,8 @@
 #include "updatedialog.h"
 #include "../ui/ui_updatedialog.h"
 
-#include "settings.h"
-#include "logger.h"
+#include "oldsettings.h"
+#include "oldlogger.h"
 #include "util.h"
 
 UpdateDialog::UpdateDialog(QString displayMessage, QWidget *parent) :
@@ -30,8 +30,8 @@ UpdateDialog::UpdateDialog(QString displayMessage, QWidget *parent) :
 
     checkThread.start();
 
-    settings = Settings::instance();
-    logger = Logger::logger();
+    settings = OldSettings::instance();
+    logger = OldLogger::logger();
 
     ui->clientCombo->addItems( settings->getClientCaptions() );
     ui->clientCombo->setCurrentIndex( settings->loadActiveClientID() );

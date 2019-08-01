@@ -12,7 +12,7 @@
 #include "storemanagedialog.h"
 #include "storeinstalldialog.h"
 
-#include "settings.h"
+#include "oldsettings.h"
 #include "util.h"
 #include "jsonparser.h"
 
@@ -29,8 +29,8 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    settings = Settings::instance();
-    logger = Logger::logger();
+    settings = OldSettings::instance();
+    logger = OldLogger::logger();
 
     // Show welcome message
     QFont font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
@@ -98,7 +98,7 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
 
     if ( settings->loadNewsState() )
     {
-        newsFetcher.makeGet( QUrl(Settings::newsFeed) );
+        newsFetcher.makeGet( QUrl(OldSettings::newsFeed) );
     }
 
     // Setup form
@@ -106,7 +106,7 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     ui->nickEdit->setText(login);
 
     connect(ui->nickEdit, &QLineEdit::textChanged, settings,
-            &Settings::saveLogin);
+            &OldSettings::saveLogin);
 
     bool isPassStored = settings->loadPassStoreState();
     ui->savePassword->setChecked(isPassStored);
@@ -118,7 +118,7 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     }
 
     connect(ui->savePassword, &QCheckBox::clicked, settings,
-            &Settings::savePassStoreState);
+            &OldSettings::savePassStoreState);
 
     QStringList clients = settings->getClientCaptions();
     ui->clientCombo->addItems(clients);
@@ -153,7 +153,7 @@ LauncherWindow::LauncherWindow(QWidget *parent) :
     connect(ui->playButton, &QPushButton::clicked, this,
             &LauncherWindow::playButtonClicked);
 
-    connect(logger, &Logger::lineAppended, this, &LauncherWindow::appendToLog);
+    connect(logger, &OldLogger::lineAppended, this, &LauncherWindow::appendToLog);
 
 #ifdef Q_OS_WIN
     QString latest = settings->getlatestVersion();

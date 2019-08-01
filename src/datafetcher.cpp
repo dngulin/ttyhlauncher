@@ -1,13 +1,13 @@
 #include "datafetcher.h"
-#include "settings.h"
+#include "oldsettings.h"
 
 DataFetcher::DataFetcher(QObject *parent) : QObject(parent)
 {
     waiting = false;
     reset();
 
-    nam = Settings::instance()->getNetworkAccessManager();
-    logger = Logger::logger();
+    nam = OldSettings::instance()->getNetworkAccessManager();
+    logger = OldLogger::logger();
     timer = new QTimer(this);
 }
 
@@ -40,7 +40,7 @@ void DataFetcher::handleReply()
     connect(timer, &QTimer::timeout,
             this, &DataFetcher::onTimeout);
 
-    timer->start(Settings::timeout);
+    timer->start(OldSettings::timeout);
 
     connect(reply, &QNetworkReply::readyRead,
             this, &DataFetcher::stopTimer);

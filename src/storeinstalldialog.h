@@ -3,8 +3,8 @@
 
 #include <QDialog>
 
-#include "settings.h"
-#include "logger.h"
+#include "oldsettings.h"
+#include "oldlogger.h"
 #include "fileinstaller.h"
 #include "fileinfo.h"
 
@@ -23,8 +23,8 @@ public:
 private:
     Ui::StoreInstallDialog *ui;
 
-    Settings* settings;
-    Logger* logger;
+    OldSettings* settings;
+    OldLogger* logger;
 
     QThread installThread;
     FileInstaller* installer;

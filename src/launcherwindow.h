@@ -4,8 +4,8 @@
 #include <QMainWindow>
 #include <QActionGroup>
 
-#include "settings.h"
-#include "logger.h"
+#include "oldsettings.h"
+#include "oldlogger.h"
 #include "datafetcher.h"
 #include "gamerunner.h"
 
@@ -64,8 +64,8 @@ private:
     Ui::LauncherWindow *ui;
     QActionGroup *newsGroup;
 
-    Settings *settings;
-    Logger *logger;
+    OldSettings *settings;
+    OldLogger *logger;
 
     DataFetcher newsFetcher;
     GameRunner *gameRunner;

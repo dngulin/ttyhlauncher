@@ -4,7 +4,7 @@
 #include <QtCore>
 #include <QtNetwork>
 
-#include "logger.h"
+#include "oldlogger.h"
 
 class DataFetcher : public QObject
 {
@@ -34,7 +34,7 @@ private:
     QString error;
     quint64 size;
 
-    Logger *logger;
+    OldLogger *logger;
     void log(const QString &text);
 
     void reset();

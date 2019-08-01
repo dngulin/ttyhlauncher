@@ -3,8 +3,8 @@
 
 #include <QDialog>
 
-#include "settings.h"
-#include "logger.h"
+#include "oldsettings.h"
+#include "oldlogger.h"
 
 namespace Ui {
 class StoreSettingsDialog;
@@ -21,8 +21,8 @@ public:
 private:
     Ui::StoreSettingsDialog *ui;
 
-    Settings* settings;
-    Logger* logger;
+    OldSettings* settings;
+    OldLogger* logger;
 
     void log(const QString &text);
     void loadSettings();

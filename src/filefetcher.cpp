@@ -1,5 +1,5 @@
 #include "filefetcher.h"
-#include "settings.h"
+#include "oldsettings.h"
 
 FileFetcher::FileFetcher(QObject *parent) :
     QObject(parent)
@@ -14,9 +14,9 @@ FileFetcher::FileFetcher(QObject *parent) :
     fetchingSizes = false;
     fetchingFiles = false;
 
-    logger = Logger::logger();
+    logger = OldLogger::logger();
 
-    hiddenLenght = Settings::instance()->getBaseDir().length() + 1;
+    hiddenLenght = OldSettings::instance()->getBaseDir().length() + 1;
 }
 
 FileFetcher::~FileFetcher()

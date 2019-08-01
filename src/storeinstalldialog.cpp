@@ -10,8 +10,8 @@ StoreInstallDialog::StoreInstallDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    settings = Settings::instance();
-    logger = Logger::logger();
+    settings = OldSettings::instance();
+    logger = OldLogger::logger();
 
     ui->log->setFont( QFontDatabase::systemFont(QFontDatabase::FixedFont) );
 

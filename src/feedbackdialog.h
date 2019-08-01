@@ -3,7 +3,7 @@
 
 #include <QDialog>
 
-#include "logger.h"
+#include "oldlogger.h"
 #include "datafetcher.h"
 
 namespace Ui {
@@ -20,7 +20,7 @@ public:
 
 private:
     Ui::FeedbackDialog *ui;
-    Logger* logger;
+    OldLogger* logger;
 
     DataFetcher uploader;
 

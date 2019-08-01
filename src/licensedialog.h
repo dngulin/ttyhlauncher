@@ -2,7 +2,7 @@
 #define LICENSEDIALOG_H
 
 #include <QDialog>
-#include "logger.h"
+#include "oldlogger.h"
 
 namespace Ui {
 class LicenseDialog;
@@ -17,7 +17,7 @@ public:
     ~LicenseDialog();
 
 private:
-    Logger *logger;
+    OldLogger *logger;
     Ui::LicenseDialog *ui;
 };
 

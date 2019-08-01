@@ -8,8 +8,8 @@ typedef QStandardPaths Path;
 #include <QApplication>
 
 #include "util.h"
-#include "settings.h"
-#include "logger.h"
+#include "oldsettings.h"
+#include "oldlogger.h"
 
 SelfUpdateDialog::SelfUpdateDialog(const QString &text, QWidget *parent) :
     QDialog(parent),
@@ -17,8 +17,8 @@ SelfUpdateDialog::SelfUpdateDialog(const QString &text, QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QString arch = Settings::instance()->getWordSize();
-    QString server = Settings::buildServer;
+    QString arch = OldSettings::instance()->getWordSize();
+    QString server = OldSettings::buildServer;
     QString url = server + "/build-" + arch + "-latest/ttyhlauncher.zip";
 
     QString temp = Path::writableLocation(Path::TempLocation);
@@ -54,7 +54,7 @@ SelfUpdateDialog::~SelfUpdateDialog()
 
 void SelfUpdateDialog::log(const QString &text)
 {
-    Logger::logger()->appendLine(tr("SelfUpdateDialog"), text);
+    OldLogger::logger()->appendLine(tr("SelfUpdateDialog"), text);
 }
 
 void SelfUpdateDialog::msg(const QString &text)

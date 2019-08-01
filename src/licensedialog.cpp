@@ -10,7 +10,7 @@ LicenseDialog::LicenseDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    logger = Logger::logger();
+    logger = OldLogger::logger();
 
     QFile licenseFile(":/resources/license.txt");
     if ( !licenseFile.open(QFile::ReadOnly | QFile::Text) )

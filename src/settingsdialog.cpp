@@ -13,8 +13,8 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    settings = Settings::instance();
-    logger = Logger::logger();
+    settings = OldSettings::instance();
+    logger = OldLogger::logger();
 
     ui->clientCombo->addItems( settings->getClientCaptions() );
     ui->clientCombo->setCurrentIndex( settings->loadActiveClientID() );

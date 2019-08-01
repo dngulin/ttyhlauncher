@@ -9,8 +9,8 @@ StoreManageDialog::StoreManageDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    settings = Settings::instance();
-    logger   = Logger::logger();
+    settings = OldSettings::instance();
+    logger   = OldLogger::logger();
     ttyhstore = new QProcess();
 
     ui->log->setFont( QFontDatabase::systemFont(QFontDatabase::FixedFont) );

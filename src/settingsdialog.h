@@ -4,8 +4,8 @@
 #include <QDialog>
 #include <QtNetwork>
 
-#include "settings.h"
-#include "logger.h"
+#include "oldsettings.h"
+#include "oldlogger.h"
 #include "datafetcher.h"
 
 namespace Ui {
@@ -25,8 +25,8 @@ private:
 
     DataFetcher fetcher;
 
-    Settings *settings;
-    Logger *logger;
+    OldSettings *settings;
+    OldLogger *logger;
 
     void msg(const QString &text);
     void log(const QString &text);

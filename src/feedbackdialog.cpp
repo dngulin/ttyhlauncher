@@ -1,7 +1,7 @@
 #include "feedbackdialog.h"
 #include "../ui/ui_feedbackdialog.h"
 
-#include "settings.h"
+#include "oldsettings.h"
 #include "util.h"
 #include "jsonparser.h"
 
@@ -13,8 +13,8 @@ FeedbackDialog::FeedbackDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    logger = Logger::logger();
-    Settings *settings = Settings::instance();
+    logger = OldLogger::logger();
+    OldSettings *settings = OldSettings::instance();
 
     ui->nickEdit->setText( settings->loadLogin() );
 
@@ -73,7 +73,7 @@ void FeedbackDialog::sendFeedback()
 
     ui->sendButton->setEnabled(false);
 
-    Settings *settings = Settings::instance();
+    OldSettings *settings = OldSettings::instance();
 
     QByteArray diag;
     diag.append("[General]\n");
@@ -115,7 +115,7 @@ void FeedbackDialog::sendFeedback()
     QJsonDocument jsonRequest(payload);
 
     msg( tr("Uploading diagnostic log...") );
-    uploader.makePost( Settings::feedbackUrl, jsonRequest.toJson() );
+    uploader.makePost( OldSettings::feedbackUrl, jsonRequest.toJson() );
 }
 
 void FeedbackDialog::requestFinished(bool result)

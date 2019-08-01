@@ -11,8 +11,8 @@ GameRunner::GameRunner(const QString &login, const QString &pass,
 {
     setParent(parent);
 
-    settings = Settings::instance();
-    logger = Logger::logger();
+    settings = OldSettings::instance();
+    logger = OldLogger::logger();
 
     name = login;
     password = pass;
@@ -78,14 +78,14 @@ void GameRunner::requestAcessToken()
         payload["username"] = name;
         payload["password"] = password;
         payload["ticket"] = ticket;
-        payload["launcherVersion"] = Settings::launcherVersion;
+        payload["launcherVersion"] = OldSettings::launcherVersion;
 
         QJsonDocument jsonRequest(payload);
 
         connect(&fetcher, &DataFetcher::finished,
                 this, &GameRunner::acessTokenReceived);
 
-        fetcher.makePost( Settings::authUrl, jsonRequest.toJson() );
+        fetcher.makePost( OldSettings::authUrl, jsonRequest.toJson() );
     }
     else
     {

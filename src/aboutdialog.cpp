@@ -1,7 +1,7 @@
 #include "aboutdialog.h"
 #include "../ui/ui_aboutdialog.h"
 
-#include "settings.h"
+#include "oldsettings.h"
 #include "licensedialog.h"
 
 AboutDialog::AboutDialog(QWidget *parent) :
@@ -9,7 +9,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
     ui(new Ui::AboutDialog)
 {
     ui->setupUi(this);
-    ui->ttyhlauncherLabel->setText("ttyhlauncher " + Settings::launcherVersion);
+    ui->ttyhlauncherLabel->setText("ttyhlauncher " + OldSettings::launcherVersion);
 
     ui->linkLabel->setOpenExternalLinks(true);
 

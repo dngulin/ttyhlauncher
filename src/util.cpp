@@ -6,8 +6,8 @@
 #include <quazip5/quacrc32.h>
 
 #include "util.h"
-#include "logger.h"
-#include "settings.h"
+#include "oldlogger.h"
+#include "oldsettings.h"
 
 // Based on: http://stackoverflow.com/questions/20734831
 QByteArray Util::makeGzip(const QByteArray &data)
@@ -156,5 +156,5 @@ QString Util::getFileContetnts(const QString &path)
 
 void Util::log(const QString &text)
 {
-    Logger::logger()->appendLine(QApplication::translate("Util", "Util"), text);
+    OldLogger::logger()->appendLine(QApplication::translate("Util", "Util"), text);
 }

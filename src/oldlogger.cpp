@@ -1,27 +1,27 @@
-#include "logger.h"
-#include "settings.h"
+#include "oldlogger.h"
+#include "oldsettings.h"
 
 #include <QTime>
 #include <QDate>
 #include <QTextStream>
 
-Logger *Logger::myInstance = NULL;
-Logger *Logger::logger()
+OldLogger *OldLogger::myInstance = NULL;
+OldLogger *OldLogger::logger()
 {
     if (myInstance == NULL)
     {
-        myInstance = new Logger();
+        myInstance = new OldLogger();
     }
     return myInstance;
 }
 
-Logger::Logger(QObject *parent) :
+OldLogger::OldLogger(QObject *parent) :
     QObject(parent)
 {
     // Rotate logs
     int rotations = 3;
 
-    QString baseDir = Settings::instance()->getBaseDir();
+    QString baseDir = OldSettings::instance()->getBaseDir();
     QString last = QString::number(rotations - 1);
 
     QFile::remove(baseDir + "/launcher." + last + ".log");
@@ -49,14 +49,14 @@ Logger::Logger(QObject *parent) :
     }
 
     QString date = QDate::currentDate().toString("dd.MM.yy");
-    QString version = Settings::instance()->launcherVersion;
+    QString version = OldSettings::instance()->launcherVersion;
 
     QString msg = tr("%1, ttyhlauncher-%2 started.").arg(date).arg(version);
 
     appendLine(tr("Logger"), msg);
 }
 
-void Logger::appendLine(const QString &sender, const QString &text)
+void OldLogger::appendLine(const QString &sender, const QString &text)
 {
     QString time = QTime::currentTime().toString("hh:mm:ss");
     QString prefix = "[" + time + "] " + sender + " >> ";

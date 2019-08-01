@@ -4,7 +4,7 @@
 #include <QtCore>
 #include <QtNetwork>
 
-#include "logger.h"
+#include "oldlogger.h"
 #include "datafetcher.h"
 
 class FileFetcher : public QObject
@@ -39,7 +39,7 @@ private:
     DataFetcher df;
     bool hasFetchErrors;
 
-    Logger *logger;
+    OldLogger *logger;
     void log(const QString &text);
 
     int hiddenLenght;

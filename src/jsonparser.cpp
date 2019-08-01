@@ -3,7 +3,7 @@
 #include <QFile>
 #include <QJsonArray>
 
-#include "settings.h"
+#include "oldsettings.h"
 
 JsonParser::JsonParser(QObject *parent) : QObject(parent)
 {
@@ -238,8 +238,8 @@ QList<LibraryInfo> JsonParser::getLibraryList() const
         QJsonArray liraryRules = library["rules"].toArray();
 
         // Get OS info for allow/disallow rules and natives
-        QString osName = Settings::instance()->getOsName();
-        QString osArch = Settings::instance()->getWordSize();
+        QString osName = OldSettings::instance()->getOsName();
+        QString osArch = OldSettings::instance()->getWordSize();
 
         // Allow library if rules not defined
         bool libraryAllowed = true;

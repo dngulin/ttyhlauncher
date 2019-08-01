@@ -3,8 +3,8 @@
 
 #include <QDialog>
 
-#include "settings.h"
-#include "logger.h"
+#include "oldsettings.h"
+#include "oldlogger.h"
 #include "datafetcher.h"
 
 namespace Ui {
@@ -25,8 +25,8 @@ private:
     QProcess* ttyhstore;
     DataFetcher fetcher;
 
-    Settings* settings;
-    Logger* logger;
+    OldSettings* settings;
+    OldLogger* logger;
 
     void requestVersions();
     void log(const QString &line, bool hidden = false);

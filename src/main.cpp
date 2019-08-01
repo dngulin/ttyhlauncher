@@ -1,7 +1,7 @@
 #include "launcherwindow.h"
 
-#include "logger.h"
-#include "settings.h"
+#include "oldlogger.h"
+#include "oldsettings.h"
 
 #include <QApplication>
 #include <QSplashScreen>
@@ -46,8 +46,8 @@ int main(int argc, char *argv[])
     }
     QApplication::installTranslator(&t);
 
-    Settings::instance();
-    Logger::logger();
+    OldSettings::instance();
+    OldLogger::logger();
 
 #ifdef Q_OS_WIN
     QCommandLineParser args;
@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
     splash->setMask( logo.mask() );
     splash->show();
 
-    Settings::instance()->updateLocalData();
+    OldSettings::instance()->updateLocalData();
 
 #ifdef Q_OS_WIN
     Settings::instance()->fetchLatestVersion();
