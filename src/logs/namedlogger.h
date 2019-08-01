@@ -1,16 +1,16 @@
-#ifndef WRAPPEDLOGGER_H
-#define WRAPPEDLOGGER_H
+#ifndef NAMEDLOGGER_H
+#define NAMEDLOGGER_H
 
 #include <QtCore/QString>
 #include <QtCore/QSharedPointer>
-#include "filelogger.h"
+#include "logger.h"
 
 namespace Ttyh {
 namespace Logs {
-class WrappedLogger
+class NamedLogger
 {
 public:
-    WrappedLogger(const QSharedPointer<FileLogger> &logger, const QString &who);
+    NamedLogger(const QSharedPointer<Logger> &logger, const QString &who);
 
     void info(const QString &msg);
     void warning(const QString &msg);
@@ -18,9 +18,9 @@ public:
 
 private:
     QString who;
-    QSharedPointer<FileLogger> logger;
+    QSharedPointer<Logger> logger;
 };
 }
 }
 
-#endif // WRAPPEDLOGGER_H
+#endif //NAMEDLOGGER_H

@@ -35,8 +35,8 @@ add_executable(ttyhlauncher WIN32 MACOSX_BUNDLE
   "json/prefixesindex.cpp"
   "json/prefixversionsindex.cpp"
   "json/dataindex.cpp"
-  "logs/filelogger.cpp"
-  "logs/wrappedlogger.cpp"
+  "logs/logger.cpp"
+  "logs/namedlogger.cpp"
 )
 add_dependencies(ttyhlauncher update_qm)
 

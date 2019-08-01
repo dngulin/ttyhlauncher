@@ -1,16 +1,16 @@
-#ifndef FILELOGGER_H
-#define FILELOGGER_H
+#ifndef LOGGER_H
+#define LOGGER_H
 
 #include <QtCore/QObject>
 #include <QtCore/QFile>
 
 namespace Ttyh {
 namespace Logs {
-class FileLogger : public QObject
+class Logger : public QObject
 {
     Q_OBJECT
 public:
-    FileLogger(const QString &dirName, int logsCount);
+    Logger(const QString &dirName, int logsCount);
 
     void info(const QString &who, const QString &msg);
     void warning(const QString &who, const QString &msg);
@@ -28,4 +28,4 @@ private:
 }
 }
 
-#endif // FILELOGGER_H
+#endif //LOGGER_H

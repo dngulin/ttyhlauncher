@@ -3,9 +3,9 @@
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
 #include <QtCore/QDateTime>
-#include "filelogger.h"
+#include "logger.h"
 
-Ttyh::Logs::FileLogger::FileLogger(const QString &dirName, int logsCount) : QObject(nullptr)
+Ttyh::Logs::Logger::Logger(const QString &dirName, int logsCount) : QObject(nullptr)
 {
     auto dataPath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
     auto logsPath = QString("%1/%2/%3").arg(dataPath, dirName, "logs");
@@ -33,28 +33,28 @@ Ttyh::Logs::FileLogger::FileLogger(const QString &dirName, int logsCount) : QObj
     }
 }
 
-void Ttyh::Logs::FileLogger::info(const QString &who, const QString &msg)
+void Ttyh::Logs::Logger::info(const QString &who, const QString &msg)
 {
     log("INFO", who, msg);
 }
 
-void Ttyh::Logs::FileLogger::warning(const QString &who, const QString &msg)
+void Ttyh::Logs::Logger::warning(const QString &who, const QString &msg)
 {
     log("WARNING", who, msg);
 }
 
-void Ttyh::Logs::FileLogger::error(const QString &who, const QString &msg)
+void Ttyh::Logs::Logger::error(const QString &who, const QString &msg)
 {
     log("ERROR", who, msg);
 }
 
-void Ttyh::Logs::FileLogger::log(const QString &lvl, const QString &who, const QString &msg)
+void Ttyh::Logs::Logger::log(const QString &lvl, const QString &who, const QString &msg)
 {
     auto dateTime = QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss");
     raw(QString("%1 [%2] %3: %4").arg(dateTime, lvl, who, msg));
 }
 
-void Ttyh::Logs::FileLogger::raw(const QString &line)
+void Ttyh::Logs::Logger::raw(const QString &line)
 {
     if (logFile.isOpen()) {
         QTextStream stream(&logFile);

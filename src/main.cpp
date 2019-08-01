@@ -9,21 +9,23 @@
 #include <QMessageBox>
 
 #include <QtCore/QSharedPointer>
-#include <logs/filelogger.h>
-#include <logs/wrappedlogger.h>
+#include <logs/logger.h>
+#include <logs/namedlogger.h>
 
 namespace Ttyh {
-void test() {
+using namespace Logs;
+
+void test()
+{
     const QString dirName = "ttyhlauncher2";
     const int logCount = 3;
 
-    auto logger = QSharedPointer<Logs::FileLogger>(new Logs::FileLogger(dirName, logCount), &QObject::deleteLater);
-    QObject::connect(logger.data(), &Logs::FileLogger::onLog, [](const QString &line){
-        QTextStream(stdout) << line << endl;
-    });
+    auto logger = QSharedPointer<Logger>(new Logger(dirName, logCount), &QObject::deleteLater);
+    QObject::connect(logger.data(), &Logger::onLog,
+                     [](const QString &line) { QTextStream(stdout) << line << endl; });
 
-    auto wrapper = Logs::WrappedLogger(logger, "Test");
-    wrapper.info("Hello the logging world!");
+    auto testLogger = Logs::NamedLogger(logger, "Test");
+    testLogger.info("Hello the logging world!");
 }
 }
 
@@ -36,12 +38,9 @@ int main(int argc, char *argv[])
     // Setup translation
     QTranslator t;
     QDate today = QDate::currentDate();
-    if (today.month() == 4 && today.day() == 1)
-    {
+    if (today.month() == 4 && today.day() == 1) {
         t.load(":/translations/koi7.qm");
-    }
-    else
-    {
+    } else {
         t.load(":/translations/ru.qm");
     }
     QApplication::installTranslator(&t);
@@ -62,19 +61,16 @@ int main(int argc, char *argv[])
 
     QString who = QApplication::translate("main", "Launcher");
 
-    if ( args.isSet(argUpdate) )
-    {
+    if (args.isSet(argUpdate)) {
         QString temp = a.applicationFilePath();
         QString orig = args.value(argUpdate);
 
         QString msg = QApplication::translate("main", "Updating instance: %1");
-        Logger::logger()->appendLine( who, msg.arg(orig) );
+        Logger::logger()->appendLine(who, msg.arg(orig));
 
         QFile origFile(orig);
-        for (int i = 0; i < 25; i++)
-        {
-            if ( origFile.open(QIODevice::ReadWrite) )
-            {
+        for (int i = 0; i < 25; i++) {
+            if (origFile.open(QIODevice::ReadWrite)) {
                 origFile.close();
                 break;
             }
@@ -82,14 +78,10 @@ int main(int argc, char *argv[])
             QThread::usleep(10);
         }
 
-        if ( QFile::exists(orig) )
-        {
-            if ( !QFile::remove(orig) )
-            {
-                QString title = QApplication::translate(
-                    "main", "Update error");
-                QString text = QApplication::translate(
-                    "main", "Can't remove old instance!");
+        if (QFile::exists(orig)) {
+            if (!QFile::remove(orig)) {
+                QString title = QApplication::translate("main", "Update error");
+                QString text = QApplication::translate("main", "Can't remove old instance!");
 
                 Logger::logger()->appendLine(who, text);
 
@@ -97,27 +89,19 @@ int main(int argc, char *argv[])
             }
         }
 
-        if ( !QFile::copy(temp, orig) )
-        {
+        if (!QFile::copy(temp, orig)) {
             QString title = QApplication::translate("main", "Update error");
-            QString text = QApplication::translate(
-                "main", "Can't copy new instance!");
+            QString text = QApplication::translate("main", "Can't copy new instance!");
 
             Logger::logger()->appendLine(who, text);
 
             QMessageBox::critical(NULL, title, text);
-        }
-        else
-        {
-            if ( QProcess::startDetached(orig, QStringList() << "-r" << temp) )
-            {
+        } else {
+            if (QProcess::startDetached(orig, QStringList() << "-r" << temp)) {
                 return 0;
-            }
-            else
-            {
+            } else {
                 QString title = QApplication::translate("main", "Update error");
-                QString text = QApplication::translate(
-                    "main", "Can't run new instance!");
+                QString text = QApplication::translate("main", "Can't run new instance!");
 
                 Logger::logger()->appendLine(who, text);
 
@@ -126,19 +110,15 @@ int main(int argc, char *argv[])
                 return -1;
             }
         }
-    }
-    else if ( args.isSet(argRemove) )
-    {
+    } else if (args.isSet(argRemove)) {
         QString temp = args.value(argRemove);
 
         QString msg = QApplication::translate("main", "Removing instance: %1");
-        Logger::logger()->appendLine( who, msg.arg(temp) );
+        Logger::logger()->appendLine(who, msg.arg(temp));
 
         QFile tempFile(temp);
-        for (int i = 0; i < 25; i++)
-        {
-            if ( tempFile.open(QIODevice::ReadWrite) )
-            {
+        for (int i = 0; i < 25; i++) {
+            if (tempFile.open(QIODevice::ReadWrite)) {
                 tempFile.close();
                 break;
             }
@@ -146,14 +126,10 @@ int main(int argc, char *argv[])
             QThread::usleep(10);
         }
 
-        if ( QFile::exists(temp) )
-        {
-            if ( !QFile::remove(temp) )
-            {
-                QString title = QApplication::translate(
-                    "main", "Update warning");
-                QString text = QApplication::translate(
-                    "main", "Can't remove temporary instance.");
+        if (QFile::exists(temp)) {
+            if (!QFile::remove(temp)) {
+                QString title = QApplication::translate("main", "Update warning");
+                QString text = QApplication::translate("main", "Can't remove temporary instance.");
 
                 Logger::logger()->appendLine(who, text);
 
@@ -164,9 +140,8 @@ int main(int argc, char *argv[])
 #endif
 
     QPixmap logo(":/resources/logo.png");
-    QSplashScreen *splash
-        = new QSplashScreen(logo, Qt::FramelessWindowHint | Qt::SplashScreen);
-    splash->setMask( logo.mask() );
+    QSplashScreen *splash = new QSplashScreen(logo, Qt::FramelessWindowHint | Qt::SplashScreen);
+    splash->setMask(logo.mask());
     splash->show();
 
     OldSettings::instance()->updateLocalData();
