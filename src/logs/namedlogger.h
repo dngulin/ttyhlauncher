@@ -10,15 +10,15 @@ namespace Logs {
 class NamedLogger
 {
 public:
-    NamedLogger(const QSharedPointer<Logger> &logger, const QString &who);
+    NamedLogger(QSharedPointer<Logger> log, QString who);
 
     void info(const QString &msg);
     void warning(const QString &msg);
     void error(const QString &msg);
 
 private:
-    QString who;
-    QSharedPointer<Logger> logger;
+    QSharedPointer<Logger> log;
+    const QString who;
 };
 }
 }
