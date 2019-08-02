@@ -29,7 +29,7 @@ Ttyh::Logs::Logger::Logger(const QString &dirName, int logsCount) : QObject(null
 
     logFile.setFileName(logFilePath.arg(logsPath, "0"));
     if (!logFile.open(QIODevice::Text | QIODevice::Append | QIODevice::WriteOnly)) {
-        QTextStream(stderr) << "Can't open logfile!";
+        QTextStream(stderr) << "Can't open a logfile!" << endl;
     }
 }
 
@@ -59,7 +59,7 @@ void Ttyh::Logs::Logger::raw(const QString &line)
     if (logFile.isOpen()) {
         QTextStream stream(&logFile);
         stream.setCodec("UTF-8");
-        stream << line << "\n";
+        stream << line << '\n';
     }
 
     emit onLog(line);
