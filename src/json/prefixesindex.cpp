@@ -11,11 +11,11 @@ Ttyh::Json::PrefixesIndex::PrefixesIndex(const QJsonObject &jObject)
 
 QJsonObject Ttyh::Json::PrefixesIndex::toJsonObject() const
 {
-    QJsonObject jObject;
+    QJsonObject jPrefixes;
 
     foreach (auto prefixId, prefixes.keys()) {
-        jObject.insert(prefixId, prefixes[prefixId].toJsonObject());
+        jPrefixes.insert(prefixId, prefixes[prefixId].toJsonObject());
     }
 
-    return jObject;
+    return QJsonObject { { keyPrefixes, jPrefixes } };
 }

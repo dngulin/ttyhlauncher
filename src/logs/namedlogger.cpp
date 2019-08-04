@@ -1,5 +1,3 @@
-#include <utility>
-
 #include "namedlogger.h"
 
 Ttyh::Logs::NamedLogger::NamedLogger(QSharedPointer<Logger> log, QString who)

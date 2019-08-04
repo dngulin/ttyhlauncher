@@ -10,7 +10,7 @@ namespace Json {
 class PrefixesIndex
 {
 public:
-    explicit PrefixesIndex(const QJsonObject &jObject);
+    explicit PrefixesIndex(const QJsonObject &jObject = QJsonObject());
 
     QHash<QString, PrefixInfo> prefixes;
 
