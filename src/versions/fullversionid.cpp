@@ -2,17 +2,22 @@
 #include "fullversionid.h"
 
 Ttyh::Versions::FullVersionId::FullVersionId(QString prefixId, QString versionId)
-    : prefixId(std::move(prefixId)), versionId(std::move(versionId))
+    : prefix(std::move(prefixId)), id(std::move(versionId))
 {
 }
 
 Ttyh::Versions::FullVersionId::FullVersionId(const QJsonObject &jObject)
 {
-    prefixId = jObject[keyPrefix].toString();
-    versionId = jObject[keyVersion].toString();
+    prefix = jObject[keyPrefix].toString();
+    id = jObject[keyVersion].toString();
 }
 
 QJsonObject Ttyh::Versions::FullVersionId::toJsonObject() const
 {
-    return QJsonObject { { keyPrefix, prefixId }, { keyVersion, versionId } };
+    return QJsonObject { { keyPrefix, prefix }, { keyVersion, id } };
+}
+
+QString Ttyh::Versions::FullVersionId::toString() const
+{
+    return QString("%1/%2").arg(prefix, id);
 }

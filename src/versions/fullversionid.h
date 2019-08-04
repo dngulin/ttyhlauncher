@@ -12,10 +12,11 @@ public:
     explicit FullVersionId(const QJsonObject &jObject);
     FullVersionId(QString prefixId, QString versionId);
 
-    QString prefixId;
-    QString versionId;
+    QString prefix;
+    QString id;
 
     QJsonObject toJsonObject() const;
+    QString toString() const;
 
 private:
     static constexpr const char *keyPrefix = "prefix";

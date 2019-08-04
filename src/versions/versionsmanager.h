@@ -36,9 +36,8 @@ private:
     QSharedPointer<QNetworkAccessManager> nam;
     Logs::NamedLogger log;
 
+    QString dataPath;
     QString versionsPath;
-    QString assetsPath;
-    QString librariesPath;
 
     QString indexPath;
     Json::PrefixesIndex index;
@@ -47,9 +46,16 @@ private:
     bool fetchingPrefixes;
     QQueue<QString> prefixFetchQueue;
 
+    bool fetchingVersionIndexes;
+
     void findLocalVersions(const QString &prefixId);
     void fetchNextPrefixOrFinish();
     void setFetchPrefixesResult(bool result);
+
+    void fetchVersionMainIndex(const FullVersionId &version);
+    void fetchVersionAssetsIndex(const FullVersionId &version, const QString &assets);
+    void fetchVersionDataIndex(const FullVersionId &version);
+    void setFetchVersionIndexesResult(bool result);
 
     QNetworkReply *makeGetRequest(const QString &url);
 };
