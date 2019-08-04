@@ -1,14 +1,9 @@
-#include "launcherwindow.h"
-
-#include "oldlogger.h"
-#include "oldsettings.h"
-
 #include <QApplication>
 #include <QSplashScreen>
 #include <QBitmap>
 #include <QMessageBox>
-
 #include <QtCore/QSharedPointer>
+
 #include "config.h"
 #include "logs/logger.h"
 #include "logs/namedlogger.h"
