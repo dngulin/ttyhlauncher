@@ -77,6 +77,9 @@ void VersionsManager::findLocalVersions(const QString &prefixId)
     }
 
     std::sort(prefix.versions.begin(), prefix.versions.end(), std::greater<QString>());
+
+    if (prefix.versions.count() > 1)
+        prefix.latestVersionId = prefix.versions[1];
 }
 
 void VersionsManager::fetchPrefixes()
