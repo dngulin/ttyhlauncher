@@ -1,29 +1,5 @@
 add_executable(ttyhlauncher WIN32 MACOSX_BUNDLE
   "main.cpp"
-  "launcherwindow.cpp"
-  "skinuploaddialog.cpp"
-  "settingsdialog.cpp"
-  "updatedialog.cpp"
-  "feedbackdialog.cpp"
-  "aboutdialog.cpp"
-  "oldsettings.cpp"
-  "oldlogger.cpp"
-  "util.cpp"
-  "licensedialog.cpp"
-  "jsonparser.cpp"
-  "libraryinfo.cpp"
-  "fileinfo.cpp"
-  "gamerunner.cpp"
-  "filefetcher.cpp"
-  "datafetcher.cpp"
-  "hashchecker.cpp"
-  "logview.cpp"
-  "selfupdatedialog.cpp"
-  "storesettingsdialog.cpp"
-  "storemanagedialog.cpp"
-  "storeinstalldialog.cpp"
-  "installinfo.cpp"
-  "fileinstaller.cpp"
   "json/downloadinfo.cpp"
   "json/assetdownloadinfo.cpp"
   "json/checkinfo.cpp"
@@ -41,6 +17,9 @@ add_executable(ttyhlauncher WIN32 MACOSX_BUNDLE
   "settings/settingsmanager.cpp"
   "versions/versionsmanager.cpp"
   "versions/fullversionid.cpp"
+  "versions/prefix.h"
+  "storage/filechecker.cpp"
+  "storage/fileinfo.h"
   "utils/network.cpp"
 )
 add_dependencies(ttyhlauncher update_qm)
@@ -54,7 +33,7 @@ target_include_directories(ttyhlauncher PRIVATE
 )
 
 target_link_libraries(ttyhlauncher
-  Qt5::Gui Qt5::Widgets Qt5::Network ${QUAZIP_LIBRARIES}
+  Qt5::Gui Qt5::Widgets Qt5::Network Qt5::Concurrent ${QUAZIP_LIBRARIES}
 )
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "^(GNU|Clang)$")

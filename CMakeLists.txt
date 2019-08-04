@@ -17,6 +17,7 @@ option(USE_GIT_VERSION "Get current commit hash from Git if possible" ON)
 find_package(Qt5Gui REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Network REQUIRED)
+find_package(Qt5Concurrent REQUIRED)
 find_package(Qt5LinguistTools REQUIRED)
 
 find_package(QuaZip5 REQUIRED)
