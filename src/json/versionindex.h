@@ -21,6 +21,8 @@ public:
 
     QString mainClass;
     QStringList gameArguments;
+
+    bool isValid() const;
 };
 }
 }

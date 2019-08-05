@@ -17,6 +17,8 @@ public:
     QHash<QString, CheckInfo> libs;
     QHash<QString, CheckInfo> files;
     QStringList mutableFiles;
+
+    bool isValid() const;
 };
 }
 }

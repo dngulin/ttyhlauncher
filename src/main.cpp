@@ -9,10 +9,14 @@
 #include "logs/namedlogger.h"
 #include "settings/settingsmanager.h"
 #include "versions/versionsmanager.h"
+#include "storage/fileinfo.h"
+#include "utils/platform.h"
 
 using namespace Ttyh::Logs;
 using namespace Ttyh::Settings;
 using namespace Ttyh::Versions;
+using namespace Ttyh::Storage;
+using namespace Ttyh::Utils;
 
 using QNam = QNetworkAccessManager;
 
@@ -67,6 +71,15 @@ int main(int argc, char *argv[])
     auto version = FullVersionId("default", versions.getPrefixes()["default"].latestVersionId);
     versions.fetchVersionIndexes(version);
     fetchIndexesLoop.exec();
+
+    QList<FileInfo> files;
+    versions.fillVersionFiles(version, files);
+
+    foreach(auto file, files) {
+        testLogger.info(file.url);
+    }
+
+    testLogger.warning(Platform::osVersion());
 
     return 0;
 }

@@ -17,10 +17,9 @@ add_executable(ttyhlauncher WIN32 MACOSX_BUNDLE
   "settings/settingsmanager.cpp"
   "versions/versionsmanager.cpp"
   "versions/fullversionid.cpp"
-  "versions/prefix.h"
   "storage/filechecker.cpp"
-  "storage/fileinfo.h"
   "utils/network.cpp"
+  "utils/platform.cpp"
 )
 add_dependencies(ttyhlauncher update_qm)
 

@@ -7,8 +7,8 @@
 class FileInfo
 {
 public:
-    FileInfo();
-    FileInfo(const QString & fileName, const QString & fileHash,
+    OldFileInfo();
+    OldFileInfo(const QString & fileName, const QString & fileHash,
              int fileSize, bool mutability);
 
     QString name;

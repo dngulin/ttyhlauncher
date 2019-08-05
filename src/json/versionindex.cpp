@@ -32,3 +32,9 @@ Ttyh::Json::VersionIndex::VersionIndex(const QJsonObject &jObject)
         gameArguments = jObject["minecraftArguments"].toString().split(' ');
     }
 }
+
+bool Ttyh::Json::VersionIndex::isValid() const
+{
+    return !id.isEmpty() && !assetsIndex.isEmpty() && !mainClass.isEmpty() && !libraries.isEmpty()
+            && !gameArguments.isEmpty();
+}

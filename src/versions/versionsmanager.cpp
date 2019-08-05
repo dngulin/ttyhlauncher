@@ -3,16 +3,20 @@
 #include <QtCore/QDir>
 #include <QtNetwork/QNetworkReply>
 
-#include <QtCore/QTimer>
-#include <json/versionindex.h>
-#include <json/prefixversionsindex.h>
+#include "storage/fileinfo.h"
+#include "json/assetsindex.h"
+#include "json/versionindex.h"
+#include "json/prefixversionsindex.h"
+#include "json/dataindex.h"
 #include "utils/network.h"
+#include "utils/platform.h"
 #include "versionsmanager.h"
 
 namespace Ttyh {
 namespace Versions {
 using namespace Json;
 using namespace Logs;
+using namespace Storage;
 
 VersionsManager::VersionsManager(const QString &dirName, QString url,
                                  QSharedPointer<QNetworkAccessManager> nam,
@@ -311,6 +315,81 @@ QNetworkReply *VersionsManager::makeGetRequest(const QString &url)
     Utils::Network::createTimeoutTimer(reply);
 
     return reply;
+}
+
+bool VersionsManager::fillVersionFiles(const FullVersionId &version, QList<FileInfo> &files)
+{
+    log.info(QString("Collecting files for the version '%1'...").arg(version.toString()));
+
+    auto dIndexPath = QString("%1/%2/data.json").arg(versionsPath, version.toString());
+    auto dataIndex = loadIndex<Json::DataIndex>(dIndexPath);
+    if (!dataIndex.isValid()) {
+        log.error("Failed to load data index!");
+        return false;
+    }
+
+    auto jarLocation = QString("%1/%2/%3/%3.jar");
+    auto jarUrl = jarLocation.arg(storeUrl, version.prefix, version.id);
+    auto jarPath = jarLocation.arg(versionsPath, version.prefix, version.id);
+    files << FileInfo(jarUrl, jarPath, dataIndex.main.hash, dataIndex.main.size);
+
+    auto fileLocation = QString("%1/%2/files/%3");
+    foreach (auto fileName, dataIndex.files.keys()) {
+        auto url = fileLocation.arg(storeUrl, version.toString(), fileName);
+        auto path = fileLocation.arg(versionsPath, version.toString(), fileName);
+        auto checkInfo = dataIndex.files[fileName];
+        files << FileInfo(url, path, checkInfo.hash, checkInfo.size);
+    }
+
+    auto vIndexPath = QString("%1/%2/%3/%3.json").arg(versionsPath, version.prefix, version.id);
+    auto versionIndex = loadIndex<Json::VersionIndex>(vIndexPath);
+    if (!versionIndex.isValid()) {
+        log.error("Failed to load version index!");
+        return false;
+    }
+
+    auto libLocation = QString("%1/libraries/%2");
+    foreach (auto libInfo, versionIndex.libraries) {
+        if (!Utils::Platform::isLibraryAllowed(libInfo))
+            continue;
+
+        auto libPath = Utils::Platform::getLibraryPath(libInfo);
+        if (!dataIndex.libs.contains(libPath)) {
+            log.warning(QString("Library '%1' is missing in the data index").arg(libPath));
+            continue;
+        }
+
+        auto url = libLocation.arg(storeUrl, libPath);
+        auto path = libLocation.arg(dataPath, libPath);
+        auto checkInfo = dataIndex.libs[libPath];
+        files << FileInfo(url, path, checkInfo.hash, checkInfo.size);
+    }
+
+    auto aIndexPath = QString("%1/assets/indexes/%2.json").arg(dataPath, versionIndex.assetsIndex);
+    auto assetsIndex = loadIndex<Json::AssetsIndex>(aIndexPath);
+    if (!assetsIndex.isValid()) {
+        log.error("Failed to load version index!");
+        return false;
+    }
+
+    auto assetLocation = QString("%1/assets/objects/%2");
+    foreach (auto asset, assetsIndex.objects) {
+        auto name = QString("%1/%2").arg(asset.hash.mid(0, 2), asset.hash);
+        auto url = assetLocation.arg(storeUrl, name);
+        auto path = assetLocation.arg(dataPath, name);
+        files << FileInfo(url, path, asset.hash, asset.size);
+    }
+
+    log.info(QString("Need to check %1 files").arg(QString::number(files.count())));
+    return true;
+}
+
+template<typename T>
+const T VersionsManager::loadIndex(const QString &path)
+{
+    QFile file(path);
+    file.open(QIODevice::ReadOnly);
+    return T(QJsonDocument::fromJson(file.readAll()).object());
 }
 
 }

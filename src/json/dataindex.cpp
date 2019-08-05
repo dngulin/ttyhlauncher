@@ -20,3 +20,8 @@ Ttyh::Json::DataIndex::DataIndex(const QJsonObject &jObject)
         mutableFiles << path.toString();
     }
 }
+
+bool Ttyh::Json::DataIndex::isValid() const
+{
+    return main.isValid() && !libs.isEmpty();
+}

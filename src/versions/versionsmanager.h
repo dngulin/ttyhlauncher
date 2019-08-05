@@ -10,6 +10,7 @@
 #include "json/prefixesindex.h"
 #include "logs/logger.h"
 #include "logs/namedlogger.h"
+#include "storage/fileinfo.h"
 #include "fullversionid.h"
 #include "prefix.h"
 
@@ -26,6 +27,7 @@ public:
     void fetchVersionIndexes(const FullVersionId &version);
 
     const QHash<QString, Prefix> getPrefixes() const;
+    bool fillVersionFiles(const FullVersionId &version, QList<Storage::FileInfo> &files);
 
 signals:
     void onFetchPrefixesResult(bool result);
@@ -58,6 +60,9 @@ private:
     void setFetchVersionIndexesResult(bool result);
 
     QNetworkReply *makeGetRequest(const QString &url);
+
+    template<typename T>
+    static const T loadIndex(const QString &path);
 };
 }
 }

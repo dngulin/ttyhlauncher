@@ -13,6 +13,8 @@ public:
 
     QString hash;
     int size;
+
+    bool isValid() const;
 };
 }
 }
