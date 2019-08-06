@@ -13,7 +13,7 @@ class FileChecker : public QObject
 {
     Q_OBJECT
 public:
-    explicit FileChecker(const QSharedPointer<Logs::Logger> &logger);
+    explicit FileChecker(const QString &dirName, const QSharedPointer<Logs::Logger> &logger);
 
     void start(const QList<FileInfo> &files);
     void cancel();
@@ -24,12 +24,13 @@ signals:
     void finished(bool cancelled, const QList<FileInfo> &filteredFiles);
 
 private:
+    const int prefixLength;
     Logs::NamedLogger log;
-    QStringList checkingNames;
+
+    QList<FileInfo> checkingFiles;
     QFutureWatcher<FileInfo> watcher;
 
     void handleFinished(bool cancelled);
-
     static bool isDownloadRequired(const FileInfo &info);
 };
 }

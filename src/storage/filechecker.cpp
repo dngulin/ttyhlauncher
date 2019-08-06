@@ -1,18 +1,26 @@
 #include <QtConcurrent/QtConcurrentFilter>
 #include <QtCore/QCryptographicHash>
+#include <QtCore/QStandardPaths>
 #include "filechecker.h"
 
-Ttyh::Storage::FileChecker::FileChecker(const QSharedPointer<Logs::Logger> &logger)
-    : log(logger, "FileChecker")
+Ttyh::Storage::FileChecker::FileChecker(const QString &dirName,
+                                        const QSharedPointer<Logs::Logger> &logger)
+    : prefixLength([&dirName]() {
+          auto pattern = QString("%1/%2/");
+          auto basePath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
+          return pattern.arg(basePath, dirName).length();
+      }()),
+      log(logger, "FileChecker")
 {
     connect(&watcher, &QFutureWatcher<FileInfo>::progressRangeChanged,
             [=](int min, int max) { emit rangeChanged(min, max); });
 
-    connect(&watcher, &QFutureWatcher<FileInfo>::progressValueChanged, [=](int index) {
-        if (index > 0 && index < checkingNames.count()) {
-            emit progressChanged(index, checkingNames[index]);
+    connect(&watcher, &QFutureWatcher<FileInfo>::progressValueChanged, [=](int fileNumber) {
+        auto index = fileNumber - 1;
+        if (index >= 0 && index < checkingFiles.count()) {
+            emit progressChanged(fileNumber, checkingFiles[index].path.mid(prefixLength));
         } else {
-            emit progressChanged(index, "UNKNOWN_TARGET_NAME");
+            emit progressChanged(fileNumber, "");
         }
     });
 
@@ -24,7 +32,7 @@ void Ttyh::Storage::FileChecker::handleFinished(bool cancelled)
 {
     auto filteredFiles = watcher.future().results();
     watcher.setFuture(QFuture<FileInfo>());
-    checkingNames.clear();
+    checkingFiles.clear();
 
     emit finished(cancelled, filteredFiles);
 }
@@ -37,10 +45,7 @@ void Ttyh::Storage::FileChecker::start(const QList<FileInfo> &files)
         return;
     }
 
-    checkingNames.clear();
-    foreach (auto info, files) {
-        checkingNames << info.path.section('/', -1);
-    }
+    checkingFiles = files;
 
     auto future = QtConcurrent::filtered(files, isDownloadRequired);
     watcher.setFuture(future);
@@ -54,7 +59,7 @@ void Ttyh::Storage::FileChecker::cancel()
         watcher.waitForFinished();
         log.info("Task have been cancelled!");
     } else {
-        log.warning("Task is not running");
+        log.warning("Cancellation is ignored. Task is not running!");
     }
 }
 

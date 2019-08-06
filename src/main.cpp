@@ -10,6 +10,7 @@
 #include "settings/settingsmanager.h"
 #include "versions/versionsmanager.h"
 #include "storage/fileinfo.h"
+#include "storage/filechecker.h"
 #include "utils/platform.h"
 
 using namespace Ttyh::Logs;
@@ -75,8 +76,26 @@ int main(int argc, char *argv[])
     QList<FileInfo> files;
     versions.fillVersionFiles(version, files);
 
-    foreach(auto file, files) {
-        testLogger.info(file.url);
+    auto checker = QSharedPointer<FileChecker>(new FileChecker(dirName, logger));
+    QList<FileInfo> downloads;
+
+    QEventLoop checkerLoop;
+    QObject::connect(checker.data(), &FileChecker::rangeChanged, [&](int min, int max) {
+        testLogger.info(QString("range: %1 - %2").arg(QString::number(min), QString::number(max)));
+    });
+    QObject::connect(checker.data(), &FileChecker::progressChanged, [&](int id, const QString &f) {
+        testLogger.info(QString("progress: %1 '%2'").arg(QString::number(id), f));
+    });
+    QObject::connect(checker.data(), &FileChecker::finished, [&](bool, const QList<FileInfo> &dl) {
+        checkerLoop.quit();
+        downloads = dl;
+    });
+
+    checker->start(files);
+    checkerLoop.exec();
+
+    foreach (auto file, downloads) {
+        testLogger.info(QString("Need to download '%1'").arg(file.url));
     }
 
     testLogger.warning(Platform::osVersion());
