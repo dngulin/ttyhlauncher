@@ -1,6 +1,8 @@
 #ifndef NETWORK_H
 #define NETWORK_H
 
+#include <QtNetwork/QNetworkReply>
+
 namespace Ttyh {
 namespace Utils {
 namespace Network {

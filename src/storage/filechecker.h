@@ -21,7 +21,7 @@ public:
 signals:
     void rangeChanged(int min, int max);
     void progressChanged(int currentId, const QString &currentName);
-    void finished(bool cancelled, const QList<FileInfo> &filteredFiles);
+    void finished(bool canceled, const QList<FileInfo> &filteredFiles);
 
 private:
     const int prefixLength;
@@ -30,7 +30,6 @@ private:
     QList<FileInfo> checkingFiles;
     QFutureWatcher<FileInfo> watcher;
 
-    void handleFinished(bool cancelled);
     static bool isDownloadRequired(const FileInfo &info);
 };
 }

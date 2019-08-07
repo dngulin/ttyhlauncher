@@ -24,27 +24,28 @@ Ttyh::Storage::FileChecker::FileChecker(const QString &dirName,
         }
     });
 
-    connect(&watcher, &QFutureWatcher<FileInfo>::finished, [=] { handleFinished(true); });
-    connect(&watcher, &QFutureWatcher<FileInfo>::canceled, [=] { handleFinished(false); });
-}
+    connect(&watcher, &QFutureWatcher<FileInfo>::finished, [=] {
+        checkingFiles.clear();
+        bool cancelled = watcher.isCanceled();
 
-void Ttyh::Storage::FileChecker::handleFinished(bool cancelled)
-{
-    auto filteredFiles = watcher.future().results();
-    watcher.setFuture(QFuture<FileInfo>());
-    checkingFiles.clear();
+        if (cancelled) {
+            log.info("Task have been cancelled!");
+        } else {
+            log.info("Finished");
+        }
 
-    emit finished(cancelled, filteredFiles);
+        emit finished(cancelled, watcher.future().results());
+    });
 }
 
 void Ttyh::Storage::FileChecker::start(const QList<FileInfo> &files)
 {
-    log.info("Start checking files...");
     if (watcher.isRunning()) {
         log.error("Failed to start a checking. Already in progress!");
         return;
     }
 
+    log.info("Start checking files...");
     checkingFiles = files;
 
     auto future = QtConcurrent::filtered(files, isDownloadRequired);
@@ -54,10 +55,8 @@ void Ttyh::Storage::FileChecker::start(const QList<FileInfo> &files)
 void Ttyh::Storage::FileChecker::cancel()
 {
     if (watcher.isRunning()) {
-        log.info("Wait for cancelling...");
+        log.info("Cancelling...");
         watcher.cancel();
-        watcher.waitForFinished();
-        log.info("Task have been cancelled!");
     } else {
         log.warning("Cancellation is ignored. Task is not running!");
     }

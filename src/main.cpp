@@ -11,6 +11,7 @@
 #include "versions/versionsmanager.h"
 #include "storage/fileinfo.h"
 #include "storage/filechecker.h"
+#include "storage/downloader.h"
 #include "utils/platform.h"
 
 using namespace Ttyh::Logs;
@@ -86,9 +87,9 @@ int main(int argc, char *argv[])
     QObject::connect(checker.data(), &FileChecker::progressChanged, [&](int id, const QString &f) {
         testLogger.info(QString("progress: %1 '%2'").arg(QString::number(id), f));
     });
-    QObject::connect(checker.data(), &FileChecker::finished, [&](bool, const QList<FileInfo> &dl) {
+    QObject::connect(checker.data(), &FileChecker::finished, [&](bool, const QList<FileInfo> &ff) {
+        downloads = ff;
         checkerLoop.quit();
-        downloads = dl;
     });
 
     checker->start(files);
@@ -96,6 +97,23 @@ int main(int argc, char *argv[])
 
     foreach (auto file, downloads) {
         testLogger.info(QString("Need to download '%1'").arg(file.url));
+    }
+
+    if (downloads.count() > 0) {
+        auto dl = QSharedPointer<Downloader>(new Downloader(storeUrl, dirName, nam, logger));
+        QEventLoop downloadLoop;
+        QObject::connect(dl.data(), &Downloader::rangeChanged, [&](int min, int max) {
+            QString msg("range: %1 - %2");
+            testLogger.info(msg.arg(QString::number(min), QString::number(max)));
+        });
+        QObject::connect(dl.data(), &Downloader::progressChanged, [&](int id, const QString &f) {
+            testLogger.info(QString("progress: %1 '%2'").arg(QString::number(id), f));
+        });
+        QObject::connect(dl.data(), &Downloader::finished,
+                         [&](bool, bool) { downloadLoop.quit(); });
+
+        dl->start(downloads);
+        downloadLoop.exec();
     }
 
     testLogger.warning(Platform::osVersion());
