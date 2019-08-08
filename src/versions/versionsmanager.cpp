@@ -311,27 +311,19 @@ bool VersionsManager::fillVersionFiles(const FullVersionId &version, QList<FileI
         return false;
     }
 
-    auto jarLocation = QString("%1/%2/%3/%3.jar");
-    auto jarUrl = jarLocation.arg(storeUrl, version.prefix, version.id);
-    auto jarPath = jarLocation.arg(versionsPath, version.prefix, version.id);
-    files << FileInfo(jarUrl, jarPath, dataIndex.main.hash, dataIndex.main.size);
+    files << getFileInfo("%1/%2/%3.jar", version, version.id, dataIndex.main);
 
-    auto fileLocation = QString("%1/%2/files/%3");
-    foreach (auto fileName, dataIndex.files.keys()) {
-        auto url = fileLocation.arg(storeUrl, version.toString(), fileName);
-        auto path = fileLocation.arg(versionsPath, version.toString(), fileName);
-        auto checkInfo = dataIndex.files[fileName];
-        files << FileInfo(url, path, checkInfo.hash, checkInfo.size);
+    foreach (auto file, dataIndex.files.keys()) {
+        files << getFileInfo("%1/%2/files/%3", version, file, dataIndex.files[file]);
     }
 
-    auto vIndexPath = QString("%1/%2/%3/%3.json").arg(versionsPath, version.prefix, version.id);
+    auto vIndexPath = QString("%1/%2/%3.json").arg(versionsPath, version.toString(), version.id);
     auto versionIndex = loadIndex<Json::VersionIndex>(vIndexPath);
     if (!versionIndex.isValid()) {
         log.error("Failed to load version index!");
         return false;
     }
 
-    auto libLocation = QString("%1/libraries/%2");
     foreach (auto libInfo, versionIndex.libraries) {
         if (!Utils::Platform::isLibraryAllowed(libInfo))
             continue;
@@ -342,10 +334,7 @@ bool VersionsManager::fillVersionFiles(const FullVersionId &version, QList<FileI
             continue;
         }
 
-        auto url = libLocation.arg(storeUrl, libPath);
-        auto path = libLocation.arg(dataPath, libPath);
-        auto checkInfo = dataIndex.libs[libPath];
-        files << FileInfo(url, path, checkInfo.hash, checkInfo.size);
+        files << getFileInfo("%1/libraries/%2", libPath, dataIndex.libs[libPath]);
     }
 
     auto aIndexPath = QString("%1/assets/indexes/%2.json").arg(dataPath, versionIndex.assetsIndex);
@@ -355,16 +344,29 @@ bool VersionsManager::fillVersionFiles(const FullVersionId &version, QList<FileI
         return false;
     }
 
-    auto assetLocation = QString("%1/assets/objects/%2");
     foreach (auto asset, assetsIndex.objects) {
         auto name = QString("%1/%2").arg(asset.hash.mid(0, 2), asset.hash);
-        auto url = assetLocation.arg(storeUrl, name);
-        auto path = assetLocation.arg(dataPath, name);
-        files << FileInfo(url, path, asset.hash, asset.size);
+        files << getFileInfo("%1/assets/objects/%2", name, asset);
     }
 
     log.info(QString("Need to check %1 files").arg(QString::number(files.count())));
     return true;
+}
+
+FileInfo VersionsManager::getFileInfo(const QString &location, const FullVersionId &version,
+                                      const QString &name, const CheckInfo &checkInfo)
+{
+    auto url = location.arg(storeUrl, version.toString(), name);
+    auto path = location.arg(versionsPath, version.toString(), name);
+    return FileInfo(url, path, checkInfo.hash, checkInfo.size);
+}
+
+FileInfo VersionsManager::getFileInfo(const QString &location, const QString &name,
+                                      const CheckInfo &checkInfo)
+{
+    auto url = location.arg(storeUrl, name);
+    auto path = location.arg(dataPath, name);
+    return FileInfo(url, path, checkInfo.hash, checkInfo.size);
 }
 
 template<typename T>

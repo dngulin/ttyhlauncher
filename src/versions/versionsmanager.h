@@ -8,6 +8,7 @@
 #include <QtNetwork/QNetworkAccessManager>
 
 #include "json/prefixesindex.h"
+#include "json/checkinfo.h"
 #include "logs/logger.h"
 #include "logs/namedlogger.h"
 #include "storage/fileinfo.h"
@@ -62,6 +63,12 @@ private:
 
     QNetworkReply *makeGetRequest(const QString &url);
     Utils::DownloadFileReply *makeGetFileRequest(const QString &url, const QString &path);
+
+    Storage::FileInfo getFileInfo(const QString &location, const FullVersionId &version,
+                                  const QString &name, const Json::CheckInfo &checkInfo);
+
+    Storage::FileInfo getFileInfo(const QString &location, const QString &name,
+                                  const Json::CheckInfo &checkInfo);
 
     template<typename T>
     static T loadIndex(const QString &path);
