@@ -37,9 +37,9 @@ private:
     int prefixLength;
     bool downloading;
 
-    QString currentFile;
-    int currentSize;
-    int totalSize;
+    QString currentFileName;
+    quint64 currentSize;
+    quint64 totalSize;
 
     QSharedPointer<QNetworkAccessManager> nam;
     QPointer<Utils::DownloadFileReply> currentReply;
@@ -50,6 +50,9 @@ private:
 
     void downloadNextFileOrFinish();
     void finish(bool cancelled, bool result);
+
+    int getRangedProgress() const;
+    static const int progressRange = 1000;
 };
 }
 }

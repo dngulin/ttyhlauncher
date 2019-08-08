@@ -14,7 +14,7 @@ Ttyh::Storage::Downloader::Downloader(QString storageUrl, const QString &dirName
       versionsPath(QString("%1/%2").arg(dataPath, "versions")),
       prefixLength(dataPath.length() + 1),
       downloading(false),
-      currentFile(""),
+      currentFileName(""),
       currentSize(0),
       totalSize(0),
       nam(std::move(nam)),
@@ -44,7 +44,7 @@ void Ttyh::Storage::Downloader::start(const QList<Ttyh::Storage::FileInfo> &file
 
     log.info("Start downloading files...");
     downloading = true;
-    currentFile = "";
+    currentFileName = "";
     currentSize = 0;
     totalSize = 0;
 
@@ -53,8 +53,8 @@ void Ttyh::Storage::Downloader::start(const QList<Ttyh::Storage::FileInfo> &file
         downloadQueue << fileInfo;
     }
 
-    emit rangeChanged(0, totalSize);
-    emit progressChanged(currentSize, currentFile);
+    emit rangeChanged(0, progressRange);
+    emit progressChanged(0, currentFileName);
 
     downloadNextFileOrFinish();
 }
@@ -69,7 +69,8 @@ void Ttyh::Storage::Downloader::downloadNextFileOrFinish()
     auto target = downloadQueue.dequeue();
 
     log.info(QString("Downloading '%1'...").arg(target.url));
-    currentFile = target.path.mid(prefixLength);
+    currentFileName = target.path.mid(prefixLength);
+    emit progressChanged(getRangedProgress(), currentFileName);
 
     auto reply = new DownloadFileReply(nam->get(QNetworkRequest(target.url)), target.path);
     currentReply = QPointer<DownloadFileReply>(reply);
@@ -79,7 +80,7 @@ void Ttyh::Storage::Downloader::downloadNextFileOrFinish()
             return;
 
         currentSize += written;
-        emit progressChanged(currentSize, currentFile);
+        emit progressChanged(getRangedProgress(), currentFileName);
     });
 
     connect(reply, &DownloadFileReply::finished, [=](bool cancelled, bool result) {
@@ -87,7 +88,7 @@ void Ttyh::Storage::Downloader::downloadNextFileOrFinish()
 
             if (!result) {
                 auto msg = QString("Failed to download '%1': %2");
-                log.error(msg.arg(currentFile, currentReply->errorString()));
+                log.error(msg.arg(currentFileName, currentReply->errorString()));
             }
 
             finish(cancelled, result);
@@ -102,7 +103,7 @@ void Ttyh::Storage::Downloader::finish(bool cancelled, bool result)
 {
     downloading = false;
 
-    currentFile = "";
+    currentFileName = "";
     currentSize = 0;
     totalSize = 0;
 
@@ -117,4 +118,12 @@ void Ttyh::Storage::Downloader::finish(bool cancelled, bool result)
     }
 
     emit finished(cancelled, result);
+}
+
+int Ttyh::Storage::Downloader::getRangedProgress() const
+{
+    if (totalSize == 0)
+        return progressRange / 2; // Just a rough estimation
+
+    return qRound((float(currentSize) / float(totalSize)) * progressRange);
 }
