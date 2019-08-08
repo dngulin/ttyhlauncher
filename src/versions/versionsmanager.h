@@ -11,6 +11,7 @@
 #include "logs/logger.h"
 #include "logs/namedlogger.h"
 #include "storage/fileinfo.h"
+#include "utils/downloadfilereply.h"
 #include "fullversionid.h"
 #include "prefix.h"
 
@@ -26,7 +27,7 @@ public:
     void fetchPrefixes();
     void fetchVersionIndexes(const FullVersionId &version);
 
-    const QHash<QString, Prefix> getPrefixes() const;
+    QHash<QString, Prefix> getPrefixes() const;
     bool fillVersionFiles(const FullVersionId &version, QList<Storage::FileInfo> &files);
 
 signals:
@@ -60,9 +61,10 @@ private:
     void setFetchVersionIndexesResult(bool result);
 
     QNetworkReply *makeGetRequest(const QString &url);
+    Utils::DownloadFileReply *makeGetFileRequest(const QString &url, const QString &path);
 
     template<typename T>
-    static const T loadIndex(const QString &path);
+    static T loadIndex(const QString &path);
 };
 }
 }

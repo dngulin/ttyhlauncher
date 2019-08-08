@@ -17,6 +17,7 @@ namespace Versions {
 using namespace Json;
 using namespace Logs;
 using namespace Storage;
+using namespace Utils;
 
 VersionsManager::VersionsManager(const QString &dirName, QString url,
                                  QSharedPointer<QNetworkAccessManager> nam,
@@ -236,59 +237,36 @@ void VersionsManager::fetchVersionAssetsIndex(const FullVersionId &version, cons
         return;
     }
 
-    auto locationPattern = QString("%1/assets/indexes/%2.json");
-    auto reply = makeGetRequest(locationPattern.arg(storeUrl, assets));
+    auto location = QString("%1/assets/indexes/%2.json");
+    auto reply = makeGetFileRequest(location.arg(storeUrl, assets), location.arg(dataPath, assets));
 
-    connect(reply, &QNetworkReply::finished, [=]() {
-        reply->deleteLater();
-
-        if (reply->error() != QNetworkReply::NoError) {
-            QString msg = "Failed to get the assets index '%1' (%2): %3";
+    connect(reply, &DownloadFileReply::finished, [=](bool cancelled, bool result) {
+        if (!result || cancelled) {
+            QString msg = "Failed to save the assets index '%1' (%2): %3";
             log.error(msg.arg(assets, version.toString(), reply->errorString()));
             setFetchVersionIndexesResult(false);
             return;
         }
 
-        QDir().mkpath(QString("%1/assets/indexes").arg(dataPath));
-
-        QFile file(locationPattern.arg(dataPath, assets));
-        if (!file.open(QIODevice::WriteOnly)) {
-            QString msg = "Failed to save the assets index '%1' (%2)";
-            log.error(msg.arg(assets, version.toString()));
-            setFetchVersionIndexesResult(false);
-            return;
-        }
-
-        file.write(reply->readAll());
         fetchVersionDataIndex(version);
     });
 }
 
 void VersionsManager::fetchVersionDataIndex(const FullVersionId &version)
 {
-    auto locationPattern = QString("%1/%2/%3/data.json");
-    auto reply = makeGetRequest(locationPattern.arg(storeUrl, version.prefix, version.id));
+    auto location = QString("%1/%2/%3/data.json");
+    auto url = location.arg(storeUrl, version.prefix, version.id);
+    auto path = location.arg(versionsPath, version.prefix, version.id);
 
-    connect(reply, &QNetworkReply::finished, [=]() {
-        reply->deleteLater();
-
-        if (reply->error() != QNetworkReply::NoError) {
-            QString msg = "Failed to get the data index '%1': %2";
+    auto reply = makeGetFileRequest(url, path);
+    connect(reply, &DownloadFileReply::finished, [=](bool cancelled, bool result) {
+        if (!result || cancelled) {
+            QString msg = "Failed to save the data index '%1': %2";
             log.error(msg.arg(version.toString(), reply->errorString()));
             setFetchVersionIndexesResult(false);
             return;
         }
 
-        QDir().mkpath(QString("%1/%2/%3").arg(versionsPath, version.prefix, version.id));
-
-        QFile file(locationPattern.arg(versionsPath, version.prefix, version.id));
-        if (!file.open(QIODevice::WriteOnly)) {
-            log.error(QString("Failed to save the data index '%1'").arg(version.toString()));
-            setFetchVersionIndexesResult(false);
-            return;
-        }
-
-        file.write(reply->readAll());
         setFetchVersionIndexesResult(true);
     });
 }
@@ -303,7 +281,7 @@ void VersionsManager::setFetchVersionIndexesResult(bool result)
     emit onFetchVersionIndexesResult(result);
 }
 
-const QHash<QString, Prefix> VersionsManager::getPrefixes() const
+QHash<QString, Prefix> VersionsManager::getPrefixes() const
 {
     return prefixes;
 }
@@ -315,6 +293,11 @@ QNetworkReply *VersionsManager::makeGetRequest(const QString &url)
     Utils::Network::createTimeoutTimer(reply);
 
     return reply;
+}
+
+DownloadFileReply *VersionsManager::makeGetFileRequest(const QString &url, const QString &path)
+{
+    return new DownloadFileReply(makeGetRequest(url), path);
 }
 
 bool VersionsManager::fillVersionFiles(const FullVersionId &version, QList<FileInfo> &files)
@@ -385,7 +368,7 @@ bool VersionsManager::fillVersionFiles(const FullVersionId &version, QList<FileI
 }
 
 template<typename T>
-const T VersionsManager::loadIndex(const QString &path)
+T VersionsManager::loadIndex(const QString &path)
 {
     QFile file(path);
     file.open(QIODevice::ReadOnly);
