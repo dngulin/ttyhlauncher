@@ -1,5 +1,5 @@
-#include <QtCore/QStringList>
 #include "fullversionid.h"
+#include "prefix.h"
 
 Ttyh::Versions::FullVersionId::FullVersionId(QString prefixId, QString versionId)
     : prefix(std::move(prefixId)), id(std::move(versionId))
@@ -8,8 +8,8 @@ Ttyh::Versions::FullVersionId::FullVersionId(QString prefixId, QString versionId
 
 Ttyh::Versions::FullVersionId::FullVersionId(const QJsonObject &jObject)
 {
-    prefix = jObject[keyPrefix].toString();
-    id = jObject[keyVersion].toString();
+    prefix = jObject[keyPrefix].toString("default");
+    id = jObject[keyVersion].toString(Prefix::latestVersionAlias);
 }
 
 QJsonObject Ttyh::Versions::FullVersionId::toJsonObject() const

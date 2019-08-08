@@ -19,6 +19,7 @@ add_executable(ttyhlauncher WIN32 MACOSX_BUNDLE
   "versions/fullversionid.cpp"
   "storage/filechecker.cpp"
   "storage/downloader.cpp"
+  "profiles/profiledata.cpp"
   "utils/network.cpp"
   "utils/platform.cpp"
   "utils/downloadfilereply.cpp"

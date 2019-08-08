@@ -9,7 +9,7 @@ namespace Versions {
 class FullVersionId
 {
 public:
-    explicit FullVersionId(const QJsonObject &jObject);
+    explicit FullVersionId(const QJsonObject &jObject = QJsonObject());
     FullVersionId(QString prefixId, QString versionId);
 
     QString prefix;
