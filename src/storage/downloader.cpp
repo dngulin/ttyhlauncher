@@ -1,6 +1,8 @@
 #include <QtCore/QStandardPaths>
 #include "downloader.h"
 
+using namespace Ttyh::Utils;
+
 Ttyh::Storage::Downloader::Downloader(QString storageUrl, const QString &dirName,
                                       QSharedPointer<QNetworkAccessManager> nam,
                                       const QSharedPointer<Ttyh::Logs::Logger> &logger)

@@ -18,10 +18,10 @@ add_executable(ttyhlauncher WIN32 MACOSX_BUNDLE
   "versions/versionsmanager.cpp"
   "versions/fullversionid.cpp"
   "storage/filechecker.cpp"
-  "storage/downloadfilereply.cpp"
   "storage/downloader.cpp"
   "utils/network.cpp"
   "utils/platform.cpp"
+  "utils/downloadfilereply.cpp"
 )
 add_dependencies(ttyhlauncher update_qm)
 

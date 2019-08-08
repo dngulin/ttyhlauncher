@@ -9,7 +9,7 @@
 #include "logs/logger.h"
 #include "logs/namedlogger.h"
 #include "fileinfo.h"
-#include "downloadfilereply.h"
+#include "utils/downloadfilereply.h"
 
 namespace Ttyh {
 namespace Storage {
@@ -42,7 +42,7 @@ private:
     int totalSize;
 
     QSharedPointer<QNetworkAccessManager> nam;
-    QPointer<DownloadFileReply> currentReply;
+    QPointer<Utils::DownloadFileReply> currentReply;
 
     QQueue<Storage::FileInfo> downloadQueue;
 

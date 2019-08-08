@@ -3,10 +3,10 @@
 #include "utils/network.h"
 #include "downloadfilereply.h"
 
-Ttyh::Storage::DownloadFileReply::DownloadFileReply(QNetworkReply *reply, const QString &filePath)
+Ttyh::Utils::DownloadFileReply::DownloadFileReply(QNetworkReply *reply, const QString &filePath)
     : QObject(reply), parentReply(reply), file(filePath), hasWriteError(false), cancelled(false)
 {
-    Utils::Network::createTimeoutTimer(reply);
+    Network::createTimeoutTimer(reply);
 
     connect(reply, &QNetworkReply::readyRead, [=]() {
         if (hasWriteError || cancelled)
@@ -45,13 +45,13 @@ Ttyh::Storage::DownloadFileReply::DownloadFileReply(QNetworkReply *reply, const 
     });
 }
 
-void Ttyh::Storage::DownloadFileReply::cancel()
+void Ttyh::Utils::DownloadFileReply::cancel()
 {
     cancelled = true;
     parentReply->abort();
 }
 
-QString Ttyh::Storage::DownloadFileReply::errorString() const
+QString Ttyh::Utils::DownloadFileReply::errorString() const
 {
     if (hasWriteError)
         return "Failed to write a file";

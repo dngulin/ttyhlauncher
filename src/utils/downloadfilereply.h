@@ -6,7 +6,7 @@
 #include <QtNetwork/QNetworkReply>
 
 namespace Ttyh {
-namespace Storage {
+namespace Utils {
 class DownloadFileReply : public QObject
 {
     Q_OBJECT
