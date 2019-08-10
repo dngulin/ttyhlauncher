@@ -17,17 +17,17 @@ QJsonObject Ttyh::Settings::SettingsData::toJsonObject() const
 {
     QJsonObject jObject;
 
-    jObject[keyUsername] = username;
-    jObject[keyPassword] = password;
-    jObject[keySavePassword] = savePassword;
+    jObject.insert(keyUsername, username);
+    jObject.insert(keyPassword, password);
+    jObject.insert(keySavePassword, savePassword);
 
-    jObject[keyProfile] = profile;
-    jObject[keyTicket] = ticket;
+    jObject.insert(keyProfile, profile);
+    jObject.insert(keyTicket, ticket);
 
-    jObject[keyWindowSizeW] = windowSize.width();
-    jObject[keyWindowSizeH] = windowSize.height();
-    jObject[keyWindowMaximized] = windowMaximized;
-    jObject[keyHideWindowOnRun] = hideWindowOnRun;
+    jObject.insert(keyWindowSizeW, windowSize.width());
+    jObject.insert(keyWindowSizeH, windowSize.height());
+    jObject.insert(keyWindowMaximized, windowMaximized);
+    jObject.insert(keyHideWindowOnRun, hideWindowOnRun);
 
     return jObject;
 }

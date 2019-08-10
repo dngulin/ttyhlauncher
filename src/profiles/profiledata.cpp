@@ -15,13 +15,13 @@ QJsonObject Ttyh::Profiles::ProfileData::toJsonObject() const
 {
     QJsonObject jObject;
 
-    jObject[keyVersion] = version.toJsonObject();
+    jObject.insert(keyVersion, version.toJsonObject());
 
-    jObject[keyUseCustomJavaPath] = useCustomJavaPath;
-    jObject[keyCustomJavaPath] = customJavaPath;
+    jObject.insert(keyUseCustomJavaPath, useCustomJavaPath);
+    jObject.insert(keyCustomJavaPath, customJavaPath);
 
-    jObject[keyUseCustomJavaArgs] = useCustomJavaArgs;
-    jObject[keyCustomJavaArgs] = customJavaArgs;
+    jObject.insert(keyUseCustomJavaArgs, useCustomJavaArgs);
+    jObject.insert(keyCustomJavaArgs, customJavaArgs);
 
     return jObject;
 }
