@@ -9,6 +9,7 @@
 #include "logs/namedlogger.h"
 #include "settings/settingsmanager.h"
 #include "versions/versionsmanager.h"
+#include "profiles/profilesmanager.h"
 #include "storage/fileinfo.h"
 #include "storage/filechecker.h"
 #include "storage/downloader.h"
@@ -17,6 +18,7 @@
 using namespace Ttyh::Logs;
 using namespace Ttyh::Settings;
 using namespace Ttyh::Versions;
+using namespace Ttyh::Profiles;
 using namespace Ttyh::Storage;
 using namespace Ttyh::Utils;
 
@@ -117,6 +119,14 @@ int main(int argc, char *argv[])
     }
 
     testLogger.warning(Platform::osVersion());
+
+    auto profiles = QSharedPointer<ProfilesManager>(new ProfilesManager(dirName, logger));
+
+    if (!profiles->isEmpty()) {
+        auto firstName = profiles->names().first();
+        auto profile = profiles->get(firstName);
+        testLogger.info(profile.version.toString());
+    }
 
     return 0;
 }

@@ -10,6 +10,7 @@
 #include "json/dataindex.h"
 #include "utils/network.h"
 #include "utils/platform.h"
+#include "utils/indexhelper.h"
 #include "versionsmanager.h"
 
 namespace Ttyh {
@@ -66,10 +67,14 @@ void VersionsManager::findLocalVersions(const QString &prefixId)
         auto versionIndexPath = QString("%1/%2/%2.json").arg(prefixPath, versionId);
         QFile file(versionIndexPath);
 
-        if (!file.open(QIODevice::ReadOnly))
+        if (!file.exists() || !file.open(QIODevice::ReadOnly))
             continue;
 
-        auto versionIndex = VersionIndex(QJsonDocument::fromJson(file.readAll()).object());
+        auto doc = QJsonDocument::fromJson(file.readAll());
+        if (!doc.isObject())
+            continue;
+
+        auto versionIndex = VersionIndex(doc.object());
         if (versionIndex.id != versionId) {
             auto msg = QString("A version index '%1' contains the wrong version id '%2'");
             log.warning(msg.arg(versionIndexPath, versionIndex.id));
@@ -156,10 +161,7 @@ void VersionsManager::fetchNextPrefixOrFinish()
         Prefix &prefix = prefixes[prefixId];
         prefix.latestVersionId = versionsIndex.latest;
 
-        auto knownVersions = QSet<QString>();
-        foreach (auto versionId, prefix.versions) {
-            knownVersions << versionId;
-        }
+        auto knownVersions = QSet<QString>::fromList(prefix.versions);
         foreach (auto versionId, versionsIndex.versions) {
             if (!knownVersions.contains(versionId))
                 prefix.versions << versionId;
@@ -305,7 +307,7 @@ bool VersionsManager::fillVersionFiles(const FullVersionId &version, QList<FileI
     log.info(QString("Collecting files for the version '%1'...").arg(version.toString()));
 
     auto dIndexPath = QString("%1/%2/data.json").arg(versionsPath, version.toString());
-    auto dataIndex = loadIndex<Json::DataIndex>(dIndexPath);
+    auto dataIndex = IndexHelper::load<Json::DataIndex>(dIndexPath);
     if (!dataIndex.isValid()) {
         log.error("Failed to load data index!");
         return false;
@@ -318,7 +320,7 @@ bool VersionsManager::fillVersionFiles(const FullVersionId &version, QList<FileI
     }
 
     auto vIndexPath = QString("%1/%2/%3.json").arg(versionsPath, version.toString(), version.id);
-    auto versionIndex = loadIndex<Json::VersionIndex>(vIndexPath);
+    auto versionIndex = IndexHelper::load<Json::VersionIndex>(vIndexPath);
     if (!versionIndex.isValid()) {
         log.error("Failed to load version index!");
         return false;
@@ -338,7 +340,7 @@ bool VersionsManager::fillVersionFiles(const FullVersionId &version, QList<FileI
     }
 
     auto aIndexPath = QString("%1/assets/indexes/%2.json").arg(dataPath, versionIndex.assetsIndex);
-    auto assetsIndex = loadIndex<Json::AssetsIndex>(aIndexPath);
+    auto assetsIndex = IndexHelper::load<Json::AssetsIndex>(aIndexPath);
     if (!assetsIndex.isValid()) {
         log.error("Failed to load version index!");
         return false;
@@ -367,14 +369,6 @@ FileInfo VersionsManager::getFileInfo(const QString &location, const QString &na
     auto url = location.arg(storeUrl, name);
     auto path = location.arg(dataPath, name);
     return FileInfo(url, path, checkInfo.hash, checkInfo.size);
-}
-
-template<typename T>
-T VersionsManager::loadIndex(const QString &path)
-{
-    QFile file(path);
-    file.open(QIODevice::ReadOnly);
-    return T(QJsonDocument::fromJson(file.readAll()).object());
 }
 
 }

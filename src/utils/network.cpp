@@ -1,8 +1,6 @@
 #include <QtNetwork/QNetworkReply>
 #include <QtCore/QTimer>
 
-#include "network.h"
-
 namespace Ttyh {
 namespace Utils {
 namespace Network {

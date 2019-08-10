@@ -69,9 +69,6 @@ private:
 
     Storage::FileInfo getFileInfo(const QString &location, const QString &name,
                                   const Json::CheckInfo &checkInfo);
-
-    template<typename T>
-    static T loadIndex(const QString &path);
 };
 }
 }
