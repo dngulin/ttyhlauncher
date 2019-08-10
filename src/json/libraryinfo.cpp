@@ -2,9 +2,8 @@
 #include "libraryinfo.h"
 
 Ttyh::Json::LibraryInfo::LibraryInfo(const QJsonObject &jObject)
+    : name(jObject["name"].toString(""))
 {
-    name = jObject["name"].toString();
-
     foreach (auto jRule, jObject["rules"].toArray()) {
         rules << LibraryRule(jRule.toObject());
     }

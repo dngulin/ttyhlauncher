@@ -1,10 +1,8 @@
 #include <QtCore/QJsonArray>
 #include "dataindex.h"
 
-Ttyh::Json::DataIndex::DataIndex(const QJsonObject &jObject)
+Ttyh::Json::DataIndex::DataIndex(const QJsonObject &jObject) : main(jObject["main"].toObject())
 {
-    main = CheckInfo(jObject["main"].toObject());
-
     auto jLibs = jObject["libs"].toObject();
     foreach (auto path, jLibs.keys()) {
         libs.insert(path, CheckInfo(jLibs[path].toObject()));

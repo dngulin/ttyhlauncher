@@ -1,7 +1,8 @@
 #include "assetdownloadinfo.h"
 
-Ttyh::Json::AssetDownloadInfo::AssetDownloadInfo(const QJsonObject &jObject) : DownloadInfo(jObject)
+Ttyh::Json::AssetDownloadInfo::AssetDownloadInfo(const QJsonObject &jObject)
+    : DownloadInfo(jObject),
+      id(jObject["id"].toString("")),
+      totalSize(jObject["totalSize"].toInt(0))
 {
-    id = jObject["id"].toString();
-    totalSize = jObject["totalSize"].toInt();
 }

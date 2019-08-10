@@ -3,10 +3,10 @@
 #include "assetdownloadinfo.h"
 
 Ttyh::Json::VersionIndex::VersionIndex(const QJsonObject &jObject)
+    : id(jObject["id"].toString()),
+      releaseTime(QDateTime::fromString(jObject["releaseTime"].toString(), Qt::ISODate)),
+      mainClass(jObject["mainClass"].toString())
 {
-    id = jObject["id"].toString();
-    releaseTime = QDateTime::fromString(jObject["releaseTime"].toString(), Qt::ISODate);
-
     const QString assetIndexKey = "assetIndex";
     if (jObject.contains(assetIndexKey)) {
         auto assetsInfo = AssetDownloadInfo(jObject[assetIndexKey].toObject());
@@ -19,8 +19,6 @@ Ttyh::Json::VersionIndex::VersionIndex(const QJsonObject &jObject)
     foreach (auto jLibraryInfo, jLibraries) {
         libraries << LibraryInfo(jLibraryInfo.toObject());
     }
-
-    mainClass = jObject["mainClass"].toString();
 
     const QString argumentsKey = "arguments";
     if (jObject.contains(argumentsKey)) {

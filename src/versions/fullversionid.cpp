@@ -7,9 +7,9 @@ Ttyh::Versions::FullVersionId::FullVersionId(QString prefixId, QString versionId
 }
 
 Ttyh::Versions::FullVersionId::FullVersionId(const QJsonObject &jObject)
+    : prefix(jObject[keyPrefix].toString("default")),
+      id(jObject[keyVersion].toString(Prefix::latestVersionAlias))
 {
-    prefix = jObject[keyPrefix].toString("default");
-    id = jObject[keyVersion].toString(Prefix::latestVersionAlias);
 }
 
 QJsonObject Ttyh::Versions::FullVersionId::toJsonObject() const
