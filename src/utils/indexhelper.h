@@ -2,6 +2,7 @@
 #define INDEXHELPER_H
 
 #include <QtCore/QString>
+#include <QtCore/QJsonDocument>
 
 namespace Ttyh {
 namespace Utils {

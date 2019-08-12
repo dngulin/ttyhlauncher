@@ -12,6 +12,8 @@ QString getLibraryPath(const Json::LibraryInfo &libInfo);
 QString osName();
 QString osVersion();
 QString wordSize();
+
+QChar getClassPathSeparator();
 }
 }
 }

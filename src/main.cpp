@@ -10,6 +10,7 @@
 #include "settings/settingsmanager.h"
 #include "versions/versionsmanager.h"
 #include "profiles/profilesmanager.h"
+#include "profiles/profilerunner.h"
 #include "storage/fileinfo.h"
 #include "storage/filechecker.h"
 #include "storage/downloader.h"
@@ -122,11 +123,18 @@ int main(int argc, char *argv[])
 
     auto profiles = QSharedPointer<ProfilesManager>(new ProfilesManager(dirName, logger));
 
-    if (!profiles->isEmpty()) {
-        auto firstName = profiles->names().first();
-        auto profile = profiles->get(firstName);
-        testLogger.info(profile.version.toString());
-    }
+    if (profiles->isEmpty())
+        return 0;
+
+    auto profileName = profiles->names().first();
+    auto profile = profiles->get(profileName);
+    testLogger.info(profile.version.toString());
+
+    auto runner = QSharedPointer<ProfileRunner>(new ProfileRunner(dirName, logger));
+    QEventLoop runLoop;
+    QObject::connect(runner.data(), &ProfileRunner::finished, [&](bool) { runLoop.quit(); });
+    runner->run(profileName, profile, settings->data.username);
+    runLoop.exec();
 
     return 0;
 }

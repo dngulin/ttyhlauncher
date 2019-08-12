@@ -62,3 +62,12 @@ QString Ttyh::Utils::Platform::wordSize()
 {
     return QString::number(QSysInfo::WordSize);
 }
+
+QChar Ttyh::Utils::Platform::getClassPathSeparator()
+{
+#ifdef Q_OS_WIN
+    return ';';
+#else
+    return ':';
+#endif
+}
