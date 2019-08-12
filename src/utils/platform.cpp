@@ -8,7 +8,7 @@ bool Ttyh::Utils::Platform::isLibraryAllowed(const Json::LibraryInfo &libInfo)
     auto allowed = false;
 
     foreach (auto rule, libInfo.rules) {
-        auto sameOs = rule.os == osName();
+        auto sameOs = rule.os == getOsName();
 
         if (rule.action == "allow" && (sameOs || rule.os.isEmpty())) {
             allowed = true;
@@ -30,17 +30,17 @@ QString Ttyh::Utils::Platform::getLibraryPath(const Json::LibraryInfo &libInfo)
     auto name = tokens[1];
     auto version = tokens[2];
 
-    auto os = osName();
+    auto os = getOsName();
     if (libInfo.natives.contains(os)) {
         auto classifier = libInfo.natives[os];
-        classifier.replace("${arch}", wordSize()); // QString have only a mutable `replace`
+        classifier.replace("${arch}", getWordSize()); // QString have only a mutable `replace`
         return QString("%1/%2/%3/%2-%3-%4.jar").arg(package, name, version, classifier);
     }
 
     return QString("%1/%2/%3/%2-%3.jar").arg(package, name, version);
 }
 
-QString Ttyh::Utils::Platform::osName()
+QString Ttyh::Utils::Platform::getOsName()
 {
 #ifdef Q_OS_LINUX
     return "linux";
@@ -53,12 +53,12 @@ QString Ttyh::Utils::Platform::osName()
 #endif
 }
 
-QString Ttyh::Utils::Platform::osVersion()
+QString Ttyh::Utils::Platform::getOsVersion()
 {
     return QSysInfo::prettyProductName();
 }
 
-QString Ttyh::Utils::Platform::wordSize()
+QString Ttyh::Utils::Platform::getWordSize()
 {
     return QString::number(QSysInfo::WordSize);
 }

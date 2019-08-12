@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
         downloadLoop.exec();
     }
 
-    testLogger.warning(Platform::osVersion());
+    testLogger.warning(Platform::getOsVersion());
 
     auto profiles = QSharedPointer<ProfilesManager>(new ProfilesManager(dirName, logger));
 

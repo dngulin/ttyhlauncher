@@ -9,9 +9,9 @@ namespace Platform {
 bool isLibraryAllowed(const Json::LibraryInfo &libInfo);
 QString getLibraryPath(const Json::LibraryInfo &libInfo);
 
-QString osName();
-QString osVersion();
-QString wordSize();
+QString getOsName();
+QString getOsVersion();
+QString getWordSize();
 
 QChar getClassPathSeparator();
 }

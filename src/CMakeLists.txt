@@ -23,6 +23,7 @@ add_executable(ttyhlauncher WIN32 MACOSX_BUNDLE
   "profiles/profiledata.cpp"
   "profiles/filesindex.cpp"
   "profiles/profilerunner.cpp"
+  "master/ttyhclient.cpp"
   "utils/network.cpp"
   "utils/platform.cpp"
   "utils/downloadfilereply.cpp"
