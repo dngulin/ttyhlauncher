@@ -95,12 +95,8 @@ bool Ttyh::Profiles::ProfileRunner::run(const QString &name, const ProfileData &
         if (lib.natives.isEmpty()) {
             classPath << libPath;
         } else {
-            log.info(QString("Extracting archive: %1...").arg(libPath.mid(prefixLength)));
-
-            auto extractedList = JlCompress::extractDir(libPath, nativesPath);
-            foreach (auto extracted, extractedList) {
-                log.info(QString("Extracted: %1").arg(extracted.mid(prefixLength)));
-            }
+            log.info(QString("Extracting '%1'...").arg(libPath.mid(prefixLength)));
+            JlCompress::extractDir(libPath, nativesPath);
         }
     }
 
