@@ -10,7 +10,7 @@ Ttyh::Master::TtyhClient::TtyhClient(const QString &masterUrl, QString ticket,
     : urlPattern([&masterUrl]() { return QString("%1/index.php?act=%2").arg(masterUrl); }()),
       ticket(std::move(ticket)),
       nam(std::move(nam)),
-      log(logger, "Client")
+      log(logger, "TtyhClient")
 {
 }
 
@@ -32,6 +32,7 @@ void Ttyh::Master::TtyhClient::login(const QString &login, const QString &pass)
     payload.insert("ticket", ticket);
     payload.insert("launcherVersion", QApplication::applicationVersion());
 
+    log.info(QString("Logging as %1...").arg(login));
     auto reply = post("login", payload);
 
     connect(reply, &QNetworkReply::finished, [=]() {
@@ -57,11 +58,12 @@ void Ttyh::Master::TtyhClient::login(const QString &login, const QString &pass)
         }
 
         if (!data.error.isEmpty()) {
-            log.error(QString("%1: '%2").arg(data.error, data.errorMessage));
+            log.error(QString("%1: '%2'").arg(data.error, data.errorMessage));
             emit loginFinished(RequestResult::RequestError, QString(), QString());
             return;
         }
 
+        log.info(QString("Success! at: '%1', ct: '%2'").arg(data.accessToken, data.clientToken));
         emit loginFinished(RequestResult::Success, data.accessToken, data.clientToken);
     });
 }
@@ -78,6 +80,7 @@ void Ttyh::Master::TtyhClient::uploadSkin(const QString &login, const QString &p
         payload.insert("skinModel", "slim");
     }
 
+    log.info("Uploading a skin...");
     auto reply = post("setskin", payload);
 
     connect(reply, &QNetworkReply::finished, [=]() {
@@ -104,11 +107,12 @@ void Ttyh::Master::TtyhClient::uploadSkin(const QString &login, const QString &p
 
         auto data = ReplyData(doc.object());
         if (!data.error.isEmpty()) {
-            log.error(QString("%1: '%2").arg(data.error, data.errorMessage));
+            log.error(QString("%1: '%2'").arg(data.error, data.errorMessage));
             emit skinUploadFinished(RequestResult::RequestError);
             return;
         }
 
+        log.info("Success!");
         emit skinUploadFinished(RequestResult::Success);
     });
 }
@@ -121,6 +125,7 @@ QNetworkReply *Ttyh::Master::TtyhClient::post(const QString &action, const QJson
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setHeader(QNetworkRequest::ContentLengthHeader, data.size());
 
+    log.info(QString("Sending a POST request '%1'...").arg(request.url().toString()));
     auto reply = nam->post(request, data);
     Utils::Network::createTimeoutTimer(reply);
 
