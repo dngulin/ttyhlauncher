@@ -6,24 +6,24 @@
 
 #include "config.h"
 #include "logs/logger.h"
-#include "logs/namedlogger.h"
 #include "settings/settingsmanager.h"
 #include "versions/versionsmanager.h"
 #include "profiles/profilesmanager.h"
 #include "profiles/profilerunner.h"
-#include "storage/fileinfo.h"
+#include "master/ttyhclient.h"
 #include "storage/filechecker.h"
 #include "storage/downloader.h"
-#include "utils/platform.h"
 
 using namespace Ttyh::Logs;
 using namespace Ttyh::Settings;
 using namespace Ttyh::Versions;
 using namespace Ttyh::Profiles;
+using namespace Ttyh::Master;
 using namespace Ttyh::Storage;
 using namespace Ttyh::Utils;
 
-using QNam = QNetworkAccessManager;
+template<typename T>
+using QSP = QSharedPointer<T>;
 
 int main(int argc, char *argv[])
 {
@@ -38,103 +38,22 @@ int main(int argc, char *argv[])
 
     const int logCount = 3;
 
-    auto logger = QSharedPointer<Logger>(new Logger(dirName, logCount), &QObject::deleteLater);
+    auto qDel = &QObject::deleteLater;
+    auto nam = QSP<QNetworkAccessManager>(new QNetworkAccessManager(), qDel);
+    auto logger = QSP<Logger>(new Logger(dirName, logCount), qDel);
     QObject::connect(logger.data(), &Logger::onLog,
                      [](const QString &line) { QTextStream(stdout) << line << endl; });
 
-    auto settings = QSharedPointer<SettingsManager>(new SettingsManager(dirName, logger));
-    auto nam = QSharedPointer<QNam>(new QNam, &QObject::deleteLater);
+    auto settings = QSP<SettingsManager>(new SettingsManager(dirName, logger));
+    auto profiles = QSP<ProfilesManager>(new ProfilesManager(dirName, logger));
+    auto versions = QSP<VersionsManager>(new VersionsManager(dirName, storeUrl, nam, logger), qDel);
 
-    auto testLogger = NamedLogger(logger, "Test");
-    testLogger.info(QApplication::applicationName());
-    testLogger.info(QApplication::applicationVersion());
+    auto ticket = settings->data.ticket;
+    auto client = QSP<TtyhClient>(new TtyhClient(masterUrl, ticket, nam, logger), qDel);
 
-    VersionsManager versions(dirName, storeUrl, nam, logger);
-
-    QEventLoop fetchPrefixesLoop;
-    QObject::connect(&versions, &VersionsManager::onFetchPrefixesResult, [&](bool result) {
-        fetchPrefixesLoop.quit();
-        testLogger.info("Prefixes fetch result: " + QString(result ? "OK" : "FAIL"));
-    });
-
-    versions.fetchPrefixes();
-    fetchPrefixesLoop.exec();
-
-    testLogger.info("Known versions:");
-    foreach (auto prefix, versions.getPrefixes()) {
-        foreach (auto version, prefix.versions) {
-            testLogger.info(QString("%1/%2").arg(prefix.id, version));
-        }
-    }
-
-    QEventLoop fetchIndexesLoop;
-    QObject::connect(&versions, &VersionsManager::onFetchVersionIndexesResult, [&](bool result) {
-        fetchIndexesLoop.quit();
-        testLogger.info("Version indexes fetch result: " + QString(result ? "OK" : "FAIL"));
-    });
-
-    auto version = FullVersionId("default", versions.getPrefixes()["default"].latestVersionId);
-    versions.fetchVersionIndexes(version);
-    fetchIndexesLoop.exec();
-
-    QList<FileInfo> files;
-    versions.fillVersionFiles(version, files);
-
-    auto checker = QSharedPointer<FileChecker>(new FileChecker(dirName, logger));
-    QList<FileInfo> downloads;
-
-    QEventLoop checkerLoop;
-    QObject::connect(checker.data(), &FileChecker::rangeChanged, [&](int min, int max) {
-        testLogger.info(QString("range: %1 - %2").arg(QString::number(min), QString::number(max)));
-    });
-    QObject::connect(checker.data(), &FileChecker::progressChanged, [&](int id, const QString &f) {
-        testLogger.info(QString("progress: %1 '%2'").arg(QString::number(id), f));
-    });
-    QObject::connect(checker.data(), &FileChecker::finished, [&](bool, const QList<FileInfo> &ff) {
-        downloads = ff;
-        checkerLoop.quit();
-    });
-
-    checker->start(files);
-    checkerLoop.exec();
-
-    foreach (auto file, downloads) {
-        testLogger.info(QString("Need to download '%1'").arg(file.url));
-    }
-
-    if (downloads.count() > 0) {
-        auto dl = QSharedPointer<Downloader>(new Downloader(storeUrl, dirName, nam, logger));
-        QEventLoop downloadLoop;
-        QObject::connect(dl.data(), &Downloader::rangeChanged, [&](int min, int max) {
-            QString msg("range: %1 - %2");
-            testLogger.info(msg.arg(QString::number(min), QString::number(max)));
-        });
-        QObject::connect(dl.data(), &Downloader::progressChanged, [&](int id, const QString &f) {
-            testLogger.info(QString("progress: %1 '%2'").arg(QString::number(id), f));
-        });
-        QObject::connect(dl.data(), &Downloader::finished,
-                         [&](bool, bool) { downloadLoop.quit(); });
-
-        dl->start(downloads);
-        downloadLoop.exec();
-    }
-
-    testLogger.warning(Platform::getOsVersion());
-
-    auto profiles = QSharedPointer<ProfilesManager>(new ProfilesManager(dirName, logger));
-
-    if (profiles->isEmpty())
-        return 0;
-
-    auto profileName = profiles->names().first();
-    auto profile = profiles->get(profileName);
-    testLogger.info(profile.version.toString());
-
-    auto runner = QSharedPointer<ProfileRunner>(new ProfileRunner(dirName, logger));
-    QEventLoop runLoop;
-    QObject::connect(runner.data(), &ProfileRunner::finished, [&](bool) { runLoop.quit(); });
-    runner->run(profileName, profile, settings->data.username);
-    runLoop.exec();
+    auto checker = QSP<FileChecker>(new FileChecker(dirName, logger), qDel);
+    auto downloader = QSP<Downloader>(new Downloader(storeUrl, dirName, nam, logger), qDel);
+    auto runner = QSP<ProfileRunner>(new ProfileRunner(dirName, logger), qDel);
 
     return 0;
 }

@@ -1,8 +1,6 @@
 #ifndef PROFILESMANAGER_H
 #define PROFILESMANAGER_H
 
-#include <QtCore/QObject>
-
 #include "logs/logger.h"
 #include "logs/namedlogger.h"
 #include "profiledata.h"
@@ -19,9 +17,8 @@ enum class RenameResult {
     IOError
 };
 
-class ProfilesManager : public QObject
+class ProfilesManager
 {
-    Q_OBJECT
 public:
     ProfilesManager(const QString &dirName, const QSharedPointer<Logs::Logger> &logger);
 
