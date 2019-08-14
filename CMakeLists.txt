@@ -36,6 +36,5 @@ configure_file("config.h.in" "config.h" @ONLY)
 set(CONFIG_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(src)
-add_subdirectory(ui)
 add_subdirectory(resources)
 add_subdirectory(translations)
