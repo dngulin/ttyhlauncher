@@ -371,5 +371,15 @@ FileInfo VersionsManager::getFileInfo(const QString &location, const QString &na
     return FileInfo(url, path, checkInfo.hash, checkInfo.size);
 }
 
+FullVersionId VersionsManager::resolve(const FullVersionId &version) const
+{
+    auto prefix = version.prefix;
+
+    if (!prefixes.contains(prefix))
+        return version;
+
+    return FullVersionId(prefix, prefixes[prefix].latestVersionId);
+}
+
 }
 }

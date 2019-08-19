@@ -27,6 +27,8 @@ add_executable(ttyhlauncher WIN32 MACOSX_BUNDLE
   "utils/network.cpp"
   "utils/platform.cpp"
   "utils/downloadfilereply.cpp"
+  "ui/mainwindow.cpp"
+  "launcher.cpp"
 )
 add_dependencies(ttyhlauncher update_qm)
 

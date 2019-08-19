@@ -46,25 +46,25 @@ void Ttyh::Master::TtyhClient::login(const QString &login, const QString &pass)
                     ? RequestResult::LoginError
                     : RequestResult::ConnectionError;
 
-            emit loginFinished(result, QString(), QString());
+            emit logged(result, QString(), QString());
             return;
         }
 
         LoginReplyData data(QJsonDocument::fromJson(reply->readAll()).object());
         if (!data.isValid()) {
             log.error("Bad reply!");
-            emit loginFinished(RequestResult::ReplyError, QString(), QString());
+            emit logged(RequestResult::ReplyError, QString(), QString());
             return;
         }
 
         if (!data.error.isEmpty()) {
             log.error(QString("%1: '%2'").arg(data.error, data.errorMessage));
-            emit loginFinished(RequestResult::RequestError, QString(), QString());
+            emit logged(RequestResult::RequestError, QString(), QString());
             return;
         }
 
         log.info(QString("Success! at: '%1', ct: '%2'").arg(data.accessToken, data.clientToken));
-        emit loginFinished(RequestResult::Success, data.accessToken, data.clientToken);
+        emit logged(RequestResult::Success, data.accessToken, data.clientToken);
     });
 }
 
@@ -94,26 +94,26 @@ void Ttyh::Master::TtyhClient::uploadSkin(const QString &login, const QString &p
                           ? RequestResult::LoginError
                           : RequestResult::ConnectionError;
 
-            emit skinUploadFinished(result);
+            emit skinUploaded(result);
             return;
         }
 
         auto doc = QJsonDocument::fromJson(reply->readAll());
         if (!doc.isObject()) {
             log.error("Bad reply!");
-            emit skinUploadFinished(RequestResult::ReplyError);
+            emit skinUploaded(RequestResult::ReplyError);
             return;
         }
 
         auto data = ReplyData(doc.object());
         if (!data.error.isEmpty()) {
             log.error(QString("%1: '%2'").arg(data.error, data.errorMessage));
-            emit skinUploadFinished(RequestResult::RequestError);
+            emit skinUploaded(RequestResult::RequestError);
             return;
         }
 
         log.info("Success!");
-        emit skinUploadFinished(RequestResult::Success);
+        emit skinUploaded(RequestResult::Success);
     });
 }
 

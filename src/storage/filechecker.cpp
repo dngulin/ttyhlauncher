@@ -54,11 +54,11 @@ void Ttyh::Storage::FileChecker::start(const QList<FileInfo> &files)
 
 void Ttyh::Storage::FileChecker::cancel()
 {
-    if (watcher.isRunning()) {
+    if (watcher.isRunning() && !watcher.isCanceled()) {
         log.info("Cancelling...");
         watcher.cancel();
     } else {
-        log.warning("Cancellation is ignored. Task is not running!");
+        log.warning("Cancellation is ignored. Task is not active!");
     }
 }
 

@@ -7,6 +7,7 @@
 #include "logs/namedlogger.h"
 #include "logs/logger.h"
 #include "profiledata.h"
+#include "profileinfo.h"
 
 namespace Ttyh {
 namespace Profiles {
@@ -18,9 +19,9 @@ class ProfileRunner : public QObject
 public:
     ProfileRunner(const QString &dirName, const QSharedPointer<Logger> &logger);
 
-    bool run(const QString &name, const ProfileData &data, const QString &userName);
-    bool run(const QString &name, const ProfileData &data, const QString &userName,
-             const QString &clientToken, const QString &accessToken);
+    bool run(const ProfileInfo &data, const QString &userName);
+    bool run(const ProfileInfo &info, const QString &userName, const QString &accessToken,
+             const QString &clientToken);
 
 signals:
     void finished(bool result);

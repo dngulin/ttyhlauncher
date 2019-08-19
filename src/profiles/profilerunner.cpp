@@ -57,18 +57,19 @@ Ttyh::Profiles::ProfileRunner::ProfileRunner(const QString &dirName,
         }
     });
 }
-bool Ttyh::Profiles::ProfileRunner::run(const QString &name, const ProfileData &data,
-                                        const QString &userName)
+bool Ttyh::Profiles::ProfileRunner::run(const ProfileInfo &info, const QString &userName)
 {
-    auto clientToken = QUuid::createUuid().toString(QUuid::WithoutBraces);
     auto accessToken = QUuid::createUuid().toString(QUuid::WithoutBraces);
-    return run(name, data, userName, clientToken, accessToken);
+    auto clientToken = QUuid::createUuid().toString(QUuid::WithoutBraces);
+    return run(info, userName, accessToken, clientToken);
 }
 
-bool Ttyh::Profiles::ProfileRunner::run(const QString &name, const ProfileData &data,
-                                        const QString &userName, const QString &clientToken,
-                                        const QString &accessToken)
+bool Ttyh::Profiles::ProfileRunner::run(const ProfileInfo &info, const QString &userName,
+                                        const QString &accessToken, const QString &clientToken)
 {
+    auto name = info.name;
+    auto data = info.data;
+
     auto version = data.version;
     log.info(QString("Starting the profile '%1' (%2)...").arg(name, version.toString()));
 
@@ -122,8 +123,8 @@ bool Ttyh::Profiles::ProfileRunner::run(const QString &name, const ProfileData &
     argsMap.insert("${version_name}", version.id);
     argsMap.insert("${version_type}", version.prefix);
     argsMap.insert("${auth_player_name}", userName);
-    argsMap.insert("${auth_uuid}", clientToken);
     argsMap.insert("${auth_access_token}", accessToken);
+    argsMap.insert("${auth_uuid}", clientToken);
     argsMap.insert("${assets_root}", QString("%1/assets").arg(dataPath));
     argsMap.insert("${assets_index_name}", versionIndex.assetsIndex);
     argsMap.insert("${game_directory}", profilePath);
@@ -143,6 +144,8 @@ bool Ttyh::Profiles::ProfileRunner::run(const QString &name, const ProfileData &
     game.setWorkingDirectory(profilePath);
 
     auto javaPath = data.useCustomJavaPath ? data.customJavaPath : "java";
+
+    log.info(javaPath + " " + args.join(' '));
     game.start(javaPath, args);
     return true;
 }

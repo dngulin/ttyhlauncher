@@ -23,9 +23,8 @@ public:
     void uploadSkin(const QString &login, const QString &pass, const QByteArray &data, bool slim);
 
 signals:
-    void loginFinished(RequestResult result, const QString &accessToken,
-                       const QString &clientToken);
-    void skinUploadFinished(RequestResult result);
+    void logged(RequestResult result, const QString &accessToken, const QString &clientToken);
+    void skinUploaded(RequestResult result);
 
 private:
     const QString urlPattern;

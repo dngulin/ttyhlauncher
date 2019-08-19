@@ -9,8 +9,13 @@ namespace Versions {
 struct Prefix {
     static constexpr const char *latestVersionAlias = "latest";
 
-    Prefix() = default;
-    explicit Prefix(QString id, QString name) : id(std::move(id)), name(std::move(name))
+    Prefix() : id(""), name("__UNKNOWN_PREFIX"), latestVersionId(latestVersionAlias)
+    {
+        versions << latestVersionAlias;
+    }
+
+    Prefix(QString id, QString name)
+        : id(std::move(id)), name(std::move(name)), latestVersionId(latestVersionAlias)
     {
         versions << latestVersionAlias;
     }

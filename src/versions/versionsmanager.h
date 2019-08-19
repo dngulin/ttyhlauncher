@@ -28,6 +28,8 @@ public:
     void fetchPrefixes();
     void fetchVersionIndexes(const FullVersionId &version);
 
+    FullVersionId resolve(const FullVersionId &version) const;
+
     QHash<QString, Prefix> getPrefixes() const;
     bool fillVersionFiles(const FullVersionId &version, QList<Storage::FileInfo> &files);
 

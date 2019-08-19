@@ -5,6 +5,7 @@
 #include <QtCore/QSharedPointer>
 
 #include "config.h"
+#include "launcher.h"
 #include "logs/logger.h"
 #include "settings/settingsmanager.h"
 #include "versions/versionsmanager.h"
@@ -14,13 +15,13 @@
 #include "storage/filechecker.h"
 #include "storage/downloader.h"
 
+using namespace Ttyh;
 using namespace Ttyh::Logs;
 using namespace Ttyh::Settings;
 using namespace Ttyh::Versions;
 using namespace Ttyh::Profiles;
 using namespace Ttyh::Master;
 using namespace Ttyh::Storage;
-using namespace Ttyh::Utils;
 
 template<typename T>
 using QSP = QSharedPointer<T>;
@@ -55,5 +56,8 @@ int main(int argc, char *argv[])
     auto downloader = QSP<Downloader>(new Downloader(storeUrl, dirName, nam, logger), qDel);
     auto runner = QSP<ProfileRunner>(new ProfileRunner(dirName, logger), qDel);
 
-    return 0;
+    Launcher l(settings, profiles, versions, client, checker, downloader, runner, logger);
+    l.start();
+
+    return QApplication::exec();
 }
