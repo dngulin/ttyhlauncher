@@ -27,7 +27,7 @@ Ttyh::Launcher::Launcher(QSharedPointer<SettingsManager> settings,
 
 void Ttyh::Launcher::connectWindowEvents()
 {
-    connect(window.data(), &MainWindow::closed, [=]() { saveSettings(); });
+    connect(window.data(), &MainWindow::closed, [=]() { saveWindowState(); });
 }
 
 void Ttyh::Launcher::connectTaskEvents()
@@ -127,6 +127,9 @@ void Ttyh::Launcher::connectRunGameFlow()
         profileInfo->data = profileData;
 
         if (!window->isOnline()) {
+            if (window->isHideOnRun()) {
+                window->hide();
+            }
             runner->run(*profileInfo, window->getUserName());
             return;
         }
@@ -199,11 +202,19 @@ void Ttyh::Launcher::connectRunGameFlow()
                     return;
                 }
 
+                if (window->isHideOnRun()) {
+                    window->hide();
+                }
+
                 auto userName = window->getUserName();
                 runner->run(*profileInfo, userName, accessToken, clientToken);
             });
     connect(runner.data(), &ProfileRunner::finished, [=](bool result) {
         window->setLocked(false);
+
+        if (window->isHideOnRun()) {
+            window->show();
+        }
 
         if (!result) {
             window->showError(tr("Game finished with a error!"));
@@ -214,7 +225,7 @@ void Ttyh::Launcher::connectRunGameFlow()
 void Ttyh::Launcher::start()
 {
     log.info("Starting...");
-    loadSettings();
+    loadWindowState();
     tryBecomeOnline();
 
     if (settings->data.windowMaximized) {
@@ -288,7 +299,7 @@ QString Ttyh::Launcher::getRequestResultMessage(RequestResult result)
     }
 }
 
-void Ttyh::Launcher::loadSettings()
+void Ttyh::Launcher::loadWindowState()
 {
     log.info("Set the window state by the settings");
 
@@ -296,21 +307,26 @@ void Ttyh::Launcher::loadSettings()
     window->setUserName(settings->data.username);
     window->setPassword(settings->data.password);
 
+    window->setSavePassword(settings->data.savePassword);
+    window->setHideOnRun(settings->data.hideWindowOnRun);
+
     window->resize(settings->data.windowSize);
 }
 
-void Ttyh::Launcher::saveSettings()
+void Ttyh::Launcher::saveWindowState()
 {
     log.info("Set settings state by the window");
 
     settings->data.username = window->getUserName();
-    settings->data.savePassword = window->isSavePasswordEnabled();
+    settings->data.savePassword = window->isSavePassword();
 
     if (settings->data.savePassword) {
         settings->data.password = window->getPassword();
     } else {
         settings->data.password = "";
     }
+
+    settings->data.hideWindowOnRun = window->isHideOnRun();
 
     settings->data.windowMaximized = window->isMaximized();
     if (!settings->data.windowMaximized) {

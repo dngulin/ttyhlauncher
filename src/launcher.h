@@ -58,8 +58,8 @@ private:
     void connectOnlineModeFlow();
     void connectRunGameFlow();
 
-    void loadSettings();
-    void saveSettings();
+    void loadWindowState();
+    void saveWindowState();
 
     static QString taskToString(Task task);
     static QString getTaskTitle(Task task);

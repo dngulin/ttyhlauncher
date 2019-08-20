@@ -27,10 +27,14 @@ public:
     void setProfiles(const QStringList &profiles, const QString &selected);
     QString getSelectedProfile() const;
 
-    bool isOnline() const;
-    void setOnline(bool online);
+    void setSavePassword(bool savePassword);
+    bool isSavePassword() const;
 
-    bool isSavePasswordEnabled() const;
+    void setHideOnRun(bool hideOnRun);
+    bool isHideOnRun() const;
+
+    void setOnline(bool online);
+    bool isOnline() const;
 
     void showTask(const QString &taskName);
     void setTaskRange(int min, int max);
@@ -49,7 +53,6 @@ signals:
 
 private:
     Ui::MainWindow *ui;
-    bool onlineMode;
 
     void closeEvent(QCloseEvent *event) override;
 };

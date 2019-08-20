@@ -4,11 +4,14 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), onlineMode(false)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     hideTask();
+
+    setOnline(false);
+    connect(ui->actionPlayOffine, &QAction::triggered,
+            [=](bool offline) { emit onlineModeSwitched(!offline); });
 
     ui->textLog->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
     ui->textLog->document()->setMaximumBlockCount(500);
@@ -18,6 +21,24 @@ MainWindow::MainWindow(QWidget *parent)
         ui->buttonCancelTask->setEnabled(false);
         emit taskCancelled();
     });
+
+    connect(ui->actionAbout, &QAction::triggered, [=](bool checked) {
+        auto name = QApplication::applicationName();
+        auto version = QApplication::applicationVersion();
+        auto text = QString("%1 %2").arg(name, version);
+        QMessageBox::about(this, name, text);
+    });
+
+    auto profilesMenu = new QMenu(this);
+    auto editProfile = new QAction(tr("Edit..."), profilesMenu);
+    auto createProfile = new QAction(tr("Create..."), profilesMenu);
+    auto removeProfile = new QAction(tr("Remove..."), profilesMenu);
+
+    profilesMenu->addAction(editProfile);
+    profilesMenu->addAction(createProfile);
+    profilesMenu->addAction(removeProfile);
+
+    ui->buttonProfiles->setMenu(profilesMenu);
 }
 
 MainWindow::~MainWindow()
@@ -102,19 +123,35 @@ QString MainWindow::getSelectedProfile() const
     return ui->comboBoxProfiles->currentText();
 }
 
-bool MainWindow::isSavePasswordEnabled() const
+void MainWindow::setSavePassword(bool savePassword)
 {
-    return true;
+    ui->actionSavePassword->setChecked(savePassword);
 }
 
-bool MainWindow::isOnline() const
+bool MainWindow::isSavePassword() const
 {
-    return onlineMode;
+    return ui->actionSavePassword->isChecked();
+}
+
+void MainWindow::setHideOnRun(bool hideOnRun)
+{
+    ui->actionHideWindow->setChecked(hideOnRun);
+}
+
+bool MainWindow::isHideOnRun() const
+{
+    return ui->actionHideWindow->isChecked();
 }
 
 void MainWindow::setOnline(bool online)
 {
-    onlineMode = online;
+    ui->actionPlayOffine->setChecked(!online);
+    ui->buttonPlay->setText(online ? tr("Play") : tr("Play (Offline)"));
+}
+
+bool MainWindow::isOnline() const
+{
+    return !ui->actionPlayOffine->isChecked();
 }
 
 void MainWindow::showTask(const QString &taskName)
