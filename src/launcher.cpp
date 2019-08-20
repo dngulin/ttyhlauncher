@@ -139,7 +139,7 @@ void Ttyh::Launcher::connectRunGameFlow()
     connect(versions.data(), &VersionsManager::onFetchVersionIndexesResult, [=](bool result) {
         QList<FileInfo> files;
         if (!versions->fillVersionFiles(profileInfo->data.version, files)) {
-            window->showError(tr("Failed to get the version indexes! See the log for details."));
+            window->showError(tr("Failed to get the version indexes!"));
             window->setLocked(false);
             return;
         }
@@ -181,13 +181,13 @@ void Ttyh::Launcher::connectRunGameFlow()
         }
 
         if (!result) {
-            window->showError(tr("Failed to download version files! See the log for details."));
+            window->showError(tr("Failed to download version files!"));
             window->setLocked(false);
             return;
         }
 
         if (!profiles->installFiles(profileInfo->name, profileInfo->data.version)) {
-            window->showError(tr("Failed to install version files! See the log for details."));
+            window->showError(tr("Failed to install version files!"));
             window->setLocked(false);
             return;
         }

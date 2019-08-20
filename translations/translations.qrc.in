@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/translations">
         <file alias="koi7.qm">@CMAKE_CURRENT_BINARY_DIR@/ttyhlauncher_koi7.qm</file>
-	<file alias="ru.qm">@CMAKE_CURRENT_BINARY_DIR@/ttyhlauncher_ru.qm</file>
+        <file alias="ru.qm">@CMAKE_CURRENT_BINARY_DIR@/ttyhlauncher_ru.qm</file>
     </qresource>
 </RCC>

@@ -49,7 +49,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>current/target/label</string>
+          <string notr="true">current/target/label</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -61,7 +61,7 @@
          <item>
           <widget class="QLabel" name="labelTaskTitle">
            <property name="text">
-            <string>Current task</string>
+            <string notr="true">Current task</string>
            </property>
           </widget>
          </item>
@@ -88,6 +88,9 @@
      <layout class="QHBoxLayout" name="layoutBottom" stretch="0,1,0">
       <item>
        <widget class="QLabel" name="labelLogo">
+        <property name="text">
+         <string notr="true"/>
+        </property>
         <property name="pixmap">
          <pixmap resource="../../resources/resources.qrc">:/resources/logo.png</pixmap>
         </property>
@@ -175,7 +178,7 @@
              <item>
               <widget class="QToolButton" name="buttonProfiles">
                <property name="text">
-                <string>...</string>
+                <string notr="true">...</string>
                </property>
                <property name="popupMode">
                 <enum>QToolButton::InstantPopup</enum>

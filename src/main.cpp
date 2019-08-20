@@ -1,8 +1,6 @@
 #include <QApplication>
-#include <QSplashScreen>
-#include <QBitmap>
-#include <QMessageBox>
 #include <QtCore/QSharedPointer>
+#include <QtCore/QTranslator>
 
 #include "config.h"
 #include "launcher.h"
@@ -29,6 +27,15 @@ using QSP = QSharedPointer<T>;
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+    QTranslator t;
+    QDate today = QDate::currentDate();
+    if (today.month() == 4 && today.day() == 1) {
+        t.load(":/translations/koi7.qm");
+    } else {
+        t.load(":/translations/ru.qm");
+    }
+    QApplication::installTranslator(&t);
 
     QApplication::setApplicationVersion(PROJECT_VERSION);
     QApplication::setApplicationName("TtyhLauncher");

@@ -32,6 +32,10 @@ add_executable(ttyhlauncher WIN32 MACOSX_BUNDLE
 )
 add_dependencies(ttyhlauncher update_qm)
 
+target_sources(ttyhlauncher PRIVATE
+  "${CMAKE_CURRENT_SOURCE_DIR}/ui/mainwindow.ui"
+)
+
 set_target_properties(ttyhlauncher PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
 )

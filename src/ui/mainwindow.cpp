@@ -194,12 +194,12 @@ void MainWindow::showError(const QString &error)
 
 bool MainWindow::askForDownloads(int count, quint64 size)
 {
-    auto strCount = QString::number(count);
-    auto strSize = QString::number(size);
+    auto cap = tr("Downloads are required");
 
-    auto title = tr("Downloads are required");
-    auto msg = tr("Need to download %1 files with the total size %2. Continue?", "", count);
-    auto result = QMessageBox::question(this, title, msg.arg(strCount, strSize));
+    auto msg = tr("Need to download %n files with the total size", "", count);
+    auto sze = QString::number(size);
+    auto ask = tr("Do you want to continue?");
+    auto result = QMessageBox::question(this, cap, QString("%1 %2.\n%3").arg(msg, sze, ask));
 
     return result == QMessageBox::Yes;
 }
