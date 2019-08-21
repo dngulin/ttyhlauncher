@@ -55,6 +55,8 @@ private:
     Ui::MainWindow *ui;
 
     void closeEvent(QCloseEvent *event) override;
+
+    static QString getSizeString(quint64 size);
 };
 
 #endif // MAINWINDOW_H

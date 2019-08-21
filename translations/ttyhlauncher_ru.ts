@@ -57,7 +57,7 @@
     <message>
         <location filename="../src/ui/mainwindow.ui" line="278"/>
         <source>Hide Window</source>
-        <translation>Скрывать окно при запуске игры</translation>
+        <translation>Скрывать при запуске игры</translation>
     </message>
     <message>
         <location filename="../src/ui/mainwindow.ui" line="283"/>
@@ -108,15 +108,35 @@
         <location filename="../src/ui/mainwindow.cpp" line="199"/>
         <source>Need to download %n files with the total size</source>
         <translation>
-            <numerusform>Необходимо загрузить %n файл размером</numerusform>
-            <numerusform>Необходимо загрузить %n файла размером</numerusform>
-            <numerusform>Необходимо загрузить %n файлов размером</numerusform>
+            <numerusform>Для запуска игры необходимо загрузить %n файл размером</numerusform>
+            <numerusform>Для запуска игры необходимо загрузить %n файла размером</numerusform>
+            <numerusform>Для запуска игры необходимо загрузить %n файлов размером</numerusform>
         </translation>
     </message>
     <message>
         <location filename="../src/ui/mainwindow.cpp" line="201"/>
         <source>Do you want to continue?</source>
         <translation>Желаете продолжить?</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/mainwindow.cpp" line="223"/>
+        <source>GiB</source>
+        <translation>ГиБ</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/mainwindow.cpp" line="226"/>
+        <source>MiB</source>
+        <translation>МиБ</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/mainwindow.cpp" line="229"/>
+        <source>KiB</source>
+        <translation>КиБ</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/mainwindow.cpp" line="231"/>
+        <source>B</source>
+        <translation>Б</translation>
     </message>
 </context>
 <context>

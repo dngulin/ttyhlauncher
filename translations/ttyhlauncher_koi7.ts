@@ -116,6 +116,26 @@
         <source>Do you want to continue?</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../src/ui/mainwindow.cpp" line="223"/>
+        <source>GiB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/mainwindow.cpp" line="226"/>
+        <source>MiB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/mainwindow.cpp" line="229"/>
+        <source>KiB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/mainwindow.cpp" line="231"/>
+        <source>B</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Ttyh::Launcher</name>

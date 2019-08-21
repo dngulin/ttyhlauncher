@@ -197,7 +197,7 @@ bool MainWindow::askForDownloads(int count, quint64 size)
     auto cap = tr("Downloads are required");
 
     auto msg = tr("Need to download %n files with the total size", "", count);
-    auto sze = QString::number(size);
+    auto sze = getSizeString(size);
     auto ask = tr("Do you want to continue?");
     auto result = QMessageBox::question(this, cap, QString("%1 %2.\n%3").arg(msg, sze, ask));
 
@@ -208,4 +208,25 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     emit closed();
     QWidget::closeEvent(event);
+}
+
+QString MainWindow::getSizeString(quint64 size)
+{
+    constexpr auto gb = 1024 * 1024 * 1024;
+    constexpr auto mb = 1024 * 1024;
+    constexpr auto kb = 1024;
+
+    QString fmt("%1 %2");
+    auto l = QLocale::system();
+
+    if (size > gb)
+        return fmt.arg(l.toString(((double) size / gb), 'f', 2), tr("GiB"));
+
+    if (size > mb)
+        return fmt.arg(l.toString(((double) size / mb), 'f', 2), tr("MiB"));
+
+    if (size > kb)
+        return fmt.arg(l.toString(((double) size / kb), 'f', 2), tr("KiB"));
+
+    return fmt.arg(l.toString(size), tr("B"));
 }
