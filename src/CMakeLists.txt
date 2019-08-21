@@ -28,12 +28,14 @@ add_executable(ttyhlauncher WIN32 MACOSX_BUNDLE
   "utils/platform.cpp"
   "utils/downloadfilereply.cpp"
   "ui/mainwindow.cpp"
+  "ui/skindialog.cpp"
   "launcher.cpp"
 )
 add_dependencies(ttyhlauncher update_qm)
 
 target_sources(ttyhlauncher PRIVATE
   "${CMAKE_CURRENT_SOURCE_DIR}/ui/mainwindow.ui"
+  "${CMAKE_CURRENT_SOURCE_DIR}/ui/skindialog.ui"
 )
 
 set_target_properties(ttyhlauncher PROPERTIES

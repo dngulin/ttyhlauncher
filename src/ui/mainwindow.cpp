@@ -13,6 +13,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->actionPlayOffine, &QAction::triggered,
             [=](bool offline) { emit onlineModeSwitched(!offline); });
 
+    connect(ui->actionUploadSkin, &QAction::triggered, [=](bool) { emit uploadSkinClicked(); });
+
     ui->textLog->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
     ui->textLog->document()->setMaximumBlockCount(500);
 
@@ -220,13 +222,13 @@ QString MainWindow::getSizeString(quint64 size)
     auto l = QLocale::system();
 
     if (size > gb)
-        return fmt.arg(l.toString(((double) size / gb), 'f', 2), tr("GiB"));
+        return fmt.arg(l.toString(((double)size / gb), 'f', 2), tr("GiB"));
 
     if (size > mb)
-        return fmt.arg(l.toString(((double) size / mb), 'f', 2), tr("MiB"));
+        return fmt.arg(l.toString(((double)size / mb), 'f', 2), tr("MiB"));
 
     if (size > kb)
-        return fmt.arg(l.toString(((double) size / kb), 'f', 2), tr("KiB"));
+        return fmt.arg(l.toString(((double)size / kb), 'f', 2), tr("KiB"));
 
     return fmt.arg(l.toString(size), tr("B"));
 }

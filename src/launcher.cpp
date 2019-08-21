@@ -1,3 +1,4 @@
+#include <ui/skindialog.h>
 #include "launcher.h"
 
 Ttyh::Launcher::Launcher(QSharedPointer<SettingsManager> settings,
@@ -21,6 +22,7 @@ Ttyh::Launcher::Launcher(QSharedPointer<SettingsManager> settings,
     connectTaskEvents();
     connectOnlineModeFlow();
     connectRunGameFlow();
+    connectSkinUpload();
 
     connect(logger.data(), &Logger::onLog, [=](const QString &msg) { window->appendLog(msg); });
 }
@@ -219,6 +221,34 @@ void Ttyh::Launcher::connectRunGameFlow()
         if (!result) {
             window->showError(tr("Game finished with a error!"));
         }
+    });
+}
+
+void Ttyh::Launcher::connectSkinUpload()
+{
+    connect(window.data(), &MainWindow::uploadSkinClicked, [=]() {
+        SkinDialog d(window.data());
+
+        connect(&d, &SkinDialog::uploadClicked, [=, &d](const QString &path, bool slim) {
+            QFile file(path);
+            if (!file.open(QIODevice::ReadOnly)) {
+                d.fail(tr("Failed to open the skin file!"));
+            }
+
+            client->uploadSkin(window->getUserName(), window->getPassword(), file.readAll(), slim);
+        });
+
+        auto conn = connect(client.data(), &TtyhClient::skinUploaded, [=, &d](RequestResult res) {
+            if (res == RequestResult::Success) {
+                d.success();
+                return;
+            }
+
+            d.fail(getRequestResultMessage(res));
+        });
+
+        d.exec();
+        disconnect(conn);
     });
 }
 

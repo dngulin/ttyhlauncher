@@ -48,6 +48,7 @@ public:
 signals:
     void onlineModeSwitched(bool online);
     void playClicked();
+    void uploadSkinClicked();
     void taskCancelled();
     void closed();
 
