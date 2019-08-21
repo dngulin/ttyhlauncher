@@ -4,68 +4,68 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="78"/>
+        <location filename="../src/ui/mainwindow.ui" line="82"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="138"/>
+        <location filename="../src/ui/mainwindow.ui" line="142"/>
         <source>Profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="145"/>
+        <location filename="../src/ui/mainwindow.ui" line="149"/>
         <source>PlayerName</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="155"/>
+        <location filename="../src/ui/mainwindow.ui" line="159"/>
         <source>Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="210"/>
+        <location filename="../src/ui/mainwindow.ui" line="214"/>
         <location filename="../src/ui/mainwindow.cpp" line="149"/>
         <source>Play</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="234"/>
+        <location filename="../src/ui/mainwindow.ui" line="238"/>
         <source>Options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="243"/>
+        <location filename="../src/ui/mainwindow.ui" line="247"/>
         <source>Tools</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="249"/>
+        <location filename="../src/ui/mainwindow.ui" line="253"/>
         <source>Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="262"/>
+        <location filename="../src/ui/mainwindow.ui" line="266"/>
         <source>Play Offine</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="270"/>
+        <location filename="../src/ui/mainwindow.ui" line="274"/>
         <source>Save Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="278"/>
+        <location filename="../src/ui/mainwindow.ui" line="282"/>
         <source>Hide Window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="283"/>
+        <location filename="../src/ui/mainwindow.ui" line="287"/>
         <source>Upload Skin...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="288"/>
+        <location filename="../src/ui/mainwindow.ui" line="292"/>
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>

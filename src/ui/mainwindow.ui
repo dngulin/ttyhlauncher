@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string notr="true">TtyhLauncher</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../../resources/resources.qrc">
+    <normaloff>:/resources/favicon.png</normaloff>:/resources/favicon.png</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_3" stretch="1,0,0">
     <item>
