@@ -78,7 +78,7 @@ CreateResult ProfilesManager::create(const QString &profileName, const ProfileDa
     if (!profileDir.exists())
         profileDir.mkpath(profileDirPath);
 
-    QFile file(QString("%1/%2.json").arg(profileDirPath, profileIndexName));
+    QFile file(QString("%1/%2").arg(profileDirPath, profileIndexName));
     if (!file.open(QIODevice::WriteOnly)) {
         log.error("Failed to save profile!");
         return CreateResult::IOError;
@@ -204,6 +204,9 @@ bool ProfilesManager::installFiles(const QString &profileName,
 
         if (checkFile(dst, checkInfo.size, checkInfo.hash, mutableFiles.contains(fileName)))
             continue;
+
+        if (!QFile::exists(src))
+            return false;
 
         auto dir = QFileInfo(dst).absoluteDir();
         dir.mkpath(dir.absolutePath());

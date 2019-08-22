@@ -109,6 +109,16 @@ void Ttyh::Launcher::connectRunGameFlow()
 {
     auto profileInfo = QSharedPointer<ProfileInfo>(new ProfileInfo());
 
+    auto tryInstallVersionFiles = [=]() {
+        if (!profiles->installFiles(profileInfo->name, profileInfo->data.version)) {
+            window->showError(tr("Failed to install version files!"));
+            window->setLocked(false);
+            return false;
+        }
+
+        return true;
+    };
+
     connect(window.data(), &MainWindow::playClicked, [=]() {
         auto profileName = window->getSelectedProfile();
         if (!profiles->contains(profileName)) {
@@ -129,10 +139,13 @@ void Ttyh::Launcher::connectRunGameFlow()
         profileInfo->data = profileData;
 
         if (!window->isOnline()) {
-            if (window->isHideOnRun()) {
-                window->hide();
+            if (tryInstallVersionFiles()) {
+
+                if (window->isHideOnRun())
+                    window->hide();
+
+                runner->run(*profileInfo, window->getUserName());
             }
-            runner->run(*profileInfo, window->getUserName());
             return;
         }
 
@@ -158,7 +171,8 @@ void Ttyh::Launcher::connectRunGameFlow()
         }
 
         if (files.isEmpty()) {
-            client->login(window->getUserName(), window->getPassword());
+            if (tryInstallVersionFiles())
+                client->login(window->getUserName(), window->getPassword());
             return;
         }
 
@@ -188,13 +202,8 @@ void Ttyh::Launcher::connectRunGameFlow()
             return;
         }
 
-        if (!profiles->installFiles(profileInfo->name, profileInfo->data.version)) {
-            window->showError(tr("Failed to install version files!"));
-            window->setLocked(false);
-            return;
-        }
-
-        client->login(window->getUserName(), window->getPassword());
+        if (tryInstallVersionFiles())
+            client->login(window->getUserName(), window->getPassword());
     });
     connect(client.data(), &TtyhClient::logged,
             [=](RequestResult result, const QString &accessToken, const QString &clientToken) {

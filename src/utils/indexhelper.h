@@ -11,8 +11,11 @@ template<typename T>
 T load(const QString &path)
 {
     QFile file(path);
-    file.open(QIODevice::ReadOnly);
-    return T(QJsonDocument::fromJson(file.readAll()).object());
+
+    if (file.open(QIODevice::ReadOnly))
+        return T(QJsonDocument::fromJson(file.readAll()).object());
+
+    return T(QJsonObject());
 }
 
 template<typename T>
