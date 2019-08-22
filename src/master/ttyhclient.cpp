@@ -32,6 +32,12 @@ void Ttyh::Master::TtyhClient::login(const QString &login, const QString &pass)
     payload.insert("ticket", ticket);
     payload.insert("launcherVersion", QApplication::applicationVersion());
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+    auto uuid = QSysInfo::machineUniqueId();
+    if (!uuid.isEmpty())
+        payload.insert("uuid", QString::fromUtf8(uuid));
+#endif
+
     log.info(QString("Logging as %1...").arg(login));
     auto reply = post("login", payload);
 
