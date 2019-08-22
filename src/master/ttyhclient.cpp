@@ -97,8 +97,8 @@ void Ttyh::Master::TtyhClient::uploadSkin(const QString &login, const QString &p
             log.error("Failed to upload skin: " + reply->errorString());
 
             auto result = error == QNetworkReply::AuthenticationRequiredError
-                          ? RequestResult::LoginError
-                          : RequestResult::ConnectionError;
+                    ? RequestResult::LoginError
+                    : RequestResult::ConnectionError;
 
             emit skinUploaded(result);
             return;
