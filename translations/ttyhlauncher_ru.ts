@@ -11,12 +11,12 @@
     <message>
         <location filename="../src/ui/aboutdialog.ui" line="60"/>
         <source>The opensource Minecraft launcher, distributed under the GNU GPL license version 3.</source>
-        <translation>Лаунчер Minecraft с открытм исходным кодом, распространяемый под лицензинй GNU GPL v3.</translation>
+        <translation>Лаунчер Minecraft с открытм исходным кодом, распространяемый под лицензией GNU GPL v3.</translation>
     </message>
     <message>
         <location filename="../src/ui/aboutdialog.ui" line="73"/>
         <source>This version is released in honor of Mikhail Pirovskih and Alexey Navalny.</source>
-        <translation>Эта верся выпущена в честь Михаила Пировских и Алексея Навального.</translation>
+        <translation>Эта версия выпущена в честь Михаила Пировских и Алексея Навального.</translation>
     </message>
     <message>
         <location filename="../src/ui/aboutdialog.ui" line="120"/>
