@@ -29,6 +29,7 @@ add_executable(ttyhlauncher WIN32 MACOSX_BUNDLE
   "utils/downloadfilereply.cpp"
   "ui/mainwindow.cpp"
   "ui/skindialog.cpp"
+  "ui/aboutdialog.cpp"
   "launcher.cpp"
 )
 add_dependencies(ttyhlauncher update_qm)
@@ -36,6 +37,7 @@ add_dependencies(ttyhlauncher update_qm)
 target_sources(ttyhlauncher PRIVATE
   "${CMAKE_CURRENT_SOURCE_DIR}/ui/mainwindow.ui"
   "${CMAKE_CURRENT_SOURCE_DIR}/ui/skindialog.ui"
+  "${CMAKE_CURRENT_SOURCE_DIR}/ui/aboutdialog.ui"
 )
 
 set_target_properties(ttyhlauncher PROPERTIES

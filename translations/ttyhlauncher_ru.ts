@@ -2,6 +2,29 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ru_RU">
 <context>
+    <name>AboutDialog</name>
+    <message>
+        <location filename="../src/ui/aboutdialog.ui" line="14"/>
+        <source>About</source>
+        <translation>О программе</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/aboutdialog.ui" line="60"/>
+        <source>The opensource Minecraft launcher, distributed under the GNU GPL license version 3.</source>
+        <translation>Лаунчер Minecraft с открытм исходным кодом, распространяемый под лицензинй GNU GPL v3.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/aboutdialog.ui" line="73"/>
+        <source>This version is released in honor of Mikhail Pirovskih and Alexey Navalny.</source>
+        <translation>Эта верся выпущена в честь Михаила Пировских и Алексея Навального.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/aboutdialog.ui" line="120"/>
+        <source>Close</source>
+        <translation>Закрыть</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <location filename="../src/ui/mainwindow.ui" line="82"/>
@@ -25,7 +48,7 @@
     </message>
     <message>
         <location filename="../src/ui/mainwindow.ui" line="214"/>
-        <location filename="../src/ui/mainwindow.cpp" line="151"/>
+        <location filename="../src/ui/mainwindow.cpp" line="147"/>
         <source>Play</source>
         <translation>Играть</translation>
     </message>
@@ -70,42 +93,42 @@
         <translation>О программе</translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="35"/>
+        <location filename="../src/ui/mainwindow.cpp" line="31"/>
         <source>Edit...</source>
         <translation>Изменить...</translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="36"/>
+        <location filename="../src/ui/mainwindow.cpp" line="32"/>
         <source>Create...</source>
         <translation>Создать...</translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="37"/>
+        <location filename="../src/ui/mainwindow.cpp" line="33"/>
         <source>Remove...</source>
         <translation>Удалить...</translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="151"/>
+        <location filename="../src/ui/mainwindow.cpp" line="147"/>
         <source>Play (Offline)</source>
         <translation>Играть (Оффлайн)</translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="189"/>
+        <location filename="../src/ui/mainwindow.cpp" line="185"/>
         <source>Information</source>
         <translation>Информация</translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="194"/>
+        <location filename="../src/ui/mainwindow.cpp" line="190"/>
         <source>Oops! Something went wrong</source>
         <translation>Упс! Что-то пошло не так</translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="199"/>
+        <location filename="../src/ui/mainwindow.cpp" line="195"/>
         <source>Downloads are required</source>
         <translation>Требуется загрузка файлов</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/ui/mainwindow.cpp" line="201"/>
+        <location filename="../src/ui/mainwindow.cpp" line="197"/>
         <source>Need to download %n files with the total size</source>
         <translation>
             <numerusform>Для запуска игры необходимо загрузить %n файл размером</numerusform>
@@ -114,27 +137,27 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="203"/>
+        <location filename="../src/ui/mainwindow.cpp" line="199"/>
         <source>Do you want to continue?</source>
         <translation>Желаете продолжить?</translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="225"/>
+        <location filename="../src/ui/mainwindow.cpp" line="221"/>
         <source>GiB</source>
         <translation>ГиБ</translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="228"/>
+        <location filename="../src/ui/mainwindow.cpp" line="224"/>
         <source>MiB</source>
         <translation>МиБ</translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="231"/>
+        <location filename="../src/ui/mainwindow.cpp" line="227"/>
         <source>KiB</source>
         <translation>КиБ</translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="233"/>
+        <location filename="../src/ui/mainwindow.cpp" line="229"/>
         <source>B</source>
         <translation>Б</translation>
     </message>

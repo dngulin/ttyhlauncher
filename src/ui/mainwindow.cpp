@@ -2,6 +2,7 @@
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QScrollBar>
 #include "mainwindow.h"
+#include "aboutdialog.h"
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -24,12 +25,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         emit taskCancelled();
     });
 
-    connect(ui->actionAbout, &QAction::triggered, [=](bool checked) {
-        auto name = QApplication::applicationName();
-        auto version = QApplication::applicationVersion();
-        auto text = QString("%1 %2").arg(name, version);
-        QMessageBox::about(this, name, text);
-    });
+    connect(ui->actionAbout, &QAction::triggered, [=](bool checked) { AboutDialog(this).exec(); });
 
     auto profilesMenu = new QMenu(this);
     auto editProfile = new QAction(tr("Edit..."), profilesMenu);
