@@ -84,7 +84,7 @@
         <item>
          <widget class="QToolButton" name="buttonJavaPath">
           <property name="text">
-           <string>...</string>
+           <string notr="true">...</string>
           </property>
          </widget>
         </item>
@@ -155,7 +155,7 @@
       <item row="0" column="0" colspan="3">
        <widget class="QRadioButton" name="radioFullscreen">
         <property name="text">
-         <string>&amp;Fullscreen</string>
+         <string>Fullscreen</string>
         </property>
         <property name="checked">
          <bool>true</bool>
