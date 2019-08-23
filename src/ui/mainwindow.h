@@ -52,6 +52,10 @@ signals:
     void taskCancelled();
     void closed();
 
+    void profileEditClicked();
+    void profileCreateClicked();
+    void profileRemoveClicked();
+
 private:
     Ui::MainWindow *ui;
 

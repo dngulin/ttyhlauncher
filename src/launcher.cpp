@@ -1,4 +1,5 @@
-#include <ui/skindialog.h>
+#include "ui/profiledialog.h"
+#include "ui/skindialog.h"
 #include "launcher.h"
 
 Ttyh::Launcher::Launcher(QSharedPointer<SettingsManager> settings,
@@ -22,6 +23,7 @@ Ttyh::Launcher::Launcher(QSharedPointer<SettingsManager> settings,
     connectTaskEvents();
     connectOnlineModeFlow();
     connectRunGameFlow();
+    connectProfileActions();
     connectSkinUpload();
 
     connect(logger.data(), &Logger::onLog, [=](const QString &msg) { window->appendLog(msg); });
@@ -233,6 +235,55 @@ void Ttyh::Launcher::connectRunGameFlow()
     });
 }
 
+void Ttyh::Launcher::connectProfileActions()
+{
+    connect(window.data(), &MainWindow::profileEditClicked, [=]() {
+        auto profileName = window->getSelectedProfile();
+        if (!profiles->contains(profileName)) {
+            window->showError(tr("Selected profile does not exist!"));
+            return;
+        }
+
+        auto profileData = profiles->get(profileName);
+        ProfileDialog dlg(window.data(), profileName, profileData, versions->getPrefixes());
+        connect(&dlg, &ProfileDialog::saveClicked,
+                [=, &dlg](const QString &newName, const ProfileData &newData) {
+                    if (profileName != newName) {
+                        auto renameResult = profiles->rename(profileName, newName);
+                        if (renameResult != RenameResult::Success) {
+                            dlg.showRenameError(renameResult);
+                            return;
+                        }
+
+                        window->setProfiles(profiles->names(), newName);
+                    }
+
+                    auto updated = profiles->update(newName, newData);
+                    if (!updated)
+                        dlg.showError(tr("Failed to save profile data!"));
+
+                    dlg.close();
+                });
+        dlg.exec();
+    });
+
+    connect(window.data(), &MainWindow::profileCreateClicked, [=]() {
+        ProfileDialog dlg(window.data(), tr("New Profile"), ProfileData(), versions->getPrefixes());
+        connect(&dlg, &ProfileDialog::saveClicked,
+                [=, &dlg](const QString &name, const ProfileData &data) {
+                    auto createResult = profiles->create(name, data);
+                    if (createResult != CreateResult::Success) {
+                        dlg.showCreateError(createResult);
+                        return;
+                    }
+
+                    window->setProfiles(profiles->names(), name);
+                    dlg.close();
+                });
+        dlg.exec();
+    });
+}
+
 void Ttyh::Launcher::connectSkinUpload()
 {
     connect(window.data(), &MainWindow::uploadSkinClicked, [=]() {
@@ -355,6 +406,7 @@ void Ttyh::Launcher::loadWindowState()
 void Ttyh::Launcher::saveWindowState()
 {
     log.info("Set settings state by the window");
+    settings->data.profile = window->getSelectedProfile();
 
     settings->data.username = window->getUserName();
     settings->data.savePassword = window->isSavePassword();

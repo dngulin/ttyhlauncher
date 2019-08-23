@@ -37,6 +37,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     profilesMenu->addAction(removeProfile);
 
     ui->buttonProfiles->setMenu(profilesMenu);
+
+    connect(editProfile, &QAction::triggered, [=]() { emit profileEditClicked(); });
+    connect(createProfile, &QAction::triggered, [=]() { emit profileCreateClicked(); });
+    connect(removeProfile, &QAction::triggered, [=]() { emit profileRemoveClicked(); });
 }
 
 MainWindow::~MainWindow()

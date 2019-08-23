@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ProfileDialog</class>
+ <widget class="QDialog" name="ProfileDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>404</width>
+    <height>494</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Profile Settings</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0,0,0">
+   <item>
+    <widget class="QGroupBox" name="boxProfile">
+     <property name="title">
+      <string>Profile</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout_2">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+      </property>
+      <item row="1" column="0">
+       <widget class="QLabel" name="labelPrefix">
+        <property name="text">
+         <string>Prefix</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="comboPrefix"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="labelVersion">
+        <property name="text">
+         <string>Version</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="comboVersion"/>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="editName">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="labelName">
+        <property name="text">
+         <string>Name</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="boxJava">
+     <property name="title">
+      <string>Java settings</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkBoxJavaPath">
+        <property name="text">
+         <string>Java path</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <layout class="QHBoxLayout" name="layoutJavaPath">
+        <item>
+         <widget class="QLineEdit" name="editJavaPath"/>
+        </item>
+        <item>
+         <widget class="QToolButton" name="buttonJavaPath">
+          <property name="text">
+           <string>...</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="checkBoxJavaArgs">
+        <property name="text">
+         <string>Parameters</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="editJavaArgs"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="boxWindowSize">
+     <property name="title">
+      <string>Set game window size</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="2" column="0">
+       <widget class="QRadioButton" name="radioSpecifiedSize">
+        <property name="text">
+         <string>Specified size</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QSpinBox" name="spinWidth">
+        <property name="maximum">
+         <number>10000</number>
+        </property>
+        <property name="value">
+         <number>800</number>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QSpinBox" name="spinHeight">
+        <property name="maximum">
+         <number>10000</number>
+        </property>
+        <property name="value">
+         <number>600</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="3">
+       <widget class="QRadioButton" name="radioLauncherSize">
+        <property name="text">
+         <string>Launcher size</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="3">
+       <widget class="QRadioButton" name="radioFullscreen">
+        <property name="text">
+         <string>&amp;Fullscreen</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="layoutDown">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item>
+      <spacer name="hspc">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="saveButton">
+       <property name="text">
+        <string>Save</string>
+       </property>
+       <property name="default">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>saveButton</tabstop>
+  <tabstop>comboPrefix</tabstop>
+  <tabstop>comboVersion</tabstop>
+  <tabstop>boxWindowSize</tabstop>
+  <tabstop>boxJava</tabstop>
+  <tabstop>editJavaPath</tabstop>
+  <tabstop>editJavaArgs</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../../resources/resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>checkBoxJavaPath</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>editJavaPath</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>73</x>
+     <y>224</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>292</x>
+     <y>224</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxJavaArgs</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>editJavaArgs</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>73</x>
+     <y>266</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>313</x>
+     <y>266</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxJavaPath</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>buttonJavaPath</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>73</x>
+     <y>224</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>467</x>
+     <y>224</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioSpecifiedSize</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>spinWidth</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>90</x>
+     <y>418</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>250</x>
+     <y>418</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioSpecifiedSize</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>spinHeight</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>90</x>
+     <y>418</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>409</x>
+     <y>418</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

@@ -57,6 +57,7 @@ private:
     void connectTaskEvents();
     void connectOnlineModeFlow();
     void connectRunGameFlow();
+    void connectProfileActions();
     void connectSkinUpload();
 
     void loadWindowState();

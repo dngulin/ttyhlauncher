@@ -4,19 +4,10 @@
 #include "logs/logger.h"
 #include "logs/namedlogger.h"
 #include "profiledata.h"
+#include "profilesopresults.h"
 
 namespace Ttyh {
 namespace Profiles {
-
-enum class CreateResult { Success, AlreadyExists, InvalidName, IOError };
-enum class RenameResult {
-    Success,
-    OldNameDoesNotExist,
-    NewNameAlreadyExists,
-    InvalidName,
-    IOError
-};
-
 class ProfilesManager
 {
 public:

@@ -375,7 +375,7 @@ FullVersionId VersionsManager::resolve(const FullVersionId &version) const
 {
     auto prefix = version.prefix;
 
-    if (!prefixes.contains(prefix))
+    if (version.id != Prefix::latestVersionAlias || !prefixes.contains(prefix))
         return version;
 
     return FullVersionId(prefix, prefixes[prefix].latestVersionId);
