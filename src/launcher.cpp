@@ -282,6 +282,25 @@ void Ttyh::Launcher::connectProfileActions()
                 });
         dlg.exec();
     });
+
+    connect(window.data(), &MainWindow::profileRemoveClicked, [=]() {
+        auto profileName = window->getSelectedProfile();
+        if (!profiles->contains(profileName)) {
+            window->showError(tr("Selected profile does not exist!"));
+            return;
+        }
+
+        if (!window->askForProfileDeletion(profileName))
+            return;
+
+        if (profiles->remove(profileName)) {
+            auto profilesNames = profiles->names();
+            auto select = profilesNames.isEmpty() ? "" : profilesNames.first();
+            window->setProfiles(profilesNames, select);
+        } else {
+            window->showError(tr("Failed to remove the selected profile!"));
+        }
+    });
 }
 
 void Ttyh::Launcher::connectSkinUpload()

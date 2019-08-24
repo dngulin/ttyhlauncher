@@ -1,14 +1,27 @@
 #include <QtGui/QFontDatabase>
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QScrollBar>
+#include <QtWidgets/QCheckBox>
 #include "mainwindow.h"
 #include "aboutdialog.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent),
+      ui(new Ui::MainWindow),
+      actionCreateProfile(nullptr),
+      actionEditProfile(nullptr),
+      actionRemoveProfile(nullptr)
 {
     ui->setupUi(this);
     hideTask();
+
+    auto profilesMenu = new QMenu(this);
+    actionCreateProfile = profilesMenu->addAction(tr("Create..."));
+    actionEditProfile = profilesMenu->addAction(tr("Edit..."));
+    actionRemoveProfile = profilesMenu->addAction(tr("Remove..."));
+
+    ui->buttonProfiles->setMenu(profilesMenu);
 
     setOnline(false);
     connect(ui->actionPlayOffine, &QAction::triggered,
@@ -27,20 +40,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     connect(ui->actionAbout, &QAction::triggered, [=](bool checked) { AboutDialog(this).exec(); });
 
-    auto profilesMenu = new QMenu(this);
-    auto editProfile = new QAction(tr("Edit..."), profilesMenu);
-    auto createProfile = new QAction(tr("Create..."), profilesMenu);
-    auto removeProfile = new QAction(tr("Remove..."), profilesMenu);
-
-    profilesMenu->addAction(editProfile);
-    profilesMenu->addAction(createProfile);
-    profilesMenu->addAction(removeProfile);
-
-    ui->buttonProfiles->setMenu(profilesMenu);
-
-    connect(editProfile, &QAction::triggered, [=]() { emit profileEditClicked(); });
-    connect(createProfile, &QAction::triggered, [=]() { emit profileCreateClicked(); });
-    connect(removeProfile, &QAction::triggered, [=]() { emit profileRemoveClicked(); });
+    connect(actionCreateProfile, &QAction::triggered, [=]() { emit profileCreateClicked(); });
+    connect(actionEditProfile, &QAction::triggered, [=]() { emit profileEditClicked(); });
+    connect(actionRemoveProfile, &QAction::triggered, [=]() { emit profileRemoveClicked(); });
 }
 
 MainWindow::~MainWindow()
@@ -118,6 +120,10 @@ void MainWindow::setProfiles(const QStringList &profiles, const QString &selecte
     ui->comboBoxProfiles->clear();
     ui->comboBoxProfiles->addItems(profiles);
     ui->comboBoxProfiles->setCurrentText(selected);
+
+    auto hasProfiles = !profiles.isEmpty();
+    actionEditProfile->setEnabled(hasProfiles);
+    actionRemoveProfile->setEnabled(hasProfiles);
 }
 
 QString MainWindow::getSelectedProfile() const
@@ -204,6 +210,28 @@ bool MainWindow::askForDownloads(int count, quint64 size)
     auto result = QMessageBox::question(this, cap, QString("%1 %2.\n%3").arg(msg, sze, ask));
 
     return result == QMessageBox::Yes;
+}
+
+bool MainWindow::askForProfileDeletion(const QString &profileName)
+{
+    QMessageBox box(this);
+    box.setIcon(QMessageBox::Question);
+    box.setWindowTitle(tr("Confirm the profile removing"));
+
+    auto msg = tr("All profile data will be lost. Do you want to delete the '%1' profile?");
+    box.setText(msg.arg(profileName));
+
+    auto cb = new QCheckBox(tr("I'm sure I want to remove the profile"));
+    box.setCheckBox(cb);
+
+    box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    box.setDefaultButton(QMessageBox::No);
+
+    auto btnYes = box.button(QMessageBox::Yes);
+    btnYes->setEnabled(false);
+    connect(cb, &QCheckBox::toggled, btnYes, &QPushButton::setEnabled);
+
+    return box.exec() == QMessageBox::Yes;
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

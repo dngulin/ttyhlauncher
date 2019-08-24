@@ -23,7 +23,7 @@ public:
     RenameResult rename(const QString &oldName, const QString &newName);
 
     bool update(const QString &profileName, const ProfileData &data);
-    void remove(const QString &profileName);
+    bool remove(const QString &profileName);
 
     bool installFiles(const QString &profileName, const Versions::FullVersionId &version);
 

@@ -139,10 +139,13 @@ bool ProfilesManager::update(const QString &profileName, const ProfileData &data
     return true;
 }
 
-void ProfilesManager::remove(const QString &profileName)
+bool ProfilesManager::remove(const QString &profileName)
 {
-    QDir().remove(QString("%1/profiles/%2").arg(dataPath, profileName));
-    profiles.remove(profileName);
+    if (QDir(QString("%1/profiles/%2").arg(dataPath, profileName)).removeRecursively()) {
+        profiles.remove(profileName);
+        return true;
+    }
+    return false;
 }
 
 bool ProfilesManager::validateProfileName(const QString &profileName)

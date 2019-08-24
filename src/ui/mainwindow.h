@@ -44,6 +44,7 @@ public:
     void showMessage(const QString &message);
     void showError(const QString &error);
     bool askForDownloads(int count, quint64 size);
+    bool askForProfileDeletion(const QString &profileName);
 
 signals:
     void onlineModeSwitched(bool online);
@@ -58,6 +59,10 @@ signals:
 
 private:
     Ui::MainWindow *ui;
+    QAction* actionCreateProfile;
+    QAction* actionEditProfile;
+    QAction* actionRemoveProfile;
+
 
     void closeEvent(QCloseEvent *event) override;
 
