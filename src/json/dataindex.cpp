@@ -8,12 +8,12 @@ Ttyh::Json::DataIndex::DataIndex(const QJsonObject &jObject) : main(jObject["mai
         libs.insert(path, CheckInfo(jLibs[path].toObject()));
     }
 
-    auto jFiles = jObject["files"]["index"].toObject();
+    auto jFiles = jObject["files"].toObject()["index"].toObject();
     foreach (auto path, jFiles.keys()) {
         files.insert(path, CheckInfo(jFiles[path].toObject()));
     }
 
-    auto jMutableFiles = jObject["files"]["mutables"].toArray();
+    auto jMutableFiles = jObject["files"].toObject()["mutables"].toArray();
     foreach (auto path, jMutableFiles) {
         mutableFiles << path.toString();
     }
