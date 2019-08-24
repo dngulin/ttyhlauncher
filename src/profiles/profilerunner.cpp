@@ -57,15 +57,17 @@ Ttyh::Profiles::ProfileRunner::ProfileRunner(const QString &dirName,
         }
     });
 }
-bool Ttyh::Profiles::ProfileRunner::run(const ProfileInfo &info, const QString &userName)
+bool Ttyh::Profiles::ProfileRunner::run(const ProfileInfo &info, const QString &userName,
+                                        const QSize &launcherSize)
 {
     auto accessToken = QUuid::createUuid().toString(QUuid::WithoutBraces);
     auto clientToken = QUuid::createUuid().toString(QUuid::WithoutBraces);
-    return run(info, userName, accessToken, clientToken);
+    return run(info, userName, accessToken, clientToken, launcherSize);
 }
 
 bool Ttyh::Profiles::ProfileRunner::run(const ProfileInfo &info, const QString &userName,
-                                        const QString &accessToken, const QString &clientToken)
+                                        const QString &accessToken, const QString &clientToken,
+                                        const QSize &launcherSize)
 {
     auto name = info.name;
     auto data = info.data;
@@ -139,6 +141,23 @@ bool Ttyh::Profiles::ProfileRunner::run(const ProfileInfo &info, const QString &
             gameArgs[i] = argsMap[token];
     }
     args << gameArgs;
+
+    if (data.setWindowSizeOnRun) {
+        auto mode = data.windowSizeMode;
+
+        switch (mode) {
+        case WindowSizeMode::FullScreen:
+            args << "--fullscreen";
+            break;
+
+        case WindowSizeMode::LauncherLike:
+        case WindowSizeMode::Specified:
+            auto size = mode == WindowSizeMode::Specified ? data.windowSize : launcherSize;
+            args << "--width" << QString::number(size.width());
+            args << "--height" << QString::number(size.height());
+            break;
+        }
+    }
 
     QDir().mkpath(profilePath);
     game.setWorkingDirectory(profilePath);

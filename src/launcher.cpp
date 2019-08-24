@@ -146,7 +146,7 @@ void Ttyh::Launcher::connectRunGameFlow()
                 if (window->isHideOnRun())
                     window->hide();
 
-                runner->run(*profileInfo, window->getUserName());
+                runner->run(*profileInfo, window->getUserName(), window->size());
             }
             return;
         }
@@ -220,7 +220,7 @@ void Ttyh::Launcher::connectRunGameFlow()
                 }
 
                 auto userName = window->getUserName();
-                runner->run(*profileInfo, userName, accessToken, clientToken);
+                runner->run(*profileInfo, userName, accessToken, clientToken, window->size());
             });
     connect(runner.data(), &ProfileRunner::finished, [=](bool result) {
         window->setLocked(false);
