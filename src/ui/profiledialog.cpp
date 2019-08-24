@@ -1,4 +1,6 @@
 #include <QtWidgets/QMessageBox>
+#include <QtCore/QStandardPaths>
+#include <QtWidgets/QFileDialog>
 #include "profiledialog.h"
 #include "ui_profiledialog.h"
 
@@ -34,10 +36,20 @@ ProfileDialog::ProfileDialog(QWidget *parent, const QString &profileName,
         }
     });
 
+    connect(ui->buttonJavaPath, &QToolButton::clicked, [=](bool) {
+        auto dir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+        auto path = QFileDialog::getOpenFileName(this, tr("Select the java executable"), dir);
+        if (!path.isEmpty())
+            ui->editJavaPath->setText(path);
+    });
+
     connect(ui->saveButton, &QPushButton::clicked, [=](bool) { saveClickedInternal(); });
 
     ui->checkBoxJavaPath->setChecked(profileData.useCustomJavaPath);
     ui->checkBoxJavaArgs->setChecked(profileData.useCustomJavaArgs);
+
+    ui->editJavaPath->setText(profileData.customJavaPath);
+    ui->editJavaArgs->setText(profileData.customJavaArgs);
 
     ui->boxWindowSize->setChecked(profileData.setWindowSizeOnRun);
     switch (profileData.windowSizeMode) {
