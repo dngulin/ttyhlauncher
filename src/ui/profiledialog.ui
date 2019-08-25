@@ -198,13 +198,21 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>saveButton</tabstop>
+  <tabstop>editName</tabstop>
   <tabstop>comboPrefix</tabstop>
   <tabstop>comboVersion</tabstop>
-  <tabstop>boxWindowSize</tabstop>
-  <tabstop>boxJava</tabstop>
+  <tabstop>checkBoxJavaPath</tabstop>
   <tabstop>editJavaPath</tabstop>
+  <tabstop>buttonJavaPath</tabstop>
+  <tabstop>checkBoxJavaArgs</tabstop>
   <tabstop>editJavaArgs</tabstop>
+  <tabstop>boxWindowSize</tabstop>
+  <tabstop>radioFullscreen</tabstop>
+  <tabstop>radioLauncherSize</tabstop>
+  <tabstop>radioSpecifiedSize</tabstop>
+  <tabstop>spinWidth</tabstop>
+  <tabstop>spinHeight</tabstop>
+  <tabstop>saveButton</tabstop>
  </tabstops>
  <resources>
   <include location="../../resources/resources.qrc"/>

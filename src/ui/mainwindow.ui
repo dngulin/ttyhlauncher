@@ -30,6 +30,9 @@
       <property name="horizontalScrollBarPolicy">
        <enum>Qt::ScrollBarAlwaysOff</enum>
       </property>
+      <property name="textInteractionFlags">
+       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+      </property>
       <property name="openExternalLinks">
        <bool>true</bool>
       </property>
@@ -296,6 +299,15 @@
    </property>
   </action>
  </widget>
+ <tabstops>
+  <tabstop>buttonPlay</tabstop>
+  <tabstop>textLog</tabstop>
+  <tabstop>buttonCancelTask</tabstop>
+  <tabstop>comboBoxProfiles</tabstop>
+  <tabstop>buttonProfiles</tabstop>
+  <tabstop>lineEditPlayerName</tabstop>
+  <tabstop>lineEditPassword</tabstop>
+ </tabstops>
  <resources>
   <include location="../../resources/resources.qrc"/>
  </resources>

@@ -97,6 +97,7 @@
  </widget>
  <tabstops>
   <tabstop>buttonBrowse</tabstop>
+  <tabstop>checkBoxSlim</tabstop>
   <tabstop>buttonUpload</tabstop>
   <tabstop>pathEdit</tabstop>
  </tabstops>
