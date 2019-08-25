@@ -3,11 +3,11 @@
 #include <QtCore/QUuid>
 #include <QtCore/QDir>
 #include <QtCore/QHash>
-#include <JlCompress.h>
 
 #include "json/versionindex.h"
 #include "utils/indexhelper.h"
 #include "utils/platform.h"
+#include "utils/zip.h"
 #include "profilerunner.h"
 
 using namespace Ttyh::Utils;
@@ -100,7 +100,10 @@ bool Ttyh::Profiles::ProfileRunner::run(const ProfileInfo &info, const QString &
             classPath << libPath;
         } else {
             log.info(QString("Extracting '%1'...").arg(libPath.mid(prefixLength)));
-            JlCompress::extractDir(libPath, nativesPath);
+            if (!Ttyh::Utils::Zip::unzipDir(libPath, nativesPath)) {
+                log.error(QString("Failed to extract '%1'!").arg(libPath.mid(prefixLength)));
+                return false;
+            }
         }
     }
 
