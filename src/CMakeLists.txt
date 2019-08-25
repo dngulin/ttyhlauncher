@@ -29,6 +29,7 @@ add_executable(ttyhlauncher WIN32 MACOSX_BUNDLE
   "utils/platform.cpp"
   "utils/downloadfilereply.cpp"
   "utils/zip.cpp"
+  "utils/migrations.cpp"
   "ui/mainwindow.cpp"
   "ui/profiledialog.cpp"
   "ui/skindialog.cpp"

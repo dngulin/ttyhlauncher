@@ -13,6 +13,7 @@
 #include "storage/filechecker.h"
 #include "storage/downloader.h"
 #include "news/newsfeed.h"
+#include "utils/migrations.h"
 
 using namespace Ttyh;
 using namespace Ttyh::Logs;
@@ -56,6 +57,10 @@ int main(int argc, char *argv[])
                      [](const QString &line) { QTextStream(stdout) << line << endl; });
 
     auto settings = QSP<SettingsManager>(new SettingsManager(dirName, logger));
+    if (settings->isFreshRun()) {
+        Utils::Migrations::restoreLoginSettings(settings, logger);
+    }
+
     auto profiles = QSP<ProfilesManager>(new ProfilesManager(dirName, logger));
     auto versions = QSP<VersionsManager>(new VersionsManager(dirName, storeUrl, nam, logger), qDel);
 
