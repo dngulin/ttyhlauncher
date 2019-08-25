@@ -27,68 +27,68 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="82"/>
+        <location filename="../src/ui/mainwindow.ui" line="85"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="142"/>
+        <location filename="../src/ui/mainwindow.ui" line="145"/>
         <source>Profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="149"/>
+        <location filename="../src/ui/mainwindow.ui" line="152"/>
         <source>PlayerName</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="159"/>
+        <location filename="../src/ui/mainwindow.ui" line="162"/>
         <source>Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="217"/>
-        <location filename="../src/ui/mainwindow.cpp" line="157"/>
+        <location filename="../src/ui/mainwindow.ui" line="220"/>
+        <location filename="../src/ui/mainwindow.cpp" line="161"/>
         <source>Play</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="241"/>
+        <location filename="../src/ui/mainwindow.ui" line="244"/>
         <source>Options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="250"/>
+        <location filename="../src/ui/mainwindow.ui" line="253"/>
         <source>Tools</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="256"/>
+        <location filename="../src/ui/mainwindow.ui" line="259"/>
         <source>Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="269"/>
+        <location filename="../src/ui/mainwindow.ui" line="272"/>
         <source>Play Offine</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="277"/>
+        <location filename="../src/ui/mainwindow.ui" line="280"/>
         <source>Save Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="285"/>
+        <location filename="../src/ui/mainwindow.ui" line="288"/>
         <source>Hide Window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="290"/>
+        <location filename="../src/ui/mainwindow.ui" line="293"/>
         <source>Upload Skin...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.ui" line="295"/>
+        <location filename="../src/ui/mainwindow.ui" line="298"/>
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>
@@ -108,69 +108,69 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="157"/>
+        <location filename="../src/ui/mainwindow.cpp" line="161"/>
         <source>Play (Offline)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="195"/>
+        <location filename="../src/ui/mainwindow.cpp" line="199"/>
         <source>Information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="200"/>
+        <location filename="../src/ui/mainwindow.cpp" line="204"/>
         <source>Oops! Something went wrong</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="205"/>
+        <location filename="../src/ui/mainwindow.cpp" line="209"/>
         <source>Downloads are required</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/ui/mainwindow.cpp" line="207"/>
+        <location filename="../src/ui/mainwindow.cpp" line="211"/>
         <source>Need to download %n files with the total size</source>
         <translation type="unfinished">
             <numerusform></numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="209"/>
+        <location filename="../src/ui/mainwindow.cpp" line="213"/>
         <source>Do you want to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="219"/>
+        <location filename="../src/ui/mainwindow.cpp" line="223"/>
         <source>Confirm the profile removing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="221"/>
+        <location filename="../src/ui/mainwindow.cpp" line="225"/>
         <source>All profile data will be lost. Do you want to delete the &apos;%1&apos; profile?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="224"/>
+        <location filename="../src/ui/mainwindow.cpp" line="228"/>
         <source>I&apos;m sure I want to remove the profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="253"/>
+        <location filename="../src/ui/mainwindow.cpp" line="257"/>
         <source>GiB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="256"/>
+        <location filename="../src/ui/mainwindow.cpp" line="260"/>
         <source>MiB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="259"/>
+        <location filename="../src/ui/mainwindow.cpp" line="263"/>
         <source>KiB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="261"/>
+        <location filename="../src/ui/mainwindow.cpp" line="265"/>
         <source>B</source>
         <translation type="unfinished"></translation>
     </message>
