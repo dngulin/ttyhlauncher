@@ -1,4 +1,3 @@
-#include <memory>
 #include <functional>
 #include <QFile>
 #include <QDir>
@@ -108,7 +107,7 @@ int zTestFile(voidpf, voidpf stream)
     }
 }
 
-bool zExtractCurrentFile(unzFile desc, QString path)
+bool zExtractCurrentFile(unzFile desc, const QString &path)
 {
     QFile dest(path);
     if (!dest.open(QIODevice::WriteOnly)) {
@@ -139,18 +138,13 @@ bool zExtractCurrentFile(unzFile desc, QString path)
     }
 }
 
-// @TODO return/log errors?
-bool unzipDir(QString zipPath, QString destDir)
+bool unzipDir(QString zipPath, const QString &destDir)
 {
     zlib_filefunc64_def funcDef = {
-        .zopen64_file = zOpenFile,
-        .zread_file = zReadFile,
-        .zwrite_file = zWriteFile,
-        .ztell64_file = zTellFile,
-        .zseek64_file = zSeekFile,
-        .zclose_file = zCloseFile,
-        .zerror_file = zTestFile,
-        .opaque = nullptr,
+        funcDef.zopen64_file = zOpenFile, funcDef.zread_file = zReadFile,
+        funcDef.zwrite_file = zWriteFile, funcDef.ztell64_file = zTellFile,
+        funcDef.zseek64_file = zSeekFile, funcDef.zclose_file = zCloseFile,
+        funcDef.zerror_file = zTestFile,  funcDef.opaque = nullptr
     };
 
     auto desc = unzOpen2_64(&zipPath, &funcDef);
@@ -167,10 +161,10 @@ bool unzipDir(QString zipPath, QString destDir)
     QDir dir(destDir);
 
     QByteArray pathBuf(4000, '\0');
-    for(;;) {
-        if (unzGetCurrentFileInfo64(desc, nullptr, pathBuf.data(), uLong(pathBuf.size()), nullptr,
-                                    0, nullptr, 0)
-            != UNZ_OK) {
+    for (;;) {
+        auto data = pathBuf.data();
+        auto size = uLong(pathBuf.size());
+        if (unzGetCurrentFileInfo64(desc, nullptr, data, size, nullptr, 0, nullptr, 0) != UNZ_OK) {
             return false;
         }
 
