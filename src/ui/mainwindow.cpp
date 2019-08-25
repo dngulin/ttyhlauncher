@@ -43,6 +43,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(actionCreateProfile, &QAction::triggered, [=]() { emit profileCreateClicked(); });
     connect(actionEditProfile, &QAction::triggered, [=]() { emit profileEditClicked(); });
     connect(actionRemoveProfile, &QAction::triggered, [=]() { emit profileRemoveClicked(); });
+
+    auto fm = ui->lineEditPassword->fontMetrics();
+    ui->lineEditPassword->setMinimumWidth(fm.averageCharWidth() * 16);
 }
 
 MainWindow::~MainWindow()
@@ -124,6 +127,7 @@ void MainWindow::setProfiles(const QStringList &profiles, const QString &selecte
     auto hasProfiles = !profiles.isEmpty();
     actionEditProfile->setEnabled(hasProfiles);
     actionRemoveProfile->setEnabled(hasProfiles);
+    ui->buttonPlay->setEnabled(hasProfiles);
 }
 
 QString MainWindow::getSelectedProfile() const
