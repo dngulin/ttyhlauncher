@@ -6,20 +6,23 @@
 using namespace Ttyh::Logs;
 
 Ttyh::Settings::SettingsManager::SettingsManager(const QString &dirName,
-                                                 const QSharedPointer<Logger> &logger):
-                                                 log(logger, "Settings")
+                                                 const QSharedPointer<Logger> &logger)
+    : cfgFilePath([&dirName]() {
+          auto basePath = QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation);
+          return QString("%1/%2/%3").arg(basePath, dirName, "settings.dat");
+      }()),
+      freshRun(!QFile::exists(cfgFilePath)),
+      log(logger, "Settings")
 {
-    auto genericCfgDir = QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation);
-    QString sub("%1/%2");
+    auto dir = QFileInfo(cfgFilePath).absoluteDir();
+    dir.mkpath(dir.absolutePath());
 
-    auto cfgDir = sub.arg(genericCfgDir, dirName);
-    QDir().mkpath(cfgDir);
-
-    cfgFilePath = sub.arg(cfgDir, "settings.json");
     QFile file(cfgFilePath);
 
     if (file.open(QIODevice::ReadOnly)) {
-        data = SettingsData(QJsonDocument::fromJson(file.readAll()).object());
+        auto bytes = file.readAll();
+        xorBytes(bytes);
+        data = SettingsData(QJsonDocument::fromJson(qUncompress(bytes)).object());
     } else {
         log.info("Default settings have been created");
     }
@@ -27,17 +30,34 @@ Ttyh::Settings::SettingsManager::SettingsManager(const QString &dirName,
     log.info("Initialized!");
 }
 
-void Ttyh::Settings::SettingsManager::save() {
+bool Ttyh::Settings::SettingsManager::isFreshRun()
+{
+    return freshRun;
+}
+
+void Ttyh::Settings::SettingsManager::save()
+{
     QFile file(cfgFilePath);
 
     if (file.open(QIODevice::WriteOnly)) {
-        file.write(QJsonDocument(data.toJsonObject()).toJson());
+        auto bytes = qCompress(QJsonDocument(data.toJsonObject()).toJson());
+        xorBytes(bytes);
+        file.write(bytes);
         log.info("Saved!");
     } else {
         log.error("Failed to save settings file!");
     }
 }
 
-Ttyh::Settings::SettingsManager::~SettingsManager() {
+Ttyh::Settings::SettingsManager::~SettingsManager()
+{
     save();
+}
+
+void Ttyh::Settings::SettingsManager::xorBytes(QByteArray &bytes)
+{
+    auto key = cfgFilePath.toUtf8().toBase64();
+    for (int i = 0; i < bytes.length(); i++) {
+        bytes[i] = bytes[i] ^ key[i % key.length()];
+    }
 }

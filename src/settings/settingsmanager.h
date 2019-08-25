@@ -17,11 +17,15 @@ public:
 
     SettingsData data;
 
+    bool isFreshRun();
     void save();
 
 private:
+    const QString cfgFilePath;
+    const bool freshRun;
     Logs::NamedLogger log;
-    QString cfgFilePath;
+
+    void xorBytes(QByteArray &bytes);
 };
 }
 }
