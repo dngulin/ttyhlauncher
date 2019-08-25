@@ -60,8 +60,8 @@ Ttyh::Profiles::ProfileRunner::ProfileRunner(const QString &dirName,
 bool Ttyh::Profiles::ProfileRunner::run(const ProfileInfo &info, const QString &userName,
                                         const QSize &launcherSize)
 {
-    auto accessToken = QUuid::createUuid().toString(QUuid::WithoutBraces);
-    auto clientToken = QUuid::createUuid().toString(QUuid::WithoutBraces);
+    auto accessToken = QUuid::createUuid().toString().mid(1, 36);
+    auto clientToken = QUuid::createUuid().toString().mid(1, 36);
     return run(info, userName, accessToken, clientToken, launcherSize);
 }
 

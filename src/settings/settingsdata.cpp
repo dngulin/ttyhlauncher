@@ -6,7 +6,7 @@ Ttyh::Settings::SettingsData::SettingsData(const QJsonObject &jObject)
       password(jObject[keyPassword].toString("")),
       savePassword(jObject[keySavePassword].toBool(true)),
       profile(jObject[keyProfile].toString("")),
-      ticket(jObject[keyTicket].toString(QUuid::createUuid().toString(QUuid::WithoutBraces))),
+      ticket(jObject[keyTicket].toString(QUuid::createUuid().toString().mid(1, 36))),
       windowSize(jObject[keyWindowSizeW].toInt(800), jObject[keyWindowSizeH].toInt(600)),
       windowMaximized(jObject[keyWindowMaximized].toBool(false)),
       hideWindowOnRun(jObject[keyHideWindowOnRun].toBool(true))
