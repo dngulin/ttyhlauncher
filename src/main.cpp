@@ -12,6 +12,7 @@
 #include "master/ttyhclient.h"
 #include "storage/filechecker.h"
 #include "storage/downloader.h"
+#include "news/newsfeed.h"
 
 using namespace Ttyh;
 using namespace Ttyh::Logs;
@@ -19,6 +20,7 @@ using namespace Ttyh::Settings;
 using namespace Ttyh::Versions;
 using namespace Ttyh::Profiles;
 using namespace Ttyh::Master;
+using namespace Ttyh::News;
 using namespace Ttyh::Storage;
 
 template<typename T>
@@ -42,6 +44,7 @@ int main(int argc, char *argv[])
 
     const QString storeUrl = "https://ttyh.ru/files/newstore";
     const QString masterUrl = "https://master.ttyh.ru";
+    const QString newsUrl = "https://ttyh.ru/misc.php?page=feed";
     const QString dirName = "ttyhlauncher2";
 
     const int logCount = 3;
@@ -62,8 +65,9 @@ int main(int argc, char *argv[])
     auto checker = QSP<FileChecker>(new FileChecker(dirName, logger), qDel);
     auto downloader = QSP<Downloader>(new Downloader(storeUrl, dirName, nam, logger), qDel);
     auto runner = QSP<ProfileRunner>(new ProfileRunner(dirName, logger), qDel);
+    auto feed = QSP<NewsFeed>(new NewsFeed(newsUrl, nam, logger), qDel);
 
-    Launcher l(settings, profiles, versions, client, checker, downloader, runner, logger);
+    Launcher l(settings, profiles, versions, client, checker, downloader, runner, feed, logger);
     l.start();
 
     return QApplication::exec();

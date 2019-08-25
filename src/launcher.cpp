@@ -7,7 +7,8 @@ Ttyh::Launcher::Launcher(QSharedPointer<SettingsManager> settings,
                          QSharedPointer<VersionsManager> versions,
                          QSharedPointer<TtyhClient> client, QSharedPointer<FileChecker> checker,
                          QSharedPointer<Downloader> downloader,
-                         QSharedPointer<ProfileRunner> runner, const QSharedPointer<Logger> &logger)
+                         QSharedPointer<ProfileRunner> runner, QSharedPointer<NewsFeed> feed,
+                         const QSharedPointer<Logger> &logger)
     : settings(std::move(settings)),
       profiles(std::move(profiles)),
       versions(std::move(versions)),
@@ -15,6 +16,7 @@ Ttyh::Launcher::Launcher(QSharedPointer<SettingsManager> settings,
       checker(std::move(checker)),
       downloader(std::move(downloader)),
       runner(std::move(runner)),
+      feed(std::move(feed)),
       window(new MainWindow, &QObject::deleteLater),
       log(logger, "Launcher"),
       activeTask(Task::Nothing)
@@ -101,9 +103,14 @@ void Ttyh::Launcher::connectOnlineModeFlow()
         window->setProfiles(profiles->names(), settings->data.profile);
         window->setLocked(false);
 
-        if (!window->isOnline()) {
+        if (!result) {
             window->showMessage(tr("Failed to switch into the online mode!"));
+        } else {
+            feed->requestNews();
         }
+    });
+    connect(feed.data(), &NewsFeed::newsReceived, [=](const QString &contents) {
+        window->appendLog(contents);
     });
 }
 

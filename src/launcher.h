@@ -12,6 +12,7 @@
 #include "master/ttyhclient.h"
 #include "storage/filechecker.h"
 #include "storage/downloader.h"
+#include "news/newsfeed.h"
 #include "ui/mainwindow.h"
 
 namespace Ttyh {
@@ -21,6 +22,7 @@ using namespace Ttyh::Versions;
 using namespace Ttyh::Profiles;
 using namespace Ttyh::Master;
 using namespace Ttyh::Storage;
+using namespace Ttyh::News;
 
 class Launcher : public QObject
 {
@@ -31,7 +33,8 @@ public:
     Launcher(QSharedPointer<SettingsManager> settings, QSharedPointer<ProfilesManager> profiles,
              QSharedPointer<VersionsManager> versions, QSharedPointer<TtyhClient> client,
              QSharedPointer<FileChecker> checker, QSharedPointer<Downloader> downloader,
-             QSharedPointer<ProfileRunner> runner, const QSharedPointer<Logger> &logger);
+             QSharedPointer<ProfileRunner> runner, QSharedPointer<NewsFeed> feed,
+             const QSharedPointer<Logger> &logger);
 
     void start();
 
@@ -43,6 +46,7 @@ private:
     QSharedPointer<FileChecker> checker;
     QSharedPointer<Downloader> downloader;
     QSharedPointer<ProfileRunner> runner;
+    QSharedPointer<NewsFeed> feed;
     QSharedPointer<MainWindow> window;
     NamedLogger log;
 
