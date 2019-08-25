@@ -27,6 +27,7 @@ add_executable(ttyhlauncher WIN32 MACOSX_BUNDLE
   "utils/network.cpp"
   "utils/platform.cpp"
   "utils/downloadfilereply.cpp"
+  "utils/zip.cpp"
   "ui/mainwindow.cpp"
   "ui/profiledialog.cpp"
   "ui/skindialog.cpp"
@@ -47,11 +48,11 @@ set_target_properties(ttyhlauncher PROPERTIES
 )
 
 target_include_directories(ttyhlauncher PRIVATE
-  ${CONFIG_INCLUDE_DIR} ${QUAZIP_INCLUDE_DIRS}
+  ${CONFIG_INCLUDE_DIR} ${UNZIP_INCLUDE_DIRS}
 )
 
 target_link_libraries(ttyhlauncher
-  Qt5::Gui Qt5::Widgets Qt5::Network Qt5::Concurrent ${QUAZIP_LIBRARIES}
+  Qt5::Gui Qt5::Widgets Qt5::Network Qt5::Concurrent ${UNZIP_LIBRARIES}
 )
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "^(GNU|Clang)$")
