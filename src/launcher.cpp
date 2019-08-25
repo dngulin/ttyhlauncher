@@ -311,7 +311,8 @@ void Ttyh::Launcher::connectSkinUpload()
         connect(&d, &SkinDialog::uploadClicked, [=, &d](const QString &path, bool slim) {
             QFile file(path);
             if (!file.open(QIODevice::ReadOnly)) {
-                d.fail(tr("Failed to open the skin file!"));
+                d.showError(tr("Failed to open the skin file!"));
+                return;
             }
 
             client->uploadSkin(window->getUserName(), window->getPassword(), file.readAll(), slim);
@@ -319,11 +320,11 @@ void Ttyh::Launcher::connectSkinUpload()
 
         auto conn = connect(client.data(), &TtyhClient::skinUploaded, [=, &d](RequestResult res) {
             if (res == RequestResult::Success) {
-                d.success();
+                d.showSuccessAndClose();
                 return;
             }
 
-            d.fail(getRequestResultMessage(res));
+            d.showError(getRequestResultMessage(res));
         });
 
         d.exec();

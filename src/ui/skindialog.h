@@ -15,8 +15,8 @@ public:
     explicit SkinDialog(QWidget *parent = nullptr);
     ~SkinDialog() override;
 
-    void fail(const QString &error);
-    void success();
+    void showError(const QString &error);
+    void showSuccessAndClose();
 
 signals:
     void uploadClicked(const QString &path, bool slim);

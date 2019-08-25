@@ -21,7 +21,7 @@ SkinDialog::SkinDialog(QWidget *parent) : QDialog(parent), ui(new Ui::SkinDialog
         setEnabled(false);
 
         if (ui->pathEdit->text().isEmpty()) {
-            fail(tr("Skin file is not selected"));
+            showError(tr("Skin file is not selected"));
             return;
         }
 
@@ -34,12 +34,12 @@ SkinDialog::~SkinDialog()
     delete ui;
 }
 
-void SkinDialog::fail(const QString &error) {
+void SkinDialog::showError(const QString &error) {
     setEnabled(true);
     QMessageBox::critical(this, tr("Failed to upload the skin"), error);
 }
 
-void SkinDialog::success() {
+void SkinDialog::showSuccessAndClose() {
     QMessageBox::information(this, tr("Success"), tr("Skin is successfully uploaded!"));
     close();
 }
