@@ -76,7 +76,7 @@ void MainWindow::appendLog(const QString &msg)
             auto begin = match.capturedStart(1);
             auto end = match.capturedEnd(1);
 
-            auto pre = msg.mid(lastIndex, begin);
+            auto pre = msg.mid(lastIndex, begin - lastIndex);
             ui->textLog->insertPlainText(pre);
 
             auto url = match.captured(1);
