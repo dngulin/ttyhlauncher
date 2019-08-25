@@ -9,7 +9,7 @@ namespace Utils {
 struct Defer {
     std::function<void()> action;
 
-    Defer(std::function<void()> doLater) : action { doLater } {}
+    explicit Defer(std::function<void()> doLater) : action(std::move(doLater)) {}
     ~Defer() { action(); }
 };
 
