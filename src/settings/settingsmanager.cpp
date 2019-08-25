@@ -9,10 +9,13 @@ Ttyh::Settings::SettingsManager::SettingsManager(const QString &dirName,
                                                  const QSharedPointer<Logger> &logger):
                                                  log(logger, "Settings")
 {
-    auto cfgDirPath = QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation);
-    QDir().mkpath(cfgDirPath);
+    auto genericCfgDir = QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation);
+    QString sub("%1/%2");
 
-    cfgFilePath = QString("%1/%2/%3").arg(cfgDirPath, dirName, "settings.json");
+    auto cfgDir = sub.arg(genericCfgDir, dirName);
+    QDir().mkpath(cfgDir);
+
+    cfgFilePath = sub.arg(cfgDir, "settings.json");
     QFile file(cfgFilePath);
 
     if (file.open(QIODevice::ReadOnly)) {
