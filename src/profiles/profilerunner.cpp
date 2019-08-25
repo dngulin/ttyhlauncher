@@ -21,7 +21,7 @@ Ttyh::Profiles::ProfileRunner::ProfileRunner(const QString &dirName,
       log(logger, "Runner")
 {
     connect(&game, &QProcess::started, [=]() { log.info("Started!"); });
-    connect(&game, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
+    connect(&game, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
             [=](int exitCode, QProcess::ExitStatus exitStatus) {
                 QString msg("Process finished with the exit code %1");
                 log.info(msg.arg(QString::number(exitCode)));
@@ -57,6 +57,7 @@ Ttyh::Profiles::ProfileRunner::ProfileRunner(const QString &dirName,
         }
     });
 }
+
 bool Ttyh::Profiles::ProfileRunner::run(const ProfileInfo &info, const QString &userName,
                                         const QSize &launcherSize)
 {
