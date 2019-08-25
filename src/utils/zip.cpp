@@ -18,14 +18,8 @@ voidpf zOpenFile(voidpf, const void *filename, int mode)
     if (mode & ZLIB_FILEFUNC_MODE_READ) {
         qMode |= QIODevice::ReadOnly;
     }
-    if (mode & ZLIB_FILEFUNC_MODE_WRITE) {
-        qMode = QIODevice::WriteOnly;
-    }
-    if (mode & ZLIB_FILEFUNC_MODE_EXISTING) {
-        qMode |= QIODevice::ExistingOnly;
-    }
-    if (mode & ZLIB_FILEFUNC_MODE_CREATE) {
-        qMode |= QIODevice::NewOnly;
+    if (mode & (ZLIB_FILEFUNC_MODE_WRITE | ZLIB_FILEFUNC_MODE_CREATE)) {
+        qMode |= QIODevice::WriteOnly;
     }
 
     if (file->open(qMode)) {
