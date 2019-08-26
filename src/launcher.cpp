@@ -33,7 +33,20 @@ Ttyh::Launcher::Launcher(QSharedPointer<SettingsManager> settings,
 
 void Ttyh::Launcher::connectWindowEvents()
 {
-    connect(window.data(), &MainWindow::closed, [=]() { saveWindowState(); });
+    connect(window.data(), &MainWindow::closed, [=]() {
+        switch (activeTask) {
+        case Task::Checking:
+            checker->cancel();
+            break;
+        case Task::Downloading:
+            downloader->cancel();
+            break;
+        default:
+            break;
+        }
+
+        saveWindowState();
+    });
 }
 
 void Ttyh::Launcher::connectTaskEvents()
@@ -53,11 +66,9 @@ void Ttyh::Launcher::connectTaskEvents()
         case Task::Nothing:
             log.warning("Try to cancel an empty task!");
             break;
-
         case Task::Checking:
             checker->cancel();
             break;
-
         case Task::Downloading:
             downloader->cancel();
             break;
@@ -109,9 +120,8 @@ void Ttyh::Launcher::connectOnlineModeFlow()
             feed->requestNews();
         }
     });
-    connect(feed.data(), &NewsFeed::newsReceived, [=](const QString &contents) {
-        window->appendLog(contents);
-    });
+    connect(feed.data(), &NewsFeed::newsReceived,
+            [=](const QString &contents) { window->appendLog(contents); });
 }
 
 void Ttyh::Launcher::connectRunGameFlow()
