@@ -49,12 +49,10 @@ set_target_properties(ttyhlauncher PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
 )
 
-target_include_directories(ttyhlauncher PRIVATE
-  ${CONFIG_INCLUDE_DIR} ${UNZIP_INCLUDE_DIRS}
-)
+target_include_directories(ttyhlauncher PRIVATE ${CONFIG_INCLUDE_DIR})
 
 target_link_libraries(ttyhlauncher
-  Qt5::Gui Qt5::Widgets Qt5::Network Qt5::Concurrent ${UNZIP_LIBRARIES}
+  Qt5::Gui Qt5::Widgets Qt5::Network Qt5::Concurrent PkgConfig::Minizip
 )
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "^(GNU|Clang)$")

@@ -20,8 +20,8 @@ find_package(Qt5Network REQUIRED)
 find_package(Qt5Concurrent REQUIRED)
 find_package(Qt5LinguistTools REQUIRED)
 
-include(FindPkgConfig)
-pkg_check_modules(UNZIP REQUIRED minizip)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(Minizip REQUIRED IMPORTED_TARGET minizip)
 
 if(USE_GIT_VERSION AND GIT_FOUND)
   execute_process(COMMAND ${GIT_EXECUTABLE} "rev-parse" "--short" "HEAD"
