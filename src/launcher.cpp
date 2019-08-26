@@ -47,6 +47,9 @@ void Ttyh::Launcher::connectWindowEvents()
 
         saveWindowState();
     });
+
+    connect(window.data(), &MainWindow::resized,
+            [=](const QSize &size) { settings->data.windowSize = size; });
 }
 
 void Ttyh::Launcher::connectTaskEvents()
@@ -455,9 +458,5 @@ void Ttyh::Launcher::saveWindowState()
     }
 
     settings->data.hideWindowOnRun = window->isHideOnRun();
-
     settings->data.windowMaximized = window->isMaximized();
-    if (!settings->data.windowMaximized) {
-        settings->data.windowSize = window->size();
-    }
 }

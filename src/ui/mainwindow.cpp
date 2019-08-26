@@ -2,6 +2,7 @@
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QScrollBar>
 #include <QtWidgets/QCheckBox>
+#include <QResizeEvent>
 #include "mainwindow.h"
 #include "aboutdialog.h"
 #include "ui_mainwindow.h"
@@ -242,6 +243,14 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     emit closed();
     QWidget::closeEvent(event);
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    QWidget::resizeEvent(event);
+    if (!isMaximized() && !isFullScreen()) {
+        emit resized(event->size());
+    }
 }
 
 QString MainWindow::getSizeString(quint64 size)

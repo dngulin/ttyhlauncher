@@ -51,22 +51,25 @@ signals:
     void playClicked();
     void uploadSkinClicked();
     void taskCancelled();
-    void closed();
 
     void profileEditClicked();
     void profileCreateClicked();
     void profileRemoveClicked();
 
+    void closed();
+    void resized(const QSize &size);
+
 private:
     Ui::MainWindow *ui;
-    QAction* actionCreateProfile;
-    QAction* actionEditProfile;
-    QAction* actionRemoveProfile;
-
-
-    void closeEvent(QCloseEvent *event) override;
+    QAction *actionCreateProfile;
+    QAction *actionEditProfile;
+    QAction *actionRemoveProfile;
 
     static QString getSizeString(quint64 size);
+
+protected:
+    void closeEvent(QCloseEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
 };
 
 #endif // MAINWINDOW_H
