@@ -1,4 +1,3 @@
-#include <QtCore/QStandardPaths>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QDir>
 #include <QtNetwork/QNetworkReply>
@@ -20,24 +19,19 @@ using namespace Logs;
 using namespace Storage;
 using namespace Utils;
 
-VersionsManager::VersionsManager(const QString &dirName, QString url,
+VersionsManager::VersionsManager(QString workDir, QString url,
                                  QSharedPointer<QNetworkAccessManager> nam,
                                  const QSharedPointer<Logger> &logger)
-    : storeUrl(std::move(url)),
+    : dataPath(std::move(workDir)),
+      versionsPath(QString("%1/%2").arg(dataPath, "versions")),
+      indexPath(QString("%1/%2").arg(versionsPath, "prefixes.json")),
+      storeUrl(std::move(url)),
       nam(std::move(nam)),
       log(logger, "Versions"),
       fetchingPrefixes(false),
       fetchingVersionIndexes(false)
 {
-    auto pattern = QString("%1/%2");
-    auto basePath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
-
-    dataPath = pattern.arg(basePath, dirName);
-    versionsPath = pattern.arg(dataPath, "versions");
-
     QDir().mkpath(versionsPath);
-
-    indexPath = QString("%1/%2").arg(versionsPath, "prefixes.json");
     QFile indexFile(indexPath);
 
     if (indexFile.open(QIODevice::ReadOnly)) {

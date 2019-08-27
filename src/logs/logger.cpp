@@ -1,14 +1,12 @@
-#include <QtCore/QStandardPaths>
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
 #include <QtCore/QDateTime>
 #include "logger.h"
 
-Ttyh::Logs::Logger::Logger(const QString &dirName, int logsCount) : QObject(nullptr)
+Ttyh::Logs::Logger::Logger(const QString &workDir, int logsCount)
 {
-    auto dataPath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
-    auto logsPath = QString("%1/%2/%3").arg(dataPath, dirName, "logs");
+    auto logsPath = QString("%1/%2").arg(workDir, "logs");
     QDir().mkpath(logsPath);
 
     auto logFilePath = QString("%1/ttyh-launcher.%2.log");

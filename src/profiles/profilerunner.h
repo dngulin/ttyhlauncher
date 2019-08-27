@@ -17,7 +17,7 @@ class ProfileRunner : public QObject
 {
     Q_OBJECT
 public:
-    ProfileRunner(const QString &dirName, const QSharedPointer<Logger> &logger);
+    ProfileRunner(QString dirName, const QSharedPointer<Logger> &logger);
 
     bool run(const ProfileInfo &data, const QString &userName, const QSize &launcherSize);
     bool run(const ProfileInfo &info, const QString &userName, const QString &accessToken,

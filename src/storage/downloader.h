@@ -17,7 +17,7 @@ class Downloader : public QObject
 {
     Q_OBJECT
 public:
-    Downloader(QString storageUrl, const QString &dirName,
+    Downloader(QString dirName, QString storageUrl,
                QSharedPointer<QNetworkAccessManager> nam,
                const QSharedPointer<Logs::Logger> &logger);
 
@@ -30,11 +30,11 @@ signals:
     void finished(bool cancelled, bool result);
 
 private:
-    const QString storeUrl;
     const QString dataPath;
     const QString versionsPath;
+    const int prefixLength;
+    const QString storeUrl;
 
-    int prefixLength;
     bool downloading;
 
     QString currentFileName;

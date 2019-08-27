@@ -11,7 +11,7 @@ namespace Profiles {
 class ProfilesManager
 {
 public:
-    ProfilesManager(const QString &dirName, const QSharedPointer<Logs::Logger> &logger);
+    ProfilesManager(QString workDir, const QSharedPointer<Logs::Logger> &logger);
 
     bool isEmpty() const;
     QStringList names() const;

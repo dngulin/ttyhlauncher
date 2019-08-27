@@ -22,7 +22,7 @@ class VersionsManager : public QObject
 {
     Q_OBJECT
 public:
-    VersionsManager(const QString &dirName, QString url, QSharedPointer<QNetworkAccessManager> nam,
+    VersionsManager(QString workDir, QString url, QSharedPointer<QNetworkAccessManager> nam,
                     const QSharedPointer<Logs::Logger> &logger);
 
     void fetchPrefixes();
@@ -38,14 +38,13 @@ signals:
     void onFetchVersionIndexesResult(bool result);
 
 private:
+    const QString dataPath;
+    const QString versionsPath;
+    const QString indexPath;
     const QString storeUrl;
     QSharedPointer<QNetworkAccessManager> nam;
     Logs::NamedLogger log;
 
-    QString dataPath;
-    QString versionsPath;
-
-    QString indexPath;
     Json::PrefixesIndex index;
     QHash<QString, Prefix> prefixes;
 

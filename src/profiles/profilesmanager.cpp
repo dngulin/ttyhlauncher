@@ -1,4 +1,3 @@
-#include <QtCore/QStandardPaths>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QDir>
 #include <QtCore/QSet>
@@ -11,11 +10,8 @@
 
 namespace Ttyh {
 namespace Profiles {
-ProfilesManager::ProfilesManager(const QString &dirName, const QSharedPointer<Logs::Logger> &logger)
-    : dataPath([&dirName]() {
-          auto basePath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
-          return QString("%1/%2").arg(basePath, dirName);
-      }()),
+ProfilesManager::ProfilesManager(QString workDir, const QSharedPointer<Logs::Logger> &logger)
+    : dataPath(std::move(workDir)),
       log(logger, "Profiles")
 {
     auto profilesPath = QString("%1/%2").arg(dataPath, "profiles");

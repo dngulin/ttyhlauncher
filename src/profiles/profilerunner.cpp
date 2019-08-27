@@ -1,5 +1,4 @@
 #include <QApplication>
-#include <QtCore/QStandardPaths>
 #include <QtCore/QUuid>
 #include <QtCore/QDir>
 #include <QtCore/QHash>
@@ -12,13 +11,8 @@
 
 using namespace Ttyh::Utils;
 
-Ttyh::Profiles::ProfileRunner::ProfileRunner(const QString &dirName,
-                                             const QSharedPointer<Logger> &logger)
-    : dataPath([&dirName]() {
-          auto basePath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
-          return QString("%1/%2").arg(basePath, dirName);
-      }()),
-      log(logger, "Runner")
+Ttyh::Profiles::ProfileRunner::ProfileRunner(QString dirName, const QSharedPointer<Logger> &logger)
+    : dataPath(std::move(dirName)), log(logger, "Runner")
 {
     connect(&game, &QProcess::started, [=]() { log.info("Started!"); });
     connect(&game, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),

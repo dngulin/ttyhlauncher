@@ -1,18 +1,14 @@
-#include <QtCore/QStandardPaths>
 #include "downloader.h"
 
 using namespace Ttyh::Utils;
 
-Ttyh::Storage::Downloader::Downloader(QString storageUrl, const QString &dirName,
+Ttyh::Storage::Downloader::Downloader(QString dirName, QString storageUrl,
                                       QSharedPointer<QNetworkAccessManager> nam,
-                                      const QSharedPointer<Ttyh::Logs::Logger> &logger)
-    : storeUrl(std::move(storageUrl)),
-      dataPath([&dirName]() {
-          auto basePath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
-          return QString("%1/%2").arg(basePath, dirName);
-      }()),
+                                      const QSharedPointer<Logs::Logger> &logger)
+    : dataPath(std::move(dirName)),
       versionsPath(QString("%1/%2").arg(dataPath, "versions")),
       prefixLength(dataPath.length() + 1),
+      storeUrl(std::move(storageUrl)),
       downloading(false),
       currentFileName(""),
       currentSize(0),

@@ -1,15 +1,10 @@
 #include <QtConcurrent/QtConcurrentFilter>
 #include <QtCore/QCryptographicHash>
-#include <QtCore/QStandardPaths>
 #include "filechecker.h"
 
 Ttyh::Storage::FileChecker::FileChecker(const QString &dirName,
                                         const QSharedPointer<Logs::Logger> &logger)
-    : prefixLength([&dirName]() {
-          auto pattern = QString("%1/%2/");
-          auto basePath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
-          return pattern.arg(basePath, dirName).length();
-      }()),
+    : prefixLength(dirName.length() + 1),
       log(logger, "FileChecker")
 {
     connect(&watcher, &QFutureWatcher<FileInfo>::progressRangeChanged,

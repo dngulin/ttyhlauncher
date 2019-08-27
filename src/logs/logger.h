@@ -10,7 +10,7 @@ class Logger : public QObject
 {
     Q_OBJECT
 public:
-    Logger(const QString &dirName, int logsCount);
+    Logger(const QString &workDir, int logsCount);
 
     void info(const QString &who, const QString &msg);
     void warning(const QString &who, const QString &msg);

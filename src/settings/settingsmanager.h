@@ -12,7 +12,7 @@ namespace Settings {
 class SettingsManager
 {
 public:
-    SettingsManager(const QString &dirName, const QSharedPointer<Logs::Logger> &logger);
+    SettingsManager(const QString &workDir, const QSharedPointer<Logs::Logger> &logger);
     ~SettingsManager();
 
     SettingsData data;
@@ -24,8 +24,6 @@ private:
     const QString cfgFilePath;
     const bool freshRun;
     Logs::NamedLogger log;
-
-    void xorBytes(QByteArray &bytes);
 };
 }
 }
