@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>334</width>
-    <height>236</height>
+    <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,7 +26,7 @@
       <string/>
      </property>
      <property name="pixmap">
-      <pixmap resource="../../resources/resources.qrc">:/resources/favicon.png</pixmap>
+      <pixmap resource="../../resources/resources.qrc">:/resources/icon-big.png</pixmap>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
