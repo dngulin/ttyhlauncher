@@ -51,14 +51,12 @@ int main(int argc, char *argv[])
     auto optVersion = args.addVersionOption();
 
     QCommandLineOption optDirectory({ "d", "directory" }, "Set the data directory", "dataDir");
-    args.addOption(optDirectory);
-
     QCommandLineOption optStore({ "s", "store" }, "Set the store url", "storeUrl");
-    args.addOption(optStore);
-
     QCommandLineOption optMaster({ "m", "master" }, "Set the master url", "masterUrl");
-    args.addOption(optMaster);
 
+    args.addOption(optDirectory);
+    args.addOption(optStore);
+    args.addOption(optMaster);
     args.process(a);
 
     QString storeUrl = "https://ttyh.ru/files/newstore";
