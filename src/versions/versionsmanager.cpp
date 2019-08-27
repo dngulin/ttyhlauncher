@@ -106,7 +106,19 @@ void VersionsManager::fetchPrefixes()
             return;
         }
 
-        auto remoteIndex = PrefixesIndex(QJsonDocument::fromJson(reply->readAll()).object());
+        auto doc = QJsonDocument::fromJson(reply->readAll());
+        if (!doc.isObject()) {
+            log.error("Failed to parse the prefixes index!");
+            setFetchPrefixesResult(false);
+            return;
+        }
+
+        auto remoteIndex = PrefixesIndex(doc.object());
+        if (remoteIndex.prefixes.isEmpty()) {
+            log.error("Invalid prefixes index!");
+            setFetchPrefixesResult(false);
+            return;
+        }
 
         foreach (auto id, remoteIndex.prefixes.keys()) {
             index.prefixes[id] = remoteIndex.prefixes[id];
