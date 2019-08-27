@@ -58,6 +58,9 @@ void MainWindow::setLocked(bool locked)
 {
     ui->menubar->setEnabled(!locked);
     ui->widgetForm->setEnabled(!locked);
+
+    if (!locked)
+        ui->buttonPlay->setFocus();
 }
 
 void MainWindow::appendLog(const QString &msg)
