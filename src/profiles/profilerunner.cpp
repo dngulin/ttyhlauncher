@@ -47,7 +47,7 @@ Ttyh::Profiles::ProfileRunner::ProfileRunner(QString dirName, const QSharedPoint
                 QString msg("Process finished with the exit code %1");
                 log.info(msg.arg(QString::number(exitCode)));
 
-                emit finished(exitStatus == QProcess::NormalExit);
+                emit finished((exitStatus == QProcess::NormalExit) && (exitCode == 0));
             });
 
     connect(&game, &QProcess::readyReadStandardOutput,
