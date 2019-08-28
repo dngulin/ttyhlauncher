@@ -48,7 +48,7 @@
     </message>
     <message>
         <location filename="../src/ui/mainwindow.ui" line="220"/>
-        <location filename="../src/ui/mainwindow.cpp" line="161"/>
+        <location filename="../src/ui/mainwindow.cpp" line="165"/>
         <source>Play</source>
         <translation>Играть</translation>
     </message>
@@ -93,42 +93,42 @@
         <translation>О программе</translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="21"/>
+        <location filename="../src/ui/mainwindow.cpp" line="22"/>
         <source>Edit...</source>
         <translation>Изменить...</translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="20"/>
+        <location filename="../src/ui/mainwindow.cpp" line="21"/>
         <source>Create...</source>
         <translation>Создать...</translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="22"/>
+        <location filename="../src/ui/mainwindow.cpp" line="23"/>
         <source>Remove...</source>
         <translation>Удалить...</translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="161"/>
+        <location filename="../src/ui/mainwindow.cpp" line="165"/>
         <source>Play (Offline)</source>
         <translation>Играть (Оффлайн)</translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="199"/>
+        <location filename="../src/ui/mainwindow.cpp" line="203"/>
         <source>Information</source>
         <translation>Информация</translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="204"/>
+        <location filename="../src/ui/mainwindow.cpp" line="208"/>
         <source>Oops! Something went wrong</source>
         <translation>Упс! Что-то пошло не так</translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="209"/>
+        <location filename="../src/ui/mainwindow.cpp" line="213"/>
         <source>Downloads are required</source>
         <translation>Требуется загрузка файлов</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/ui/mainwindow.cpp" line="211"/>
+        <location filename="../src/ui/mainwindow.cpp" line="215"/>
         <source>Need to download %n files with the total size</source>
         <translation>
             <numerusform>Для запуска игры необходимо загрузить %n файл размером</numerusform>
@@ -137,42 +137,42 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="213"/>
+        <location filename="../src/ui/mainwindow.cpp" line="217"/>
         <source>Do you want to continue?</source>
         <translation>Желаете продолжить?</translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="223"/>
+        <location filename="../src/ui/mainwindow.cpp" line="227"/>
         <source>Confirm the profile removing</source>
         <translation>Подтвердите удаление профиля</translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="225"/>
+        <location filename="../src/ui/mainwindow.cpp" line="229"/>
         <source>All profile data will be lost. Do you want to delete the &apos;%1&apos; profile?</source>
         <translation>Все данные профиля будут потеряны. Вы действительно хотите удлить профиль &quot;%1&quot;?</translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="228"/>
+        <location filename="../src/ui/mainwindow.cpp" line="232"/>
         <source>I&apos;m sure I want to remove the profile</source>
         <translation>Я уверен, что хочу удалить профиль</translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="257"/>
+        <location filename="../src/ui/mainwindow.cpp" line="269"/>
         <source>GiB</source>
         <translation>ГиБ</translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="260"/>
+        <location filename="../src/ui/mainwindow.cpp" line="272"/>
         <source>MiB</source>
         <translation>МиБ</translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="263"/>
+        <location filename="../src/ui/mainwindow.cpp" line="275"/>
         <source>KiB</source>
         <translation>КиБ</translation>
     </message>
     <message>
-        <location filename="../src/ui/mainwindow.cpp" line="265"/>
+        <location filename="../src/ui/mainwindow.cpp" line="277"/>
         <source>B</source>
         <translation>Б</translation>
     </message>
@@ -360,89 +360,94 @@
 <context>
     <name>Ttyh::Launcher</name>
     <message>
-        <location filename="../src/launcher.cpp" line="105"/>
+        <location filename="../src/launcher.cpp" line="121"/>
         <source>Failed to switch into the online mode!</source>
         <translation>Не удалось перейти в режим онлайн!</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="127"/>
-        <location filename="../src/launcher.cpp" line="243"/>
-        <location filename="../src/launcher.cpp" line="289"/>
+        <location filename="../src/launcher.cpp" line="147"/>
+        <location filename="../src/launcher.cpp" line="265"/>
+        <location filename="../src/launcher.cpp" line="311"/>
         <source>Selected profile does not exist!</source>
         <translation>Выбранный профиль не существует!</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="135"/>
+        <location filename="../src/launcher.cpp" line="155"/>
         <source>Failed to resolve the latest prefix version!</source>
         <translation>Не удалось определить последнюю версию!</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="159"/>
+        <location filename="../src/launcher.cpp" line="175"/>
         <source>Failed to get the version indexes!</source>
         <translation>Не удалось получить индексы версии!</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="202"/>
+        <location filename="../src/launcher.cpp" line="218"/>
         <source>Failed to download version files!</source>
         <translation>Не удалось загрузить файлы!</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="116"/>
+        <location filename="../src/launcher.cpp" line="136"/>
         <source>Failed to install version files!</source>
         <translation>Не удалось установить файлы версии в профиль!</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="233"/>
+        <location filename="../src/launcher.cpp" line="241"/>
+        <source>Failed to start the game!</source>
+        <translation>Не удалось запустить игру!</translation>
+    </message>
+    <message>
+        <location filename="../src/launcher.cpp" line="255"/>
         <source>Game finished with a error!</source>
         <translation>Игра завершилась с ошибкой!</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="263"/>
+        <location filename="../src/launcher.cpp" line="285"/>
         <source>Failed to save profile data!</source>
         <translation>Не удалось сохранить данные профиля!</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="271"/>
+        <location filename="../src/launcher.cpp" line="293"/>
         <source>New Profile</source>
         <translation>Новый профиль</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="301"/>
+        <location filename="../src/launcher.cpp" line="323"/>
         <source>Failed to remove the selected profile!</source>
         <translation>Не удалось удалить выбранный профиль!</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="314"/>
+        <location filename="../src/launcher.cpp" line="336"/>
         <source>Failed to open the skin file!</source>
         <translation>Не удалось открыть файл скина!</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="385"/>
+        <location filename="../src/launcher.cpp" line="408"/>
         <source>Checking files</source>
         <translation>Проверка файлов</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="387"/>
+        <location filename="../src/launcher.cpp" line="410"/>
         <source>Downloading files</source>
         <translation>Загрузка файлов</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="399"/>
+        <location filename="../src/launcher.cpp" line="422"/>
         <source>Failed to connect to the server</source>
         <translation>Не удалось подключиться к серверу</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="401"/>
+        <location filename="../src/launcher.cpp" line="424"/>
         <source>Incorrect login or password</source>
         <translation>Неправильный логин или пароль</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="403"/>
+        <location filename="../src/launcher.cpp" line="426"/>
         <source>Bad request data</source>
         <translation>Некорректные данные в запросе</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="405"/>
+        <location filename="../src/launcher.cpp" line="428"/>
         <source>Incorrect server reply</source>
         <translation>Некорректный ответ сервера</translation>
     </message>
