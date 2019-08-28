@@ -57,15 +57,16 @@ void Ttyh::Master::TtyhClient::login(const QString &login, const QString &pass)
         }
 
         LoginReplyData data(QJsonDocument::fromJson(reply->readAll()).object());
-        if (!data.isValid()) {
-            log.error("Bad reply!");
-            emit logged(RequestResult::ReplyError, QString(), QString());
-            return;
-        }
 
         if (!data.error.isEmpty()) {
             log.error(QString("%1: '%2'").arg(data.error, data.errorMessage));
             emit logged(RequestResult::RequestError, QString(), QString());
+            return;
+        }
+
+        if (!data.isValid()) {
+            log.error("Bad reply!");
+            emit logged(RequestResult::ReplyError, QString(), QString());
             return;
         }
 

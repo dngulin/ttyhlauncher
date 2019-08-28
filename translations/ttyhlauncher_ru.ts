@@ -365,24 +365,24 @@
         <translation>Не удалось перейти в режим онлайн!</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="147"/>
-        <location filename="../src/launcher.cpp" line="265"/>
-        <location filename="../src/launcher.cpp" line="311"/>
+        <location filename="../src/launcher.cpp" line="156"/>
+        <location filename="../src/launcher.cpp" line="275"/>
+        <location filename="../src/launcher.cpp" line="321"/>
         <source>Selected profile does not exist!</source>
         <translation>Выбранный профиль не существует!</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="155"/>
+        <location filename="../src/launcher.cpp" line="164"/>
         <source>Failed to resolve the latest prefix version!</source>
         <translation>Не удалось определить последнюю версию!</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="175"/>
+        <location filename="../src/launcher.cpp" line="184"/>
         <source>Failed to get the version indexes!</source>
         <translation>Не удалось получить индексы версии!</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="218"/>
+        <location filename="../src/launcher.cpp" line="228"/>
         <source>Failed to download version files!</source>
         <translation>Не удалось загрузить файлы!</translation>
     </message>
@@ -392,64 +392,69 @@
         <translation>Не удалось установить файлы версии в профиль!</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="241"/>
+        <location filename="../src/launcher.cpp" line="251"/>
         <source>Failed to start the game!</source>
         <translation>Не удалось запустить игру!</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="255"/>
+        <location filename="../src/launcher.cpp" line="265"/>
         <source>Game finished with a error!</source>
         <translation>Игра завершилась с ошибкой!</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="285"/>
+        <location filename="../src/launcher.cpp" line="295"/>
         <source>Failed to save profile data!</source>
         <translation>Не удалось сохранить данные профиля!</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="293"/>
+        <location filename="../src/launcher.cpp" line="303"/>
         <source>New Profile</source>
         <translation>Новый профиль</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="323"/>
+        <location filename="../src/launcher.cpp" line="333"/>
         <source>Failed to remove the selected profile!</source>
         <translation>Не удалось удалить выбранный профиль!</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="336"/>
+        <location filename="../src/launcher.cpp" line="349"/>
         <source>Failed to open the skin file!</source>
         <translation>Не удалось открыть файл скина!</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="408"/>
+        <location filename="../src/launcher.cpp" line="421"/>
         <source>Checking files</source>
         <translation>Проверка файлов</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="410"/>
+        <location filename="../src/launcher.cpp" line="423"/>
         <source>Downloading files</source>
         <translation>Загрузка файлов</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="422"/>
+        <location filename="../src/launcher.cpp" line="435"/>
         <source>Failed to connect to the server</source>
         <translation>Не удалось подключиться к серверу</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="424"/>
+        <location filename="../src/launcher.cpp" line="437"/>
         <source>Incorrect login or password</source>
         <translation>Неправильный логин или пароль</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="426"/>
+        <location filename="../src/launcher.cpp" line="439"/>
         <source>Bad request data</source>
         <translation>Некорректные данные в запросе</translation>
     </message>
     <message>
-        <location filename="../src/launcher.cpp" line="428"/>
+        <location filename="../src/launcher.cpp" line="441"/>
         <source>Incorrect server reply</source>
         <translation>Некорректный ответ сервера</translation>
+    </message>
+    <message>
+        <location filename="../src/launcher.cpp" line="482"/>
+        <source>Need to specify the login and password</source>
+        <translation type="unfinished">Необходимо указать логин и пароль</translation>
     </message>
 </context>
 </TS>

@@ -137,8 +137,15 @@ void Ttyh::Launcher::connectRunGameFlow()
             window->setLocked(false);
             return false;
         }
-
         return true;
+    };
+
+    auto tryLogin = [=]() {
+        if (!checkLoginData()) {
+            window->setLocked(false);
+            return;
+        }
+        client->login(window->getUserName(), window->getPassword());
     };
 
     connect(window.data(), &MainWindow::playClicked, [=]() {
@@ -190,7 +197,8 @@ void Ttyh::Launcher::connectRunGameFlow()
 
         if (files.isEmpty()) {
             if (tryInstallVersionFiles())
-                client->login(window->getUserName(), window->getPassword());
+                tryLogin();
+
             return;
         }
 
@@ -221,7 +229,7 @@ void Ttyh::Launcher::connectRunGameFlow()
         }
 
         if (tryInstallVersionFiles())
-            client->login(window->getUserName(), window->getPassword());
+            tryLogin();
     });
     connect(client.data(), &TtyhClient::logged,
             [=](RequestResult result, const QString &accessToken, const QString &clientToken) {
@@ -328,6 +336,9 @@ void Ttyh::Launcher::connectProfileActions()
 void Ttyh::Launcher::connectSkinUpload()
 {
     connect(window.data(), &MainWindow::uploadSkinClicked, [=]() {
+        if (!checkLoginData())
+            return;
+
         SkinDialog d(window.data());
 
         connect(&d, &SkinDialog::uploadClicked, [=, &d](const QString &path, bool slim) {
@@ -461,4 +472,14 @@ void Ttyh::Launcher::saveWindowState()
 
     settings->data.hideWindowOnRun = window->isHideOnRun();
     settings->data.windowMaximized = window->isMaximized();
+}
+
+bool Ttyh::Launcher::checkLoginData()
+{
+    if (window->getUserName().isEmpty() || window->getPassword().isEmpty()) {
+        window->showError(tr("Need to specify the login and password"));
+        return false;
+    }
+
+    return true;
 }

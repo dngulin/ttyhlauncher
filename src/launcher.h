@@ -64,6 +64,8 @@ private:
     void connectProfileActions();
     void connectSkinUpload();
 
+    bool checkLoginData();
+
     void loadWindowState();
     void saveWindowState();
 
