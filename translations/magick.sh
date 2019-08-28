@@ -16,7 +16,10 @@ for i in $(seq 1 "$COUNT"); do
         
         NUMERUS="$(xmlstarlet sel -T -t -v "(TS/context/message)[$i]/@numerus" "$TARGET" || true)"
         if [ "$NUMERUS" = 'yes' ]; then
-            xmlstarlet ed -L -u "((TS/context/message/translation)[$i]/numerusform)[1]" -v "$TRS" "$TARGET"
+            NTRS=$(sed 's/%Н/%n/g' <<< "$TRS")
+            xmlstarlet ed -L -u "((TS/context/message/translation)[$i]/numerusform)[1]" -v "$NTRS" "$TARGET"
+            xmlstarlet ed -L -u "((TS/context/message/translation)[$i]/numerusform)[2]" -v "$NTRS" "$TARGET"
+            xmlstarlet ed -L -u "((TS/context/message/translation)[$i]/numerusform)[3]" -v "$NTRS" "$TARGET"
         else
             xmlstarlet ed -L -u "(TS/context/message/translation)[$i]" -v "$TRS" "$TARGET"
         fi
