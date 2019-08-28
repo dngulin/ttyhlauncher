@@ -6,8 +6,9 @@ Ttyh::Json::PrefixVersionsIndex::PrefixVersionsIndex(const QJsonObject &jObject)
 {
     auto jVersions = jObject["versions"].toArray();
     foreach (auto jVersion, jVersions) {
-        auto jId = jVersion.toObject()["id"];
-        if (jId.isString())
-            versions << jId.toString();
+        auto jVersionObj = jVersion.toObject();
+        auto version = jVersionObj["id"].toString();
+        if (!version.isEmpty())
+            versions << version;
     }
 }

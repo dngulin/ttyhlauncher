@@ -23,8 +23,9 @@ Ttyh::Json::VersionIndex::VersionIndex(const QJsonObject &jObject)
     const QString argumentsKey = "arguments";
     if (jObject.contains(argumentsKey)) {
         foreach (auto token, jObject[argumentsKey].toObject()["game"].toArray()) {
-            if (token.isString())
-                gameArguments << token.toString();
+            auto argument = token.toString();
+            if (!argument.isEmpty())
+                gameArguments << argument;
         }
     } else {
         gameArguments = jObject["minecraftArguments"].toString().split(' ');
