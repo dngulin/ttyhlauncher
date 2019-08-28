@@ -14,20 +14,10 @@ using namespace Ttyh::Utils;
 Ttyh::Profiles::ProfileRunner::ProfileRunner(QString dirName, const QSharedPointer<Logger> &logger)
     : dataPath(std::move(dirName)), log(logger, "Runner")
 {
-    connect(&game, &QProcess::started, [=]() { log.info("Started!"); });
-    connect(&game, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-            [=](int exitCode, QProcess::ExitStatus exitStatus) {
-                QString msg("Process finished with the exit code %1");
-                log.info(msg.arg(QString::number(exitCode)));
-
-                emit finished(exitStatus == QProcess::NormalExit);
-            });
-
-    connect(&game, &QProcess::readyReadStandardOutput,
-            [=]() { logger->raw(game.readAllStandardOutput().trimmed()); });
-    connect(&game, &QProcess::readyReadStandardError,
-            [=]() { logger->raw(game.readAllStandardError().trimmed()); });
-
+    connect(&game, &QProcess::started, [=]() {
+        log.info("Started!");
+        emit startHandled(true);
+    });
     connect(&game, &QProcess::errorOccurred, [=](QProcess::ProcessError error) {
         switch (error) {
         case QProcess::FailedToStart:
@@ -49,7 +39,21 @@ Ttyh::Profiles::ProfileRunner::ProfileRunner(QString dirName, const QSharedPoint
             log.error("Something went wrong!");
             break;
         }
+        emit startHandled(false);
     });
+
+    connect(&game, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+            [=](int exitCode, QProcess::ExitStatus exitStatus) {
+                QString msg("Process finished with the exit code %1");
+                log.info(msg.arg(QString::number(exitCode)));
+
+                emit finished(exitStatus == QProcess::NormalExit);
+            });
+
+    connect(&game, &QProcess::readyReadStandardOutput,
+            [=]() { logger->raw(game.readAllStandardOutput().trimmed()); });
+    connect(&game, &QProcess::readyReadStandardError,
+            [=]() { logger->raw(game.readAllStandardError().trimmed()); });
 }
 
 bool Ttyh::Profiles::ProfileRunner::run(const ProfileInfo &info, const QString &userName,

@@ -24,6 +24,7 @@ public:
              const QString &clientToken, const QSize &launcherSize);
 
 signals:
+    void startHandled(bool result);
     void finished(bool result);
 
 private:

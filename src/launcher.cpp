@@ -162,10 +162,6 @@ void Ttyh::Launcher::connectRunGameFlow()
 
         if (!window->isOnline()) {
             if (tryInstallVersionFiles()) {
-
-                if (window->isHideOnRun())
-                    window->hide();
-
                 runner->run(*profileInfo, window->getUserName(), window->size());
             }
             return;
@@ -235,19 +231,25 @@ void Ttyh::Launcher::connectRunGameFlow()
                     return;
                 }
 
-                if (window->isHideOnRun()) {
-                    window->hide();
-                }
-
                 auto userName = window->getUserName();
                 runner->run(*profileInfo, userName, accessToken, clientToken, window->size());
             });
+
+    connect(runner.data(), &ProfileRunner::startHandled, [=](bool result) {
+        if (!result) {
+            window->setLocked(false);
+            window->showError(tr("Failed to start the game!"));
+            return;
+        }
+
+        if (window->isHideOnRun())
+            window->hide();
+    });
     connect(runner.data(), &ProfileRunner::finished, [=](bool result) {
         window->setLocked(false);
 
-        if (window->isHideOnRun()) {
+        if (window->isHideOnRun())
             window->show();
-        }
 
         if (!result) {
             window->showError(tr("Game finished with a error!"));
