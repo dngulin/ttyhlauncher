@@ -1,164 +1,120 @@
-#include "launcherwindow.h"
-
-#include "logger.h"
-#include "settings.h"
-
 #include <QApplication>
-#include <QSplashScreen>
-#include <QBitmap>
-#include <QMessageBox>
+#include <QtCore/QSharedPointer>
+#include <QtCore/QTranslator>
+#include <QtCore/QCommandLineParser>
+#include <QtCore/QDir>
+#include <QtCore/QStandardPaths>
+
+#include "config.h"
+#include "launcher.h"
+#include "logs/logger.h"
+#include "settings/settingsmanager.h"
+#include "versions/versionsmanager.h"
+#include "profiles/profilesmanager.h"
+#include "profiles/profilerunner.h"
+#include "master/ttyhclient.h"
+#include "storage/filechecker.h"
+#include "storage/downloader.h"
+#include "news/newsfeed.h"
+#include "utils/migrations.h"
+
+using namespace Ttyh;
+using namespace Ttyh::Logs;
+using namespace Ttyh::Settings;
+using namespace Ttyh::Versions;
+using namespace Ttyh::Profiles;
+using namespace Ttyh::Master;
+using namespace Ttyh::News;
+using namespace Ttyh::Storage;
+
+template<typename T>
+using QSP = QSharedPointer<T>;
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    // Setup translation
+    QApplication::setApplicationName("TtyhLauncher");
+    QApplication::setApplicationVersion(PROJECT_VERSION);
+
     QTranslator t;
     QDate today = QDate::currentDate();
-    if (today.month() == 4 && today.day() == 1)
-    {
+    if (today.month() == 4 && today.day() == 1) {
         t.load(":/translations/koi7.qm");
-    }
-    else
-    {
+    } else {
         t.load(":/translations/ru.qm");
     }
     QApplication::installTranslator(&t);
 
-    Settings::instance();
-    Logger::logger();
-
-#ifdef Q_OS_WIN
     QCommandLineParser args;
+    auto optHelp = args.addHelpOption();
+    auto optVersion = args.addVersionOption();
 
-    QCommandLineOption argUpdate("u", "Update path", "path");
-    QCommandLineOption argRemove("r", "Remove path", "path");
+    QCommandLineOption optDirectory({ "d", "directory" }, "Set the data directory", "dataDir");
+    QCommandLineOption optStore({ "s", "store" }, "Set the store url", "storeUrl");
+    QCommandLineOption optMaster({ "m", "master" }, "Set the master url", "masterUrl");
 
-    args.addOption(argUpdate);
-    args.addOption(argRemove);
-
+    args.addOption(optDirectory);
+    args.addOption(optStore);
+    args.addOption(optMaster);
     args.process(a);
 
-    QString who = QApplication::translate("main", "Launcher");
+    QString storeUrl = "https://ttyh.ru/files/newstore";
+    QString masterUrl = "https://master.ttyh.ru";
+    const QString newsUrl = "https://ttyh.ru/misc.php?page=feed";
 
-    if ( args.isSet(argUpdate) )
-    {
-        QString temp = a.applicationFilePath();
-        QString orig = args.value(argUpdate);
+    auto dataPath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
+    QString workDir = QString("%1/%2").arg(dataPath, "ttyhlauncher2");
 
-        QString msg = QApplication::translate("main", "Updating instance: %1");
-        Logger::logger()->appendLine( who, msg.arg(orig) );
+    if (args.isSet(optHelp))
+        args.showHelp();
 
-        QFile origFile(orig);
-        for (int i = 0; i < 25; i++)
-        {
-            if ( origFile.open(QIODevice::ReadWrite) )
-            {
-                origFile.close();
-                break;
-            }
+    if (args.isSet(optVersion))
+        args.showVersion();
 
-            QThread::usleep(10);
-        }
+    if (args.isSet(optStore))
+        storeUrl = args.value(optStore);
 
-        if ( QFile::exists(orig) )
-        {
-            if ( !QFile::remove(orig) )
-            {
-                QString title = QApplication::translate(
-                    "main", "Update error");
-                QString text = QApplication::translate(
-                    "main", "Can't remove old instance!");
+    if (args.isSet(optMaster))
+        masterUrl = args.value(optMaster);
 
-                Logger::logger()->appendLine(who, text);
+    if (args.isSet(optDirectory)) {
+        QDir dir(args.value(optDirectory));
+        auto isAbsolute = dir.makeAbsolute();
+        workDir = dir.absolutePath();
 
-                QMessageBox::critical(NULL, title, text);
-            }
-        }
-
-        if ( !QFile::copy(temp, orig) )
-        {
-            QString title = QApplication::translate("main", "Update error");
-            QString text = QApplication::translate(
-                "main", "Can't copy new instance!");
-
-            Logger::logger()->appendLine(who, text);
-
-            QMessageBox::critical(NULL, title, text);
-        }
-        else
-        {
-            if ( QProcess::startDetached(orig, QStringList() << "-r" << temp) )
-            {
-                return 0;
-            }
-            else
-            {
-                QString title = QApplication::translate("main", "Update error");
-                QString text = QApplication::translate(
-                    "main", "Can't run new instance!");
-
-                Logger::logger()->appendLine(who, text);
-
-                QMessageBox::critical(NULL, title, text);
-
-                return -1;
-            }
+        if (!isAbsolute || !dir.exists()) {
+            QTextStream(stderr) << QString("Invalid directory: '%1'").arg(workDir) << endl;
+            return 1;
         }
     }
-    else if ( args.isSet(argRemove) )
-    {
-        QString temp = args.value(argRemove);
 
-        QString msg = QApplication::translate("main", "Removing instance: %1");
-        Logger::logger()->appendLine( who, msg.arg(temp) );
+    const int logCount = 3;
 
-        QFile tempFile(temp);
-        for (int i = 0; i < 25; i++)
-        {
-            if ( tempFile.open(QIODevice::ReadWrite) )
-            {
-                tempFile.close();
-                break;
-            }
+    auto qDel = &QObject::deleteLater;
+    auto nam = QSP<QNetworkAccessManager>(new QNetworkAccessManager(), qDel);
+    auto logger = QSP<Logger>(new Logger(workDir, logCount), qDel);
+    QObject::connect(logger.data(), &Logger::onLog,
+                     [](const QString &line) { QTextStream(stdout) << line << endl; });
 
-            QThread::usleep(10);
-        }
-
-        if ( QFile::exists(temp) )
-        {
-            if ( !QFile::remove(temp) )
-            {
-                QString title = QApplication::translate(
-                    "main", "Update warning");
-                QString text = QApplication::translate(
-                    "main", "Can't remove temporary instance.");
-
-                Logger::logger()->appendLine(who, text);
-
-                QMessageBox::warning(NULL, title, text);
-            }
-        }
+    auto settings = QSP<SettingsManager>(new SettingsManager(workDir, logger));
+    if (settings->isFreshRun()) {
+        Utils::Migrations::restoreLoginSettings(settings, logger);
     }
-#endif
 
-    QPixmap logo(":/resources/logo.png");
-    QSplashScreen *splash
-        = new QSplashScreen(logo, Qt::FramelessWindowHint | Qt::SplashScreen);
-    splash->setMask( logo.mask() );
-    splash->show();
+    auto profiles = QSP<ProfilesManager>(new ProfilesManager(workDir, logger));
+    auto versions = QSP<VersionsManager>(new VersionsManager(workDir, storeUrl, nam, logger), qDel);
 
-    Settings::instance()->updateLocalData();
+    auto ticket = settings->data.ticket;
+    auto client = QSP<TtyhClient>(new TtyhClient(masterUrl, ticket, nam, logger), qDel);
 
-#ifdef Q_OS_WIN
-    Settings::instance()->fetchLatestVersion();
-#endif
+    auto checker = QSP<FileChecker>(new FileChecker(workDir, logger), qDel);
+    auto downloader = QSP<Downloader>(new Downloader(workDir, storeUrl, nam, logger), qDel);
+    auto runner = QSP<ProfileRunner>(new ProfileRunner(workDir, logger), qDel);
+    auto feed = QSP<NewsFeed>(new NewsFeed(newsUrl, nam, logger), qDel);
 
-    splash->close();
-    delete splash;
+    Launcher l(settings, profiles, versions, client, checker, downloader, runner, feed, logger);
+    l.start();
 
-    LauncherWindow w;
-    w.show();
-
-    return a.exec();
+    return QApplication::exec();
 }

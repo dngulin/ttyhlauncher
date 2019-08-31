@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.4)
-project(ttyhlauncher VERSION 1.2.3 LANGUAGES CXX)
+project(ttyhlauncher VERSION 2.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -17,9 +17,11 @@ option(USE_GIT_VERSION "Get current commit hash from Git if possible" ON)
 find_package(Qt5Gui REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Network REQUIRED)
+find_package(Qt5Concurrent REQUIRED)
 find_package(Qt5LinguistTools REQUIRED)
 
-find_package(QuaZip5 REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(Minizip REQUIRED IMPORTED_TARGET minizip)
 
 if(USE_GIT_VERSION AND GIT_FOUND)
   execute_process(COMMAND ${GIT_EXECUTABLE} "rev-parse" "--short" "HEAD"
@@ -35,6 +37,5 @@ configure_file("config.h.in" "config.h" @ONLY)
 set(CONFIG_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(src)
-add_subdirectory(ui)
 add_subdirectory(resources)
 add_subdirectory(translations)

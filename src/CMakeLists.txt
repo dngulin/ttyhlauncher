@@ -1,42 +1,58 @@
 add_executable(ttyhlauncher WIN32 MACOSX_BUNDLE
   "main.cpp"
-  "launcherwindow.cpp"
-  "skinuploaddialog.cpp"
-  "settingsdialog.cpp"
-  "updatedialog.cpp"
-  "feedbackdialog.cpp"
-  "aboutdialog.cpp"
-  "settings.cpp"
-  "logger.cpp"
-  "util.cpp"
-  "licensedialog.cpp"
-  "jsonparser.cpp"
-  "libraryinfo.cpp"
-  "fileinfo.cpp"
-  "gamerunner.cpp"
-  "filefetcher.cpp"
-  "datafetcher.cpp"
-  "hashchecker.cpp"
-  "logview.cpp"
-  "selfupdatedialog.cpp"
-  "storesettingsdialog.cpp"
-  "storemanagedialog.cpp"
-  "storeinstalldialog.cpp"
-  "installinfo.cpp"
-  "fileinstaller.cpp"
+  "json/downloadinfo.cpp"
+  "json/assetdownloadinfo.cpp"
+  "json/checkinfo.cpp"
+  "json/assetsindex.cpp"
+  "json/libraryrule.cpp"
+  "json/libraryinfo.cpp"
+  "json/versionindex.cpp"
+  "json/prefixinfo.cpp"
+  "json/prefixesindex.cpp"
+  "json/prefixversionsindex.cpp"
+  "json/dataindex.cpp"
+  "logs/logger.cpp"
+  "logs/namedlogger.cpp"
+  "settings/settingsdata.cpp"
+  "settings/settingsmanager.cpp"
+  "versions/versionsmanager.cpp"
+  "versions/fullversionid.cpp"
+  "storage/filechecker.cpp"
+  "storage/downloader.cpp"
+  "profiles/profilesmanager.cpp"
+  "profiles/profiledata.cpp"
+  "profiles/filesindex.cpp"
+  "profiles/profilerunner.cpp"
+  "master/ttyhclient.cpp"
+  "news/newsfeed.cpp"
+  "utils/network.cpp"
+  "utils/platform.cpp"
+  "utils/downloadfilereply.cpp"
+  "utils/zip.cpp"
+  "utils/migrations.cpp"
+  "ui/mainwindow.cpp"
+  "ui/profiledialog.cpp"
+  "ui/skindialog.cpp"
+  "ui/aboutdialog.cpp"
+  "launcher.cpp"
 )
 add_dependencies(ttyhlauncher update_qm)
+
+target_sources(ttyhlauncher PRIVATE
+  "${CMAKE_CURRENT_SOURCE_DIR}/ui/mainwindow.ui"
+  "${CMAKE_CURRENT_SOURCE_DIR}/ui/profiledialog.ui"
+  "${CMAKE_CURRENT_SOURCE_DIR}/ui/skindialog.ui"
+  "${CMAKE_CURRENT_SOURCE_DIR}/ui/aboutdialog.ui"
+)
 
 set_target_properties(ttyhlauncher PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
 )
 
-target_include_directories(ttyhlauncher PRIVATE
-  ${CONFIG_INCLUDE_DIR} ${QUAZIP_INCLUDE_DIRS}
-)
+target_include_directories(ttyhlauncher PRIVATE ${CONFIG_INCLUDE_DIR})
 
 target_link_libraries(ttyhlauncher
-  Qt5::Gui Qt5::Widgets Qt5::Network ${QUAZIP_LIBRARIES}
+  Qt5::Gui Qt5::Widgets Qt5::Network Qt5::Concurrent PkgConfig::Minizip
 )
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "^(GNU|Clang)$")

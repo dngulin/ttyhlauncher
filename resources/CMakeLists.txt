@@ -8,15 +8,15 @@ if(UNIX AND NOT APPLE)
     DESTINATION "${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps"
   )
 elseif(WIN32)
-  set(RC_FILE "${CMAKE_CURRENT_BINARY_DIR}/favicon.rc")
+  set(RC_FILE "${CMAKE_CURRENT_BINARY_DIR}/icon.rc")
 
   file(WRITE ${RC_FILE}
-    "IDI_ICON1 ICON \"${CMAKE_CURRENT_SOURCE_DIR}/favicon.ico\""
+    "IDI_ICON1 ICON \"${CMAKE_CURRENT_SOURCE_DIR}/icon.ico\""
   )
   target_sources(ttyhlauncher PUBLIC ${RC_FILE})
 elseif(APPLE)
-  set(MACOSX_BUNDLE_ICON_FILE "favicon.icns")
-  set(ICON_FILE "${CMAKE_CURRENT_SOURCE_DIR}/favicon.icns")
+  set(MACOSX_BUNDLE_ICON_FILE "icon.icns")
+  set(ICON_FILE "${CMAKE_CURRENT_SOURCE_DIR}/icon.icns")
 
   set_source_files_properties(${ICON_FILE} PROPERTIES
     MACOSX_PACKAGE_LOCATION "Resources"

@@ -10,7 +10,6 @@ skin to a session server. About the custom session and update servers see below.
 We are against the use of the launcher for illegal purposes, it is written just
 for fun. If you like Minecraft, buy the game.
 
-
 ### Custom services
 
 This minecraft launcher is designed to use custom update and session servers.
@@ -19,6 +18,5 @@ For details see the [ttyhstore](https://github.com/betrok/ttyhstore) and
 
 ### Dependencies
 
-1. Qt 5.5 or later (Core, Gui, Widgets, Network, LinguistTools)
-2. QuaZIP built with CMake
-3. Optional: Git, to get the current commit hash
+1. Qt 5.7 or later (Core, Gui, Widgets, Network, Concurrent, LinguistTools)
+2. Minizip

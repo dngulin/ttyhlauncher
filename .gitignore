@@ -1,2 +1,4 @@
 CMakeLists.txt.user*
 *.zip
+.idea
+build

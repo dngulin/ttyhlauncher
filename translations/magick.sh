@@ -13,6 +13,15 @@ for i in $(seq 1 "$COUNT"); do
         SRC="$(xmlstarlet sel -T -t -v "(TS/context/message/source)[$i]" "$TARGET")"
         TRS="$(printf '%s' "$SRC" | tr '[:upper:]' '[:lower:]' | iconv -f koi-7 -t utf-8)"
         printf "%s = %s\n" "$i" "$TRS"
-        xmlstarlet ed -L -u "(TS/context/message/translation)[$i]" -v "$TRS" "$TARGET"
+        
+        NUMERUS="$(xmlstarlet sel -T -t -v "(TS/context/message)[$i]/@numerus" "$TARGET" || true)"
+        if [ "$NUMERUS" = 'yes' ]; then
+            NTRS=$(sed 's/%Н/%n/g' <<< "$TRS")
+            xmlstarlet ed -L -u "((TS/context/message/translation)[$i]/numerusform)[1]" -v "$NTRS" "$TARGET"
+            xmlstarlet ed -L -u "((TS/context/message/translation)[$i]/numerusform)[2]" -v "$NTRS" "$TARGET"
+            xmlstarlet ed -L -u "((TS/context/message/translation)[$i]/numerusform)[3]" -v "$NTRS" "$TARGET"
+        else
+            xmlstarlet ed -L -u "(TS/context/message/translation)[$i]" -v "$TRS" "$TARGET"
+        fi
     fi
 done

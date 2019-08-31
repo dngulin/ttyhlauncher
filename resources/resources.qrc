@@ -1,14 +1,8 @@
 <RCC>
     <qresource prefix="/resources">
-        <file>about.png</file>
-	<file>configure.png</file>
-	<file>favicon.png</file>
-	<file>license.txt</file>
-	<file>logo.png</file>
-	<file>logo.txt</file>
-	<file>minecraft.png</file>
-	<file>reporting.png</file>
-	<file>skin.png</file>
-	<file>users.txt</file>
+        <file>icon.png</file>
+        <file>icon-big.png</file>
+        <file>logo.png</file>
+        <file>users.txt</file>
     </qresource>
 </RCC>
