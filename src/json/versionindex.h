@@ -5,6 +5,7 @@
 #include <QtCore/QList>
 #include <QtCore/QDateTime>
 #include "libraryinfo.h"
+#include "argumentinfo.h"
 
 namespace Ttyh {
 namespace Json {
@@ -21,6 +22,7 @@ public:
 
     QString mainClass;
     QStringList gameArguments;
+    QList<ArgumentInfo> javaArguments;
 
     bool isValid() const;
 };

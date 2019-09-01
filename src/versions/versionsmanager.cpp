@@ -333,7 +333,7 @@ bool VersionsManager::fillVersionFiles(const FullVersionId &version, QList<FileI
     }
 
     foreach (auto libInfo, versionIndex.libraries) {
-        if (!Utils::Platform::isLibraryAllowed(libInfo))
+        if (!Utils::Platform::checkRules(libInfo.rules))
             continue;
 
         auto libPath = Utils::Platform::getLibraryPath(libInfo);

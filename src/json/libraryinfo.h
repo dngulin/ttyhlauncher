@@ -14,7 +14,7 @@ public:
     explicit LibraryInfo(const QJsonObject &jObject);
 
     QString name;
-    QList<LibraryRule> rules;
+    QList<Rule> rules;
     QHash<QString, QString> natives;
 };
 }

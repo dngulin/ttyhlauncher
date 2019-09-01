@@ -89,7 +89,7 @@ bool Ttyh::Profiles::ProfileRunner::run(const ProfileInfo &info, const QString &
     auto prefixLength = dataPath.length() + 1;
     QStringList classPath;
     foreach (auto lib, versionIndex.libraries) {
-        if (!Platform::isLibraryAllowed(lib))
+        if (!Platform::checkRules(lib.rules))
             continue;
 
         auto libPath = QString("%1/libraries/%2").arg(dataPath, Platform::getLibraryPath(lib));
@@ -98,7 +98,7 @@ bool Ttyh::Profiles::ProfileRunner::run(const ProfileInfo &info, const QString &
             classPath << libPath;
         } else {
             log.info(QString("Extracting '%1'...").arg(libPath.mid(prefixLength)));
-            if (!Ttyh::Utils::Zip::unzipDir(libPath, nativesPath)) {
+            if (!Utils::Zip::unzipDir(libPath, nativesPath)) {
                 log.error(QString("Failed to extract '%1'!").arg(libPath.mid(prefixLength)));
                 return false;
             }
@@ -114,15 +114,18 @@ bool Ttyh::Profiles::ProfileRunner::run(const ProfileInfo &info, const QString &
 
     args << "-Dline.separator=\r\n";
     args << "-Dfile.encoding=UTF8";
-    args << "-Dminecraft.launcher.brand=" + QApplication::applicationName();
-    args << "-Dminecraft.launcher.version=" + QApplication::applicationVersion();
-    args << "-Djava.library.path=" + nativesPath;
-    args << "-cp";
-    args << classPath.join(Platform::getClassPathSeparator());
+
+    foreach (auto arg, getJvmArgs(versionIndex.javaArguments)) {
+        arg.replace("${natives_directory}", nativesPath);
+        arg.replace("${launcher_name}", QApplication::applicationName());
+        arg.replace("${launcher_version}", QApplication::applicationVersion());
+        arg.replace("${classpath}", classPath.join(Platform::getClassPathSeparator()));
+        args << arg;
+    }
+
     args << versionIndex.mainClass;
 
     auto profilePath = QString("%1/profiles/%2").arg(dataPath, name);
-
     QHash<QString, QString> argsMap;
     argsMap.insert("${version_name}", version.id);
     argsMap.insert("${version_type}", version.prefix);
@@ -169,4 +172,25 @@ bool Ttyh::Profiles::ProfileRunner::run(const ProfileInfo &info, const QString &
     log.info(javaPath + " " + args.join(' '));
     game.start(javaPath, args);
     return true;
+}
+
+QStringList Ttyh::Profiles::ProfileRunner::getJvmArgs(const QList<Json::ArgumentInfo> &args)
+{
+    if (args.isEmpty()) {
+        QStringList fallback;
+        fallback << "-Djava.library.path=${natives_directory}";
+        fallback << "-Dminecraft.launcher.brand=${launcher_name}";
+        fallback << "-Dminecraft.launcher.version=${launcher_version}";
+        fallback << "-cp"
+                 << "${classpath}";
+        return fallback;
+    }
+
+    QStringList checkedArgs;
+    foreach (auto arg, args) {
+        if (Platform::checkRules(arg.rules)) {
+            checkedArgs << arg.values;
+        }
+    }
+    return checkedArgs;
 }

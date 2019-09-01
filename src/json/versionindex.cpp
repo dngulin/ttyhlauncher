@@ -22,10 +22,20 @@ Ttyh::Json::VersionIndex::VersionIndex(const QJsonObject &jObject)
 
     const QString argumentsKey = "arguments";
     if (jObject.contains(argumentsKey)) {
-        foreach (auto token, jObject[argumentsKey].toObject()["game"].toArray()) {
-            auto argument = token.toString();
+        auto jArgs = jObject[argumentsKey].toObject();
+
+        foreach (auto jGameArg, jArgs["game"].toArray()) {
+            auto argument = jGameArg.toString();
             if (!argument.isEmpty())
                 gameArguments << argument;
+        }
+
+        foreach (auto jVmArg, jArgs["jvm"].toArray()) {
+            if (jVmArg.isString()) {
+                javaArguments << ArgumentInfo(jVmArg.toString());
+            } else if (jVmArg.isObject()) {
+                javaArguments << ArgumentInfo(jVmArg.toObject());
+            }
         }
     } else {
         gameArguments = jObject["minecraftArguments"].toString().split(' ');

@@ -5,12 +5,14 @@
 
 namespace Ttyh {
 namespace Json {
-class LibraryRule
+class Rule
 {
 public:
-    explicit LibraryRule(const QJsonObject &jObject);
+    explicit Rule(const QJsonObject &jObject);
 
-    QString os;
+    QString osName;
+    QString osVersion;
+    QString osArch;
     QString action;
 };
 }

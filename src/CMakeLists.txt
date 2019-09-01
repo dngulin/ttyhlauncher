@@ -11,6 +11,7 @@ add_executable(ttyhlauncher WIN32 MACOSX_BUNDLE
   "json/prefixesindex.cpp"
   "json/prefixversionsindex.cpp"
   "json/dataindex.cpp"
+  "json/argumentinfo.cpp"
   "logs/logger.cpp"
   "logs/namedlogger.cpp"
   "settings/settingsdata.cpp"

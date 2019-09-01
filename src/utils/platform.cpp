@@ -1,20 +1,28 @@
+#include <QtCore/QRegularExpression>
 #include "platform.h"
 
-bool Ttyh::Utils::Platform::isLibraryAllowed(const Json::LibraryInfo &libInfo)
+bool Ttyh::Utils::Platform::checkRules(const QList<Json::Rule> &rules)
 {
-    if (libInfo.rules.isEmpty())
+    if (rules.isEmpty())
         return true;
 
     auto allowed = false;
 
-    foreach (auto rule, libInfo.rules) {
-        auto sameOs = rule.os == getOsName();
+    auto checkOsVersion = [] (const QString &version) {
+        QRegularExpression re(version);
+        return re.match(QSysInfo::productVersion()).hasMatch();
+    };
 
-        if (rule.action == "allow" && (sameOs || rule.os.isEmpty())) {
-            allowed = true;
-        } else if (rule.action == "disallow" && sameOs) {
-            allowed = false;
-        }
+    foreach (auto rule, rules) {
+        auto matchOsName = rule.osName.isEmpty() || rule.osName == getOsName();
+        auto matchOsVersion = rule.osVersion.isEmpty() || checkOsVersion(rule.osVersion);
+        auto matchOsArch = rule.osArch.isEmpty() || rule.osArch == getArch();
+
+        auto match = matchOsName && matchOsVersion && matchOsArch;
+        if (!match)
+            continue;
+
+        allowed = rule.action == "allow";
     }
 
     return allowed;
@@ -61,6 +69,17 @@ QString Ttyh::Utils::Platform::getOsVersion()
 QString Ttyh::Utils::Platform::getWordSize()
 {
     return QString::number(QSysInfo::WordSize);
+}
+
+QString Ttyh::Utils::Platform::getArch()
+{
+#if Q_PROCESSOR_WORDSIZE == 4
+    return "x86";
+#elif Q_PROCESSOR_WORDSIZE == 8
+    return "x86_64";
+#else
+    return "unknown";
+#endif
 }
 
 QChar Ttyh::Utils::Platform::getClassPathSeparator()

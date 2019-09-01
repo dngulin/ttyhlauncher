@@ -6,12 +6,13 @@
 namespace Ttyh {
 namespace Utils {
 namespace Platform {
-bool isLibraryAllowed(const Json::LibraryInfo &libInfo);
+bool checkRules(const QList<Json::Rule> &rules);
 QString getLibraryPath(const Json::LibraryInfo &libInfo);
 
 QString getOsName();
 QString getOsVersion();
 QString getWordSize();
+QString getArch();
 
 QChar getClassPathSeparator();
 }

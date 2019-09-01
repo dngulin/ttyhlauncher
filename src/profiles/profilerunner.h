@@ -6,6 +6,7 @@
 
 #include "logs/namedlogger.h"
 #include "logs/logger.h"
+#include "json/argumentinfo.h"
 #include "profiledata.h"
 #include "profileinfo.h"
 
@@ -31,6 +32,8 @@ private:
     const QString dataPath;
     NamedLogger log;
     QProcess game;
+
+    static QStringList getJvmArgs(const QList<Json::ArgumentInfo> &args);
 };
 }
 }

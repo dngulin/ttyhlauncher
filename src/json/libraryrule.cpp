@@ -1,5 +1,8 @@
 #include "libraryrule.h"
-Ttyh::Json::LibraryRule::LibraryRule(const QJsonObject &jObject)
-    : os(jObject["os"].toObject()["name"].toString("")), action(jObject["action"].toString(""))
+Ttyh::Json::Rule::Rule(const QJsonObject &jObject)
+    : osName(jObject["os"].toObject()["name"].toString("")),
+      osVersion(jObject["os"].toObject()["version"].toString("")),
+      osArch(jObject["os"].toObject()["arch"].toString("")),
+      action(jObject["action"].toString(""))
 {
 }
