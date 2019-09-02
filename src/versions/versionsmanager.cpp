@@ -61,12 +61,16 @@ void VersionsManager::findLocalVersions(const QString &prefixId)
         auto versionIndexPath = QString("%1/%2/%2.json").arg(prefixPath, versionId);
         QFile file(versionIndexPath);
 
-        if (!file.exists() || !file.open(QIODevice::ReadOnly))
+        if (!file.exists() || !file.open(QIODevice::ReadOnly)) {
+            log.warning(QString("Failed to open: '%1'").arg(versionIndexPath));
             continue;
+        }
 
         auto doc = QJsonDocument::fromJson(file.readAll());
-        if (!doc.isObject())
+        if (!doc.isObject()) {
+            log.warning(QString("Failed to parse: '%1'").arg(versionIndexPath));
             continue;
+        }
 
         auto versionIndex = VersionIndex(doc.object());
         if (versionIndex.id != versionId) {
