@@ -19,4 +19,4 @@ For details see the [ttyhstore](https://github.com/betrok/ttyhstore) and
 ### Dependencies
 
 1. Qt 5.7 or later (Core, Gui, Widgets, Network, Concurrent, LinguistTools)
-2. Minizip
+2. LibZip

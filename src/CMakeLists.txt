@@ -53,7 +53,7 @@ set_target_properties(ttyhlauncher PROPERTIES
 target_include_directories(ttyhlauncher PRIVATE ${CONFIG_INCLUDE_DIR})
 
 target_link_libraries(ttyhlauncher
-  Qt5::Gui Qt5::Widgets Qt5::Network Qt5::Concurrent PkgConfig::Minizip
+  Qt5::Gui Qt5::Widgets Qt5::Network Qt5::Concurrent PkgConfig::LibZip
 )
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "^(GNU|Clang)$")

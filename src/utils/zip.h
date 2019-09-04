@@ -7,7 +7,7 @@ namespace Ttyh {
 namespace Utils {
 namespace Zip {
 
-bool unzipDir(QString zipPath, const QString& destDir);
+bool unzipDir(const QString &zipPath, const QString &destDir);
 
 }
 }
