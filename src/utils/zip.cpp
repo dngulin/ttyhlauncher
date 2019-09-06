@@ -59,7 +59,12 @@ bool unzipDir(const QString &zipPath, const QString &destDir)
         struct zip_stat entryStat {
         };
 
-        if (zip_stat_index(archive, entryIndex, ZIP_STAT_NAME, &entryStat) == 0) {
+        auto statFlags = ZIP_FL_UNCHANGED | ZIP_FL_ENC_GUESS;
+        if (zip_stat_index(archive, entryIndex, statFlags, &entryStat) == 0) {
+            auto statDataMask = (ZIP_STAT_NAME | ZIP_STAT_SIZE);
+            if ((entryStat.valid & statDataMask) != statDataMask)
+                return false;
+
             QString entryName(entryStat.name);
 
             if (entryName.endsWith("/")) {
