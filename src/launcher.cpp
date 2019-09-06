@@ -148,6 +148,11 @@ void Ttyh::Launcher::connectRunGameFlow()
         client->login(window->getUserName(), window->getPassword());
     };
 
+    auto handleFailedToRun = [=]() {
+        window->showError(tr("Failed to prepare the game to run!"));
+        window->setLocked(false);
+    };
+
     connect(window.data(), &MainWindow::playClicked, [=]() {
         auto profileName = window->getSelectedProfile();
         if (!profiles->contains(profileName)) {
@@ -169,7 +174,8 @@ void Ttyh::Launcher::connectRunGameFlow()
 
         if (!window->isOnline()) {
             if (tryInstallVersionFiles()) {
-                runner->run(*profileInfo, window->getUserName(), window->size());
+                if (!runner->run(*profileInfo, window->getUserName(), window->size()))
+                    handleFailedToRun();
             }
             return;
         }
@@ -240,7 +246,9 @@ void Ttyh::Launcher::connectRunGameFlow()
                 }
 
                 auto userName = window->getUserName();
-                runner->run(*profileInfo, userName, accessToken, clientToken, window->size());
+                auto windowSize = window->size();
+                if (!runner->run(*profileInfo, userName, accessToken, clientToken, windowSize))
+                    handleFailedToRun();
             });
 
     connect(runner.data(), &ProfileRunner::startHandled, [=](bool result) {

@@ -32,63 +32,63 @@
       <translation type="unfinished">ЦАНЦЕЛ</translation>
     </message>
     <message>
-      <location filename="../src/ui/mainwindow.ui" line="145"/>
+      <location filename="../src/ui/mainwindow.ui" line="148"/>
       <source>Profile</source>
       <translation type="unfinished">ПРОФИЛЕ</translation>
     </message>
     <message>
-      <location filename="../src/ui/mainwindow.ui" line="152"/>
+      <location filename="../src/ui/mainwindow.ui" line="185"/>
       <source>PlayerName</source>
       <translation type="unfinished">ПЛАЫЕРНАМЕ</translation>
     </message>
     <message>
-      <location filename="../src/ui/mainwindow.ui" line="162"/>
+      <location filename="../src/ui/mainwindow.ui" line="198"/>
       <source>Password</source>
       <translation type="unfinished">ПАССВОРД</translation>
     </message>
     <message>
-      <location filename="../src/ui/mainwindow.ui" line="220"/>
+      <location filename="../src/ui/mainwindow.ui" line="245"/>
       <location filename="../src/ui/mainwindow.cpp" line="165"/>
       <source>Play</source>
       <translation type="unfinished">ПЛАЫ</translation>
     </message>
     <message>
-      <location filename="../src/ui/mainwindow.ui" line="244"/>
+      <location filename="../src/ui/mainwindow.ui" line="269"/>
       <source>Options</source>
       <translation type="unfinished">ОПТИОНС</translation>
     </message>
     <message>
-      <location filename="../src/ui/mainwindow.ui" line="253"/>
+      <location filename="../src/ui/mainwindow.ui" line="278"/>
       <source>Tools</source>
       <translation type="unfinished">ТООЛС</translation>
     </message>
     <message>
-      <location filename="../src/ui/mainwindow.ui" line="259"/>
+      <location filename="../src/ui/mainwindow.ui" line="284"/>
       <source>Help</source>
       <translation type="unfinished">ХЕЛП</translation>
     </message>
     <message>
-      <location filename="../src/ui/mainwindow.ui" line="272"/>
+      <location filename="../src/ui/mainwindow.ui" line="297"/>
       <source>Play Offine</source>
       <translation type="unfinished">ПЛАЫ ОФФИНЕ</translation>
     </message>
     <message>
-      <location filename="../src/ui/mainwindow.ui" line="280"/>
+      <location filename="../src/ui/mainwindow.ui" line="305"/>
       <source>Save Password</source>
       <translation type="unfinished">САЖЕ ПАССВОРД</translation>
     </message>
     <message>
-      <location filename="../src/ui/mainwindow.ui" line="288"/>
+      <location filename="../src/ui/mainwindow.ui" line="313"/>
       <source>Hide Window</source>
       <translation type="unfinished">ХИДЕ ВИНДОВ</translation>
     </message>
     <message>
-      <location filename="../src/ui/mainwindow.ui" line="293"/>
+      <location filename="../src/ui/mainwindow.ui" line="318"/>
       <source>Upload Skin...</source>
       <translation type="unfinished">УПЛОАД СКИН...</translation>
     </message>
     <message>
-      <location filename="../src/ui/mainwindow.ui" line="298"/>
+      <location filename="../src/ui/mainwindow.ui" line="323"/>
       <source>About</source>
       <translation type="unfinished">АБОУТ</translation>
     </message>
@@ -365,24 +365,29 @@
       <translation type="unfinished">ФАИЛЕД ТО СВИТЦХ ИНТО ТХЕ ОНЛИНЕ МОДЕ!</translation>
     </message>
     <message>
-      <location filename="../src/launcher.cpp" line="156"/>
-      <location filename="../src/launcher.cpp" line="275"/>
-      <location filename="../src/launcher.cpp" line="321"/>
+      <location filename="../src/launcher.cpp" line="152"/>
+      <source>Failed to prepare the game to run!</source>
+      <translation type="unfinished">ФАИЛЕД ТО ПРЕПАРЕ ТХЕ ГАМЕ ТО РУН!</translation>
+    </message>
+    <message>
+      <location filename="../src/launcher.cpp" line="159"/>
+      <location filename="../src/launcher.cpp" line="281"/>
+      <location filename="../src/launcher.cpp" line="327"/>
       <source>Selected profile does not exist!</source>
       <translation type="unfinished">СЕЛЕЦТЕД ПРОФИЛЕ ДОЕС НОТ ЕЬИСТ!</translation>
     </message>
     <message>
-      <location filename="../src/launcher.cpp" line="164"/>
+      <location filename="../src/launcher.cpp" line="167"/>
       <source>Failed to resolve the latest prefix version!</source>
       <translation type="unfinished">ФАИЛЕД ТО РЕСОЛЖЕ ТХЕ ЛАТЕСТ ПРЕФИЬ ЖЕРСИОН!</translation>
     </message>
     <message>
-      <location filename="../src/launcher.cpp" line="184"/>
+      <location filename="../src/launcher.cpp" line="188"/>
       <source>Failed to get the version indexes!</source>
       <translation type="unfinished">ФАИЛЕД ТО ГЕТ ТХЕ ЖЕРСИОН ИНДЕЬЕС!</translation>
     </message>
     <message>
-      <location filename="../src/launcher.cpp" line="228"/>
+      <location filename="../src/launcher.cpp" line="232"/>
       <source>Failed to download version files!</source>
       <translation type="unfinished">ФАИЛЕД ТО ДОВНЛОАД ЖЕРСИОН ФИЛЕС!</translation>
     </message>
@@ -392,67 +397,67 @@
       <translation type="unfinished">ФАИЛЕД ТО ИНСТАЛЛ ЖЕРСИОН ФИЛЕС!</translation>
     </message>
     <message>
-      <location filename="../src/launcher.cpp" line="251"/>
+      <location filename="../src/launcher.cpp" line="257"/>
       <source>Failed to start the game!</source>
       <translation type="unfinished">ФАИЛЕД ТО СТАРТ ТХЕ ГАМЕ!</translation>
     </message>
     <message>
-      <location filename="../src/launcher.cpp" line="265"/>
+      <location filename="../src/launcher.cpp" line="271"/>
       <source>Game finished with a error!</source>
       <translation type="unfinished">ГАМЕ ФИНИСХЕД ВИТХ А ЕРРОР!</translation>
     </message>
     <message>
-      <location filename="../src/launcher.cpp" line="295"/>
+      <location filename="../src/launcher.cpp" line="301"/>
       <source>Failed to save profile data!</source>
       <translation type="unfinished">ФАИЛЕД ТО САЖЕ ПРОФИЛЕ ДАТА!</translation>
     </message>
     <message>
-      <location filename="../src/launcher.cpp" line="303"/>
+      <location filename="../src/launcher.cpp" line="309"/>
       <source>New Profile</source>
       <translation type="unfinished">НЕВ ПРОФИЛЕ</translation>
     </message>
     <message>
-      <location filename="../src/launcher.cpp" line="333"/>
+      <location filename="../src/launcher.cpp" line="339"/>
       <source>Failed to remove the selected profile!</source>
       <translation type="unfinished">ФАИЛЕД ТО РЕМОЖЕ ТХЕ СЕЛЕЦТЕД ПРОФИЛЕ!</translation>
     </message>
     <message>
-      <location filename="../src/launcher.cpp" line="349"/>
+      <location filename="../src/launcher.cpp" line="355"/>
       <source>Failed to open the skin file!</source>
       <translation type="unfinished">ФАИЛЕД ТО ОПЕН ТХЕ СКИН ФИЛЕ!</translation>
     </message>
     <message>
-      <location filename="../src/launcher.cpp" line="421"/>
+      <location filename="../src/launcher.cpp" line="427"/>
       <source>Checking files</source>
       <translation type="unfinished">ЦХЕЦКИНГ ФИЛЕС</translation>
     </message>
     <message>
-      <location filename="../src/launcher.cpp" line="423"/>
+      <location filename="../src/launcher.cpp" line="429"/>
       <source>Downloading files</source>
       <translation type="unfinished">ДОВНЛОАДИНГ ФИЛЕС</translation>
     </message>
     <message>
-      <location filename="../src/launcher.cpp" line="435"/>
+      <location filename="../src/launcher.cpp" line="441"/>
       <source>Failed to connect to the server</source>
       <translation type="unfinished">ФАИЛЕД ТО ЦОННЕЦТ ТО ТХЕ СЕРЖЕР</translation>
     </message>
     <message>
-      <location filename="../src/launcher.cpp" line="437"/>
+      <location filename="../src/launcher.cpp" line="443"/>
       <source>Incorrect login or password</source>
       <translation type="unfinished">ИНЦОРРЕЦТ ЛОГИН ОР ПАССВОРД</translation>
     </message>
     <message>
-      <location filename="../src/launcher.cpp" line="439"/>
+      <location filename="../src/launcher.cpp" line="445"/>
       <source>Bad request data</source>
       <translation type="unfinished">БАД РЕЯУЕСТ ДАТА</translation>
     </message>
     <message>
-      <location filename="../src/launcher.cpp" line="441"/>
+      <location filename="../src/launcher.cpp" line="447"/>
       <source>Incorrect server reply</source>
       <translation type="unfinished">ИНЦОРРЕЦТ СЕРЖЕР РЕПЛЫ</translation>
     </message>
     <message>
-      <location filename="../src/launcher.cpp" line="482"/>
+      <location filename="../src/launcher.cpp" line="488"/>
       <source>Need to specify the login and password</source>
       <translation type="unfinished">НЕЕД ТО СПЕЦИФЫ ТХЕ ЛОГИН АНД ПАССВОРД</translation>
     </message>
