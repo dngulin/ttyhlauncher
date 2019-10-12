@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
     args.addOption(optMaster);
     args.process(a);
 
-    QString storeUrl = "https://ttyh.ru/files/newstore";
+    QString storeUrl = "https://store.ttyh.ru";
     QString masterUrl = "https://master.ttyh.ru";
     const QString newsUrl = "https://ttyh.ru/misc.php?page=feed";
 
