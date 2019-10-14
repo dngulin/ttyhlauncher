@@ -2,12 +2,13 @@
 #define ZIP_H
 
 #include <QString>
+#include <functional>
 
 namespace Ttyh {
 namespace Utils {
 namespace Zip {
-
-bool unzipDir(const QString &zipPath, const QString &destDir);
+using LogFunc = std::function<void(const QString)>;
+bool unzipDir(const QString &zipPath, const QString &destDir, const LogFunc &logError);
 
 }
 }

@@ -98,7 +98,8 @@ bool Ttyh::Profiles::ProfileRunner::run(const ProfileInfo &info, const QString &
             classPath << libPath;
         } else {
             log.info(QString("Extracting '%1'...").arg(libPath.mid(prefixLength)));
-            if (!Utils::Zip::unzipDir(libPath, nativesPath)) {
+            auto logError = [&](const QString &msg) { log.error(msg); };
+            if (!Utils::Zip::unzipDir(libPath, nativesPath, logError)) {
                 log.error(QString("Failed to extract '%1'!").arg(libPath.mid(prefixLength)));
                 return false;
             }
