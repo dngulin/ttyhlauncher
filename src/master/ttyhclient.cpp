@@ -70,7 +70,7 @@ void Ttyh::Master::TtyhClient::login(const QString &login, const QString &pass)
             return;
         }
 
-        log.info(QString("Success! at: '%1', ct: '%2'").arg(data.accessToken, data.clientToken));
+        log.info(QString("Success! ct: '%1'").arg(data.clientToken));
         emit logged(RequestResult::Success, data.accessToken, data.clientToken);
     });
 }
