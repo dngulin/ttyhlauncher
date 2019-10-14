@@ -58,7 +58,8 @@ bool unzipDir(const QString &zipPath, const QString &destDir, const LogFunc &log
     struct zip *archive;
     int errorCode;
 
-    auto cStrZipPath = QDir::toNativeSeparators(zipPath).toUtf8().constData();
+    auto byteArray = QDir::toNativeSeparators(zipPath).toUtf8();
+    auto cStrZipPath = byteArray.constData();
     auto openFlags = ZIP_CHECKCONS | ZIP_RDONLY;
 
     if ((archive = zip_open(cStrZipPath, openFlags, &errorCode)) == nullptr) {
