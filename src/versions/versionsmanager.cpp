@@ -1,6 +1,7 @@
 #include <QtCore/QJsonDocument>
 #include <QtCore/QDir>
 #include <QtNetwork/QNetworkReply>
+#include <QtCore/QCollator>
 
 #include "storage/fileinfo.h"
 #include "json/assetsindex.h"
@@ -83,7 +84,7 @@ void VersionsManager::findLocalVersions(const QString &prefixId)
         log.info(QString("Local version is found: '%1/%2'").arg(prefixId, versionId));
     }
 
-    std::sort(prefix.versions.begin(), prefix.versions.end(), std::greater<QString>());
+    sortVersions(prefix.versions);
 
     if (prefix.versions.count() > 1)
         prefix.latestVersionId = prefix.versions[1];
@@ -177,7 +178,7 @@ void VersionsManager::fetchNextPrefixOrFinish()
                 prefix.versions << versionId;
         }
 
-        std::sort(prefix.versions.begin(), prefix.versions.end(), std::greater<QString>());
+        sortVersions(prefix.versions);
 
         fetchNextPrefixOrFinish();
     });
@@ -389,6 +390,14 @@ FullVersionId VersionsManager::resolve(const FullVersionId &version) const
         return version;
 
     return FullVersionId(prefix, prefixes[prefix].latestVersionId);
+}
+
+void VersionsManager::sortVersions(QStringList &versions) {
+    QCollator coll;
+    coll.setNumericMode(true);
+    auto compare = [&](const QString& a, const QString& b){ return coll.compare(a, b) > 0; };
+
+    std::sort(versions.begin(), versions.end(), compare);
 }
 
 }

@@ -24,6 +24,10 @@ struct Prefix {
     QString name;
     QStringList versions;
     QString latestVersionId;
+
+    static bool less(const Prefix &a, const Prefix &b) {
+        return a.id < b.id;
+    }
 };
 }
 }

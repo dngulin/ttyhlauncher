@@ -12,7 +12,10 @@ ProfileDialog::ProfileDialog(QWidget *parent, const QString &profileName,
 
     ui->editName->setText(profileName);
 
-    foreach (auto prefix, prefixes) {
+    auto prefixList = prefixes.values();
+    std::sort(prefixList.begin(), prefixList.end(), Prefix::less);
+
+    foreach (auto prefix, prefixList) {
         ui->comboPrefix->addItem(prefix.name, prefix.id);
     }
     ui->comboPrefix->setCurrentText(prefixes[profileData.version.prefix].name);

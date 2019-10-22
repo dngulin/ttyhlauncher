@@ -70,6 +70,8 @@ private:
 
     Storage::FileInfo getFileInfo(const QString &location, const QString &name,
                                   const Json::CheckInfo &checkInfo);
+
+    static void sortVersions(QStringList &versions);
 };
 }
 }

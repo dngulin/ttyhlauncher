@@ -101,7 +101,10 @@ void Ttyh::Launcher::connectOnlineModeFlow()
         log.info(QString("Become %1").arg(result ? "online" : "offline"));
 
         if (profiles->isEmpty()) {
-            foreach (auto prefix, versions->getPrefixes()) {
+            auto prefixList = versions->getPrefixes().values();
+            std::sort(prefixList.begin(), prefixList.end(), Prefix::less);
+
+            foreach (auto prefix, prefixList) {
                 auto profileData = ProfileData();
                 profileData.version = FullVersionId(prefix.id, Prefix::latestVersionAlias);
 
