@@ -10,6 +10,10 @@
 
 namespace Ttyh {
 namespace Profiles {
+
+constexpr const char *ProfilesManager::profileIndexName;
+constexpr const char *ProfilesManager::filesIndexName;
+
 ProfilesManager::ProfilesManager(QString workDir, const QSharedPointer<Logs::Logger> &logger)
     : dataPath(std::move(workDir)),
       log(logger, "Profiles")
