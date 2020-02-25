@@ -35,8 +35,8 @@ private:
     static bool validateProfileName(const QString &profileName);
     static bool checkFile(const QString &path, int size, const QString &hash, bool editable);
 
-    static constexpr const char *profileIndexName = "profile.json";
-    static constexpr const char *filesIndexName = "files.json";
+    const char *profileIndexName = "profile.json";
+    const char *filesIndexName = "files.json";
 };
 }
 }
