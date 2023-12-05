@@ -19,6 +19,7 @@ static bool unzipFile(zip *zip, int idx, const QString &path, quint64 size, cons
     Defer closeZipFile([zipFile]() { zip_fclose(zipFile); });
 
     QFile file(path);
+    QDir().mkpath(QFileInfo(path).absolutePath());
     if (!file.open(QIODevice::WriteOnly)) {
         logError(QString("Failed to open file '%1'").arg(path));
         return false;
