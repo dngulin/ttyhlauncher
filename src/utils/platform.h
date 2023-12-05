@@ -7,7 +7,13 @@ namespace Ttyh {
 namespace Utils {
 namespace Platform {
 bool checkRules(const QList<Json::Rule> &rules);
-QString getLibraryPath(const Json::LibraryInfo &libInfo);
+
+struct LibPathInfo {
+    QString path;
+    bool isNativeLib;
+};
+
+LibPathInfo getLibraryPathInfo(const Json::LibraryInfo &libInfo);
 
 QString getOsName();
 QString getOsVersion();

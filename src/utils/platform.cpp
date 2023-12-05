@@ -28,9 +28,10 @@ bool Ttyh::Utils::Platform::checkRules(const QList<Json::Rule> &rules)
     return allowed;
 }
 
-// From: "package.dot.separated:name:version"
+// From: "package.dot.separated:name:version[:classifier]"
 // To:   "package/slash/separated/name/version/name-version[-classifier].jar"
-QString Ttyh::Utils::Platform::getLibraryPath(const Json::LibraryInfo &libInfo)
+Ttyh::Utils::Platform::LibPathInfo
+Ttyh::Utils::Platform::getLibraryPathInfo(const Json::LibraryInfo &libInfo)
 {
     auto tokens = libInfo.name.split(':');
 
@@ -38,14 +39,29 @@ QString Ttyh::Utils::Platform::getLibraryPath(const Json::LibraryInfo &libInfo)
     auto name = tokens[1];
     auto version = tokens[2];
 
-    auto os = getOsName();
-    if (libInfo.natives.contains(os)) {
-        auto classifier = libInfo.natives[os];
-        classifier.replace("${arch}", getWordSize()); // QString have only a mutable `replace`
-        return QString("%1/%2/%3/%2-%3-%4.jar").arg(package, name, version, classifier);
+    QString classifier;
+
+    if (tokens.count() > 3) {
+        classifier = tokens[3];
+    } else {
+        auto os = getOsName();
+        if (libInfo.natives.contains(os)) {
+            classifier = libInfo.natives[os];
+        }
     }
 
-    return QString("%1/%2/%3/%2-%3.jar").arg(package, name, version);
+    if (!classifier.isEmpty()) {
+        classifier.replace("${arch}", getWordSize()); // QString have only a mutable `replace`
+        return LibPathInfo {
+            .path = QString("%1/%2/%3/%2-%3-%4.jar").arg(package, name, version, classifier),
+            .isNativeLib = true,
+        };
+    }
+
+    return LibPathInfo {
+        .path = QString("%1/%2/%3/%2-%3.jar").arg(package, name, version),
+        .isNativeLib = false,
+    };
 }
 
 QString Ttyh::Utils::Platform::getOsName()

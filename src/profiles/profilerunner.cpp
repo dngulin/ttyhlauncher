@@ -92,9 +92,10 @@ bool Ttyh::Profiles::ProfileRunner::run(const ProfileInfo &info, const QString &
         if (!Platform::checkRules(lib.rules))
             continue;
 
-        auto libPath = QString("%1/libraries/%2").arg(dataPath, Platform::getLibraryPath(lib));
+        auto libPathInfo = Platform::getLibraryPathInfo(lib);
+        auto libPath = QString("%1/libraries/%2").arg(dataPath, libPathInfo.path);
 
-        if (lib.natives.isEmpty()) {
+        if (!libPathInfo.isNativeLib) {
             classPath << libPath;
         } else {
             log.info(QString("Extracting '%1'...").arg(libPath.mid(prefixLength)));

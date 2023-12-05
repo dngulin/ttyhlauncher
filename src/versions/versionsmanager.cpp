@@ -341,7 +341,7 @@ bool VersionsManager::fillVersionFiles(const FullVersionId &version, QList<FileI
         if (!Utils::Platform::checkRules(libInfo.rules))
             continue;
 
-        auto libPath = Utils::Platform::getLibraryPath(libInfo);
+        auto libPath = Utils::Platform::getLibraryPathInfo(libInfo).path;
         if (!dataIndex.libs.contains(libPath)) {
             log.warning(QString("Library '%1' is missing in the data index").arg(libPath));
             continue;
