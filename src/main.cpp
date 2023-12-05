@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
         workDir = dir.absolutePath();
 
         if (!isAbsolute || !dir.exists()) {
-            QTextStream(stderr) << QString("Invalid directory: '%1'").arg(workDir) << endl;
+            QTextStream(stderr) << QString("Invalid directory: '%1'").arg(workDir) << Qt::endl;
             return 1;
         }
     }
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
     auto nam = QSP<QNetworkAccessManager>(new QNetworkAccessManager(), qDel);
     auto logger = QSP<Logger>(new Logger(workDir, logCount), qDel);
     QObject::connect(logger.data(), &Logger::onLog,
-                     [](const QString &line) { QTextStream(stdout) << line << endl; });
+                     [](const QString &line) { QTextStream(stdout) << line << Qt::endl; });
 
     auto settings = QSP<SettingsManager>(new SettingsManager(workDir, logger));
     if (settings->isFreshRun()) {
