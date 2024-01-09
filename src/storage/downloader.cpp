@@ -44,7 +44,7 @@ void Ttyh::Storage::Downloader::start(const QList<Ttyh::Storage::FileInfo> &file
     currentSize = 0;
     totalSize = 0;
 
-    foreach (auto fileInfo, files) {
+    for (const auto& fileInfo : files) {
         totalSize += fileInfo.size;
         downloadQueue << fileInfo;
     }

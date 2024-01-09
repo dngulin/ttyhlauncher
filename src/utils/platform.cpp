@@ -13,7 +13,7 @@ bool Ttyh::Utils::Platform::checkRules(const QList<Json::Rule> &rules)
         return re.match(QSysInfo::productVersion()).hasMatch();
     };
 
-    foreach (auto rule, rules) {
+    for (const auto& rule : rules) {
         auto matchOsName = rule.osName.isEmpty() || rule.osName == getOsName();
         auto matchOsVersion = rule.osVersion.isEmpty() || checkOsVersion(rule.osVersion);
         auto matchOsArch = rule.osArch.isEmpty() || rule.osArch == getArch();
@@ -52,15 +52,15 @@ Ttyh::Utils::Platform::getLibraryPathInfo(const Json::LibraryInfo &libInfo)
 
     if (!classifier.isEmpty()) {
         classifier.replace("${arch}", getWordSize()); // QString have only a mutable `replace`
-        return LibPathInfo {
-            .path = QString("%1/%2/%3/%2-%3-%4.jar").arg(package, name, version, classifier),
-            .isNativeLib = true,
+        return {
+            QString("%1/%2/%3/%2-%3-%4.jar").arg(package, name, version, classifier),
+            true,
         };
     }
 
-    return LibPathInfo {
-        .path = QString("%1/%2/%3/%2-%3.jar").arg(package, name, version),
-        .isNativeLib = false,
+    return {
+        QString("%1/%2/%3/%2-%3.jar").arg(package, name, version),
+        false,
     };
 }
 

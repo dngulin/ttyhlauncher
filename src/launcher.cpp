@@ -104,7 +104,7 @@ void Ttyh::Launcher::connectOnlineModeFlow()
             auto prefixList = versions->getPrefixes().values();
             std::sort(prefixList.begin(), prefixList.end(), Prefix::less);
 
-            foreach (auto prefix, prefixList) {
+            for (const auto& prefix : prefixList) {
                 auto profileData = ProfileData();
                 profileData.version = FullVersionId(prefix.id, Prefix::latestVersionAlias);
 
@@ -212,7 +212,7 @@ void Ttyh::Launcher::connectRunGameFlow()
         }
 
         quint64 size = 0;
-        foreach (auto fileInfo, files)
+        for (const auto& fileInfo : files)
             size += fileInfo.size;
 
         if (!window->askForDownloads(files.count(), size)) {

@@ -4,7 +4,7 @@
 
 Ttyh::Profiles::FilesIndex::FilesIndex(const QJsonObject &jObject)
 {
-    foreach (auto name, jObject[keyInstalled].toArray()) {
+    for (const auto& name : jObject[keyInstalled].toArray()) {
         installed << name.toString("");
     }
 }
@@ -12,7 +12,7 @@ Ttyh::Profiles::FilesIndex::FilesIndex(const QJsonObject &jObject)
 QJsonObject Ttyh::Profiles::FilesIndex::toJsonObject() const
 {
     QJsonArray jArray;
-    foreach (auto name, installed) {
+    for (const auto& name : installed) {
         jArray << name;
     }
 

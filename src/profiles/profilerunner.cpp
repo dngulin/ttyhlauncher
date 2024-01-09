@@ -88,7 +88,7 @@ bool Ttyh::Profiles::ProfileRunner::run(const ProfileInfo &info, const QString &
 
     auto prefixLength = dataPath.length() + 1;
     QStringList classPath;
-    foreach (auto lib, versionIndex.libraries) {
+    for (const auto& lib : versionIndex.libraries) {
         if (!Platform::checkRules(lib.rules))
             continue;
 
@@ -117,7 +117,7 @@ bool Ttyh::Profiles::ProfileRunner::run(const ProfileInfo &info, const QString &
     args << "-Dline.separator=\r\n";
     args << "-Dfile.encoding=UTF8";
 
-    foreach (auto arg, getJvmArgs(versionIndex.javaArguments)) {
+    for (auto arg : getJvmArgs(versionIndex.javaArguments)) {
         arg.replace("${natives_directory}", nativesPath);
         arg.replace("${launcher_name}", QApplication::applicationName());
         arg.replace("${launcher_version}", QApplication::applicationVersion());
@@ -189,7 +189,7 @@ QStringList Ttyh::Profiles::ProfileRunner::getJvmArgs(const QList<Json::Argument
     }
 
     QStringList checkedArgs;
-    foreach (auto arg, args) {
+    for (const auto& arg : args) {
         if (Platform::checkRules(arg.rules)) {
             checkedArgs << arg.values;
         }

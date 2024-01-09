@@ -18,7 +18,7 @@ ProfilesManager::ProfilesManager(QString workDir, const QSharedPointer<Logs::Log
     auto profilesDir = QDir(profilesPath);
 
     if (profilesDir.exists()) {
-        foreach (auto profileName, profilesDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot)) {
+        for (const auto& profileName : profilesDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot)) {
             auto path = QString("%1/%2/%3").arg(profilesPath, profileName, profileIndexName);
             QFile file(path);
 
@@ -150,7 +150,7 @@ bool ProfilesManager::validateProfileName(const QString &profileName)
         return false;
 
     QSet<QChar> allowed { ' ', '-', '_', '.', ',', '!', '?' };
-    foreach (auto ch, profileName) {
+    for (const auto& ch : profileName) {
         if (ch.isLetterOrNumber() || allowed.contains(ch))
             continue;
 
@@ -182,7 +182,7 @@ bool ProfilesManager::installFiles(const QString &profileName,
     auto actual = QSet<QString>(files.begin(), files.end());
     auto obsolete = QSet<QString>(filesIndex.installed.begin(), filesIndex.installed.end()).subtract(actual);
 
-    foreach (auto fileName, obsolete) {
+    for (const auto& fileName : obsolete) {
         QFile::remove(QString("%1/%2").arg(profilePath, fileName));
     }
 
@@ -196,7 +196,7 @@ bool ProfilesManager::installFiles(const QString &profileName,
     auto srcPattern = QString("%1/versions/%2/files/%3");
     auto dstPattern = QString("%1/profiles/%2/%3");
 
-    foreach (auto fileName, dataIndex.files.keys()) {
+    for (const auto& fileName : dataIndex.files.keys()) {
         auto checkInfo = dataIndex.files[fileName];
 
         auto src = srcPattern.arg(dataPath, version.toString(), fileName);

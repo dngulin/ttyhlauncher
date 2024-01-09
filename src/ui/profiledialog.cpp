@@ -15,7 +15,7 @@ ProfileDialog::ProfileDialog(QWidget *parent, const QString &profileName,
     auto prefixList = prefixes.values();
     std::sort(prefixList.begin(), prefixList.end(), Prefix::less);
 
-    foreach (auto prefix, prefixList) {
+    for (const auto& prefix : prefixList) {
         ui->comboPrefix->addItem(prefix.name, prefix.id);
     }
     ui->comboPrefix->setCurrentText(prefixes[profileData.version.prefix].name);
@@ -25,7 +25,7 @@ ProfileDialog::ProfileDialog(QWidget *parent, const QString &profileName,
             return;
 
         ui->comboVersion->clear();
-        foreach (auto version, prefixes[prefixId].versions) {
+        for (const auto& version : prefixes[prefixId].versions) {
             if (version == Prefix::latestVersionAlias) {
                 auto latestName = tr("Latest version");
                 auto latestId = prefixes[prefixId].latestVersionId;

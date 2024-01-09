@@ -41,7 +41,7 @@ VersionsManager::VersionsManager(QString workDir, QString url,
         log.info("Default version index have been created");
     }
 
-    foreach (auto id, index.prefixes.keys()) {
+    for (const auto& id : index.prefixes.keys()) {
         if (id.isEmpty())
             continue;
 
@@ -58,7 +58,7 @@ void VersionsManager::findLocalVersions(const QString &prefixId)
     auto prefixPath = QString("%1/%2").arg(versionsPath, prefixId);
     auto versions = QDir(prefixPath).entryList(QDir::Dirs | QDir::NoDotAndDotDot);
 
-    foreach (auto versionId, versions) {
+    for (const auto& versionId : versions) {
         auto versionIndexPath = QString("%1/%2/%2.json").arg(prefixPath, versionId);
         QFile file(versionIndexPath);
 
@@ -125,7 +125,7 @@ void VersionsManager::fetchPrefixes()
             return;
         }
 
-        foreach (auto id, remoteIndex.prefixes.keys()) {
+        for (const auto& id : remoteIndex.prefixes.keys()) {
             index.prefixes[id] = remoteIndex.prefixes[id];
             prefixFetchQueue << id;
 
@@ -173,7 +173,7 @@ void VersionsManager::fetchNextPrefixOrFinish()
         prefix.latestVersionId = versionsIndex.latest;
 
         auto knownVersions = QSet<QString>(prefix.versions.begin(), prefix.versions.end());
-        foreach (auto versionId, versionsIndex.versions) {
+        for (const auto& versionId : versionsIndex.versions) {
             if (!knownVersions.contains(versionId))
                 prefix.versions << versionId;
         }
@@ -326,7 +326,7 @@ bool VersionsManager::fillVersionFiles(const FullVersionId &version, QList<FileI
 
     files << getFileInfo("%1/%2/%3.jar", version, version.id, dataIndex.main);
 
-    foreach (auto file, dataIndex.files.keys()) {
+    for (const auto& file : dataIndex.files.keys()) {
         files << getFileInfo("%1/%2/files/%3", version, file, dataIndex.files[file]);
     }
 
@@ -337,7 +337,7 @@ bool VersionsManager::fillVersionFiles(const FullVersionId &version, QList<FileI
         return false;
     }
 
-    foreach (auto libInfo, versionIndex.libraries) {
+    for (const auto& libInfo : versionIndex.libraries) {
         if (!Utils::Platform::checkRules(libInfo.rules))
             continue;
 
@@ -357,7 +357,7 @@ bool VersionsManager::fillVersionFiles(const FullVersionId &version, QList<FileI
         return false;
     }
 
-    foreach (auto asset, assetsIndex.objects) {
+    for (const auto& asset : assetsIndex.objects) {
         auto name = QString("%1/%2").arg(asset.hash.mid(0, 2), asset.hash);
         files << getFileInfo("%1/assets/objects/%2", name, asset);
     }

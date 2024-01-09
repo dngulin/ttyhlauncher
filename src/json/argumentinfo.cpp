@@ -3,7 +3,7 @@
 
 Ttyh::Json::ArgumentInfo::ArgumentInfo(const QJsonObject &jObject)
 {
-    foreach (auto jRule, jObject["rules"].toArray()) {
+    for (const auto& jRule : jObject["rules"].toArray()) {
         rules << Rule(jRule.toObject());
     }
 
@@ -12,7 +12,7 @@ Ttyh::Json::ArgumentInfo::ArgumentInfo(const QJsonObject &jObject)
     if (jValue.isString()) {
         values << jValue.toString();
     } else if (jValue.isArray()) {
-        foreach (auto jValueEntry, jValue.toArray()) {
+        for (const auto& jValueEntry : jValue.toArray()) {
             values << jValueEntry.toString();
         }
     }

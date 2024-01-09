@@ -16,7 +16,7 @@ Ttyh::Json::VersionIndex::VersionIndex(const QJsonObject &jObject)
     }
 
     auto jLibraries = jObject["libraries"].toArray();
-    foreach (auto jLibraryInfo, jLibraries) {
+    for (const auto&  jLibraryInfo : jLibraries) {
         libraries << LibraryInfo(jLibraryInfo.toObject());
     }
 
@@ -24,13 +24,13 @@ Ttyh::Json::VersionIndex::VersionIndex(const QJsonObject &jObject)
     if (jObject.contains(argumentsKey)) {
         auto jArgs = jObject[argumentsKey].toObject();
 
-        foreach (auto jGameArg, jArgs["game"].toArray()) {
+        for (const auto& jGameArg : jArgs["game"].toArray()) {
             auto argument = jGameArg.toString();
             if (!argument.isEmpty())
                 gameArguments << argument;
         }
 
-        foreach (auto jVmArg, jArgs["jvm"].toArray()) {
+        for (const auto& jVmArg : jArgs["jvm"].toArray()) {
             if (jVmArg.isString()) {
                 javaArguments << ArgumentInfo(jVmArg.toString());
             } else if (jVmArg.isObject()) {
