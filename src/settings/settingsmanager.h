@@ -17,7 +17,7 @@ public:
 
     SettingsData data;
 
-    bool isFreshRun();
+    bool isFreshRun() const;
     void save();
 
 private:

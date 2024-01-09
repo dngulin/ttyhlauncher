@@ -24,7 +24,7 @@ Ttyh::Settings::SettingsManager::SettingsManager(const QString &workDir,
     log.info("Initialized!");
 }
 
-bool Ttyh::Settings::SettingsManager::isFreshRun()
+bool Ttyh::Settings::SettingsManager::isFreshRun() const
 {
     return freshRun;
 }
