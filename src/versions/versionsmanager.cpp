@@ -371,7 +371,7 @@ FileInfo VersionsManager::getFileInfo(const QString &location, const FullVersion
 {
     auto url = location.arg(storeUrl, version.toString(), name);
     auto path = location.arg(versionsPath, version.toString(), name);
-    return FileInfo(url, path, checkInfo.hash, checkInfo.size);
+    return {url, path, checkInfo.hash, checkInfo.size};
 }
 
 FileInfo VersionsManager::getFileInfo(const QString &location, const QString &name,
@@ -379,7 +379,7 @@ FileInfo VersionsManager::getFileInfo(const QString &location, const QString &na
 {
     auto url = location.arg(storeUrl, name);
     auto path = location.arg(dataPath, name);
-    return FileInfo(url, path, checkInfo.hash, checkInfo.size);
+    return {url, path, checkInfo.hash, checkInfo.size};
 }
 
 FullVersionId VersionsManager::resolve(const FullVersionId &version) const
@@ -389,7 +389,7 @@ FullVersionId VersionsManager::resolve(const FullVersionId &version) const
     if (version.id != Prefix::latestVersionAlias || !prefixes.contains(prefix))
         return version;
 
-    return FullVersionId(prefix, prefixes[prefix].latestVersionId);
+    return {prefix, prefixes[prefix].latestVersionId};
 }
 
 void VersionsManager::sortVersions(QStringList &versions) {
