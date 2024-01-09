@@ -178,8 +178,9 @@ bool ProfilesManager::installFiles(const QString &profileName,
 
     auto filesIndex = Utils::IndexHelper::load<FilesIndex>(filesIndexPath);
 
-    auto actual = QSet<QString>::fromList(dataIndex.files.keys());
-    auto obsolete = QSet<QString>::fromList(filesIndex.installed).subtract(actual);
+    auto files = dataIndex.files.keys();
+    auto actual = QSet<QString>(files.begin(), files.end());
+    auto obsolete = QSet<QString>(filesIndex.installed.begin(), filesIndex.installed.end()).subtract(actual);
 
     foreach (auto fileName, obsolete) {
         QFile::remove(QString("%1/%2").arg(profilePath, fileName));
@@ -190,7 +191,7 @@ bool ProfilesManager::installFiles(const QString &profileName,
         return true;
     }
 
-    auto mutableFiles = QSet<QString>::fromList(dataIndex.mutableFiles);
+    auto mutableFiles = QSet<QString>(dataIndex.mutableFiles.begin(), dataIndex.mutableFiles.end());
 
     auto srcPattern = QString("%1/versions/%2/files/%3");
     auto dstPattern = QString("%1/profiles/%2/%3");

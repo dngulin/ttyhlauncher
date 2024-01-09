@@ -172,7 +172,7 @@ void VersionsManager::fetchNextPrefixOrFinish()
         Prefix &prefix = prefixes[prefixId];
         prefix.latestVersionId = versionsIndex.latest;
 
-        auto knownVersions = QSet<QString>::fromList(prefix.versions);
+        auto knownVersions = QSet<QString>(prefix.versions.begin(), prefix.versions.end());
         foreach (auto versionId, versionsIndex.versions) {
             if (!knownVersions.contains(versionId))
                 prefix.versions << versionId;
