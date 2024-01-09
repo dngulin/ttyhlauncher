@@ -34,6 +34,7 @@ private:
     QProcess game;
 
     static QStringList getJvmArgs(const QList<Json::ArgumentInfo> &args);
+    static QString getUserType(const QDateTime &releaseTime);
 };
 }
 }

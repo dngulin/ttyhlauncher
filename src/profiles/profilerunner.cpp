@@ -138,7 +138,7 @@ bool Ttyh::Profiles::ProfileRunner::run(const ProfileInfo &info, const QString &
     argsMap.insert("${assets_index_name}", versionIndex.assetsIndex);
     argsMap.insert("${game_directory}", profilePath);
     argsMap.insert("${user_properties}", "{}");
-    argsMap.insert("${user_type}", "mojang");
+    argsMap.insert("${user_type}", getUserType(versionIndex.releaseTime));
 
     auto gameArgs = versionIndex.gameArguments;
     for (int i = 0; i < gameArgs.count(); i++) {
@@ -195,4 +195,14 @@ QStringList Ttyh::Profiles::ProfileRunner::getJvmArgs(const QList<Json::Argument
         }
     }
     return checkedArgs;
+}
+
+QString Ttyh::Profiles::ProfileRunner::getUserType(const QDateTime &releaseTime) {
+    // Starting from the 22w43a version (1.19.3 snapshot) the chat reporting/siging was introduced,
+    // the client requests signing keys only with the MSA account type
+    if (releaseTime.isValid() && releaseTime >= QDateTime::fromString("2022-10-26T11:55:59+00:00", Qt::ISODate)) {
+        return "msa";
+    }
+
+    return "mojang";
 }
