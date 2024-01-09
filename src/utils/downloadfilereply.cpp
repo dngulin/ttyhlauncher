@@ -31,7 +31,7 @@ Ttyh::Utils::DownloadFileReply::DownloadFileReply(QNetworkReply *reply, const QS
             return;
         }
 
-        emit bytesWritten(written);
+        emit bytesWritten((int)written);
     });
 
     connect(reply, &QNetworkReply::finished, [=]() {

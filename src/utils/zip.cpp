@@ -69,7 +69,7 @@ bool unzipDir(const QString &zipPath, const QString &destDir, const LogFunc &log
     }
     Defer closeZip([archive]() { zip_close(archive); });
 
-    int entryCount = zip_get_num_entries(archive, ZIP_FL_UNCHANGED);
+    int entryCount = (int)zip_get_num_entries(archive, ZIP_FL_UNCHANGED);
     for (auto entryIndex = 0; entryIndex < entryCount; entryIndex++) {
         struct zip_stat entryStat {
         };
