@@ -150,14 +150,11 @@ bool ProfilesManager::validateProfileName(const QString &profileName)
         return false;
 
     QSet<QChar> allowed { ' ', '-', '_', '.', ',', '!', '?' };
-    for (const auto& ch : profileName) {
-        if (ch.isLetterOrNumber() || allowed.contains(ch))
-            continue;
-
-        return false;
-    }
-
-    return true;
+    return std::all_of(
+        profileName.begin(),
+        profileName.end(),
+        [&](QChar ch){ return ch.isLetterOrNumber() || allowed.contains(ch); }
+    );
 }
 
 bool ProfilesManager::installFiles(const QString &profileName,
