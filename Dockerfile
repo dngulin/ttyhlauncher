@@ -2,7 +2,7 @@ FROM alpine:3.10 as builder
 WORKDIR /ttyhlauncher
 COPY . /ttyhlauncher/
 RUN set -ex \
- && apk add --no-cache git cmake make gcc g++ qt5-qtbase-dev qt5-qttools-dev libzip-dev 
+ && apk add --no-cache git cmake make gcc g++ qt5-qtbase-dev qt5-qttools-dev libzip-dev \
  && cmake . && make
 
 FROM alpine:3.10
